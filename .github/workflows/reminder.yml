@@ -3,7 +3,12 @@ name: Inactivity Reminder
 on:
   schedule:
     - cron: "0 12 * * *" # Run everyday at 12 UTC (or 19.00 WIB)
-
+  workflow_dispatch:
+    inputs:
+      run_job:
+        description: "Run the job regardless of time"
+        required: true
+        default: "false"
 jobs:
   check-activity:
     runs-on: ubuntu-latest
