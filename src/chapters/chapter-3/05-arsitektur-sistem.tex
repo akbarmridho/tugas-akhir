@@ -1,0 +1,7 @@
+Seperti yang telah dijelaskan pada gambar \ref{fig:gambaran-umum-arsitektur}, PERISAI memiliki dua komponen utama yaitu \textit{dashboard} dan \textit{service}. \textit{Dashboard} memiliki dua modul, yaitu modul untuk menampilkan halaman-halaman yang bersesuaian dan modul untuk melakukan koneksi dengan \textit{service}.
+
+\textit{Service} memiliki tiga modul, yaitu server, \textit{database}, serta Kubernetes. Server menjadi pusat kontrol dari \textit{request} yang dikirimkan melalui \textit{dashboard}. Masing-masing perangkat diatur oleh modul Kubernetes yang telah memiliki sistem kluster terpisah. Penjelasan arsitektur secara detail dijelaskan pada dua subbab, yaitu arsitektur struktural serta arsitektur \textit{behavioural}.
+
+\input{chapters/chapter-3/05-1-arsitektur-structural.tex}
+
+\input{chapters/chapter-3/05-2-arsitektur-behavioural.tex}

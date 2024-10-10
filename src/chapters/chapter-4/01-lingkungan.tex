@@ -1,0 +1,39 @@
+\section{Lingkungan}
+\label{sec:lingkungan-implementasi}
+Pengembangan PERISAI dilakukan pada lingkungan komputer lokal. Berikut merupakan penjelasan implementasi dari masing masing bagian secara terperinci yang terbagi menjadi dua bagian yaitu perangkat lunak dan perangkat keras.
+
+PERISAI dibuat dengan bantuan beberapa kakas pada bahasa \textit{golang}, \textit{vue}, dan \textit{typescript}. Sistem hidup di luar \textit{kubernetes cluster} dan mengakses kubernetes melalui \textit{Kubernetes Client}. \textit{Kubernetes cluster} dibuat dengan menggunakan kakas \textit{kind} agar dapat dijalankan pada komputer lokal. Cluster disimulasikan memiliki 4 \textit{node} dengan spesifikasi 1 \textit{master node} dan 3 \textit{worker node}. Adapun spesifikasi dari komputer yang dipakai untuk pengembangan adalah sebagai berikut.
+\begin{enumerate}
+  \item \textbf{Perangkat Keras}
+
+        \begin{enumerate}
+          \item CPU: \textit{Apple M1 Chip}
+          \item RAM: 8 GB
+        \end{enumerate}
+
+  \item \textbf{Perangkat Lunak}
+
+        \begin{enumerate}
+          \item Platform dan Sistem Operasi: Darwin Arm 64, MacOS Ventura 13.3
+          \item \textit{Database}: Postgres 16.2-alpine3.19
+          \item \textit{Containerization}: Docker desktop v26.0.0
+          \item \textit{Kubernetes Cluster}:
+                \begin{enumerate}
+                  \item Kubernetes Client v1.30.0
+                  \item K3s v1.29.4+k3s1
+                  \item kind v0.22.0 go1.21.7 darwin/arm64
+                \end{enumerate}
+          \item Bahasa pemrogramman:
+                \begin{enumerate}
+                  \item Go 1.22.2 darwin/arm64
+                  \item Vue 3
+                  \item Typescript
+                \end{enumerate}
+          \item Dependensi Lain:
+                \begin{enumerate}
+                  \item \textit{Kubernetes Go-Client}
+                  \item \textit{Echo, Logrus, Cobra, Viper, PQ, Sqlx, Go-migrate, Validator}
+                  \item \textit{Nuxt, NuxtUI, pinia, Zod}
+                \end{enumerate}
+        \end{enumerate}
+\end{enumerate}
