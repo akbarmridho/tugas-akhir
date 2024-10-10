@@ -72,7 +72,7 @@ Will you use ACTUALLY WRITE or CHANGE TOPIC? Choose wisely, trainer!""",
 
 # Check for recent commits
 def check_recent_commits():
-    one_week_ago = datetime.now() - timedelta(days=7)
+    one_week_ago = datetime.now() - timedelta(days=6)
     commits = repo.get_commits(since=one_week_ago)
     return commits.totalCount > 0
 
@@ -93,12 +93,11 @@ def create_issue():
 
 # Main function
 def main():
-    create_issue()
-    # if not check_recent_commits():
-    #     create_issue()
-    #     print("Reminder issue created.")
-    # else:
-    #     print("Recent commits found. No action needed.")
+    if not check_recent_commits():
+        create_issue()
+        print("Reminder issue created.")
+    else:
+        print("Recent commits found. No action needed.")
 
 
 if __name__ == "__main__":
