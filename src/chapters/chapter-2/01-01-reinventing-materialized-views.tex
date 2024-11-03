@@ -1,0 +1,9 @@
+\subsection{Contoh: \textit{Reinventing Materialized Views}}
+
+Menurut \cite{leverageDatabaseInsideOut}, \textit{materialized views} pada \textit{database}adalah sebuah \textit{query} yang dijalankan \textit{database} lalu disimpan sebagai \textit{cache}. Ketika terdapat perubahan, \textit{materialized view} juga akan diperbarui. Hal ini dilakukan untuk pengoptimalan kinerja. Ketika melakukan \textit{query}, data sudah tersedia lebih awal dan hasil dapat ditampilkan dengan lebih cepat karena \textit{query} tersebut di-\textit{precompute}.
+
+Pendekatan ini sedikit bermasalah karena \textit{materialized view} hanya ada di dalam \textit{database}. Bila konsep ini dikeluarkan dari \textit{database}, kita akan mendapatkan \textit{cache} yang terus menerus diperbarui.
+
+Untuk itu, kita harus menyiapkan tiga hal, yaitu sebuah mekanisme untuk menulis secara transaksional, sebuah \textit{log} yang menyimpan riwayat \textit{writes}, dan \textit{query engine} yang mengubah \textit{log} menjadi \textit{view}.
+
+Berbeda dengan \textit{materialized view}, ketiga hal tersebut bisa dibuat terpisah dan \textit{decentralized} sehingga setiap elemen tersebut beroperasi sebagai entitas yang independen.
