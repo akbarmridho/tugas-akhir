@@ -1,0 +1,22 @@
+\subsection{\textit{Stream Processing}}
+
+Secara umum, \textit{stream} merujuk pada data yang tersedia secara inkremental dari waktu ke waktu. Konsep ini dipakai di berbagai tempat, seperti stdin dan stdout Unix, TCP \textit{connection}, dan lain-lain \parencite{dataIntensiveApplications}.
+
+\textit{Stream processing} merupakan paradigma pemrograman yang memandang \textit{streams} atau urutan \textit{events} sebagai objek \textit{input} dan \textit{output} utama dari komputasi. \cite{streaming101} menyatakan bahwa \textit{stream processing} merupakan tipe \textit{engine} pemrosesan data yang didesain dengan mempertimbangkan \textit{dataset} yang tidak terbatas.
+
+\cite{streamProcessingComparison} menyatakan bahwa terdapat karakteristik penting pada \textit{stream processing}, yaitu:
+
+\begin{enumerate}
+    \item \textit{Delivery guarantees}. Setiap informasi yang masuk harus dijamin akan diproses oleh \textit{streaming engine}.
+    \item \textit{Fault tolerance}. Ketika terjadi kegagalan, \textit{streaming engine} harus mampu melakukan \textit{recovery} dan memulai ulang dari titik yang ditinggalkan.
+    \item \textit{State management}. \textit{Streaming engine} harus memiliki mekanisme untuk menyimpan dan memperbarui informasi \textit{state}.
+    \item Memiliki kinerja yang baik dari sisi latensi, \textit{throughput}, dan \textit{scalability}.
+    \item Memiliki fitur yang lebih \textit{advances}, seperti \textit{event time processing}, \textit{watermarks}, \textit{windowing}, dan lain-lain.
+\end{enumerate}
+
+Selain itu, karakteristik \textit{stream processing} juga bisa dibagi menjadi dua jenis, yaitu:
+
+\begin{enumerate}
+    \item \textit{Native streaming}. \textit{Stream processing} jenis ini akan langsung memproses \textit{record} yang diterima secepat mungkin. Contoh \textit{stream processing} tipe ini adalah Apache Storm, Apache Flink, Apache Kafka Streams, dan Apache Samza.
+    \item \textit{Micro-batching}. \textit{Stream processing} jenis ini meproses \textit{record} setiap beberapa detik atau milidetik sekali sehingga \textit{record} diproses dalam setiap \textit{mini-batch} dengan sedikit \textit{delay}. Contoh \textit{stream processing} tipe ini adalah Apahe Spark Streaming dan Apache Storm-Trident.
+\end{enumerate}
