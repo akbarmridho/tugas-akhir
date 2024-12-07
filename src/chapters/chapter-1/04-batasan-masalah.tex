@@ -4,11 +4,7 @@
 Terdapat batasan yang diambil dalam pelaksanaan tugas akhir ini, yaitu sebagai berikut.
 
 \begin{enumerate}
-  \item Penlitian ini berfokus pada pengoptimalan operasi \textit{read} dan \textit{write} dengan \textit{design pattern} CQRS pada kasus \textit{ticketing system}.
-  \item \textit{Streaming database} yang digunakan adalah Risingwave.
-  \item \textit{Event streaming platform} yang digunakan adalah Redpanda.
-  \item Pengoptimalan ini berfokus pada \textit{single tenant ticketing system}, yaitu mengoptimalkan \textit{ticketing} untuk satu \textit{event} dengan \textit{traffic} tinggi dan bukan mengoptimalkan \textit{ticketing} untuk banyak \textit{event} pada waktu yang bersamaan.
-  \item OLTP \textit{database} yang digunakan adalah PostgreSQL.
-  \item Berfokus pada pengoptimalan sistem sehingga mampu menangani besarnya jumlah pengguna dan tidak membahas desain sistem dari sisi pengalaman pengguna.
+  \item Penelitian ini tidak membahas desain sistem dari sisi pengalaman pengguna, seperti penggunaan sistem antrean yang cukup umum digunakan oleh sistem \textit{ticketing} pada saat ini.
+  \item Penelitian ini berfokus pada pengoptimalan penjualan tiket untuk satu \textit{event} pada satu waktu. Pengoptimalan penjualan tiket untuk banyak \textit{event} dengan beban tinggi cukup dioptimalkan dengan membedakan waktu penjualan.
 \end{enumerate}
 
