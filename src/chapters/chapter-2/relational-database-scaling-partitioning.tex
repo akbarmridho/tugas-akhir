@@ -8,7 +8,7 @@ Tujuan dari pempartisian data adalah untuk menyebarkan data dan beban secara adi
 
 \begin{enumerate}
     \item Partisi berdasarkan \textit{keys}, seperti judul buku yang berawalan A-E, F-J, dan seterusnya. Meskipun begitu, perlu diiperhatikan apakah distribusi \textit{keys} tersebar secara merata.
-          \begin{figure}
+          \begin{figure}[ht]
               \centering
               \includegraphics[width=0.8\textwidth]{resources/chapter-2/partition-by-key-range.png}
               \caption{\textit{Partition by key range \parencite{dataIntensiveApplications}}}
@@ -16,7 +16,7 @@ Tujuan dari pempartisian data adalah untuk menyebarkan data dan beban secara adi
           \end{figure}
 
     \item Partisi berdasarkan \textit{hash of key}. Fungsi hash yang baik dapat mengubah distribusi \textit{keys} yang \textit{skewed} menjadi merata.
-          \begin{figure}
+          \begin{figure}[ht]
               \centering
               \includegraphics[width=0.8\textwidth]{resources/chapter-2/partition-by-hash.png}
               \caption{\textit{Partition by hash \parencite{dataIntensiveApplications}}}

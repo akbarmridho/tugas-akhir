@@ -10,7 +10,7 @@ Replikasi berarti menyimpan salinan data yang sama pada beberapa mesin yang berb
 
 Salah satu pendekatan yang umum diimplementasikan pada basis data relasional seperti PostgreSQL adalah replikasi berbasiskan \textit{leader and follower}. Satu \textit{node} ditugaskan sebagai \textit{leader} yang menerima operasi \textit{read and write}, lalu setiap perubahan yang terjadi akan direplikasi oleh replika (\textit{follower}). Dengan pola seperti ini, umumnya operasi \textit{write} hanya dapat ditangani oleh \textit{leader} dan operasi \textit{read} dapat ditangani oleh semua \textit{node}.
 
-\begin{figure}
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-2/leader-based-replication.png}
     \caption{\textit{Leader-based (master-slave) replication \parencite{dataIntensiveApplications}}}
