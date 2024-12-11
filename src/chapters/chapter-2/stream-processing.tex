@@ -1,4 +1,4 @@
-\subsection{\textit{Stream Processing}}
+\section{\textit{Stream Processing}}
 
 Secara umum, \textit{stream} merujuk pada data yang tersedia secara inkremental dari waktu ke waktu. Konsep ini dipakai di berbagai tempat, seperti stdin dan stdout Unix, TCP \textit{connection}, dan lain-lain \parencite{dataIntensiveApplications}.
 
@@ -20,3 +20,5 @@ Selain itu, karakteristik \textit{stream processing} juga bisa dibagi menjadi du
     \item \textit{Native streaming}. \textit{Stream processing} jenis ini akan langsung memproses \textit{record} yang diterima secepat mungkin. Contoh \textit{stream processing} tipe ini adalah Apache Storm, Apache Flink, Apache Kafka Streams, dan Apache Samza.
     \item \textit{Micro-batching}. \textit{Stream processing} jenis ini meproses \textit{record} setiap beberapa detik atau milidetik sekali sehingga \textit{record} diproses dalam setiap \textit{mini-batch} dengan sedikit \textit{delay}. Contoh \textit{stream processing} tipe ini adalah Apahe Spark Streaming dan Apache Storm-Trident.
 \end{enumerate}
+
+\input{chapters/chapter-2/stream-processing-risingwave.tex}
