@@ -2,12 +2,12 @@
 
 RisingWave merupakan \textit{cloud-native streaming database}. Setelah menghubungkan sumber \textit{stream}, pengguna dapat membuat \textit{query} analisis dengan mendefinisikan \textit{materialized view}, yang diperbarui secara inkremental pada RisingWave \textit{streaming engine} \parencite{risingwave}.
 
-Berikut adalah keuntungan Risingwave:
+Berikut adalah keuntungan RisingWave:
 
 \begin{enumerate}
     \item Mudah dipelajari karena mengembangkan sintaks yang dimiliki PostgreSQL.
     \item Mudah dioperasikan dan memiliki kebutuhan \textit{resource} yang lebih rendah karena ditulis dalam bahasa sistem Rust.
-    \item Mendukung berbagai sumber data dan mampu mengirimkan (\textit{sink}) data ke dalam berbagai sumber, seperti mengambil data dari Apache Kafka lalu hasilnya dikirim ke ClickHouse.
+    \item Mendukung berbagai sumber data dan mampu mengirimkan (\textit{sink}) data ke dalam berbagai sumber, seperti mengambil data dari Apache Kafka lalu hasilnya dikirim ke ClickHouse. RisingWave mendukung integrasi dengan PostgreSQL CDC dan Apache Kafka sebagai \textit{source} dan \textit{sink}.
     \item Menjamin konsistensi pada \textit{materialized view} dengan konsistensi berbasiskan \textit{snapshot}.
 \end{enumerate}
 
