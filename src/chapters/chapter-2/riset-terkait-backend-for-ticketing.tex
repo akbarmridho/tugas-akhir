@@ -1,0 +1,28 @@
+\subsection{\textit{Backend for a Ticketing System}}
+
+Tesis ini membahas desain \textit{backend} untuk sistem \textit{ticketing}. Tesis ini berfokus pada desain modul, fungsionalitas, serta relasi yang diperlukan untuk menjalankan sistem ini, berbeda dengan penelitian sebelumnya yang fokus membahas desain dari sisi arsitektur. Tesis ini tidak membahas arsitektur secara detil dan hanya membagi fungsionalitas menjadi beberapa modul. Oleh karena itu, arsitektur yang digunakan pada penelitian ini adalah arsitektur \textit{modular monolith}. Selain itu, penelitian ini memakai prinsip REST API dalam mendesain implementasi API \parencite{backendForTicketing}.
+
+Terdapat empat entitas yang digambarkan pada sistem ini, yaitu:
+
+\begin{enumerate}
+    \item Pengguna yang bertugas untuk mencari dan membeli tiket, melakukan pembayaran, dan mengubah profil pengguna.
+    \item Organisasi yang bertugas untuk mengatur acara, kategori tiket, dan lain-lain.
+    \item \textit{Validator} yang bertugas untuk memberi izin dan mencegah terjadinya pelanggaran yang berkaitan dengan validitas dan integritas tiket.
+    \item \textit{Administrator} yang bertugas atas registrasi organisasi dan mengatur sertifikat penjual tiket.
+\end{enumerate}
+
+Figur \ref{fig:event-rm} dan \ref{fig:ticket-storage} menggambarkan diagram relasi entitas untuk \textit{events} dan entitas yang berkaitan untuk proses pembuatan dan penyimpanan tiket.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-2/event-rm.png}
+    \caption{\textit{ERD events} \parencite{backendForTicketing}}
+    \label{fig:event-rm}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-2/er-ticket-storage.png}
+    \caption{\textit{ERD} dengan entitas untuk pembuatan dan penyimpanan tiket \parencite{backendForTicketing}}
+    \label{fig:ticket-storage}
+\end{figure}
