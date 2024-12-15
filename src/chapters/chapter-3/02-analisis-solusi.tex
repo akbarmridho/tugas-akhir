@@ -29,7 +29,43 @@ Daftar acara dan ketersediaan awal tiket merupakan data yang di-\textit{populate
 
 \subsubsection{Arsitektur Dasar}
 
-Arsitektur ini akan menjadi \textit{baseline} atau referensi yang digunakan sebagai dasar perbandingan kinerja.
+Arsitektur ini akan menjadi \textit{baseline} atau referensi yang digunakan sebagai dasar perbandingan kinerja. Terdapat dua layanan eksternal, yaitu layanan pengguna dan layanan pembayaran. Selain itu, terdapat \textit{cluster} PostgreSQL dengan konfigurasi satu \textit{leader node} dan beberapa \textit{read replica}. Keberadaan \textit{read replica} memungkinkan peningkatan \textit{read throughput} untuk operasi \textit{query} ketersediaan. Meskipun begitu, tidak ada pengoptimalan untuk operasi pemesanan tiket.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{resources/chapter-3/architecture-reference.png}
+  \caption{\textit{Baseline Architecture}}
+  \label{fig:baseline-architecture}
+\end{figure}
+
+Basis data merupakan komponen yang sulit di-\textit{scale} secara dinamis berdasarkan beban yang diterima. Pada konfigurasi ini, \textit{vertical scaling} merupakan satu-satunya opsi untuk meningkatkan \textit{throughput}. Meskipun begitu, layanan lain seperti \textit{ticketing service} dan layanan pengguna dapat dengan mudah di-\textit{scale} dengan menambah jumlah \textit{instance}.
+
+\subsubsection{Arsitektur yang Mengoptimalkan PostgreSQL}
+
+Arsitektur ini mengoptimalan sistem dengan pola CQRS. Tanggung jawab penanganan \textit{read query} dilimpahkan kepada RisingWave \textit{instance}. \textit{Streaming database} ini mengonsumsi \textit{CDC stream} dari \textit{PostgreSQL cluster}, melayani permintaan \textit{query} ketersediaan tiket, serta memperbaruinya secara \textit{incremental}. \textit{Cluster} PostgreSQL dengan \textit{extension} Citus memungkinkan penggunaan \textit{row-based sharding} dengan \textit{multiple writer} sehingga \textit{write throughput} dapat ditingkatkan. Selain itu, permintaan pemesanan tiket akan di-\textit{queue} terlebih dahulu lalu diproses secara bertahap. Redis digunakan untuk menyimpan \textit{dirty data} dari transaksi yang sudah \textit{commited} dan \textit{uncommited} sehingga dapat mencegah permintaan pemesanan masuk. Kedua pendekatan ini mengikuti pola \textit{queue-based load leveling}. Selain itu, pemodelan data yang digunakan untuk pemesanan tiket adalah berupa \textit{command}, yang merupakan varian dari \textit{event sourcing}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{resources/chapter-3/architecture-optimized.png}
+  \caption{\textit{Optimized Architecture with PostgreSQL}}
+  \label{fig:optimized-architecture}
+\end{figure}
+
+Basis data masih merupakan komponen yang sulit di-\textit{scale} secara dinamis. Meskipun begitu, penggunaan \textit{extension} Citus memungkinkan peningkatan \textit{write throughput} dengan \textit{scale out} dan tidak hanya dengan \textit{scale up}. \textit{Instance} Redpanda dapat dengan mudah dibuat \textit{cluster} dan \textit{partitioning}. Bila perlu, Redis dapat dikonfigurasikan dengan mode \textit{cluster} untuk \textit{redundancy} dan mode AOF untuk \textit{persistence}. Layanan lain seperti \textit{ticketing service} dan layanan pengguna dapat dengan mudah di-\textit{scale} dengan menambah jumlah \textit{instance}.
+
+\subsubsection{Arsitektur \textit{Event-Driven}}
+
+Arsitektur ini tidak menggunakan PostgreSQL sama sekali. Pada dasarnya, basis data relasional terdiri atas komponen \textit{storage} dan \textit{query processor}. Pada arsitektur ini, komponen \textit{storage} diganti menggunakan Redpanda dengan berbagai topik dan \textit{query processor} diganti dengan RisingWave. Meskipun begitu, pendekatan ini tidak memiliki dukungan \textit{transaction} selain \textit{transaction} pada Redpanda yang berupa \textit{push log all or nothing} pada beberapa topik sekaligus. Untuk itu, Redis digunakan untuk menyimpan \textit{dirty data} atau \textit{uncommited data} sehingga \textit{double booking} dapat dicegah.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{resources/chapter-3/architecture-event-driven.png}
+  \caption{\textit{Event-Driven Architecture}}
+  \label{fig:solution-event-driven-architecture}
+\end{figure}
+
+\textit{Instance} Redpanda dapat dengan mudah dibuat \textit{cluster} dan \textit{partitioning}. Bila perlu, Redis dapat dikonfigurasikan dengan mode \textit{cluster} untuk \textit{redundancy} dan mode AOF untuk \textit{persistence}. Layanan lain seperti \textit{ticketing service} dan layanan pengguna dapat dengan mudah di-\textit{scale} dengan menambah jumlah \textit{instance}. Selain itu, RisingWave merupakan \textit{streaming database} yang \textit{cloud-native} sehingga dapat di-\textit{scale out} dengan mudah untuk meningkatkan \textit{throughput}.
+
 
 % \bgroup
 % \begin{table}[ht]
