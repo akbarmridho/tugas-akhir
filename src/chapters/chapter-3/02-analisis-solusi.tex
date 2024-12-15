@@ -1,0 +1,52 @@
+\section{Analisis Solusi}
+
+\subsection{Ide Dasar}
+
+Sebagaimana dijelaskan pada analisis masalah, kita harus mengatasi masalah \textit{read query} ketersediaan tiket serta \textit{throughput} dan \textit{flow control} pemesanan tiket. Berikut adalah ide dasar untuk menyelesaikannya:
+
+\begin{enumerate}
+  \item Permasalahan pada \textit{read query} dapat diatasi dengan memanfaatkan \textit{streaming database}, sehingga sistem menyediakan \textit{query} hasil agregasi yang diperbarui secara \textit{incremental} setiap kali ada perubahan. Pendekatan ini mengurangi proses agregasi yang dilakukan secara berulang-ulang, sehingga \textit{query} lebih efisien. Selain itu, pendekatan ini membagi tanggung jawab untuk operasi \textit{read} dari basis data utama.
+  \item Terdapat dua opsi untuk meningkatkan \textit{throughput} pemesanan tiket, yaitu dengan melakukan \textit{row-level sharding} pada relasi tiket dan menggunakan \textit{extension} Citus yang memungkinkan adanya \textit{multiple writer}. Di sisi lain, menghilangkan basis data relasional sepenuhnya juga bisa menjadi opsi. Pendekatan \textit{database inside-out} yang memisahkan komponen \textit{storage}, \textit{query}, dan lain-lain dari basis data memungkinkan setiap komponen \textit{scale} secara terpisah dan mencapai \textit{scalability} yang lebih baik. Meskipun begitu, perlu desain khusus untuk menjamin tidak terjadi \textit{double booking} dan menjamin integritas \textit{transaction}.
+  \item Untuk mengatur \textit{flow control}, pendekatan \textit{queue-based load leveling pattern} dapat digunakan dengan membuat operasi pemesanan asinkron dan membuat \textit{queue}. Dengan begini, sistem dapat memproses permintaan sesuai dengan kapasitas sistem dan stabilitas sistem dapat terjaga. Selain itu, sistem dapat menyimpan \textit{dirty/ uncommited data} tiket (tiket yang sedang dipesan, tetapi belum \textit{commited}). Dengan memanfaatkan data tersebut, sistem dapat menolak \textit{request} sehingga mencegah \textit{request} masuk sedari awal. 
+\end{enumerate}
+
+Secara umum, solusi yang dibahas mengikuti pola yang menyerupai pendekatan CQRS.
+
+\subsection{Komponen Sistem \textit{Ticketing}}
+
+Berdasarkan studi yang sudah dibahas sebelumnya dan berdasarkan fokus yang ingin dibahas pada penelitian ini, berikut adalah komponen sistem yang menjadi \textit{scope} dari penelitian ini:
+
+\begin{enumerate}
+  \item Layanan \textit{backend} utama yang memproses setiap permintaan yang berkaitan dengan pemesanan tiket.
+  \item Layanan \textit{authentication}.
+  \item Layanan \textit{payment gateway}. Layanan ini merupakan \textit{external service} dan cukup melakukan \textit{mocking service}.
+  \item Selain itu, terdapat satu basis data utama sebagai \textit{single source of truth}.
+\end{enumerate}
+
+Daftar acara dan ketersediaan awal tiket merupakan data yang di-\textit{populate} dari awal, sehingga fitur manajemen acara dan tiket tidak diimplementasikan. Pembahasan lengkap sistem dibahas pada bagian lampiran.
+
+\subsection{Arsitektur Solusi}
+
+\subsubsection{Arsitektur Dasar}
+
+Arsitektur ini akan menjadi \textit{baseline} atau referensi yang digunakan sebagai dasar perbandingan kinerja.
+
+% \bgroup
+% \begin{table}[ht]
+%   \def\arraystretch{1.3}
+%   \caption{Perbandingan Ketiga Alternatif Solusi}
+%   \label{tab:perbandingan-analisis-solusi}
+%   \centering
+%   \begin{tabular}{|p{2cm}|p{2cm}|p{2cm}|p{1.8cm}|p{1.7cm}|p{1.7cm}|}
+%     \hline
+%     Solusi           & Berjalan di berbagai perangkat                            & Melakukan \textit{targeted deployment} & Berjalan pada perangkat dengan sumber daya terbatas & Mengatur banyak perangkat & Waktu pembuatan sistem \\
+%     \hline
+%     Kubernetes       & Ya, seluruh perangkat yang dapat melakukan kontainerisasi & Ya                                     & Ya dengan K3s                                       & Ya                        & Cepat                  \\
+%     \hline
+%     Zookeper         & Ya, seluruh perangkat yang memiliki java                  & Tidak                                  & Tidak                                               & Ya                        & Cepat                  \\
+%     \hline
+%     LEONORE \& DIANE & Tidak                                                     & Tidak                                  & Mungkin                                             & Ya                        & Lama                   \\
+%     \hline
+%   \end{tabular}
+% \end{table}
+% \egroup
