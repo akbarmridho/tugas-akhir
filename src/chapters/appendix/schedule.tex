@@ -1,0 +1,62 @@
+\chapter{Jadwal Pengerjaan}
+
+\begin{center}
+    \footnotesize
+    \begin{longtable}{|p{0.2\textwidth}|p{0.5\textwidth}|c|c|}
+        \caption{Jadwal Pengerjaan Tugas Akhir}                                                                                                            \\
+        \hline
+        \textbf{Tahap}          & \textbf{Pekerjaan}                                                            & \textbf{Tanggal Mulai} & \textbf{Durasi} \\
+        \hline
+        \endfirsthead
+
+        \multicolumn{4}{|c|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                          \\
+        \hline
+        \textbf{Tahap}          & \textbf{Pekerjaan}                                                            & \textbf{Tanggal Mulai} & \textbf{Durasi} \\
+        \hline
+        \endhead
+
+        \hline
+        \multicolumn{4}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                   \\
+        \endfoot
+
+        \hline
+        \endlastfoot
+
+        \multicolumn{4}{|c|}{\textbf{Perencanaan dan desain solusi}}                                                                                       \\
+        \hline
+        Perencanaan             & Menganalisis kebutuhan sistem                                                 & 2025-02-01             & 5 hari          \\
+                                & Merancang rencana implementasi baseline architecture                          & 2025-02-06             & 5 hari          \\
+                                & Merancang rencana implementasi arsitektur pengoptimalan PostgreSQL            & 2025-02-11             & 5 hari          \\
+                                & Merancang rencana implementasi arsitektur event-driven                        & 2025-02-16             & 5 hari          \\
+                                & Merancang uji kasus                                                           & 2025-02-21             & 5 hari          \\
+        \hline
+        \multicolumn{4}{|c|}{\textbf{Implementasi}}                                                                                                        \\
+        \hline
+        Implementasi            & Merancang skema basis data                                                    & 2025-02-26             & 3 hari          \\
+                                & Mengimplementasikan user service                                              & 2025-02-29             & 3 hari          \\
+                                & Mengimplementasikan payment service                                           & 2025-03-03             & 3 hari          \\
+                                & Mengimplementasikan ticketing service                                         & 2025-03-06             & 6 hari          \\
+                                & Mengintegrasikan penggunaan extension PostgreSQL Citus                        & 2025-03-12             & 6 hari          \\
+                                & Mengintegrasikan Redpanda untuk queue based load leveling                     & 2025-03-18             & 6 hari          \\
+                                & Mengimplementasikan drop-request berdasarkan pending reservation              & 2025-03-24             & 4 hari          \\
+                                & Mengintegrasikan RisingWave untuk incrementally updated query                 & 2025-03-28             & 6 hari          \\
+                                & Merancang dan mengimplementasikan skema topic untuk event-driven architecture & 2025-04-03             & 6 hari          \\
+                                & Mengintegrasikan RisingWave untuk event-driven architecture                   & 2025-04-09             & 6 hari          \\
+                                & Mengimplementasikan ticketing service versi event-driven architecture         & 2025-04-15             & 8 hari          \\
+        \hline
+        \multicolumn{4}{|c|}{\textbf{Deployment dan Pengujian}}                                                                                            \\
+        \hline
+        Deployment \& Pengujian & Deployment baseline architecture                                              & 2025-04-23             & 3 hari          \\
+                                & Pengujian baseline architecture                                               & 2025-04-26             & 3 hari          \\
+                                & Deployment arsitektur pengoptimalan PostgreSQL                                & 2025-04-29             & 3 hari          \\
+                                & Pengujian arsitektur pengoptimalan PostgreSQL                                 & 2025-05-02             & 3 hari          \\
+                                & Deployment arsitektur event-driven                                            & 2025-05-05             & 3 hari          \\
+                                & Pengujian arsitektur event-driven                                             & 2025-05-08             & 3 hari          \\
+        \hline
+        \multicolumn{4}{|c|}{\textbf{Evaluasi dan Pengolahan Data}}                                                                                        \\
+        \hline
+        Evaluasi                & Pengolahan data                                                               & 2025-05-11             & 7 hari          \\
+                                & Menyelesaikan laporan tugas akhir                                             & 2025-05-18             & 10 hari         \\
+        \hline
+    \end{longtable}
+\end{center}
