@@ -2,70 +2,67 @@
 
 \subsection{Ide Dasar}
 
-Sebagaimana dijelaskan pada analisis masalah, kita harus mengatasi masalah \textit{read query} ketersediaan tiket serta \textit{throughput} dan \textit{flow control} pemesanan tiket. Berikut adalah ide dasar untuk menyelesaikannya:
+Berikut adalah ide dasar untuk menyelesaikan masalah pembacaan ketersediaan tiket dan pemesanan tiket:
 
 \begin{enumerate}
-  \item Permasalahan pada \textit{read query} dapat diatasi dengan memanfaatkan \textit{streaming database}, sehingga sistem menyediakan \textit{query} hasil agregasi yang diperbarui secara \textit{incremental} setiap kali ada perubahan. Pendekatan ini mengurangi proses agregasi yang dilakukan secara berulang-ulang, sehingga \textit{query} lebih efisien. Selain itu, pendekatan ini membagi tanggung jawab untuk operasi \textit{read} dari basis data utama.
-  \item Terdapat dua opsi untuk meningkatkan \textit{throughput} pemesanan tiket, yaitu dengan melakukan \textit{row-level sharding} pada relasi tiket dan menggunakan \textit{extension} Citus yang memungkinkan adanya \textit{multiple writer}. Di sisi lain, menghilangkan basis data relasional sepenuhnya juga bisa menjadi opsi. Pendekatan \textit{database inside-out} yang memisahkan komponen \textit{storage}, \textit{query}, dan lain-lain dari basis data memungkinkan setiap komponen \textit{scale} secara terpisah dan mencapai \textit{scalability} yang lebih baik. Meskipun begitu, perlu desain khusus untuk menjamin tidak terjadi \textit{double booking} dan menjamin integritas \textit{transaction}.
-  \item Untuk mengatur \textit{flow control}, pendekatan \textit{queue-based load leveling pattern} dapat digunakan dengan membuat operasi pemesanan asinkron dan membuat \textit{queue}. Dengan begini, sistem dapat memproses permintaan sesuai dengan kapasitas sistem dan stabilitas sistem dapat terjaga. Selain itu, sistem dapat menyimpan \textit{dirty/ uncommited data} tiket (tiket yang sedang dipesan, tetapi belum \textit{commited}). Dengan memanfaatkan data tersebut, sistem dapat menolak \textit{request} sehingga mencegah \textit{request} masuk sedari awal. 
+  \item Tanggung jawab pelayanan ketersediaan tiket dapat dilimpahkan kepada RisingWave, sehingga beban pada basis data berkurang. \textit{Streaming database} ini dapat memperbarui hasil kueri secara inkremental setiap kali ada perubahan. Pendekatan ini mengurangi proses agregasi yang dilakukan secara berulang-ulang, sehingga kueri lebih efisien. Pendekatan ini merupakan bagian dari \textit{query responsibility segregation} pada pola CQRS.
+  \item Menggunakan kluster PostgreSQL dengan ekstensi Citus dan pembagian data berdasarkan baris. Pendekatan ini meungkinkan adanya \textit{multiple writer}, sehingga \textit{throughput} pemesanan tiket dapat meningkat. Di sisi lain, tidak menggunakan basis data relasional juga bisa menjadi opsi. Pendekatan \textit{database inside-out} yang memisahkan komponen \textit{storage} dan \textit{query} memungkinkan setiap komponen \textit{scale} secara independen. Meskipun begitu, perlu perhatian khusus untuk menghindari pemesanan ganda dan menjaga integritas transaksi.
+  \item Untuk mengontrol pemesanan tiket, pendekatan penyeimbangan beban berbasiskan antrean dapat digunakan. Pemesanan tiket dapat didesain sebagai \textit{command} pada pola CQRS. Dengan begini, sistem dapat memproses permintaan sesuai dengan kapasitas sistem, sehingga stabilitas sistem dapat terjaga. Selain itu, informasi tiket yang sedang dipesan tetapi belum \textit{commit} (kita sebut \textit{uncommited data}) dapat disimpan pada Redis yang kemudian digunakan untuk menolak permintaan lebih awal dan mengurani permintaan yang masuk.
 \end{enumerate}
 
-Secara umum, solusi yang dibahas mengikuti pola yang menyerupai pendekatan CQRS.
+\subsection{Komponen Sistem Tiket}
 
-\subsection{Komponen Sistem \textit{Ticketing}}
-
-Berdasarkan studi yang sudah dibahas sebelumnya dan berdasarkan fokus yang ingin dibahas pada penelitian ini, berikut adalah komponen sistem yang menjadi \textit{scope} dari penelitian ini:
+Berdasarkan studi yang sudah dibahas sebelumnya dan berdasarkan fokus yang ingin dibahas pada penelitian ini, berikut adalah komponen sistem yang menjadi bahasan dari penelitian ini:
 
 \begin{enumerate}
   \item Layanan \textit{backend} utama yang memproses setiap permintaan yang berkaitan dengan pemesanan tiket.
-  \item Layanan \textit{authentication}.
-  \item Layanan \textit{payment gateway}. Layanan ini merupakan \textit{external service} dan cukup melakukan \textit{mocking service}.
-  \item Selain itu, terdapat satu basis data utama sebagai \textit{single source of truth}.
+  \item Layanan otentikasi.
+  \item Layanan gerbang pembayaran. Layanan ini merupakan layanan eksternal dan cukup melakukan \textit{mocking service}.
+  \item Terdapat satu basis data utama sebagai sumber kebenaran utama.
 \end{enumerate}
 
-Daftar acara dan ketersediaan awal tiket merupakan data yang di-\textit{populate} dari awal, sehingga fitur manajemen acara dan tiket tidak diimplementasikan. Pembahasan lengkap sistem dibahas pada bagian lampiran.
+Daftar acara dan ketersediaan awal tiket merupakan data yang diisi dari awal, sehingga fitur manajemen acara dan tiket tidak diimplementasikan. Detail lengkap komponen dan fitur sistem dijelaskan pada bagian lampiran.
 
 \subsection{Arsitektur Solusi}
 
-\subsubsection{Arsitektur Dasar}
+Komponen \textit{backend} utama bersifat \textit{stateless}, sehingga dapat di-\textit{scale} dengan meningkatkan jumlah \textit{instance}. Setiap arsitektur solusi memiliki dua layanan eksternal, yaitu layanan pengguna dan layanan gerbang pembayaran. Basis data merupakan komponen yang sulit di-\textit{scale} secara dinamis berdasarkan beban yang diterima. Biasanya, penskalaan secara vertikal merupakan opsi utama untuk meningkatkan \textit{throughput}.
 
-Arsitektur ini akan menjadi \textit{baseline} atau referensi yang digunakan sebagai dasar perbandingan kinerja. Terdapat dua layanan eksternal, yaitu layanan pengguna dan layanan pembayaran. Selain itu, terdapat \textit{cluster} PostgreSQL dengan konfigurasi satu \textit{leader node} dan beberapa \textit{read replica}. Keberadaan \textit{read replica} memungkinkan peningkatan \textit{read throughput} untuk operasi \textit{query} ketersediaan. Meskipun begitu, tidak ada pengoptimalan untuk operasi pemesanan tiket.
+\subsubsection{Arsitektur Dasar Acuan}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\textwidth]{resources/chapter-3/architecture-reference.png}
-  \caption{\textit{Baseline Architecture}}
+  \caption{Arsitektur Dasar Acuan}
   \label{fig:baseline-architecture}
 \end{figure}
 
-Basis data merupakan komponen yang sulit di-\textit{scale} secara dinamis berdasarkan beban yang diterima. Pada konfigurasi ini, \textit{vertical scaling} merupakan satu-satunya opsi untuk meningkatkan \textit{throughput}. Meskipun begitu, layanan lain seperti \textit{ticketing service} dan layanan pengguna dapat dengan mudah di-\textit{scale} dengan menambah jumlah \textit{instance}.
+Arsitektur ini akan menjadi dasar acuan yang digunakan sebagai dasar perbandingan kinerja. Terdapat kluster PostgreSQL dengan konfigurasi satu node pemimpin dan sisanya node replika. Keberadaan replika memungkinkan peningkatan \textit{throughput} permintaan baca, tetapi tidak ada pengoptimalan untuk operasi tulis.
 
 \subsubsection{Arsitektur yang Mengoptimalkan PostgreSQL}
 
-Arsitektur ini mengoptimalan sistem dengan pola CQRS. Tanggung jawab penanganan \textit{read query} dilimpahkan kepada RisingWave \textit{instance}. \textit{Streaming database} ini mengonsumsi \textit{CDC stream} dari \textit{PostgreSQL cluster}, melayani permintaan \textit{query} ketersediaan tiket, serta memperbaruinya secara \textit{incremental}. \textit{Cluster} PostgreSQL dengan \textit{extension} Citus memungkinkan penggunaan \textit{row-based sharding} dengan \textit{multiple writer} sehingga \textit{write throughput} dapat ditingkatkan. Selain itu, permintaan pemesanan tiket akan di-\textit{queue} terlebih dahulu lalu diproses secara bertahap. Redis digunakan untuk menyimpan \textit{dirty data} dari transaksi yang sudah \textit{commited} dan \textit{uncommited} sehingga dapat mencegah permintaan pemesanan masuk. Kedua pendekatan ini mengikuti pola \textit{queue-based load leveling}. Selain itu, pemodelan data yang digunakan untuk pemesanan tiket adalah berupa \textit{command}, yang merupakan varian dari \textit{event sourcing}.
+Arsitektur ini mengoptimalkan sistem dengan pola CQRS. Tanggung jawab permintaan baca dilimpahkan kepada RisingWave. \textit{Streaming database} ini mengonsumsi \textit{CDC stream} dari kluster PostgreSQL, lalu memperbarui kueri secara inkremental. Penggunaan ekstensi Citus memungkinkan pembagian data berdasarkan baris dan \textit{multiple writer}. Selain itu, perintah pemesanan tiket (berupa \textit{command}/ \textit{event sourcing}) akan dimasukkan ke dalam antrean terlebih dahulu, lalu diproses secara bertahap. Redis digunakan untuk menyimpan \textit{uncommited data} dan menolak permintaan pemesanan lebih awal.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\textwidth]{resources/chapter-3/architecture-optimized.png}
-  \caption{\textit{Optimized Architecture with PostgreSQL}}
+  \caption{Arsitektur yang Mengoptimalkan PostgreSQL}
   \label{fig:optimized-architecture}
 \end{figure}
 
-Basis data masih merupakan komponen yang sulit di-\textit{scale} secara dinamis. Meskipun begitu, penggunaan \textit{extension} Citus memungkinkan peningkatan \textit{write throughput} dengan \textit{scale out} dan tidak hanya dengan \textit{scale up}. \textit{Instance} Redpanda dapat dengan mudah dibuat \textit{cluster} dan \textit{partitioning}. Bila perlu, Redis dapat dikonfigurasikan dengan mode \textit{cluster} untuk \textit{redundancy} dan mode AOF untuk \textit{persistence}. Layanan lain seperti \textit{ticketing service} dan layanan pengguna dapat dengan mudah di-\textit{scale} dengan menambah jumlah \textit{instance}.
+Penggunaan ekstensi Citus memungkinkan penginkatan \textit{write throughput} tidak hanya dengan pendekatan \textit{scale up}, tetapi juga dengan pendekatan \textit{scale-out}. Redpanda dapat dibuat kluster dengan pemartisian data untuk meningkatkan \textit{throughput}. Redis dapat dikonfigurasikan dalam mode kluster untuk redundansi dan mode AOF untuk \textit{persistence}.
 
 \subsubsection{Arsitektur \textit{Event-Driven}}
 
-Arsitektur ini tidak menggunakan PostgreSQL sama sekali. Pada dasarnya, basis data relasional terdiri atas komponen \textit{storage} dan \textit{query processor}. Pada arsitektur ini, komponen \textit{storage} diganti menggunakan Redpanda dengan berbagai topik dan \textit{query processor} diganti dengan RisingWave. Meskipun begitu, pendekatan ini tidak memiliki dukungan \textit{transaction} selain \textit{transaction} pada Redpanda yang berupa \textit{push log all or nothing} pada beberapa topik sekaligus. Untuk itu, Redis digunakan untuk menyimpan \textit{dirty data} atau \textit{uncommited data} sehingga \textit{double booking} dapat dicegah.
+Arsitektur ini tidak menggunakan PostgreSQL sama sekali. Pada dasarnya, basis data relasional terdiri atas komponen \textit{storage} dan \textit{query processor}. Pada arsitektur ini, komponen \textit{storage} diganti menggunakan Redpanda dengan berbagai topik dan \textit{query processor} diganti dengan RisingWave. Meskipun begitu, pendekatan ini tidak memiliki dukungan \textit{transaction} selain \textit{transaction} pada Redpanda yang berupa \textit{push log all or nothing} pada beberapa topik sekaligus. Untuk itu, Redis digunakan untuk menyimpan \textit{dirty data} atau \textit{uncommited data} sehingga untuk mencegah \textit{double booking}.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\textwidth]{resources/chapter-3/architecture-event-driven.png}
-  \caption{\textit{Event-Driven Architecture}}
+  \caption{Arsitektur \textit{Event-Driven}}
   \label{fig:solution-event-driven-architecture}
 \end{figure}
 
-\textit{Instance} Redpanda dapat dengan mudah dibuat \textit{cluster} dan \textit{partitioning}. Bila perlu, Redis dapat dikonfigurasikan dengan mode \textit{cluster} untuk \textit{redundancy} dan mode AOF untuk \textit{persistence}. Layanan lain seperti \textit{ticketing service} dan layanan pengguna dapat dengan mudah di-\textit{scale} dengan menambah jumlah \textit{instance}. Selain itu, RisingWave merupakan \textit{streaming database} yang \textit{cloud-native} sehingga dapat di-\textit{scale out} dengan mudah untuk meningkatkan \textit{throughput}.
-
+Redpanda dapat dibuat kluster dengan pemartisian data untuk meningkatkan \textit{throughput}. Redis dapat dikonfigurasikan dalam mode kluster untuk redundansi dan mode AOF untuk \textit{persistence}. Selain itu, RisingWave merupakan \textit{streaming database} yang \textit{cloud-native} sehingga dapat di-\textit{scale out} dengan mudah untuk meningkatkan \textit{throughput}.
 
 % \bgroup
 % \begin{table}[ht]
