@@ -1,4 +1,4 @@
-\section{Perosesan \textit{Stream}}
+\section{Pemrosesan \textit{Stream}}
 
 Secara umum, \textit{stream} merujuk pada data yang tersedia secara inkremental dari waktu ke waktu. Konsep ini dipakai di berbagai tempat, seperti stdin dan stdout Unix, koneksi TCP, dan lain-lain \parencite{dataIntensiveApplications}.
 
@@ -8,7 +8,7 @@ Secara umum, \textit{stream} merujuk pada data yang tersedia secara inkremental 
 
 \begin{enumerate}
     \item \textit{Delivery guarantees}. Setiap informasi yang masuk harus dijamin akan diproses oleh \textit{streaming engine}.
-    \item Toleransi kegagalan (\textit{Fault tolerance}). Ketika terjadi kegagalan, \textit{streaming engine} harus mampu melakukan pemulihan dan memulai ulang dari titik yang ditinggalkan.
+    \item Toleransi kegagalan (\textit{fault tolerance}). Ketika terjadi kegagalan, \textit{streaming engine} harus mampu melakukan pemulihan dan memulai ulang dari titik yang ditinggalkan.
     \item \textit{State management}. \textit{Streaming engine} harus memiliki mekanisme untuk menyimpan dan memperbarui informasi \textit{state}.
     \item Memiliki kinerja yang baik dari sisi latensi, \textit{throughput}, dan skalabilitas.
     \item Memiliki fitur yang lebih canggih, seperti \textit{event time processing}, \textit{watermarks}, \textit{windowing}, dan lain-lain.
