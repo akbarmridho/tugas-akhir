@@ -23,7 +23,7 @@
         "./thesis.tex"
       ],
       "env": {}
-    },
+    }
     // {
     //   "name": "latex_itb_move",
     //   "command": "cp",
@@ -34,5 +34,6 @@
   "latex-workshop.synctex.afterBuild.enabled": true,
   "latex-workshop.latex.outDir": "%DIR%/../build",
   "latex-workshop.latex.autoBuild.run": "onSave",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "cSpell.language": "en,id-ID"
 }
