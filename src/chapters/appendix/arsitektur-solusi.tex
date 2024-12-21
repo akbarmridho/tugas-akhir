@@ -60,11 +60,13 @@ Selain Citus, terdapat berbagai alternatif basis data terdistribusi lain, sepert
 
 Distribusi data yang \textit{natively distributed} masih sama-sama berupa \textit{sharding} data. Meskipun begitu, proses \textit{sharding} ini dilakukan secara otomatis dan tidak ditentukan oleh pengguna. Selain itu, suatu \textit{shard} dapat dipegang oleh beberapa \textit{node} sekaligus untuk mencapai \textit{redundancy} dan \textit{fault tolerance}.
 
-Todo kenapa pilih citus selain karena familiarity dengan postgresql dan agar perbandingannya setara dengan arsitektur dasar acuan yang sama-sama menggunakan postgresql
+Pada basis data terdistribusi seperti YugabyteDB, CockroachDB, dan TiDB, terdapat \textit{overhead} dalam koordinasi antarnode untuk operasi tulis, terlebih lagi setiap operasi tulis harus mencapai konsensus terlebih dahulu. Berbeda dengan basis data terdistribusi yang memakai koordinator seperti Citus dan Vitess, \textit{overhead} lebih kecil dan berada pada koordinator saja. Setelah koordinator menentukan node yang bertanggung jawab atas operasi tersebut, operasi langsung diarahkan kepada node yang berkaitan. Pendekatan konsensus memang memberikan konsistensi dan \textit{failover} yang lebih baik, tetapi terdapat \textit{tradeoff} berupa latensi yang lebih tinggi. Penggunaan basis data terdistribusi dengan konsensus akan lebih \textit{desirable} apabila melayani pengguna dalam beberapa \textit{region} yang berbeda. Meskipun begitu, penelitian ini berfokus pada pengoptimalan untuk satu \textit{region} yang sama.
 
-\subsection{Penggunaan Solusi \textit{Serverless}}
+Sekarang, terdapat dua pilihan yang tersisa, yaitu Vitess dan Citus. Citus dipilih agar basis \textit{database} yang digunakan sama, sehingga perbandingan antar arsitektur lebih disebabkan karena perbedaan arsitektur dan bukan karena perbedaan pengoptimalan pada basis data yang berbeda. Selain itu, basis data PostgreSQL merupakan basis data yang paling familiar dengan penulis dibandingan dengan MySQL.
 
-Bagaimana dengan solusi serverless?
+\subsection{Penggunaan Solusi Basis Data \textit{Serverless}}
+
+Penggunaan solusi serverless seperti Supabase, Neon, dan PlanetScale terbatas pada vendor tersebut. Solusi seperti ini memiliki banyak variabel yang tidak bisa dikontrol, terlebih lagi dari aspek biaya yang harus dikeluarkan untuk melakukan pengujian. Selain itu, terdapat batas atas penggunaan sumber daya yang diperbolehkan oleh setiap vendor. Batas atas ini baru bisa ditambah ketika melakukan \textit{subscription} dengan \textit{enterprise plan}. Oleh karena itu, penggunaan solusi \textit{serverless} tidak \textit{feasible} untuk dilakukan.
 
 \section{Arsitektur Solusi}
 
