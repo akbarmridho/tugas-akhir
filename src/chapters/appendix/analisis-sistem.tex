@@ -1,8 +1,8 @@
 \chapter{Analisis Sistem}
 
-\section{Kebutuhan Fungsional dan Non-Fungsional Sistem Tiket}
+\section{Kebutuhan Fungsional dan Non-Fungsional Layanan Tiket}
 
-\subsection{Kebutuhan Fungsional Sistem Tiket}
+\subsection{Kebutuhan Fungsional Layanan Tiket}
 
 Berikut adalah kebutuhan fungsional yang menjadi cakupan pada tugas akhir ini:
 
@@ -11,21 +11,45 @@ Berikut adalah kebutuhan fungsional yang menjadi cakupan pada tugas akhir ini:
     \item Pengguna dapat membaca daftar ketersediaan tiket untuk suatu acara.
     \item Pengguna dapat memesan tiket.
     \item Sistem dapat menerima pembelian tiket lebih dari satu dalam satu pembelian untuk acara yang sama. Meskipun begitu, satu kali pembelian maksimal hanya dapat membeli empat tiket.
-    \item Sistem dapat menjual tiket berdasarkan tempat duduk atau berdasarkan area.
+    \item Sistem dapat menjual tiket berdasarkan tempat duduk dan berdasarkan area.
     \item Sistem dapat menangani penjualan tiket untuk lebih dari satu acara dalam satu waktu.
-    \item Pengguna dapat membatalkan pembelian tiket apabila pengguna belum melakukan pembayaran.
     \item Apabila pengguna tidak menyelesaikan pembayaran sampai batas waktu tertentu, pembelian akan dibatalkan dan tiket akan kembali tersedia untuk dibeli oleh pengguna lain.
 \end{enumerate}
 
 Pemesanan tiket dibagi menjadi dua tahap, yaitu fase \textit{hold seating} dan fase pembayaran. Fase \textit{hold seating} akan me-\textit{reserve} tiket sampai batas waktu tertentu hingga pengguna menyelesaikan fase pembayaran. Saat pembayaran berhasil, pembelian tiket baru akan dianggap sukses. Daftar acara dan ketersediaan awal tiket merupakan data yang diisi dari awal, sehingga fitur manajemen acara dan tiket tidak diimplementasikan.
 
-\subsection{Kebutuhan Non-Fungsional Sistem Tiket}
+\subsection{Kebutuhan Non-Fungsional Layanan Tiket}
 
 Berikut adalah kebutuhan non-fungsional yang menjadi cakupan pada tugas akhir ini:
 
 \begin{enumerate}
     \item Sistem harus memastikan tidak terjadi \textit{double booking} pada saat pemesanan tiket fase \textit{hold seating}.
     \item \textit{Endpoint} yang melayani pembacaan ketersediaan tiket harus selalu mengembalikan hasil terbaru (\textit{data freshness}).
+\end{enumerate}
+
+\section{Kebutuhan Fungsional dan Non-Fungsional Layanan Otentikasi}
+
+\subsection{Kebutuhan Fungsional Layanan Tiket}
+
+Berikut adalah kebutuhan fungsional yang menjadi cakupan pada tugas akhir ini:
+
+\begin{enumerate}
+    \item Pengguna dapat melakukan registrasi.
+    \item Pengguna dapat melakukan login.
+    \item Layanan lain dapat memperoleh informasi pengguna.
+    \item Layanan lain dapat memverifikasi token otentikasi pengguna.
+\end{enumerate}
+
+\section{Kebutuhan Fungsional dan Non-Fungsional Layanan Pembayaran}
+
+\subsection{Kebutuhan Fungsional Layanan Pembayaran}
+
+Berikut adalah kebutuhan fungsional yang menjadi cakupan pada tugas akhir ini:
+
+\begin{enumerate}
+    \item Layanan lain dapat membuat tagihan pembayaran dan mengembalikan pranala pembayaran.
+    \item Layanan pembayaran akan memanggil \textit{webhook} yang telah ditentukan untuk melakukan notifikasi ketika pembayaran berhasil atau gagal.
+    \item Pembayaran akan otomatis gagal apabila pengguna tidak melakukan pembayaran hingga batas waktu tertentu.
 \end{enumerate}
 
 \section{Komponen Sistem Tiket}
