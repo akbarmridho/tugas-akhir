@@ -1,6 +1,6 @@
 \section{Pola Penyeimbangan Beban Berbasiskan Antrean}
 
-Sebuah layanan dalam satu sistem seringkali bertugas untuk mengerjakan sesuatu dan memanggil layanan lain. Dalam kasus ini, terdapat kemungkinan munculnya masalah kinerja dan keandalan ketika layanan mengalami beban yang tinggi. Keadaan ini dapat menciptakan situasi \textit{backpressure}.
+Sebuah layanan dalam satu sistem sering kali bertugas untuk mengerjakan sesuatu dan memanggil layanan lain. Dalam kasus ini, terdapat kemungkinan munculnya masalah kinerja dan keandalan ketika layanan mengalami beban yang tinggi. Keadaan ini dapat menciptakan situasi \textit{backpressure}.
 
 Dalam konteks perangkat lunak, \textit{backpressure} dapat didefinisikan sebagai \textit{resistance or force opposing the desired flow of data through software} \parencite{backpressureExplained}. Selain melakukan penyesuaian pada sumber daya sistem, terdapat tiga strategi yang dapat digunakan untuk menangani \textit{backpressure}, yaitu:
 
@@ -10,7 +10,7 @@ Dalam konteks perangkat lunak, \textit{backpressure} dapat didefinisikan sebagai
     \item Membuang (\textit{drop}) sebagian pesan yang diterima.
 \end{enumerate}
 
-Pola penyeimbangan beban berdasiskan antrean (\textit{Queue-based load leveling}) merupakan pola desain yang menyelesaikan masalah \textit{backpressure} dengan menggunakan antrean yang bertindak sebagai \textit{buffer} antara pesan dengan sebuah layanan, sehingga beban dapat dikontrol dan layanan tetap berjalan dengan stabil \parencite{queueLoadLeveling}.
+Pola penyeimbangan beban berbasiskan antrean (\textit{Queue-based load leveling}) merupakan pola desain yang menyelesaikan masalah \textit{backpressure} dengan menggunakan antrean yang bertindak sebagai \textit{buffer} antara pesan dengan sebuah layanan, sehingga beban dapat dikontrol dan layanan tetap berjalan dengan stabil \parencite{queueLoadLeveling}.
 
 \begin{figure}[htbp]
     \centering

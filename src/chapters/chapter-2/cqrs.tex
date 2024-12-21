@@ -1,6 +1,6 @@
 \section{Segregasi Tanggung Jawab Kueri dan Perintah}
 
-Segregasi tanggung jawab kueri dan perintah (\textit{Command-Query Responsibility Segregation}, CQRS) merupakan sebuah pola yang memisahkan operasi baca dan tulis untuk sebuah media penyimpanan data. Dalam pemodelan data, seringkali model data yang sama digunakan untuk operasi pembacaan dan pembaruan. Meskipun begitu, seringkali kedua operasi tersebut memiliki kebutuhan yang berbeda. CQRS menggunakan model data yang berbeda untuk operasi yang berbeda. Selain itu, beban pekerjaan untuk kedua operasi tersebut seringkali asimetris dan memiliki kebutuhan kinerja dan penskalaan yang berbeda \parencite{msCQRS}.
+Segregasi tanggung jawab kueri dan perintah (\textit{Command-Query Responsibility Segregation}, CQRS) merupakan sebuah pola yang memisahkan operasi baca dan tulis untuk sebuah media penyimpanan data. Dalam pemodelan data, sering kali model data yang sama digunakan untuk operasi pembacaan dan pembaruan. Meskipun begitu, sering kali kedua operasi tersebut memiliki kebutuhan yang berbeda. CQRS menggunakan model data yang berbeda untuk operasi yang berbeda. Selain itu, beban pekerjaan untuk kedua operasi tersebut sering kali asimetris dan memiliki kebutuhan kinerja dan penskalaan yang berbeda \parencite{msCQRS}.
 
 Perintah (\textit{command}) merupakan pesan yang berfokus pada pekerjaan, seperti "pesan kamar hotel" dibandingkan dengan "ubah status reservasi suatu kamar menjadi sudah dipesan". Dengan pendekatan ini, perintah dapat diproses secara asinkron.
 
