@@ -1,0 +1,13 @@
+
+\section{Komponen Sistem Tiket}
+
+Berdasarkan studi yang sudah dibahas sebelumnya dan berdasarkan fokus yang ingin dibahas pada penelitian ini, berikut adalah komponen sistem yang menjadi bahasan dari penelitian ini:
+
+\begin{enumerate}
+    \item Layanan \textit{backend} utama yang memproses setiap permintaan yang berkaitan dengan pemesanan tiket. Layanan ini dapat dipecah menjadi beberapa layanan bergantung pada desain setiap arsitektur solusi.
+    \item Layanan otentikasi. Layanan ini menggunakan solusi otentikasi yang sudah \textit{established}, seperti Ory Kratos. Otentikasi akan menggunakan JWT token sehingga validasi pengguna tidak harus bergantung pada layanan ini.
+    \item Layanan gerbang pembayaran. Implementasi dari layanan ini akan berupa \textit{mock service}. Layanan ini akan disimulasikan sebagai gerbang pembayaran eksternal.
+    \item Terdapat satu basis data utama sebagai sumber kebenaran utama. Basis data relasional yang akan digunakan adalah PostgreSQL.
+\end{enumerate}
+
+Komponen sistem yang lebih spesifik akan bergantung pada desain setiap arsitektur solusi.

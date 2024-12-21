@@ -2,7 +2,7 @@
 
 Tugas akhir ini membahas aplikasi pemesanan tiket acara dengan arsitektur \textit{microservice} dengan komunikasi \textit{event-driven}. Tujuan dari penelitian tersebut adalah membuat aplikasi tiket yang \textit{fault-tolerant} sehingga layanan yang masih berjalan tetap dapat memenuhi aksi yang lain. Untuk itu, arsitektur \textit{microservice} diimplementasikan dengan cara \textit{loosely-coupled}. Agar hal tersebut dapat dipenuhi, komunikasi \textit{event-driven} digunakan. Agar \textit{dependency} antarlayanan berkurang, seluruh data yang diperlukan oleh sebuah layanan diikutserkatan pada \textit{event} yang dikirim \parencite{microservicesEventDriven}.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-2/jeeves.png}
     \caption{Arsitektur Jeeves \parencite{microservicesEventDriven}}

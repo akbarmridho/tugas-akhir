@@ -2,7 +2,7 @@
 
 Menurut \cite{dataIntensiveApplications}, \textit{change data capture} (CDC) merupakan sebuah proses yang mengobservasi setiap perubahan pada data yang ditulis ke dalam basis data dan mengekstraknya ke dalam bentuk yang bisa direplikasi oleh sistem lain. Sebagai contoh, perubahan pada database bisa ditangkap lalu diterapkan pada \textit{search index} untuk menyamakan data pada basis data. Apabila log diaplikasikan dalam urutan yang sama, data pada \textit{search index} dan basis data bisa dipastikan sama.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-2/cdc.png}
     \caption{Ilustrasi CDC \parencite{dataIntensiveApplications}}
@@ -13,7 +13,7 @@ PostgreSQL juga mendukung CDC dengan istilah \textit{logical replication}. Mekan
 
 PostgreSQL mendukung dua mode operasi untuk replikasi, yaitu replikasi secara asinkron dan sinkron \parencite{insideLogicalReplication}. Pada mode sinkron, \textit{subscriber} harus merespons terlebih dahulu terhadap perubahan data sebelum PostgreSQL dapat melakukan \textit{commit}.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-2/postgres-logical-replication.png}
     \caption{Arsitektur \textit{logical replication} \parencite{insideLogicalReplication}}
