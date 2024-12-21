@@ -35,5 +35,12 @@
   "latex-workshop.latex.outDir": "%DIR%/../build",
   "latex-workshop.latex.autoBuild.run": "onSave",
   "editor.formatOnSave": true,
-  "cSpell.language": "en,id-ID"
+  "cSpell.language": "en,id-ID",
+  "cSpell.words": [
+    "kluster",
+    "penskalaan",
+    "relasional",
+    "skalabilitas",
+    "terspesialisasi"
+  ]
 }
