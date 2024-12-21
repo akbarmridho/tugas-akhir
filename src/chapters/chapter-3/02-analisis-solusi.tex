@@ -2,11 +2,11 @@
 
 \subsection{Ide Dasar}
 
-Berikut adalah ide dasar untuk menyelesaikan masalah pembacaan ketersediaan tiket dan pemesanan tiket:
+Berikut adalah ide dasar yang dapat dimanfaatkan untuk mengoptimalkan sistem ini:
 
 \begin{enumerate}
   \item Tanggung jawab pelayanan ketersediaan tiket dapat dilimpahkan kepada RisingWave, sehingga beban pada basis data berkurang. \textit{Streaming database} ini dapat memperbarui hasil kueri secara inkremental setiap kali ada perubahan. Pendekatan ini mengurangi proses agregasi yang dilakukan secara berulang-ulang, sehingga kueri lebih efisien. Pendekatan ini merupakan bagian dari \textit{query responsibility segregation} pada pola CQRS.
-  \item Menggunakan kluster PostgreSQL dengan ekstensi Citus dan pembagian data berdasarkan baris. Pendekatan ini meungkinkan adanya \textit{multiple writer}, sehingga \textit{throughput} pemesanan tiket dapat meningkat. Di sisi lain, tidak menggunakan basis data relasional juga bisa menjadi opsi. Pendekatan \textit{database inside-out} yang memisahkan komponen \textit{storage} dan \textit{query} memungkinkan setiap komponen \textit{scale} secara independen. Meskipun begitu, perlu perhatian khusus untuk menghindari pemesanan ganda dan menjaga integritas transaksi.
+  \item Menggunakan kluster PostgreSQL dengan ekstensi Citus dan pembagian data berdasarkan baris. Pendekatan ini memungkinkan adanya \textit{multiple writer}, sehingga \textit{throughput} pemesanan tiket dapat meningkat. Di sisi lain, tidak menggunakan basis data relasional juga bisa menjadi opsi. Pendekatan \textit{database inside-out} yang memisahkan komponen \textit{storage} dan \textit{query} memungkinkan setiap komponen \textit{scale} secara independen. Meskipun begitu, perlu perhatian khusus untuk menghindari pemesanan ganda dan menjaga integritas transaksi.
   \item Untuk mengontrol pemesanan tiket, pendekatan penyeimbangan beban berbasiskan antrean dapat digunakan. Pemesanan tiket dapat didesain sebagai \textit{command} pada pola CQRS. Dengan begini, sistem dapat memproses permintaan sesuai dengan kapasitas sistem, sehingga stabilitas sistem dapat terjaga. Selain itu, informasi tiket yang sedang dipesan tetapi belum \textit{commit} (kita sebut \textit{uncommited data}) dapat disimpan pada Redis yang kemudian digunakan untuk menolak permintaan lebih awal dan mengurangi permintaan yang masuk.
 \end{enumerate}
 
