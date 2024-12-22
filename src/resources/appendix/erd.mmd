@@ -1,0 +1,66 @@
+erDiagram
+    Events ||--o{ TicketCategory : "hasMany"
+    Events {
+        string name
+        string location
+        string description
+    }
+
+    TicketCategory ||--o{ Areas : "hasMany"
+    TicketCategory {
+        string name
+    }
+
+    Areas ||--o{ Seats : "hasMany"
+    Areas {
+        string name
+        string type "numbered_seating | free_standing"
+    }
+
+    Seats {
+        string seatNumber
+        string status "available | on_hold | sold"
+    }
+
+    TicketSale ||--o{ TicketPackage : "hasMany"
+    TicketSale {
+        datetime saleBeginAt
+        datetime saleEndAt
+    }
+
+    TicketPackage ||--|| TicketCategory : "hasOne"
+    TicketPackage {
+        int ticketStock
+        decimal price
+    }
+
+    Users ||--o{ Orders : "hasMany"
+    Users {
+    }
+
+    Orders ||--|| Invoice : "hasOne"
+    Orders ||--o{ OrderItem : "hasMany"
+    Orders {
+        string status "waitingForPayment | failed | success"
+    }
+
+    Invoice {
+        string status "pending | expired | paid"
+        datetime expiredAt
+        decimal amount
+    }
+
+    OrderItem ||--|| TicketPackage : "hasOne"
+    OrderItem ||--|| Seats : "hasOne"
+    OrderItem ||--|| IssuedTicket : "hasOne"
+    OrderItem {
+        string customerName
+        string customerEmail
+        decimal price
+    }
+
+    IssuedTicket ||--|| Seats : "hasOne"
+    IssuedTicket {
+        string serialNumber
+        string holderName
+    }
