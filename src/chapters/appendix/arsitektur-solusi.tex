@@ -1,15 +1,5 @@
 \chapter{Analisis Solusi}
 
-\section{Alternatif Solusi}
-
-Bagian ini membahas alternatif pengoptimalan yang bisa menjadi opsi, tetapi tidak dipilih menjadi bagian dari solusi.
-
-\input{chapters/appendix/arsitektur-solusi/cache-ttl-kecil.tex}
-
-\input{chapters/appendix/arsitektur-solusi/alternatif-basis-data.tex}
-
-\input{chapters/appendix/arsitektur-solusi/serverless.tex}
-
 \section{Arsitektur Solusi}
 
 Setiap arsitektur solusi memiliki dua layanan eksternal, yaitu layanan pengguna dan layanan gerbang pembayaran. Kedua layanan ini akan dibuat \textit{stateless} sehingga penskalaan dapat dilakukan dengan menambah jumlah \textit{instance} layanan. Pada kasus ini, kedua layanan ini akan diusahakan sehingga tidak menjadi sumber \textit{bottleneck}. Layanan pengguna tidak akan menjadi \textit{bottleneck} karena pada saat pengujian akan diasumsikan seluruh pengguna sudah \textit{login} dan pemeriksaan otentikasi dilakukan pada masing-masing \textit{instance backend}.
@@ -21,3 +11,20 @@ Komunikasi dengan layanan pembayaran harus dilakukan secara sinkron, setidaknya 
 \input{chapters/appendix/arsitektur-solusi/ar-postgre.tex}
 
 \input{chapters/appendix/arsitektur-solusi/ar-event-driven.tex}
+
+
+\section{Alternatif Solusi}
+
+Bagian ini membahas alternatif pengoptimalan atau alternatif teknologi yang bisa menjadi opsi, tetapi tidak dipilih menjadi bagian dari solusi.
+
+\input{chapters/appendix/arsitektur-solusi/cache-ttl-kecil.tex}
+
+\input{chapters/appendix/arsitektur-solusi/alternatif-basis-data.tex}
+
+\input{chapters/appendix/arsitektur-solusi/serverless.tex}
+
+\input{chapters/appendix/arsitektur-solusi/pemilihan-redpanda.tex}
+
+\input{chapters/appendix/arsitektur-solusi/pemilihan-risingwave.tex}
+
+\input{chapters/appendix/arsitektur-solusi/pemilihan-redis.tex}
