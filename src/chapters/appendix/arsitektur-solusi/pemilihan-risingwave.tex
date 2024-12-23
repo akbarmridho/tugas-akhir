@@ -1,9 +1,12 @@
 \subsection{Penggunaan RisingWave dan Alternatifnya}
 
-Bahas butuh exactly once semantics. Evaluate opsi yang ada
+Pemrosesan \textit{stream} pada kasus ini membutuhkan \textit{platform} yang memiliki semantik \textit{exactly once}. Selain itu, kasus ini juga membutuhkan \textit{stateful stream processor}. Salah satu alternatif cukup populer adalah Apache Flink. \textit{Framework} ini menawarkan latensi yang rendah serta penskalaan yang baik. Meskipun begitu, RisingWave menawarkan fitur yang lebih menarik, sebagaimana dibahas pada studi literatur, seperti:
 
-Flink, RisingWave, Apache Kafka Stream (or Redpanda)
+\begin{enumerate}
+    \item Latensi dan penggunaan sumber daya yang lebih rendah.
+    \item Mendukung \textit{ad-hoc query}.
+    \item \textit{Learning curve} yang lebih rendah karena mengimplementasikan \textit{interface} yang \textit{compatible} dengan PostgreSQL.
+    \item Mendukung \textit{connector} langsung dengan Kafka dan PostgreSQL CDC, sehingga mengurangi \textit{overhead}.
+\end{enumerate}
 
-Bahas kenapa RisingWave
-- kinerja (Rust, NonJVM)
-- Integrasi langsung dengan CDC Postgres, Kafka
+Alternatif lain yang tersedia adalah ksqlDB yang merupakan \textit{stream processor} yang berjalan di atas Kafka. Teknologi ini merupakan \textit{stateful stream processor} dan memiliki semantik \textit{exactly once}. Meskipun begitu, kelengkapan fitur pada RisingWave membuat ksqlDB kurang menarik.
