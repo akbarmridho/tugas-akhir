@@ -1,4 +1,4 @@
-\subsection{Penggunaan Redis dan Alternatifnya}
+\section{Penggunaan Redis dan Alternatifnya}
 
 Saat ini terdapat berbagai solusi \textit{key-value store}, seperti Redis yang menyimpan data di memory dengan dukungan \textit{persistence}, etcd yang menyimpan data di \textit{storage} dan berbasiskan konsensus, serta LevelDB atau RocksDB yang merupakan \textit{embeddable kv store} yang \textit{persistent}. \textit{KV store} berbasis konsensus unggul dalam aspek \textit{persistence} dan \textit{consistency}, sedangkan Redis unggul dalam aspek \textit{throughput}. \textit{Embeddable kv store} seperti LevelDB atau RocksDB unggul apabila membutuhkan \textit{kv store} yang persistent secara lokal. Pemilihan satu solusi dengan yang lainnya memiliki berbagai \textit{trade off} yang harus dipelajari dengan hati-hati.
 

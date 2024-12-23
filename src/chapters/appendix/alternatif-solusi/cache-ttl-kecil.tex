@@ -1,3 +1,3 @@
-\subsection{Penggunaan \textit{Cache} dengan TTL Kecil}
+\section{Penggunaan \textit{Cache} dengan TTL Kecil}
 
 Meski pada beban tinggi hasil kueri yang di-\textit{cache} akan selalu \textit{stale}, tetap ada durasi hidup (\textit{time to live}) \textit{cache} yang masih dapat diterima. Misalkan, waktu hidup \textit{cache} pembacaan ketersediaan adalah 100-200 milidetik. Rentang waktu ini masih memberikan \textit{data freshness} yang baik dan mampu meminimalkan jumlah kueri yang harus dilakukan sistem. Meskipun begitu, pendekatan ini harus dilakukan pada setiap arsitektur agar perbandingannya setara. Selain itu, pendekatan ini tidak sesuai dengan tujuan tugas akhir ini yang ingin mengoptimalkan operasi baca dan tetap memberikan hasil kueri yang \textit{fresh}.
