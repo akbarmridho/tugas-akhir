@@ -1,10 +1,8 @@
 \chapter{Analisis Solusi}
 
+\input{chapters/appendix/arsitektur-solusi/layanan-pendukung.tex}
+
 \section{Arsitektur Solusi}
-
-Setiap arsitektur solusi memiliki dua layanan eksternal, yaitu layanan pengguna dan layanan gerbang pembayaran. Kedua layanan ini akan dibuat \textit{stateless} sehingga penskalaan dapat dilakukan dengan menambah jumlah \textit{instance} layanan. Pada kasus ini, kedua layanan ini akan diusahakan sehingga tidak menjadi sumber \textit{bottleneck}. Layanan pengguna tidak akan menjadi \textit{bottleneck} karena pada saat pengujian akan diasumsikan seluruh pengguna sudah \textit{login} dan pemeriksaan otentikasi dilakukan pada masing-masing \textit{instance backend}.
-
-Komunikasi dengan layanan pembayaran harus dilakukan secara sinkron, setidaknya ketika layanan tiket memanggil layanan pembayaran untuk membuat tagihan. Apabila layanan pembayaran tiket mengalami \textit{bottleneck} pada basis data, pengoptimalan pada basis data akan dilakukan dengan menggunakan kluster Citus sebagaimana yang dilakukan pada arsitektur yang mengoptimalkan PostgreSQL.
 
 \input{chapters/appendix/arsitektur-solusi/ar-dasar-acuan.tex}
 
