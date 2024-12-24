@@ -14,14 +14,14 @@ Berikut adalah ide dasar yang dapat dimanfaatkan untuk mengoptimalkan sistem ini
 
 Setiap arsitektur solusi memiliki layanan tiket, pengguna, pembayaran, dan basis data. Terdapat tiga arsitektur solusi yang akan dibahas, yaitu:
 
-\subsubsection{Arsitektur Dasar Acuan}
+\subsubsection{Arsitektur Dasar Acuan (RADAR)}
 
-Arsitektur dasar acuan terdiri atas layanan tiket, pengguna, pembayaran, dan basis data PostgreSQL dalam kluster dengan skema \textit{read replica}. Arsitektur ini akan dijadikan sebagai acuan pengujian.
+Arsitektur dasar acuan, diberi nama RADAR (rancangan dasar), terdiri atas layanan tiket, pengguna, pembayaran, dan basis data PostgreSQL dalam kluster dengan skema \textit{read replica}. Arsitektur ini akan dijadikan sebagai acuan pengujian.
 
-\subsubsection{Arsitektur yang Mengoptimalkan PostgreSQL}
+\subsubsection{Arsitektur yang Mengoptimalkan PostgreSQL (PGP)}
 
-Arsitektur ini mengoptimalkan basis data dengan menggunakan ekstensi Citus. Dengan ini, data dapat dipartisi berdasarkan baris dan setiap node basis data dapat menjadi \textit{writer}. Perubahan pemesanan tiket akan dikonsumsi oleh RisingWave melalui CDC. RisingWave akan melayani permintaan baca alih-alih melalui basis data utama. Redis dan Redpanda juga digunakan untuk menerapkan pola penyeimbangan beban berbasis antrean untuk operasi pemesanan tiket.
+Arsitektur ini, diberi nama Postgres Plus (PGP), mengoptimalkan basis data dengan menggunakan ekstensi Citus. Dengan ini, data dapat dipartisi berdasarkan baris dan setiap node basis data dapat menjadi \textit{writer}. Perubahan pemesanan tiket akan dikonsumsi oleh RisingWave melalui CDC. RisingWave akan melayani permintaan baca alih-alih melalui basis data utama. Redis dan Redpanda juga digunakan untuk menerapkan pola penyeimbangan beban berbasis antrean untuk operasi pemesanan tiket.
 
-\subsubsection{Arsitektur \textit{Event-Driven}}
+\subsubsection{Arsitektur \textit{Event-Driven} (EDA)}
 
-Arsitektur ini tidak menggunakan basis data PostgreSQL. Setiap perubahan ditulis dalam bentuk perintah ke dalam Redpanda yang bertindak sebagai \textit{log storage}. Untuk melakukan kueri, RisingWave akan mengonsumsi data dari Redpanda lalu membangun hasil kueri dari data tersebut. Pendekatan ini memungkinkan penskalaan independen untuk setiap komponennya. Selain itu, Redis digunakan untuk menyimpan \textit{uncommited data}, sehingga kasus \textit{double booking} dapat dihindari.
+Arsitektur ini, diberi nama \textit{event-driven architecture} (EDA), tidak menggunakan basis data PostgreSQL. Setiap perubahan ditulis dalam bentuk perintah ke dalam Redpanda yang bertindak sebagai \textit{log storage}. Untuk melakukan kueri, RisingWave akan mengonsumsi data dari Redpanda lalu membangun hasil kueri dari data tersebut. Pendekatan ini memungkinkan penskalaan independen untuk setiap komponennya. Selain itu, Redis digunakan untuk menyimpan \textit{uncommited data}, sehingga kasus \textit{double booking} dapat dihindari.
