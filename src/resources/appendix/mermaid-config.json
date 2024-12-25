@@ -1,8 +1,11 @@
 {
     "theme": "default",
     "fontSize": 24,
-    "er": {
-        "fontSize": 24,
-        "sectionFontSize": 24
+    "sequence": {
+        "diagramMarginX": 0,
+        "diagramMarginY": 0,
+        "actorMargin": 10,
+        "messageAlign": "center",
+        "mirrorActors": true
     }
 }

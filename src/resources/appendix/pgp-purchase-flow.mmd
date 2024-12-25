@@ -1,0 +1,39 @@
+sequenceDiagram
+    participant A as Actor
+    participant TS as TicketService
+    participant R as Redis
+    participant BQT as Booking Queue Topic
+    participant BP as Booking Processor
+    participant PS as Payment Service
+    participant PG as PostgreSQL
+    participant BRT as Booking Reply Topic
+
+    A->>+TS: book(seats)
+    TS->>+R: check available seats
+    R-->>-TS: seats availability
+
+    alt no available seats
+        TS-->>A: return error
+    else seats available
+        TS->>BQT: publish booking request
+        Note right of TS: Fire and continue
+
+        BP->>BQT: consume booking request
+        
+        BP->>PG: insert booking data
+        
+        alt database insert successful
+            PG-->>BP: insert success
+            BP->>+PS: process payment
+            PS-->>-BP: payment response
+            BP->>BRT: publish booking result
+        else database insert failed
+            PG-->>BP: insert failed
+            BP->>BRT: publish booking failed result
+            Note right of BP: No payment processing if DB fails
+        end
+
+        TS->>BRT: subscribe and wait
+        BRT-->>TS: booking result
+        TS-->>-A: return booking result
+    end
