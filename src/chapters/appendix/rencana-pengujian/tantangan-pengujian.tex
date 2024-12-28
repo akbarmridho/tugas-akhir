@@ -1,0 +1,8 @@
+\section{Tantangan Pengujian}
+
+Tantangan utama pengujian penelitian ini adalah estimasi biaya yang harus dikeluarkan. Untuk mengoptimalkan biaya yang dikeluarkan, proses pengujian harus dilakukan secepat mungkin dan menggunakan layanan komputasi awan yang lebih murah dibandingkan dengan yang lain atau menggunakan kredit gratis dari penyedia layanan apabila masih tersedia. Berikut adalah rencana yang akan dilakukan untuk mengoptimalkan biaya pengujian:
+
+\begin{enumerate}
+    \item Salah satu layanan komputasi awan Hetzner menyediakan layanan yang cukup terjangkau, terutama untuk server yang berada di Jerman. Meskipun begitu, layanan ini tidak menyediakan \textit{managed} Kubernetes. Akan tetapi, terdapat proyek Terraform Kube Hetzner yang bisa memudahkan konfigurasi lingkungan Kubernetes.
+    \item Proses pengembangan dilakukan secara lokal. Selain itu, otomasi dan \textit{script} perlu digunakan agar lingkungan yang dikembangkan secara lokal dapat dengan mudah di-\textit{reproduce} di lingkungan pengujian. Otomasi ini juga berguna untuk mempercepat proses \textit{deployment} dan proses pengujian.
+\end{enumerate}
