@@ -9,56 +9,56 @@ Berikut adalah kebutuhan fungsional dan non-fungsional sistem tiket yang menjadi
 \begingroup
 \footnotesize
 \begin{longtable}{|l|p{0.4\textwidth}|p{0.4\textwidth}|}
-    \caption{Kebutuhan Fungsional Sistem Tiket}                                                                                                                                                                                                                                                                                                                                                                                                                                          \\
+    \caption{Kebutuhan Fungsional Sistem Tiket}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \\
     \hline
-    \textbf{ID} & \textbf{Kebutuhan}                                                                                             & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
     \hline
     \endfirsthead
 
-    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                                                            \\
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\
     \hline
-    \textbf{ID} & \textbf{Kebutuhan}                                                                                             & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
     \hline
     \endhead
 
     \hline
-    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                                                     \\
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \\
     \endfoot
 
     \hline
     \endlastfoot
 
     \hline
-    TF-01       & Sistem dapat melayani permintaan ketersediaan acara.                                                           &                                                                                                                                                                                                                                                                                                                                                       \\
+    TF-01       & Sistem dapat melayani permintaan ketersediaan acara.                                                                                                                                                                            &                                                                                                                                                                                                                                                                                                                                                       \\
     \hline
     \hline
-    TF-02       & Sistem dapat melayani permintaan ketersediaan tiket untuk suatu acara .                                        & Ketersediaan tiket dibagi berdasarkan kategori. Data ketersediaan bisa lebih granular (menampilkan ketersediaan per kursi) atau hanya menampilkan jumlah ketersediaan untuk suatu kategori. Perilaku ini dapat diatur per kategori tiket.                                                                                                             \\
+    TF-02       & Sistem dapat melayani permintaan ketersediaan tiket untuk suatu acara .                                                                                                                                                         & Ketersediaan tiket dibagi berdasarkan kategori. Data ketersediaan bisa lebih granular (menampilkan ketersediaan per kursi) atau hanya menampilkan jumlah ketersediaan untuk suatu kategori. Perilaku ini dapat diatur per kategori tiket.                                                                                                             \\
     \hline
     \hline
-    TF-03       & Sistem dapat melayani permintaan pemesanan tiket untuk suatu acara.                                            & Seorang pengguna dapat memesan hingga empat tiket dalam kategori yang sama sekaligus. Pengguna dapat memesan berdasarkan kursi atau area tiket, bergantung pada pengaturan kategori tiket. Pemesanan akan dibatalkan secara otomatis ketika sudah melewati tenggat waktu pembayaran.                                                                  \\
+    TF-03       & Sistem dapat melayani permintaan pemesanan tiket untuk suatu acara. Sebuah acara dapat dilaksanakan selama beberapa hari (\textit{multi-day event}) pada tempat yang sama dengan setiap tiket hanya berlaku pada hari itu saja. & Seorang pengguna dapat memesan hingga empat tiket dalam kategori yang sama sekaligus. Pengguna dapat memesan berdasarkan kursi atau area tiket, bergantung pada pengaturan kategori tiket. Pemesanan akan dibatalkan secara otomatis ketika sudah melewati tenggat waktu pembayaran.                                                                  \\
     \hline
     \hline
-    TF-04       & Pengguna dapat melihat status tiket yang pernah dipesan.                                                       &                                                                                                                                                                                                                                                                                                                                                       \\
+    TF-04       & Pengguna dapat melihat status tiket yang pernah dipesan.                                                                                                                                                                        &                                                                                                                                                                                                                                                                                                                                                       \\
     \hline
-    TF-05       & Sistem dapat menangani penjualan tiket untuk lebih dari satu acara dalam satu waktu.                           &                                                                                                                                                                                                                                                                                                                                                       \\
-    \hline
-    \hline
-    UF-01       & Sistem dapat melayani registrasi pengguna.                                                                     &                                                                                                                                                                                                                                                                                                                                                       \\
+    TF-05       & Sistem dapat menangani penjualan tiket untuk lebih dari satu acara dalam satu waktu.                                                                                                                                            &                                                                                                                                                                                                                                                                                                                                                       \\
     \hline
     \hline
-    UF-02       & Sistem menyediakan mekanisme \textit{login} bagi pengguna.                                                     &                                                                                                                                                                                                                                                                                                                                                       \\
+    UF-01       & Sistem dapat melayani registrasi pengguna.                                                                                                                                                                                      &                                                                                                                                                                                                                                                                                                                                                       \\
     \hline
     \hline
-    UF-03       & Sistem menyediakan \textit{endpoint} bagi layanan lain untuk memperoleh informasi pengguna yang terotentikasi. &                                                                                                                                                                                                                                                                                                                                                       \\
+    UF-02       & Sistem menyediakan mekanisme \textit{login} bagi pengguna.                                                                                                                                                                      &                                                                                                                                                                                                                                                                                                                                                       \\
     \hline
     \hline
-    PF-01       & Sistem dapat membuat tagihan pembayaran dan pranala pembayaran.                                                & \textit{Mock service}. Pembayaran dilakukan dengan mengirimkan \textit{request} kepada pranala yang diberikan dengan parameter sukses atau gagal. Selain itu, terdapat tenggat waktu pembayaran yang ditentukan berdasarkan parameter pada saat pembuatan tagihan. Pembayaran akan otomatis gagal apabila tidak dipenuhi hingga batas waktu tersebut. \\
+    UF-03       & Sistem menyediakan \textit{endpoint} bagi layanan lain untuk memperoleh informasi pengguna yang terotentikasi.                                                                                                                  &                                                                                                                                                                                                                                                                                                                                                       \\
     \hline
     \hline
-    PF-02       & Sistem memanggil \textit{webhook} yang telah ditentukan ketika terdapat pembayaran yang berhasil atau gagal.   & \textit{Mock service}. Pembayaran dilakukan dengan mengirimkan \textit{request} kepada pranala yang diberikan dengan parameter sukses atau gagal.                                                                                                                                                                                                     \\
+    PF-01       & Sistem dapat membuat tagihan pembayaran dan pranala pembayaran.                                                                                                                                                                 & \textit{Mock service}. Pembayaran dilakukan dengan mengirimkan \textit{request} kepada pranala yang diberikan dengan parameter sukses atau gagal. Selain itu, terdapat tenggat waktu pembayaran yang ditentukan berdasarkan parameter pada saat pembuatan tagihan. Pembayaran akan otomatis gagal apabila tidak dipenuhi hingga batas waktu tersebut. \\
     \hline
     \hline
-    PF-03       & Sistem menyediakan \textit{endpoint} untuk menampilkan detail tagihan pembayaran.                              &                                                                                                                                                                                                                                                                                                                                                       \\
+    PF-02       & Sistem memanggil \textit{webhook} yang telah ditentukan ketika terdapat pembayaran yang berhasil atau gagal.                                                                                                                    & \textit{Mock service}. Pembayaran dilakukan dengan mengirimkan \textit{request} kepada pranala yang diberikan dengan parameter sukses atau gagal.                                                                                                                                                                                                     \\
+    \hline
+    \hline
+    PF-03       & Sistem menyediakan \textit{endpoint} untuk menampilkan detail tagihan pembayaran.                                                                                                                                               &                                                                                                                                                                                                                                                                                                                                                       \\
     \hline
 \end{longtable}
 \endgroup
@@ -72,33 +72,33 @@ Berikut adalah kebutuhan non-fungsional yang menjadi cakupan pada tugas akhir in
 \begingroup
 \footnotesize
 \begin{longtable}{|l|p{0.4\textwidth}|p{0.4\textwidth}|}
-    \caption{Kebutuhan Non-Fungsional Sistem Tiket}                                                                                                                                                               \\
+    \caption{Kebutuhan Non-Fungsional Sistem Tiket}                                                                                                                                                                            \\
     \hline
-    \textbf{ID} & \textbf{Parameter}      & \textbf{Kebutuhan}                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                                                                                                                    \\
     \hline
     \endfirsthead
 
-    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                     \\
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                  \\
     \hline
-    \textbf{ID} & \textbf{Parameter}      & \textbf{Kebutuhan}                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                                                                                                                    \\
     \hline
     \endhead
 
     \hline
-    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                              \\
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                           \\
     \endfoot
 
     \hline
     \endlastfoot
 
     \hline
-    TN-01       & Konsistensi             & Sistem harus memastikan tidak terjadi \textit{double booking} pada saat pemesanan tiket.                                                                              \\
+    TN-01       & Konsistensi dan integritas transaksi & Sistem harus memastikan tidak terjadi \textit{double booking} pada saat pemesanan tiket.                                                                              \\
     \hline
     \hline
-    TN-02       & \textit{Data Freshness} & Sistem harus selalu mengembalikan data paling terbaru.                                                                                                                \\
+    TN-02       & \textit{Data Freshness}              & Sistem harus selalu mengembalikan data paling terbaru.                                                                                                                \\
     \hline
     \hline
-    UN-01       & Otentisitas Pengguna    & Layanan lain dapat memverifikasi otentikasi token pengguna tanpa harus memanggil layanan pengguna, seperti dengan penggunaan token JWT dengan \textit{shared secret}. \\
+    UN-01       & Otentisitas Pengguna                 & Layanan lain dapat memverifikasi otentikasi token pengguna tanpa harus memanggil layanan pengguna, seperti dengan penggunaan token JWT dengan \textit{shared secret}. \\
     \hline
 \end{longtable}
 \endgroup

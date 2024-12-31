@@ -2,14 +2,14 @@
 
 Pengawasan merupakan aspek yang krusial untuk mengukur kinerja dari setiap solusi yang dibahas pada penelitian ini. Hal ini meliputi \textit{health check}, log, dan metrik. Selama pengujian, penelitian ini akan menggunakan kakas yang umum digunakan untuk mendukung fungsi pengawasan yaitu Grafana Stack yang meliputi dasbor Grafana, Grafana Loki untuk pengumpulan log, Grafana Agent untuk pengiriman log, dan Prometheus untuk pengumpulan metrik.
 
-Metrik yang akan dikumpulkan merupakan metrik dasar yang umum digunakan untuk melakukan pengawasan. Setiap metrik yang diukur juga merupakan metrik yang bersifat \textit{time series}. Hal ini meliputi tetapi tidak terbatas pada metrik-metrik berikut:
+Metrik yang akan dikumpulkan merupakan metrik dasar yang umum digunakan untuk melakukan pengawasan. Setiap metrik yang diukur merupakan metrik yang bersifat \textit{time series}. Metrik yang dikumpulkan meliputi tetapi tidak terbatas pada metrik-metrik berikut:
 
 \begin{enumerate}
     \item Metrik mesin, seperti penggunaan RAM, CPU, media penyimpanan, \textit{network in/out}.
-    \item Metrik layanan HTTP, seperti jumlah permintaan yang dibagi berdasarkan kode respons, distribusi latensi, banyaknya error, dan lain-lain.
-    \item Metrik PostgreSQL, seperti IOPS, QPS, penggunaan CPU, jumlah koneksi, \textit{locking} dan \textit{contention}, \textit{replication lag} dan lain-lain.
+    \item Metrik layanan HTTP, seperti jumlah permintaan yang dibagi berdasarkan kode respons, distribusi latensi, banyaknya galat, dan lain-lain.
+    \item Metrik PostgreSQL, seperti IOPS, QPS, penggunaan CPU, jumlah koneksi, \textit{locking} dan \textit{contention}, \textit{replication lag}, dan lain-lain.
     \item Metrik Redpanda, seperti \textit{throughput}, latensi, penggunaan media penyimpanan, jumlah partisi, dan lain-lain.
-    \item Metrik Redis, seperti \textit{throughput}, latensi, penggunaan memori, metrik \textit{persistence}, metrik replikasi, jumlah error, dan lain-lain.
+    \item Metrik Redis, seperti \textit{throughput}, latensi, penggunaan memori, metrik \textit{persistence}, metrik replikasi, jumlah galat, dan lain-lain.
 \end{enumerate}
 
 Pada dasarnya, setiap metrik yang relevan dalam proses pengujian akan dikumpulkan terlebih dahulu. Setelah proses pengujian selesai, data baru akan diolah untuk memperoleh \textit{insights} dan perbandingan dari setiap solusi yang diimplementasikan.

@@ -59,6 +59,6 @@ Arsitektur ini membutuhkan \textit{persistence} yang lebih kuat dibandingkan den
 \begin{enumerate}
     \item Dibandingkan dengan arsitektur sebelumnya, pendekatan seperti ini memiliki kompleksitas yang jauh lebih tinggi. Selain itu, aspek \textit{extendability} pada arsitektur ini tidak lebih baik dibandingkan dengan arsitektur sebelumnya, terutama pada penambahan fitur yang berinteraksi dengan basis data relasional.
     \item Pada saat penjualan, dapat diasumsikan entitas Events, TicketCategory, Areas, TicketSale, dan TicketPackage tidak berubah sehingga data entitas tersebut dapat di-\textit{cache}.
-    \item Redis merupakan basis data yang menyimpan data di memori. \textit{Data eviction} tidak boleh terjadi ketika menggunakan Redis pada arsitektur ini, sehingga alokasi memori Redis merupakan hal yang perlu perhatian khusus.
+    \item Redis merupakan basis data yang menyimpan data di memori. \textit{Data eviction} tidak boleh terjadi ketika menggunakan Redis pada arsitektur ini, sehingga alokasi memori Redis merupakan hal yang perlu perhatian khusus dan harus dijamin agar tidak mengalami \textit{out of memory}.
 \end{enumerate}
 

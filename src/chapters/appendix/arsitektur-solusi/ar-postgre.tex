@@ -1,6 +1,6 @@
 \subsection{Arsitektur yang Mengoptimalkan PostgreSQL (PGP)}
 
-Arsitektur ini mengoptimalkan sistem dengan pola CQRS dan pola penyeimbangan beban berbasiskan antrean.
+Arsitektur ini mengoptimalkan sistem dengan pola CQRS, pola penyeimbangan beban berbasiskan antrean, dan menggunakan ekstensi Citus untuk menjalankan basis data secara terdistribusi.
 
 \begin{figure}[htbp]
     \centering
@@ -13,7 +13,7 @@ Arsitektur ini mengoptimalkan sistem dengan pola CQRS dan pola penyeimbangan beb
 
 Penggunaan ekstensi Citus memungkinkan peningkatan \textit{throughput} dengan pendekatan \textit{scale-out}. Peningkatan ini tidak hanya pada \textit{throughput} baca, tetapi juga \textit{throughput} tulis. Hal ini dapat dicapai dengan pembagian data pada tabel berdasarkan baris, lalu setiap \textit{node} yang memegang bagian data tersebut dibuat menjadi \textit{writer}.
 
-\textit{Sharding} berdasarkan baris ini dapat dilakukan pada tabel Seats, IssuedTicket, OrderItem, dan Orders. Entitas sisanya dapat dibuat sebagai tabel yang direplikasi ke setiap node.
+\textit{Sharding} berdasarkan baris dapat dilakukan pada tabel Seats, IssuedTicket, OrderItem, dan Orders. Entitas sisanya dapat dibuat sebagai tabel yang direplikasi ke setiap node.
 
 \subsubsection{Penggunaan Pola Penyeimbangan Beban dengan Antrean}
 
