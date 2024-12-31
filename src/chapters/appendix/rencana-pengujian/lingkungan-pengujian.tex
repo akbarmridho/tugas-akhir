@@ -7,3 +7,5 @@ Penelitian ini rencananya akan diuji pada \textit{cloud provider} dengan \textit
     \item \textit{Kubernetes} untuk melakukan orkestrasi kontainer layanan lainnya.
     \item \textit{Virtual machine} untuk menjalankan agen yang bertindak sebagai pengguna ketika proses pengujian berlangsung.
 \end{enumerate}
+
+Mengingat penelitian ini fokus pada peningkatan \textit{throughput}, setiap node yang dijalankan akan berada pada satu \textit{data center}/ \textit{availability zone} yang sama agar latensi dapat dikurangi. Selain itu, setiap node akan menggunakan server dengan media penyimpanan bertipe SSD NVME untuk memaksimalkan \textit{throughput} perangkat keras.
