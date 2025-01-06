@@ -20,11 +20,13 @@
 \usepackage{mathptmx}
 
 % 4th Sectioning
-\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
 \usepackage{titlesec}
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
 
 \titleformat{\subsubsubsection}
 {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titleformat*{\section}{\normalsize\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
 \titlespacing*{\subsubsubsection}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
@@ -41,12 +43,12 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{blindtext}
-\usepackage{sectsty}
+% \usepackage{sectsty}
 \usepackage{chngcntr}
 \usepackage{etoolbox}
 \usepackage{array}
+\usepackage{float}
 \usepackage[hidelinks]{hyperref}       % Package untuk link di daftar isi. Ubah jadi \usepackage[hidelinks]{hyperref} apabila ingin menghilangkan kotak merah disekitar link
-\usepackage{titlesec}       % Package Format judul
 \usepackage{titletoc}       % Package Format judul di toc
 \usepackage{tocbibind}      % Package untuk masukkan toc, lot, lof ke Daftar Isi
 \usepackage{scrwfile}       % Package untuk membuat Daftar Lampiran dari toc
@@ -56,6 +58,8 @@
 \usepackage{xcolor, colortbl}
 \usepackage{setspace}
 \usepackage{listings}
+\usepackage{csquotes}
+\usepackage{multirow}
 
 \graphicspath{{resources/}}   % letak direktori penyimpanan gambar
 
@@ -83,42 +87,42 @@
   \addtocontents{atoc}{\protect\value{tocdepth}=\savedtocdepth}%
 
   \titlecontents{chapter}
-    [0pt]
-    {\bfseries}
-    {Lampiran \thecontentslabel.\quad}
-    {}
-    {\hfill\contentspage}
+  [0pt]
+  {\bfseries}
+  {Lampiran \thecontentslabel.\quad}
+  {}
+  {\hfill\contentspage}
 
   \titleformat{\chapter}[block]
-    {\bfseries}
-    {\chaptertitlename\ \thechapter.\quad}{0pt}
-    {\bfseries}
+  {\bfseries}
+  {\chaptertitlename\ \thechapter.\quad}{0pt}
+  {\bfseries}
 }
 
 % Hilangkan titik pada toc
 \makeatletter
-\renewcommand{\@dotsep}{1} 
+\renewcommand{\@dotsep}{1}
 \makeatother
 
 % Setel title pada chapter-chapter di toc, lof, lot
 \titlecontents{chapter}
-  [0pt]
-  {\bfseries}
-  {\MakeUppercase{Bab} \thecontentslabel\quad\uppercase}
-  {}
-  {\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
+[0pt]
+{\bfseries}
+{\MakeUppercase{Bab} \thecontentslabel\quad\uppercase}
+{}
+{\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
 \titlecontents{figure}
-  [0pt]
-  {}
-  {Gambar \thecontentslabel.\quad}
-  {}
-  {\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
+[0pt]
+{}
+{Gambar \thecontentslabel.\quad}
+{}
+{\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
 \titlecontents{table}
-  [0pt]
-  {}
-  {Tabel \thecontentslabel.\quad}
-  {}
-  {\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
+[0pt]
+{}
+{Tabel \thecontentslabel.\quad}
+{}
+{\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
 
 % Masukin Daftar Pustaka ke toc
 \let\originalprintbibliography\printbibliography
@@ -133,11 +137,11 @@
 \renewcommand{\baselinestretch}{1.5}
 
 % Setting judul
-\chapterfont{\centering \large}
+% \chapterfont{\centering \large}
 \titleformat{\chapter}[display]
-  {\Large\centering\bfseries}
-  {\chaptertitlename\ \thechapter}{0pt}
-    {\Large\bfseries\uppercase}
+{\Large\centering\bfseries}
+{\chaptertitlename\ \thechapter}{0pt}
+{\Large\bfseries\uppercase}
 
 % Setting nomor pada subbsubsubbab
 \setcounter{secnumdepth}{4}
@@ -173,3 +177,10 @@
 
 % Format to ignore underflow hbadness
 \hbadness=99999
+
+% Redefine \cite for Name (Year)
+\DeclareCiteCommand{\cite}
+{\usebibmacro{prenote}} % Optional prenote
+{\printnames{labelname}\space(\printfield{year})} % Name (Year)
+{\multicitedelim} % Separator for multiple citations
+{\usebibmacro{postnote}} % Optional postnote
