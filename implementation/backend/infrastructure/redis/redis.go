@@ -6,9 +6,13 @@ type Cluster struct {
 	Client *baseredis.ClusterClient
 }
 
+type Config struct {
+	Hosts []string
+}
+
 func NewRedis(config Config) (*Cluster, error) {
 	rdb := baseredis.NewClusterClient(&baseredis.ClusterOptions{
-		// todo
+		Addrs: config.Hosts,
 	})
 
 	return &Cluster{

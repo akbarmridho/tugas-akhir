@@ -1,20 +1,19 @@
 package memcache
 
 import (
-	"github.com/dgraph-io/ristretto"
+	"github.com/allegro/bigcache"
 )
 
 type Memcache struct {
-	Cache *ristretto.Cache
+	Cache *bigcache.BigCache
 }
 
 func NewMemcache() (*Memcache, error) {
-	cache, err := ristretto.NewCache(&ristretto.Config{
-		// todo update the max values
-		NumCounters: 1e5,     // number of keys to track frequency of (10M).
-		MaxCost:     1 << 25, // maximum cost of cache (32MB).
-		BufferItems: 1,       // number of keys per Get buffer.
-	})
+	config := bigcache.Config{
+		HardMaxCacheSize: 256,
+	}
+
+	cache, err := bigcache.NewBigCache(config)
 
 	if err != nil {
 		return nil, err

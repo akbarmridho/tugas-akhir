@@ -2,14 +2,17 @@ package postgres
 
 import (
 	"context"
-	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Base struct {
+type Postgres struct {
 	Pool *pgxpool.Pool
+}
+
+type Config struct {
+	DatabaseUrl string
 }
 
 type QueryExecutor interface {
@@ -19,7 +22,7 @@ type QueryExecutor interface {
 
 const TransactionContextKey = "postgres_tx"
 
-func (p *Base) GetExecutor(ctx context.Context) QueryExecutor {
+func (p *Postgres) GetExecutor(ctx context.Context) QueryExecutor {
 	tx, ok := ctx.Value(TransactionContextKey).(pgx.Tx)
 
 	if !ok {
@@ -29,28 +32,18 @@ func (p *Base) GetExecutor(ctx context.Context) QueryExecutor {
 	return tx
 }
 
-func NewBasePostgres(config Config) (*Base, error) {
-	c, err := pgxpool.ParseConfig(fmt.Sprintf(
-		"user=%s password=%s host=%s port=%s database=%s",
-		config.DatabaseUsername,
-		config.DatabasePassword,
-		config.DatabaseHost,
-		config.DatabasePort,
-		config.DatabaseName,
-	))
-
-	// todo adjust the max conn parameter
-
-	if config.Timezone != nil {
-		c.ConnConfig.RuntimeParams["timezone"] = *config.Timezone
-	}
+// NewPostgres
+// Example database url
+// postgresql://username:password@leader.example.com:5432,follower1.example.com:5432,follower2.example.com:5432/dbname?target_session_attrs=primary
+func NewPostgres(config Config) (*Postgres, error) {
+	c, err := pgxpool.ParseConfig(config.DatabaseUrl)
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), c)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Base{
+	return &Postgres{
 		Pool: pool,
 	}, nil
 }
