@@ -1,4 +1,3 @@
--- migrate:up
 CREATE TYPE area_type as ENUM ('numbered-seating', 'free-standing');
 CREATE TYPE seat_status as ENUM ('available', 'on-hold', 'sold');
 CREATE TYPE order_status as ENUM ('waiting-for-payment', 'failed', 'success');
@@ -75,8 +74,6 @@ CREATE TABLE "orders" (
     fail_reason text,
 
     external_user_id text not null,
-    invoice_id bigint not null references invoices(id) on update cascade on delete cascade,
-
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );
@@ -100,6 +97,8 @@ CREATE TABLE "invoices"
     amount int not null,
     external_id text not null,
 
+    order_id bigint not null references orders(id) on update cascade on delete cascade,
+
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );
@@ -116,20 +115,3 @@ CREATE TABLE "issued_tickets" (
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );
-
--- migrate:down
-
-DROP TABLE "issued_tickets";
-DROP TABLE "invoices";
-DROP TABLE "order_items";
-DROP TABLE "orders";
-DROP TABLE "ticket_seats";
-DROP TABLE "ticket_areas";
-DROP TABLE "ticket_packages";
-DROP TABLE "ticket_sales";
-DROP TABLE "ticket_categories";
-DROP TABLE "events";
-DROP TYPE invoice_status;
-DROP TYPE order_status;
-DROP TYPE seat_status;
-DROP TYPE area_type;
