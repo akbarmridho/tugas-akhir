@@ -10,6 +10,7 @@ export const env = createEnv({
 			.pipe(z.string().array().min(1)),
 		PORT: z.coerce.number().int().min(50).default(3000),
 		NODE_ENV: z.enum(["development", "production"]).default("development"),
+		WEBHOOK_URL: z.string().url(),
 	},
 
 	/**

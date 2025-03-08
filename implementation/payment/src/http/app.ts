@@ -14,6 +14,8 @@ import { prometheus } from "@hono/prometheus";
 import { logger as honoLogger } from "hono/logger";
 import { generateId } from "../common/utils.js";
 import dayjs from "dayjs";
+import { queue } from "./queue.js";
+import type { Job } from "bullmq";
 
 const { printMetrics, registerMetrics } = prometheus({});
 
@@ -49,26 +51,9 @@ app.get("/metrics", printMetrics);
 // healthcheck endpoint
 app.get("/health", async (c) => {
 	try {
-		if (!redis.isOpen) {
-			return c.json(
-				{
-					status: "unhealthy",
-					message: "Redis cluster connection is not open",
-				},
-				503,
-			);
-		}
+		const retrievedValue = await redis.ping();
 
-		const testKey = "health-check-test";
-		const testValue = Date.now().toString();
-
-		await redis.set(testKey, testValue, {
-			EX: 10,
-		});
-
-		const retrievedValue = await redis.get(testKey);
-
-		if (retrievedValue === testValue) {
+		if (retrievedValue === "PONG") {
 			return c.json({
 				status: "healthy",
 				message: "Node healthy",
@@ -192,11 +177,16 @@ app.openapi(
 			status: "pending",
 		};
 
-		await redis.set(`invoices:${id}`, JSON.stringify(data), {
-			EX: 5 * 60 * 60, // 5 hour
-		});
+		await redis.setex(`invoices:${id}`, 5 * 60 * 60, JSON.stringify(data));
 
-		// todo add queue or expiration for expired invoice
+		await queue.add("webhook", id, {
+			jobId: id,
+			backoff: {
+				type: "exponential",
+				delay: 5000,
+			},
+			delay: now.diff(expireDate) + 1000,
+		});
 
 		return c.json(data, 200);
 	},
@@ -268,7 +258,10 @@ app.openapi(
 
 		const invoice = rawInvoice.data;
 
-		if (invoice.status !== "pending") {
+		if (
+			invoice.status !== "pending" ||
+			dayjs(invoice.expiredAt).isBefore(dayjs())
+		) {
 			return c.json(
 				{
 					message: "Invoice status must be pending",
@@ -287,11 +280,13 @@ app.openapi(
 			invoice.status = "failed";
 		}
 
-		await redis.set(`invoices:${id}`, JSON.stringify(invoice), {
-			EX: 5 * 60 * 60, // 5 hour
-		});
+		await redis.setex(`invoices:${id}`, 5 * 60 * 60, JSON.stringify(invoice));
 
-		// todo remove expiration and trigger webhooks
+		const job: Job | undefined = await queue.getJob(id);
+
+		if (job && (await job.isDelayed())) {
+			await job.promote();
+		}
 
 		return c.json(invoice, 200);
 	},

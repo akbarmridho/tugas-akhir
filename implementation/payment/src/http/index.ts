@@ -5,6 +5,7 @@ import { logger } from "../common/logger.js";
 import { env } from "../common/env.js";
 import { app } from "./app.js";
 import { redis } from "../common/redis.js";
+import { queue } from "./queue.js";
 
 (async function main() {
 	await redis.connect();
@@ -26,8 +27,9 @@ import { redis } from "../common/redis.js";
 		// Close the server
 		server.close(() => {
 			logger.info("Server closed.");
-			// Disconnect redis
-			redis.disconnect().finally(() => {
+			queue.close().finally(() => {
+				// Disconnect redis
+				redis.disconnect(false);
 				process.exit(0);
 			});
 		});

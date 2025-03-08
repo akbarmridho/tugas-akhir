@@ -1,12 +1,14 @@
-import { createCluster } from "redis";
 import { env } from "./env.js";
+import { Cluster } from "ioredis";
 
-export type RedisCluster = ReturnType<typeof createCluster>;
+// todo set no eviction
+export const redis = new Cluster(
+	env.REDIS_HOSTS.map((e) => {
+		const [host, port] = e.split(":");
 
-export const redis = createCluster({
-	rootNodes: env.REDIS_HOSTS.map((host) => {
 		return {
-			url: `redis://${host}`,
+			host,
+			port: Number(port),
 		};
 	}),
-});
+);
