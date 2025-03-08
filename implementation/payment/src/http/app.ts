@@ -12,12 +12,24 @@ import {
 import { HTTPException } from "hono/http-exception";
 import { prometheus } from "@hono/prometheus";
 import { logger as honoLogger } from "hono/logger";
-import { generateId } from "../common/utils.js";
+import { generateId, instanceId } from "../common/utils.js";
 import dayjs from "dayjs";
 import { queue } from "./queue.js";
-import type { Job } from "bullmq";
 
-const { printMetrics, registerMetrics } = prometheus({});
+const { printMetrics, registerMetrics } = prometheus({
+	metricOptions: {
+		requestDuration: {
+			customLabels: {
+				instanceId: () => instanceId,
+			},
+		},
+		requestsTotal: {
+			customLabels: {
+				instanceId: () => instanceId,
+			},
+		},
+	},
+});
 
 export const app = new OpenAPIHono();
 
@@ -47,6 +59,11 @@ app.get("/", (c) => {
 });
 
 app.get("/metrics", printMetrics);
+
+app.get("/metrics-queue", async (c) => {
+	const metrics = await queue.exportPrometheusMetrics();
+	return c.text(metrics);
+});
 
 // healthcheck endpoint
 app.get("/health", async (c) => {
@@ -179,14 +196,14 @@ app.openapi(
 
 		await redis.setex(`invoices:${id}`, 5 * 60 * 60, JSON.stringify(data));
 
-		await queue.add("webhook", id, {
-			jobId: id,
-			backoff: {
-				type: "exponential",
-				delay: 5000,
+		await queue.add(
+			"webhook",
+			{ id },
+			{
+				jobId: id,
+				delay: now.diff(expireDate) + 1000,
 			},
-			delay: now.diff(expireDate) + 1000,
-		});
+		);
 
 		return c.json(data, 200);
 	},
@@ -282,7 +299,7 @@ app.openapi(
 
 		await redis.setex(`invoices:${id}`, 5 * 60 * 60, JSON.stringify(invoice));
 
-		const job: Job | undefined = await queue.getJob(id);
+		const job = await queue.getJob(id);
 
 		if (job && (await job.isDelayed())) {
 			await job.promote();
