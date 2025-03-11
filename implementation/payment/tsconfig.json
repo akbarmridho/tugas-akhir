@@ -12,11 +12,12 @@
 		"noImplicitReturns": false,
 		"noImplicitAny": false,
 		"noUnusedParameters": false,
-		"verbatimModuleSyntax": true,
-		"types": ["node"],
+		"verbatimModuleSyntax": false,
+		"types": ["node", "jest", "mocha"],
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx",
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"esModuleInterop": true
 	},
-	"include": ["./src/**/*"]
+	"include": ["./src/**/*", "./tests/**/*"]
 }
