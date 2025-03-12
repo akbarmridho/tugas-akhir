@@ -8,6 +8,7 @@ export const env = createEnv({
 			.string()
 			.transform((value) => value.split(","))
 			.pipe(z.string().array().min(1)),
+		REDIS_PASSWORD: z.string().optional(),
 		PORT: z.coerce.number().int().min(50).default(3000),
 		NODE_ENV: z
 			.enum(["development", "production", "test"])

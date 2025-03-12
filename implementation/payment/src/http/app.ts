@@ -15,6 +15,7 @@ import { logger as honoLogger } from "hono/logger";
 import { generateId, instanceId } from "../common/utils.js";
 import dayjs from "dayjs";
 import { queue } from "./queue.js";
+import { timeout } from "hono/timeout";
 
 const { printMetrics, registerMetrics } = prometheus({
 	metricOptions: {
@@ -33,6 +34,7 @@ const { printMetrics, registerMetrics } = prometheus({
 
 export const app = new OpenAPIHono();
 
+app.use("*", timeout(30000));
 app.use("/invoices/*", registerMetrics);
 
 app.use(
@@ -68,7 +70,9 @@ app.get("/metrics-queue", async (c) => {
 // healthcheck endpoint
 app.get("/health", async (c) => {
 	try {
+		logger.info("before ping");
 		const retrievedValue = await redis.ping();
+		logger.info("after ping");
 
 		if (retrievedValue === "PONG") {
 			return c.json({
@@ -100,6 +104,7 @@ app.get("/health", async (c) => {
 app.openapi(
 	createRoute({
 		method: "get",
+		summary: "Get Invoice",
 		path: "/invoices/{id}",
 		request: {
 			params: IdParamsSchema,
@@ -137,7 +142,7 @@ app.openapi(
 			);
 		}
 
-		const invoice = await InvoiceSchema.safeParseAsync(data);
+		const invoice = await InvoiceSchema.safeParseAsync(JSON.parse(data));
 
 		if (!invoice.success) {
 			throw new HTTPException(500, {
@@ -153,6 +158,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		method: "post",
+		summary: "Create Invoice",
 		path: "/invoices",
 		request: {
 			body: {
@@ -194,14 +200,18 @@ app.openapi(
 			status: "pending",
 		};
 
-		await redis.setex(`invoices:${id}`, 5 * 60 * 60, JSON.stringify(data));
+		await redis.setex(
+			`invoices:${id}`,
+			5 * 60 * 60 * 1000,
+			JSON.stringify(data),
+		);
 
 		await queue.add(
 			"webhook",
 			{ id },
 			{
 				jobId: id,
-				delay: now.diff(expireDate) + 1000,
+				delay: expireDate.diff(now) + 1000,
 			},
 		);
 
@@ -213,6 +223,7 @@ app.openapi(
 app.openapi(
 	createRoute({
 		method: "post",
+		summary: "Pay Invoice",
 		path: "/invoices/{id}/payment",
 		request: {
 			params: IdParamsSchema,
@@ -265,7 +276,7 @@ app.openapi(
 			);
 		}
 
-		const rawInvoice = await InvoiceSchema.safeParseAsync(data);
+		const rawInvoice = await InvoiceSchema.safeParseAsync(JSON.parse(data));
 
 		if (!rawInvoice.success) {
 			throw new HTTPException(500, {
@@ -297,12 +308,18 @@ app.openapi(
 			invoice.status = "failed";
 		}
 
-		await redis.setex(`invoices:${id}`, 5 * 60 * 60, JSON.stringify(invoice));
+		await redis.setex(
+			`invoices:${id}`,
+			5 * 60 * 60 * 1000,
+			JSON.stringify(invoice),
+		);
 
 		const job = await queue.getJob(id);
 
 		if (job && (await job.isDelayed())) {
 			await job.promote();
+		} else {
+			logger.warn(`Cannot find corresponding job for invoice ${id}`);
 		}
 
 		return c.json(invoice, 200);

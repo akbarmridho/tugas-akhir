@@ -1,0 +1,250 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Payment Service"
+    },
+    "components": {
+        "schemas": {
+            "Invoice": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "externalId": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "expiredAt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "paidAt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "paidAmount": {
+                        "type": "number",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "expired",
+                            "paid",
+                            "failed"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "amount",
+                    "externalId",
+                    "createdAt",
+                    "expiredAt",
+                    "paidAt",
+                    "paidAmount",
+                    "status"
+                ]
+            },
+            "CreateInvoiceRequest": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "externalId": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "amount",
+                    "externalId"
+                ]
+            },
+            "PayInvoiceRequest": {
+                "type": "object",
+                "properties": {
+                    "mode": {
+                        "type": "string",
+                        "enum": [
+                            "success",
+                            "failed"
+                        ]
+                    }
+                },
+                "required": [
+                    "mode"
+                ]
+            }
+        },
+        "parameters": {}
+    },
+    "paths": {
+        "/invoices/{id}": {
+            "get": {
+                "summary": "Get Invoice",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "minLength": 3
+                        },
+                        "required": true,
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retrieve the invoice",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Invoice"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Invoice not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/invoices": {
+            "post": {
+                "summary": "Create Invoice",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateInvoiceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retrieve the invoice",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Invoice"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/invoices/{id}/payment": {
+            "post": {
+                "summary": "Pay Invoice",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "minLength": 3
+                        },
+                        "required": true,
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PayInvoiceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retrieve the invoice",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Invoice"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Invoice not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -20,7 +20,7 @@ const devConsoleFormat = winston.format.combine(
 	winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
 	winston.format.printf(
 		(info) =>
-			`${info.timestamp} ${info.level}: ${info.message} ${info.stack || ""} ${Object.keys(info.metadata || {}).length ? JSON.stringify(info.metadata) : ""}`,
+			`${info.timestamp} ${info.level}: ${info.message} ${info.stack || ""} ${Object.keys(info.metadata || {}).length ? JSON.stringify(info.metadata || {}) : ""}`,
 	),
 );
 

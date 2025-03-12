@@ -1,23 +1,26 @@
 import { serve } from "@hono/node-server";
-import { createServer } from "node:http2";
+import { createSecureServer } from "node:http2";
 
 import { logger } from "../common/logger.js";
 import { env } from "../common/env.js";
 import { app } from "./app.js";
 import { redis } from "../common/redis.js";
 import { queue } from "./queue.js";
+import { readFileSync } from "node:fs";
 
 (async function main() {
-	await redis.connect();
-
 	const server = serve(
 		{
 			fetch: app.fetch,
 			port: env.PORT,
-			createServer,
+			createServer: createSecureServer,
+			serverOptions: {
+				key: readFileSync("./cert/key.pem"),
+				cert: readFileSync("./cert/cert.pem"),
+			},
 		},
 		(info) => {
-			logger.info(`Server is running on http://0.0.0.0:${info.port}`);
+			logger.info(`Server is running on http://localhost:${info.port}`);
 		},
 	);
 
@@ -46,8 +49,6 @@ import { queue } from "./queue.js";
 	process.on("SIGINT", handleShutdown);
 	process.on("SIGTERM", handleShutdown);
 })().catch((e) => {
-	logger.error("Main loop error", {
-		error: e,
-	});
+	logger.error("Main loop error", e);
 	process.exit(1);
 });
