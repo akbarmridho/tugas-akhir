@@ -34,8 +34,8 @@ import { readFileSync } from "node:fs";
 				const response = await got.post(env.WEBHOOK_URL, {
 					json: invoice,
 					https: {
-						key: readFileSync("./cert/key.pem"),
-						certificate: readFileSync("./cert/cert.pem"),
+						key: readFileSync("../cert/key.pem"),
+						certificate: readFileSync("../cert/cert.pem"),
 						rejectUnauthorized: false,
 					},
 					http2: true,

@@ -56,8 +56,8 @@ app.all("*", async (c) => {
 			port: 3005,
 			createServer: createSecureServer,
 			serverOptions: {
-				key: readFileSync("./cert/key.pem"),
-				cert: readFileSync("./cert/cert.pem"),
+				key: readFileSync("../cert/key.pem"),
+				cert: readFileSync("../cert/cert.pem"),
 			},
 		},
 		(info) => {
