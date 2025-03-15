@@ -96,7 +96,7 @@ CREATE TABLE "invoices"
     id     bigserial primary key,
     status invoice_status not null default 'pending',
     amount int not null,
-    external_id text not null,
+    external_id text,
 
     order_id bigint not null references orders(id) on update cascade on delete cascade,
 
