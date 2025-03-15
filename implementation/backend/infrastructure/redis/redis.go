@@ -7,13 +7,20 @@ type Cluster struct {
 }
 
 type Config struct {
-	Hosts []string
+	Hosts    []string
+	Password *string
 }
 
 func NewRedis(config Config) (*Cluster, error) {
-	rdb := baseredis.NewClusterClient(&baseredis.ClusterOptions{
+	opts := baseredis.ClusterOptions{
 		Addrs: config.Hosts,
-	})
+	}
+
+	if config.Password != nil {
+		opts.Password = *config.Password
+	}
+
+	rdb := baseredis.NewClusterClient(&opts)
 
 	return &Cluster{
 		Client: rdb,

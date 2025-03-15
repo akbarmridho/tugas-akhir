@@ -37,7 +37,6 @@ CREATE TABLE "ticket_sales" (
 
 CREATE TABLE "ticket_packages" (
     id bigserial primary key,
-    stock int not null,
     price int not null,
 
     ticket_category_id bigint not null references ticket_categories(id) on update cascade on delete cascade,
@@ -72,6 +71,8 @@ CREATE TABLE "orders" (
     id bigserial primary key,
     status order_status not null,
     fail_reason text,
+
+    first_ticket_area_id bigint not null references ticket_areas(id) on update cascade on delete cascade,
 
     external_user_id text not null,
     created_at timestamptz default now(),
