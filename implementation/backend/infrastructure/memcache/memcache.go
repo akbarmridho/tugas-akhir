@@ -2,6 +2,7 @@ package memcache
 
 import (
 	"github.com/allegro/bigcache"
+	"time"
 )
 
 type Memcache struct {
@@ -11,6 +12,7 @@ type Memcache struct {
 func NewMemcache() (*Memcache, error) {
 	config := bigcache.Config{
 		HardMaxCacheSize: 256,
+		LifeWindow:       5 * time.Minute,
 	}
 
 	cache, err := bigcache.NewBigCache(config)

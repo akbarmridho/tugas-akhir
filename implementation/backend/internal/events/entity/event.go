@@ -66,3 +66,7 @@ type TicketSeat struct {
 	CreatedAt    time.Time  `json:"createdAt"`
 	UpdatedAt    time.Time  `json:"updatedAt"`
 }
+
+type GetEventDto struct {
+	ID int64 `param:"id"`
+}
