@@ -21,10 +21,10 @@ type QueryExecutor interface {
 	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
 }
 
-const TransactionContextKey = "postgres_tx"
+const PostgresTransactionContextKey = "postgres_tx"
 
 func (p *Postgres) GetExecutor(ctx context.Context) QueryExecutor {
-	tx, ok := ctx.Value(TransactionContextKey).(pgx.Tx)
+	tx, ok := ctx.Value(PostgresTransactionContextKey).(pgx.Tx)
 
 	if !ok {
 		return p.Pool

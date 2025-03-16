@@ -45,6 +45,7 @@ type TicketPackage struct {
 
 	// Relations
 	TicketCategory TicketCategory `json:"ticketCategory"`
+	TicketAreas    []TicketArea   `json:"ticketAreas"`
 }
 
 type TicketArea struct {
@@ -67,6 +68,21 @@ type TicketSeat struct {
 	UpdatedAt    time.Time  `json:"updatedAt"`
 }
 
+type AreaAvailability struct {
+	TicketPackageID int64 `json:"ticketPackageId"`
+	TicketAreaID    int64 `json:"ticketAreaId"`
+	TotalSeats      int32 `json:"totalSeats"`
+	AvailableSeats  int32 `json:"availableSeats"`
+}
+
 type GetEventDto struct {
 	ID int64 `param:"id"`
+}
+
+type GetAvailabilityDto struct {
+	TicketSaleID int64 `param:"id"`
+}
+
+type GetSeatsDto struct {
+	TicketAreaID int64 `param:"id"`
 }

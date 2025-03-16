@@ -116,3 +116,11 @@ CREATE TABLE "issued_tickets" (
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );
+
+CREATE INDEX idx_ticket_seats_ticket_area_id_seat_number ON ticket_seats(ticket_area_id, seat_number);
+
+CREATE INDEX idx_ticket_seats_ticket_area_id ON ticket_seats(ticket_area_id);
+
+CREATE INDEX idx_ticket_packages_ticket_sale_id ON ticket_packages(ticket_sale_id);
+
+CREATE INDEX idx_ticket_areas_ticket_package_id ON ticket_areas(ticket_package_id);
