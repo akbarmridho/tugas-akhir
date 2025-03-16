@@ -1,4 +1,4 @@
-\subsection{Arsitektur yang Mengoptimalkan PostgreSQL (PGP)}
+\subsubsection{Arsitektur yang Mengoptimalkan PostgreSQL (PGP)}
 
 Arsitektur ini mengoptimalkan sistem dengan pola CQRS, pola penyeimbangan beban berbasiskan antrean, dan menggunakan ekstensi Citus untuk menjalankan basis data secara terdistribusi.
 
@@ -9,13 +9,13 @@ Arsitektur ini mengoptimalkan sistem dengan pola CQRS, pola penyeimbangan beban 
     \label{fig:optimized-architecture}
 \end{figure}
 
-\subsubsection{Peningkatan \textit{Throughput} PostgreSQL dengan Citus}
+\textbf{Peningkatan \textit{Throughput} PostgreSQL dengan Citus}
 
 Penggunaan ekstensi Citus memungkinkan peningkatan \textit{throughput} dengan pendekatan \textit{scale-out}. Peningkatan ini tidak hanya pada \textit{throughput} baca, tetapi juga \textit{throughput} tulis. Hal ini dapat dicapai dengan pembagian data pada tabel berdasarkan baris, lalu setiap \textit{node} yang memegang bagian data tersebut dibuat menjadi \textit{writer}.
 
 \textit{Sharding} berdasarkan baris dapat dilakukan pada tabel Seats, IssuedTicket, OrderItem, dan Orders. Entitas sisanya dapat dibuat sebagai tabel yang direplikasi ke setiap node.
 
-\subsubsection{Penggunaan Pola Penyeimbangan Beban dengan Antrean}
+\textbf{Penggunaan Pola Penyeimbangan Beban dengan Antrean}
 
 Perintah pemesanan tiket (berupa \textit{command}/ \textit{event sourcing}) akan dimasukkan ke dalam antrean Redpanda terlebih dahulu. Lalu, \textit{booking processor} akan memproses permintaan secara bertahap berdasarkan kemampuan sistem. Pendekatan ini memungkinkan terjaganya stabilitas sistem ketika terdapat \textit{burst request}.
 
@@ -36,13 +36,13 @@ Terdapat dua isu yang harus dibahas pada pendekatan ini, yaitu:
     \item Dengan menggunakan antrean, komunikasi akan menjadi asinkron. Untuk menghubungkan permintaan dan respons, \textit{correlation id} dapat digunakan. Terdapat dua alternatif agar pengguna dapat diberitahu agar mendapatkan respons, yaitu menggunakan \textit{notify} dari sisi server atau respons pemesanan baru akan diberikan ketika sudah terdapat respons. Pendekatan yang dipilih adalah pendekatan kedua karena permintaan pemesanan juga membutuhkan aksi lanjutan untuk proses pembayaran. Selain itu, \textit{latency} pemrosesan permintaan ini juga dapat berguna sebagai \textit{metrics} dalam pengujian.
 \end{enumerate}
 
-\subsubsection{Pelimpahan Tanggung Jawab Baca Kepada RisingWave}
+\textbf{Pelimpahan Tanggung Jawab Baca Kepada RisingWave}
 
 Pada permintaan baca ketersediaan tiket, tanggung jawab penanganannya dapat dilimpahkan kepada RisingWave. \textit{Streaming database} ini mengonsumsi \textit{CDC stream} dari kluster PostgreSQL, lalu memperbarui kueri secara inkremental. Dengan begitu, operasi baca tidak akan membebani basis data dan penanganannya dapat dilakukan dengan lebih efisien dengan RisingWave.
 
 Sama seperti penggunaan \textit{read replica}, hal yang harus diperhatikan dalam penggunaan RisingWave adalah \textit{replication lag}. Data yang dikembalikan oleh RisingWave tidak valid apabila data tersebut \textit{outdated}. Pendekatan ini tidak mendukung konfigurasi agar transaksi \textit{commit} setelah RisingWave \textit{acknowledge} data, sehingga tetap akan ada \textit{replication lag}. Solusi dari permasalahan ini adalah \textit{tuning} RisingWave agar mampu mengikuti beban yang dikirimkan oleh PostgreSQL.
 
-\subsubsection{Penskalaan Pada PGP}
+\textbf{Penskalaan Pada PGP}
 
 Berikut adalah strategi penskalaan untuk setiap komponen selain dengan pendekatan \textit{scale-up}:
 
@@ -54,7 +54,7 @@ Berikut adalah strategi penskalaan untuk setiap komponen selain dengan pendekata
     \item Kluster Redpanda dapat di-\textit{scale} dengan menggunakan beberapa partisi. Setiap partisi akan menangani permintaan untuk satu atau beberapa kategori tiket yang telah ditentukan. Jumlah partisi permintaan dan respons akan sama.
 \end{enumerate}
 
-\subsubsection{Aspek Lain}
+\textbf{Aspek Lain}
 
 \begin{enumerate}
     \item Pendekatan pemartisian berdasarkan kategori mengharuskan konfigurasi dilakukan secara manual setiap kali akan diadakan proses penjualan. Mekanisme atau analisis yang memungkinkan konfigurasi secara otomatis tidak akan dibahas karena di luar \textit{scope} penelitian ini.

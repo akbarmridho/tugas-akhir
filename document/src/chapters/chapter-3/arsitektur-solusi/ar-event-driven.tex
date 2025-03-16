@@ -1,4 +1,4 @@
-\subsection{Arsitektur \textit{Event-Driven} (EDA)}
+\subsubsection{Arsitektur \textit{Event-Driven} (EDA)}
 
 Arsitektur ini tidak menggunakan PostgreSQL sama sekali. Pada dasarnya, basis data relasional terdiri atas komponen \textit{storage} dan \textit{query processor}. Pada arsitektur ini, komponen \textit{storage} diganti menggunakan Redpanda dengan berbagai topik dan \textit{query processor} diganti dengan RisingWave. Penggunaan RisingWave memungkinkan pembangunan kueri secara inkremental dari berbagai sumber data, termasuk topik Redpanda. Meskipun begitu, pendekatan ini tidak memiliki dukungan \textit{transaction} selain \textit{transaction} pada Redpanda yang berupa \textit{push log all or nothing} pada beberapa topik sekaligus. Untuk itu, Redis digunakan untuk menyimpan \textit{uncommited data} sehingga untuk mencegah \textit{double booking}.
 
@@ -9,7 +9,7 @@ Arsitektur ini tidak menggunakan PostgreSQL sama sekali. Pada dasarnya, basis da
     \label{fig:solution-event-driven-architecture}
 \end{figure}
 
-\subsubsection{Pemodelan Topik dan Entitas}
+\textbf{Pemodelan Topik dan Entitas}
 
 Karena tidak ada basis data relasional yang digunakan dalam arsitektur ini, terdapat beberapa perubahan dalam pemodelan entitas menjadi topik. Perubahan ini adalah sebagai berikut:
 
@@ -21,7 +21,7 @@ Karena tidak ada basis data relasional yang digunakan dalam arsitektur ini, terd
     \item Topik IssuedTickets merupakan entitas IssuedTicket.
 \end{enumerate}
 
-\subsubsection{Alur Sistem}
+\textbf{Alur Sistem}
 
 Berikut adalah gambaran alur sistem untuk proses pemesanan tiket dan notifikasi pembayaran.
 
@@ -39,7 +39,7 @@ Berikut adalah gambaran alur sistem untuk proses pemesanan tiket dan notifikasi 
     \label{fig:payment-verify-flow-eda}
 \end{figure}
 
-\subsubsection{Penskalaan Arsitektur EDA}
+\textbf{Penskalaan Arsitektur EDA}
 
 Berikut adalah strategi penskalaan untuk setiap komponen selain dengan pendekatan \textit{scale-up}:
 
@@ -50,11 +50,11 @@ Berikut adalah strategi penskalaan untuk setiap komponen selain dengan pendekata
     \item Kluster Redpanda dapat di-\textit{scale} dengan menggunakan beberapa partisi.
 \end{enumerate}
 
-\subsubsection{Isu \textit{Persistence} Pada \textit{Uncommited Data}}
+\textbf{Isu \textit{Persistence} Pada \textit{Uncommited Data}}
 
 Arsitektur ini membutuhkan \textit{persistence} yang lebih kuat dibandingkan dengan arsitektur sebelumnya. Meskipun begitu, penggunaan \textit{snapshot}, AOF, dan konfigurasi \texttt{appendfsync always} dapat dianggap cukup. Perintah \texttt{appendfsync always} membuat Redis untuk selalu melakukan penulisan langsung setelah setiap perintah penulisan dijalankan. Hal ini berbeda dengan konfigurasi \textit{default} Redis yang melakukan operasi tulis setiap detik. Meskipun begitu, penggunaan konfigurasi ini menjadikan \textit{throughput} tulis Redis jauh lebih lambat. Akan tetapi, hal ini menjadi risiko yang diambil untuk menjamin \textit{safety} pada sistem ini.
 
-\subsubsection{Aspek Lain}
+\textbf{Aspek Lain}
 
 \begin{enumerate}
     \item Dibandingkan dengan arsitektur sebelumnya, pendekatan seperti ini memiliki kompleksitas yang jauh lebih tinggi. Selain itu, aspek \textit{extendability} pada arsitektur ini tidak lebih baik dibandingkan dengan arsitektur sebelumnya, terutama pada penambahan fitur yang berinteraksi dengan basis data relasional.
