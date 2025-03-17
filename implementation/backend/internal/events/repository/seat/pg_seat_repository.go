@@ -1,4 +1,4 @@
-package repository
+package seat
 
 import (
 	"context"
@@ -7,19 +7,19 @@ import (
 	"tugas-akhir/backend/internal/events/entity"
 )
 
-type SeatRepository struct {
+type PGSeatRepository struct {
 	db *postgres.Postgres
 }
 
-func NewSeatRepository(
+func NewPGSeatRepository(
 	db *postgres.Postgres,
-) *SeatRepository {
-	return &SeatRepository{
+) *PGSeatRepository {
+	return &PGSeatRepository{
 		db: db,
 	}
 }
 
-func (r *EventRepository) GetSeats(ctx context.Context, payload entity.GetSeatsDto) ([]entity.TicketSeat, error) {
+func (r *PGSeatRepository) GetSeats(ctx context.Context, payload entity.GetSeatsDto) ([]entity.TicketSeat, error) {
 	query := `
 	SELECT *
 	FROM ticket_seats

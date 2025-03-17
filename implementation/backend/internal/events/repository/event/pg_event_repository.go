@@ -1,4 +1,4 @@
-package repository
+package event
 
 import (
 	"context"
@@ -13,16 +13,16 @@ import (
 	"tugas-akhir/backend/pkg/logger"
 )
 
-type EventRepository struct {
+type PGEventRepository struct {
 	db    *postgres.Postgres
 	cache *memcache.Memcache
 }
 
-func NewEventRepository(
+func NewPGEventRepository(
 	db *postgres.Postgres,
 	cache *memcache.Memcache,
-) *EventRepository {
-	return &EventRepository{
+) *PGEventRepository {
+	return &PGEventRepository{
 		db:    db,
 		cache: cache,
 	}
@@ -34,7 +34,7 @@ func eventCacheKey(id int64) string {
 	return fmt.Sprintf("%s:%d", "events:", id)
 }
 
-func (r *EventRepository) GetEvents(ctx context.Context) ([]entity.Event, error) {
+func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, error) {
 	result := make([]entity.Event, 0)
 
 	cache, cacheErr := r.cache.Cache.Get(EVENTS_CACHE_KEY)
@@ -77,10 +77,10 @@ func (r *EventRepository) GetEvents(ctx context.Context) ([]entity.Event, error)
 	return result, nil
 }
 
-func (r *EventRepository) GetEvent(ctx context.Context, payload entity.GetEventDto) (*entity.Event, error) {
+func (r *PGEventRepository) GetEvent(ctx context.Context, payload entity.GetEventDto) (*entity.Event, error) {
 	var event entity.Event
 
-	cache, cacheErr := r.cache.Cache.Get(EVENTS_CACHE_KEY)
+	cache, cacheErr := r.cache.Cache.Get(eventCacheKey(payload.ID))
 
 	if cacheErr != nil {
 		logger.FromCtx(ctx).Sugar().Errorf("Cannot get event %d from cache", payload.ID)
@@ -188,7 +188,7 @@ func (r *EventRepository) GetEvent(ctx context.Context, payload entity.GetEventD
 		return nil, err
 	}
 
-	if setCacheErr := r.cache.Cache.Set(EVENTS_CACHE_KEY, eventJSON); setCacheErr != nil {
+	if setCacheErr := r.cache.Cache.Set(eventCacheKey(payload.ID), eventJSON); setCacheErr != nil {
 		logger.FromCtx(ctx).Error("Cannot set cache events")
 	}
 
