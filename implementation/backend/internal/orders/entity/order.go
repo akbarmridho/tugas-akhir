@@ -23,6 +23,20 @@ type OrderItem struct {
 	CustomerEmail string    `json:"customerEmail"`
 	Price         int64     `json:"price"`
 	OrderID       int64     `json:"orderId"`
+	TicketSeatID  int64     `json:"ticketSeatId"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
+}
+
+type OrderItemDto struct {
+	CustomerName  string `json:"customerName"`
+	CustomerEmail string `json:"customerEmail"`
+	TicketSeatID  int64  `json:"ticketSeatId"`
+	Price         *int64
+}
+
+type PlaceOrderDto struct {
+	UserID            *string
+	FirstTicketAreaID *string
+	Items             []OrderItemDto `json:"items"`
 }

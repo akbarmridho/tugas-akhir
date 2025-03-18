@@ -3,6 +3,7 @@ package booking
 import (
 	"context"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/pkg/errors"
 	"tugas-akhir/backend/infrastructure/postgres"
 	"tugas-akhir/backend/internal/bookings/entity"
 	entity2 "tugas-akhir/backend/internal/events/entity"
@@ -35,7 +36,7 @@ func (r *PGBookingInterface) Book(ctx context.Context, payload entity.BookingReq
 	}
 
 	if len(seats) != len(payload.SeatIDs) {
-		return nil, entity.ResultDataLengthNotMatch
+		return nil, errors.WithStack(errors.WithMessage(entity.InternalTicketLockError, "the result data length does not match with the param length"))
 	}
 
 	// update status to on hold
@@ -52,7 +53,7 @@ func (r *PGBookingInterface) Book(ctx context.Context, payload entity.BookingReq
 	}
 
 	if tag.RowsAffected() != int64(len(payload.SeatIDs)) {
-		return nil, entity.UpdatedDataLengthNotMatch
+		return nil, errors.WithStack(errors.WithMessage(entity.InternalTicketLockError, "the updated data length does not match with the param length"))
 	}
 
 	return seats, nil

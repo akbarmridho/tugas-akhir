@@ -86,6 +86,7 @@ CREATE TABLE "order_items" (
     price int not null,
 
     order_id bigint not null references orders(id) on update cascade on delete cascade,
+    ticket_seat_id bigint not null references ticket_seats(id) on update cascade on delete cascade,
 
     created_at timestamptz default now(),
     updated_at timestamptz default now()
@@ -96,7 +97,7 @@ CREATE TABLE "invoices"
     id     bigserial primary key,
     status invoice_status not null default 'pending',
     amount int not null,
-    external_id text,
+    external_id text not null,
 
     order_id bigint not null references orders(id) on update cascade on delete cascade,
 

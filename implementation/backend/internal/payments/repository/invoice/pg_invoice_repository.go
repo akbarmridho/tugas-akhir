@@ -1,1 +1,34 @@
 package invoice
+
+import (
+	"context"
+	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/pkg/errors"
+	"tugas-akhir/backend/infrastructure/postgres"
+	"tugas-akhir/backend/internal/payments/entity"
+)
+
+type PGInvoiceRepository struct {
+	db *postgres.Postgres
+}
+
+func (r *PGInvoiceRepository) CreateInvoice(ctx context.Context, payload entity.CreateInvoiceDto) (*entity.Invoice, error) {
+	query := `
+	INSERT INTO invoices(status, amount, external_id, order_id)
+	VALUES ('pending', $1, $2, $3)
+    `
+
+	var invoice entity.Invoice
+
+	err := pgxscan.Get(ctx, r.db.GetExecutor(ctx), &invoice, query, payload.Amount, payload.ExternalID, payload.OrderID)
+
+	if err != nil {
+		if pgxscan.NotFound(err) {
+			return nil, errors.WithMessage(entity.CreateInvoiceInternalError, "no invoice returned")
+		}
+
+		return nil, err
+	}
+
+	return &invoice, nil
+}
