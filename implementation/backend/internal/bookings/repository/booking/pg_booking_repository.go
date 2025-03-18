@@ -2,24 +2,26 @@ package booking
 
 import (
 	"context"
+	"fmt"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/pkg/errors"
 	"tugas-akhir/backend/infrastructure/postgres"
 	"tugas-akhir/backend/internal/bookings/entity"
+	"tugas-akhir/backend/internal/bookings/service"
 	entity2 "tugas-akhir/backend/internal/events/entity"
 )
 
-type PGBookingInterface struct {
+type PGBookingRepository struct {
 	db *postgres.Postgres
 }
 
-func NewPGBookingInterface(db *postgres.Postgres) *PGBookingInterface {
-	return &PGBookingInterface{
+func NewPGBookingInterface(db *postgres.Postgres) *PGBookingRepository {
+	return &PGBookingRepository{
 		db: db,
 	}
 }
 
-func (r *PGBookingInterface) Book(ctx context.Context, payload entity.BookingRequestDto) ([]entity2.TicketSeat, error) {
+func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRequestDto) ([]entity2.TicketSeat, error) {
 	query := `
 	SELECT id, seat_number, status, ticket_area_id, created_at, updated_at
 	FROM ticket_seats
@@ -57,4 +59,78 @@ func (r *PGBookingInterface) Book(ctx context.Context, payload entity.BookingReq
 	}
 
 	return seats, nil
+}
+
+func (r *PGBookingRepository) PublishIssuedTickets(ctx context.Context, payload entity.PublishIssuedTicketDto) error {
+	query := `
+	INSERT INTO issued_tickets(serial_number, holder_name, seat_id, order_id, order_item_id, name, description) VALUES
+    `
+
+	if len(payload.Items) != len(payload.SeatInfos) {
+		return errors.WithMessage(entity.IssueTicketError, "payload items and seat info length is different")
+	}
+
+	args := []interface{}{}
+
+	for i, item := range payload.Items {
+		if i > 0 && i != (len(payload.Items)-1) {
+			query += ", "
+		}
+
+		info := payload.SeatInfos[i]
+
+		serialNumber, err := service.GenerateSerialNumber(item)
+
+		if err != nil {
+			return err
+		}
+
+		issuedTicketDescription := ""
+
+		if info.SeatType == entity2.AreaType__FreeStanding {
+			issuedTicketDescription = fmt.Sprintf("%s (Free Standing)", info.CategoryName)
+		} else if info.SeatType == entity2.AreaType__NumberedSeating {
+			issuedTicketDescription = fmt.Sprintf("%s - Number %s", info.CategoryName, info.SeatNumber)
+		}
+
+		paramOffset := i * 7
+		query += fmt.Sprintf(
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d)",
+			paramOffset+1,
+			paramOffset+2,
+			paramOffset+3,
+			paramOffset+4,
+			paramOffset+5,
+			paramOffset+6,
+			paramOffset+7,
+		)
+
+		args = append(args,
+			serialNumber,
+			item.CustomerName,
+			item.TicketSeatID,
+			item.OrderID,
+			item.ID,
+			payload.EventName,
+			issuedTicketDescription,
+		)
+	}
+
+	_, err := r.db.GetExecutor(ctx).Exec(ctx, query, args...)
+
+	return err
+}
+
+func (r *PGBookingRepository) GetIssuedTickets(ctx context.Context, payload entity.GetIssuedTicketDto) ([]entity.IssuedTicket, error) {
+	query := `
+	SELECT *
+	FROM issued_tickets
+	WHERE order_id = $1
+    `
+
+	result := make([]entity.IssuedTicket, 0)
+
+	err := pgxscan.Select(ctx, r.db.GetExecutor(ctx), &result, query, payload.ID)
+
+	return nil, err
 }

@@ -109,6 +109,8 @@ CREATE TABLE "issued_tickets" (
     id bigserial primary key,
     serial_number text not null,
     holder_name text not null,
+    name text not null,
+    description text not null,
 
     seat_id bigint not null references ticket_seats(id) on update cascade on delete cascade,
     order_id bigint not null references orders(id) on update cascade on delete cascade,

@@ -32,3 +32,15 @@ func (r *PGInvoiceRepository) CreateInvoice(ctx context.Context, payload entity.
 
 	return &invoice, nil
 }
+
+func (r *PGInvoiceRepository) UpdateInvoiceStatus(ctx context.Context, payload entity.UpdateInvoiceStatusDto) error {
+	query := `
+	UPDATE invoices
+	SET status = $1
+	WHERE id = $2
+    `
+
+	_, err := r.db.GetExecutor(ctx).Exec(ctx, query, payload.Status, payload.ID)
+
+	return err
+}

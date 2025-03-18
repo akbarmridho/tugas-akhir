@@ -8,4 +8,5 @@ import (
 
 type BookingInterface interface {
 	Book(ctx context.Context, payload entity.BookingRequestDto) ([]entity2.TicketSeat, error)
+	PublishIssuedTickets(ctx context.Context, payload entity.PublishIssuedTicketDto) error
 }

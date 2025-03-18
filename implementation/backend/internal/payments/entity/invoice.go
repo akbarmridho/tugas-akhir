@@ -17,3 +17,8 @@ type CreateInvoiceDto struct {
 	ExternalID string
 	OrderID    int64
 }
+
+type UpdateInvoiceStatusDto struct {
+	ID     int64
+	Status InvoiceStatus
+}

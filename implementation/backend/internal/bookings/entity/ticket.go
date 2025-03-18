@@ -3,12 +3,15 @@ package entity
 import (
 	"time"
 	"tugas-akhir/backend/internal/events/entity"
+	entity2 "tugas-akhir/backend/internal/orders/entity"
 )
 
 type IssuedTicket struct {
 	ID           int64     `json:"id"`
 	SerialNumber string    `json:"serialNumber"`
 	HolderName   string    `json:"holderName"`
+	Name         string    `json:"name"`
+	Description  string    `json:"description"`
 	SeatID       int64     `json:"seatId"`
 	OrderID      int64     `json:"orderId"`
 	OrderItemID  int64     `json:"orderItemId"`
@@ -17,4 +20,20 @@ type IssuedTicket struct {
 
 	// Relations
 	TicketSeat entity.TicketSeat `json:"ticketSeat"`
+}
+
+type SeatInfo struct {
+	CategoryName string
+	SeatType     entity.AreaType
+	SeatNumber   string
+}
+
+type PublishIssuedTicketDto struct {
+	EventName string
+	SeatInfos []SeatInfo
+	Items     []entity2.OrderItem
+}
+
+type GetIssuedTicketDto struct {
+	ID string `param:"id"`
 }
