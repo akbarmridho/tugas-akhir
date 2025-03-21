@@ -10,7 +10,8 @@
     "dev:echo": "tsx watch src/echo/index.ts",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "generate": "npx openapi-generator-cli generate"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@jest/globals": "^29.7.0",
+    "@openapitools/openapi-generator-cli": "^2.18.4",
     "@types/ioredis-mock": "^8.2.5",
     "@types/jest": "^29.5.14",
     "@types/mocha": "^10.0.10",

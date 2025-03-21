@@ -1,0 +1,28 @@
+{
+    "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+    "spaces": 2,
+    "generator-cli": {
+        "version": "7.7.0",
+        "generators": {
+            "golang": {
+                "inputSpec": "openapi.json",
+                "output": "./client",
+                "generatorName": "go",
+                "packageName": "mock_payment",
+                "additionalProperties": {
+                    "packageName": "mock_payment",
+                    "withGoMod": false,
+                    "isGoSubmodule": true,
+                    "enumClassPrefix": true
+                },
+                "globalProperty": {
+                    "apiDocs": false,
+                    "apiTests": false,
+                    "modelDocs": false,
+                    "modelTests": false,
+                    "verbose": false
+                }
+            }
+        }
+    }
+}

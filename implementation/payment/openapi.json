@@ -4,6 +4,24 @@
         "version": "1.0.0",
         "title": "Payment Service"
     },
+    "servers": [
+        {
+            "description": "environment",
+            "url": "{protocol}://{server}",
+            "variables": {
+                "protocol": {
+                    "enum": [
+                        "http",
+                        "https"
+                    ],
+                    "default": "https"
+                },
+                "server": {
+                    "default": "localhost:3000"
+                }
+            }
+        }
+    ],
     "components": {
         "schemas": {
             "Invoice": {
