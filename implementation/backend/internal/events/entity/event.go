@@ -11,7 +11,7 @@ type Event struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 
 	// relations
-	TicketSales []TicketSale `json:"ticketSales"`
+	TicketSales []TicketSale `json:"ticketSales,omitempty"`
 }
 
 type TicketCategory struct {
@@ -66,6 +66,9 @@ type TicketSeat struct {
 	TicketAreaID int64      `json:"ticketAreaId"`
 	CreatedAt    time.Time  `json:"createdAt"`
 	UpdatedAt    time.Time  `json:"updatedAt"`
+
+	// Relations
+	TicketArea *TicketArea `json:"ticketArea,omitempty"`
 }
 
 type AreaAvailability struct {

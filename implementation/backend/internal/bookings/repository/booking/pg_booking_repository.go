@@ -111,7 +111,7 @@ func (r *PGBookingRepository) PublishIssuedTickets(ctx context.Context, payload 
 			item.TicketSeatID,
 			item.OrderID,
 			item.ID,
-			payload.EventName,
+			fmt.Sprintf("%s - %s", payload.EventName, payload.TicketSaleName),
 			issuedTicketDescription,
 		)
 	}
@@ -122,6 +122,20 @@ func (r *PGBookingRepository) PublishIssuedTickets(ctx context.Context, payload 
 }
 
 func (r *PGBookingRepository) GetIssuedTickets(ctx context.Context, payload entity.GetIssuedTicketDto) ([]entity.IssuedTicket, error) {
+	var count int
+
+	countQuery := `
+        SELECT COUNT(*) 
+        FROM orders 
+        WHERE id = $1 AND external_user_id = $2
+    `
+
+	err := r.db.GetExecutor(ctx).QueryRow(ctx, countQuery, payload.ID, payload.UserID).Scan(&count)
+
+	if err != nil {
+		return nil, errors.WithStack(errors.WithMessage(entity.IssuedTicketFetchError, "cannot get the order count"))
+	}
+
 	query := `
 	SELECT *
 	FROM issued_tickets
@@ -130,7 +144,11 @@ func (r *PGBookingRepository) GetIssuedTickets(ctx context.Context, payload enti
 
 	result := make([]entity.IssuedTicket, 0)
 
-	err := pgxscan.Select(ctx, r.db.GetExecutor(ctx), &result, query, payload.ID)
+	err = pgxscan.Select(ctx, r.db.GetExecutor(ctx), &result, query, payload.ID)
 
-	return nil, err
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

@@ -72,6 +72,8 @@ CREATE TABLE "orders" (
     status order_status not null,
     fail_reason text,
 
+    event_id bigint not null references events(id) on update cascade on delete cascade,
+    ticket_sale_id bigint not null references events(id) on update cascade on delete cascade,
     first_ticket_area_id bigint not null references ticket_areas(id) on update cascade on delete cascade,
 
     external_user_id text not null,
@@ -86,6 +88,7 @@ CREATE TABLE "order_items" (
     price int not null,
 
     order_id bigint not null references orders(id) on update cascade on delete cascade,
+    ticket_category_id bigint not null references ticket_categories(id) on update cascade on delete cascade,
     ticket_seat_id bigint not null references ticket_seats(id) on update cascade on delete cascade,
 
     created_at timestamptz default now(),

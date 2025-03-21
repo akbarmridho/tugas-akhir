@@ -36,7 +36,7 @@ func (r *PGInvoiceRepository) CreateInvoice(ctx context.Context, payload entity.
 func (r *PGInvoiceRepository) UpdateInvoiceStatus(ctx context.Context, payload entity.UpdateInvoiceStatusDto) error {
 	query := `
 	UPDATE invoices
-	SET status = $1
+	SET status = $1, updated_at = now()
 	WHERE id = $2
     `
 

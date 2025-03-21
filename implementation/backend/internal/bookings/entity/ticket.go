@@ -29,11 +29,13 @@ type SeatInfo struct {
 }
 
 type PublishIssuedTicketDto struct {
-	EventName string
-	SeatInfos []SeatInfo
-	Items     []entity2.OrderItem
+	EventName      string
+	TicketSaleName string
+	SeatInfos      []SeatInfo
+	Items          []entity2.OrderItem
 }
 
 type GetIssuedTicketDto struct {
-	ID string `param:"id"`
+	ID     string  `param:"id"`
+	UserID *string `json:"userId"`
 }
