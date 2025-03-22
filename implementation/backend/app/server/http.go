@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"tugas-akhir/backend/app/server/handler/health"
 	middleware2 "tugas-akhir/backend/app/server/middleware"
 	"tugas-akhir/backend/app/server/route"
 	"tugas-akhir/backend/infrastructure/config"
@@ -39,7 +40,11 @@ func (s *Server) Stop(context context.Context) error {
 	return s.engine.Shutdown(context)
 }
 
-func NewServer(routes *route.Routes, config *config.Config) *Server {
+func NewServer(
+	healthHandler health.HealthcheckHandler,
+	routes *route.Routes,
+	config *config.Config,
+) *Server {
 	engine := echo.New()
 	engine.HideBanner = true
 	engine.HidePort = true
@@ -67,6 +72,8 @@ func NewServer(routes *route.Routes, config *config.Config) *Server {
 	engine.Use(middleware.Recover())
 
 	engine.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
+
+	engine.GET("/health", healthHandler.Healthcheck)
 
 	// setup common middleware=
 	engine.Use(middleware2.ZapLogger(logger.GetInfo()))
