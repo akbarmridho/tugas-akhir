@@ -8,6 +8,7 @@ import (
 	"golang.org/x/net/http2"
 	"net/http"
 	"net/url"
+	"os"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/internal/payments/entity"
 	"tugas-akhir/backend/pkg/mock_payment"
@@ -22,7 +23,13 @@ type MockPaymentService struct {
 func NewMockPaymentService(config *config.Config) (*MockPaymentService, error) {
 	caCertPool := x509.NewCertPool()
 
-	if ok := caCertPool.AppendCertsFromPEM([]byte(config.TlsCert)); !ok {
+	certData, err := os.ReadFile(config.PaymentCertPath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if ok := caCertPool.AppendCertsFromPEM(certData); !ok {
 		return nil, errors.WithStack(errors.WithMessage(entity.PaymentServiceInternalError, "failed to append cert to pool"))
 	}
 
@@ -34,7 +41,7 @@ func NewMockPaymentService(config *config.Config) (*MockPaymentService, error) {
 	}
 
 	// Explicitly enable HTTP/2
-	err := http2.ConfigureTransport(transport)
+	err = http2.ConfigureTransport(transport)
 	if err != nil {
 		return nil, err
 	}

@@ -10,12 +10,17 @@ import (
 type Config struct {
 	Environment string `envconfig:"ENVIRONMENT" required:"true" default:"development"`
 	ServerPort  int    `envconfig:"SERVER_PORT" default:"3000"`
+	TlsCertPath string `envconfig:"TLS_CERT_PATH" required:"true"`
+	TlsKeyPath  string `envconfig:"TLS_KEY_PATH" required:"true"`
 	JwtSecret   string `envconfig:"JWT_SECRET" required:"true"`
+
+	TestScenario string `envconfig:"TEST_SCENARIO"`
+	AppVariant   AppVariant
+	PodName      string `envconfig:"POD_NAME" default:"none"`
 
 	DatabaseUrl       string `envconfig:"DATABASE_URL" required:"true"`
 	PaymentServiceUrl string `envconfig:"PAYMENT_SERVICE_URL" required:"true"`
-	TlsCert           string `envconfig:"TLS_CERT" required:"true"`
-	TlsKey            string `envconfig:"TLS_KEY" required:"true"`
+	PaymentCertPath   string `envconfig:"PAYMENT_CERT_PATH" required:"true"`
 }
 
 func NewConfig() (*Config, error) {
