@@ -12,7 +12,10 @@ type Config struct {
 	ServerPort  int    `envconfig:"SERVER_PORT" default:"3000"`
 	JwtSecret   string `envconfig:"JWT_SECRET" required:"true"`
 
-	DatabaseUrl string `envconfig:"DATABASE_URL" required:"true"`
+	DatabaseUrl       string `envconfig:"DATABASE_URL" required:"true"`
+	PaymentServiceUrl string `envconfig:"PAYMENT_SERVICE_URL" required:"true"`
+	TlsCert           string `envconfig:"TLS_CERT" required:"true"`
+	TlsKey            string `envconfig:"TLS_KEY" required:"true"`
 }
 
 func NewConfig() (*Config, error) {
