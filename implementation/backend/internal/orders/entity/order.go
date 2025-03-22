@@ -60,3 +60,9 @@ type GetOrderDto struct {
 	OrderID int64   `param:"id"`
 	UserID  *string `json:"userId"`
 }
+
+type UpdateOrderStatusDto struct {
+	OrderID    int64
+	Status     OrderStatus
+	FailReason *string
+}

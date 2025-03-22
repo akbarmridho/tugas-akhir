@@ -267,4 +267,18 @@ func (r *PGOrderRepository) GetOrder(ctx context.Context, payload entity.GetOrde
 	return &order, nil
 }
 
-// todo update order (for webhooks handle)
+func (r *PGOrderRepository) UpdateOrderStatus(ctx context.Context, payload entity.UpdateOrderStatusDto) error {
+	query := `
+	UPDATE orders
+	SET status = $1, fail_reason = $2, updated_at = now()
+	WHERE id = $3
+    `
+
+	rows, err := r.db.GetExecutor(ctx).Exec(ctx, query, payload.Status, payload.FailReason, payload.OrderID)
+
+	if rows.RowsAffected() == 0 {
+		return errors.WithStack(entity.OrderNotFoundError)
+	}
+
+	return err
+}
