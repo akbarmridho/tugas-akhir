@@ -79,13 +79,13 @@ type AreaAvailability struct {
 }
 
 type GetEventDto struct {
-	ID int64 `param:"id"`
+	ID int64 `param:"eventId"`
 }
 
 type GetAvailabilityDto struct {
-	TicketSaleID int64 `param:"id"`
+	TicketSaleID int64 `param:"ticketSaleId"`
 }
 
 type GetSeatsDto struct {
-	TicketAreaID int64 `param:"id"`
+	TicketAreaID int64 `param:"ticketAreaId"`
 }

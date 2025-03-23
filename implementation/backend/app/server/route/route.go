@@ -21,8 +21,12 @@ func (r Routes) Setup(engine *echo.Echo) {
 	}
 }
 
-func NewRoutes() *Routes {
-	rootRoutes := make([]Route, 0)
+func NewRoutes(
+	eventsRoute *EventsRoute,
+) *Routes {
+	rootRoutes := []Route{
+		eventsRoute,
+	}
 
 	return &Routes{
 		root: rootRoutes,
@@ -30,5 +34,6 @@ func NewRoutes() *Routes {
 }
 
 var Module = fx.Options(
+	fx.Provide(NewEventsRoute),
 	fx.Provide(NewRoutes),
 )
