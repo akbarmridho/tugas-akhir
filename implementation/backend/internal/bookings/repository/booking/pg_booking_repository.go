@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/pkg/errors"
 	"tugas-akhir/backend/infrastructure/postgres"
 	"tugas-akhir/backend/internal/bookings/entity"
@@ -34,6 +35,13 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 	err := pgxscan.Select(ctx, r.db.GetExecutor(ctx), &seats, query, payload.SeatIDs)
 
 	if err != nil {
+		if pgErr, ok := err.(*pgconn.PgError); ok {
+			// PostgreSQL error codes for lock-related issues
+			// 55P03 is the error code for "no wait" lock failure
+			if pgErr.Code == "55P03" {
+				return nil, entity.LockNotAcquiredError
+			}
+		}
 		return nil, err
 	}
 

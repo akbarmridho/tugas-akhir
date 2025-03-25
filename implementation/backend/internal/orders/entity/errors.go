@@ -7,3 +7,5 @@ var OrderPlacementInternalError = errors.New("internal order placement configura
 var OrderFetchInternalError = errors.New("internal order fetch configuration")
 
 var OrderNotFoundError = errors.New("order not found")
+
+var TicketSaleNotFoundError = errors.New("ticket sale not found")

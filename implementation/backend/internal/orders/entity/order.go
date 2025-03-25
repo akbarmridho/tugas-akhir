@@ -41,24 +41,24 @@ type OrderItem struct {
 }
 
 type OrderItemDto struct {
-	CustomerName     string `json:"customerName"`
-	CustomerEmail    string `json:"customerEmail"`
-	TicketSeatID     int64  `json:"ticketSeatId"`
-	Price            *int64
+	CustomerName     string `json:"customerName" validate:"required"`
+	CustomerEmail    string `json:"customerEmail" validate:"required,email"`
+	TicketSeatID     int64  `json:"ticketSeatId" validate:"required"`
+	Price            *int32
 	TicketCategoryID *int64
 }
 
 type PlaceOrderDto struct {
 	UserID            *string
-	EventID           *int64
-	TicketSaleID      *int64
+	EventID           int64 `json:"eventId"`
+	TicketSaleID      int64 `json:"ticketSaleId"`
 	FirstTicketAreaID *int64
-	Items             []OrderItemDto `json:"items"`
+	Items             []OrderItemDto `json:"items" validate:"required,min=1,max=5"`
 }
 
 type GetOrderDto struct {
-	OrderID int64   `param:"id"`
-	UserID  *string `json:"userId"`
+	OrderID int64 `param:"id" validate:"required"`
+	UserID  *string
 }
 
 type UpdateOrderStatusDto struct {

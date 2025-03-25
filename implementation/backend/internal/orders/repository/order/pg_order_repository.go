@@ -30,14 +30,6 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 		return nil, errors.WithStack(errors.WithMessage(entity.OrderPlacementInternalError, "first ticket area id is nil"))
 	}
 
-	if payload.EventID == nil {
-		return nil, errors.WithStack(errors.WithMessage(entity.OrderPlacementInternalError, "event id is nil"))
-	}
-
-	if payload.TicketSaleID == nil {
-		return nil, errors.WithStack(errors.WithMessage(entity.OrderPlacementInternalError, "ticket sale id is nil"))
-	}
-
 	querier := r.db.GetExecutor(ctx)
 
 	orderQuery := `
@@ -48,7 +40,7 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 
 	var order entity.Order
 
-	err := pgxscan.Get(ctx, querier, &order, orderQuery, *payload.UserID, *payload.FirstTicketAreaID, *payload.TicketSaleID, *payload.EventID)
+	err := pgxscan.Get(ctx, querier, &order, orderQuery, *payload.UserID, *payload.FirstTicketAreaID, payload.TicketSaleID, payload.EventID)
 
 	if err != nil {
 		if pgxscan.NotFound(err) {
