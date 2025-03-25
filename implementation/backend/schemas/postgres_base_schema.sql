@@ -1,7 +1,7 @@
 CREATE TYPE area_type as ENUM ('numbered-seating', 'free-standing');
 CREATE TYPE seat_status as ENUM ('available', 'on-hold', 'sold');
 CREATE TYPE order_status as ENUM ('waiting-for-payment', 'failed', 'success');
-CREATE TYPE invoice_status as ENUM ('pending', 'expired', 'paid');
+CREATE TYPE invoice_status as ENUM ('pending', 'expired', 'failed', 'paid');
 
 CREATE TABLE "events" (
     id bigserial primary key,

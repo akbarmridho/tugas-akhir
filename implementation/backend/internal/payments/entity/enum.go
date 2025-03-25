@@ -5,9 +5,10 @@ import "errors"
 type InvoiceStatus string
 
 const (
-	OrderStatus__Pending InvoiceStatus = "pending"
-	OrderStatus__Expired InvoiceStatus = "expired"
-	OrderStatus__Paid    InvoiceStatus = "paid"
+	InvoiceStatus__Pending InvoiceStatus = "pending"
+	InvoiceStatus__Expired InvoiceStatus = "expired"
+	InvoiceStatus__Failed  InvoiceStatus = "failed"
+	InvoiceStatus__Paid    InvoiceStatus = "paid"
 )
 
 func (e *InvoiceStatus) Scan(value interface{}) error {
@@ -23,11 +24,11 @@ func (e *InvoiceStatus) Scan(value interface{}) error {
 
 	switch enumValue {
 	case "pending":
-		*e = OrderStatus__Pending
+		*e = InvoiceStatus__Pending
 	case "expired":
-		*e = OrderStatus__Expired
+		*e = InvoiceStatus__Expired
 	case "paid":
-		*e = OrderStatus__Paid
+		*e = InvoiceStatus__Paid
 	default:
 		return errors.New("invalid scan value '" + enumValue + "' for InvoiceStatus enum")
 	}

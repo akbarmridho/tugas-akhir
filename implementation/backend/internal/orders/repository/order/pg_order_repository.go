@@ -106,7 +106,7 @@ func (r *PGOrderRepository) GetOrder(ctx context.Context, payload entity.GetOrde
 				o.id, o.status, o.fail_reason, o.event_id, o.ticket_sale_id,
 				o.first_ticket_area_id, o.external_user_id, o.created_at, o.updated_at
 			FROM orders o
-			WHERE o.id = $1 AND o.external_user_id = $2
+			WHERE o.id = $1 AND (o.external_user_id = $2 OR $3)
 		),
 		invoice_data AS (
 			SELECT
@@ -244,7 +244,7 @@ func (r *PGOrderRepository) GetOrder(ctx context.Context, payload entity.GetOrde
     `
 
 	var orderJSON json.RawMessage
-	err := r.db.GetExecutor(ctx).QueryRow(ctx, query, payload.OrderID, *payload.UserID).Scan(&orderJSON)
+	err := r.db.GetExecutor(ctx).QueryRow(ctx, query, payload.OrderID, *payload.UserID, payload.BypassUserID).Scan(&orderJSON)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, entity.OrderNotFoundError

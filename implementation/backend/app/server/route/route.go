@@ -24,10 +24,12 @@ func (r Routes) Setup(engine *echo.Echo) {
 func NewRoutes(
 	eventsRoute *EventsRoute,
 	ordersRoute *OrdersRoute,
+	webhookRoute *WebhookRoute,
 ) *Routes {
 	rootRoutes := []Route{
 		eventsRoute,
 		ordersRoute,
+		webhookRoute,
 	}
 
 	return &Routes{

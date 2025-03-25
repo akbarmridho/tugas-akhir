@@ -57,8 +57,9 @@ type PlaceOrderDto struct {
 }
 
 type GetOrderDto struct {
-	OrderID int64 `param:"id" validate:"required"`
-	UserID  *string
+	OrderID      int64 `param:"id" validate:"required"`
+	UserID       *string
+	BypassUserID bool
 }
 
 type UpdateOrderStatusDto struct {
