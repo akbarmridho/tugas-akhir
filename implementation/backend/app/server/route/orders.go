@@ -26,4 +26,5 @@ func (r *OrdersRoute) Setup(engine *echo.Group) {
 	group.Use(r.authMiddleware.JwtMiddleware)
 
 	group.POST("/", r.orderHandler.PlaceOrder)
+	group.GET("/:id", r.orderHandler.GetOrder)
 }
