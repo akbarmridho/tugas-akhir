@@ -14,6 +14,7 @@ export const env = createEnv({
 			.enum(["development", "production", "test"])
 			.default("development"),
 		WEBHOOK_URL: z.string().url(),
+		WEBHOOK_SECRET: z.string(),
 	},
 
 	/**

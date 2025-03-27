@@ -5,6 +5,7 @@ import { env } from "../common/env.js";
 import { InvoiceSchema } from "../common/schema.js";
 import got from "got";
 import { readFileSync } from "node:fs";
+import { computeHMACSHA256 } from "./verify.js";
 
 (async function main() {
 	// Create the worker to process webhook jobs
@@ -30,9 +31,16 @@ import { readFileSync } from "node:fs";
 
 			const invoice = rawInvoice.data;
 
+			const payload = JSON.stringify(invoice);
+			const hash = computeHMACSHA256(env.WEBHOOK_SECRET, payload);
+
 			try {
 				const response = await got.post(env.WEBHOOK_URL, {
-					json: invoice,
+					body: payload,
+					headers: {
+						"content-type": "application/json",
+						"x-webhook-verify": hash,
+					},
 					https: {
 						key: readFileSync("../cert/key.pem"),
 						certificate: readFileSync("../cert/cert.pem"),
