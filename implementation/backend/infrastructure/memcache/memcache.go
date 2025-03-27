@@ -2,6 +2,7 @@ package memcache
 
 import (
 	"github.com/allegro/bigcache"
+	"go.uber.org/fx"
 	"time"
 )
 
@@ -25,3 +26,5 @@ func NewMemcache() (*Memcache, error) {
 		Cache: cache,
 	}, nil
 }
+
+var Module = fx.Options(fx.Provide(NewMemcache))

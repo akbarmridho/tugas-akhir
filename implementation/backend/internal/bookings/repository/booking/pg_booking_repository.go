@@ -16,7 +16,7 @@ type PGBookingRepository struct {
 	db *postgres.Postgres
 }
 
-func NewPGBookingInterface(db *postgres.Postgres) *PGBookingRepository {
+func NewPGBookingRepository(db *postgres.Postgres) *PGBookingRepository {
 	return &PGBookingRepository{
 		db: db,
 	}

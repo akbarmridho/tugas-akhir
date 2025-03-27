@@ -1,8 +1,10 @@
-package postgres
+package risingwave
 
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.uber.org/fx"
+	"tugas-akhir/backend/infrastructure/config"
 )
 
 type Risingwave struct {
@@ -11,8 +13,8 @@ type Risingwave struct {
 
 // NewRisingwave
 // Example database url
-func NewRisingwave(config Config) (*Risingwave, error) {
-	c, err := pgxpool.ParseConfig(config.DatabaseUrl)
+func NewRisingwave(config *config.Config) (*Risingwave, error) {
+	c, err := pgxpool.ParseConfig(config.RisingwaveUrl)
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), c)
 	if err != nil {
@@ -23,3 +25,5 @@ func NewRisingwave(config Config) (*Risingwave, error) {
 		Pool: pool,
 	}, nil
 }
+
+var Module = fx.Options(fx.Provide(NewRisingwave))

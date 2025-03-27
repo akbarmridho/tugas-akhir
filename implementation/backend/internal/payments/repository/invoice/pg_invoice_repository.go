@@ -12,6 +12,12 @@ type PGInvoiceRepository struct {
 	db *postgres.Postgres
 }
 
+func NewPGInvoiceRepository(db *postgres.Postgres) *PGInvoiceRepository {
+	return &PGInvoiceRepository{
+		db: db,
+	}
+}
+
 func (r *PGInvoiceRepository) CreateInvoice(ctx context.Context, payload entity.CreateInvoiceDto) (*entity.Invoice, error) {
 	query := `
 	INSERT INTO invoices(status, amount, external_id, order_id)

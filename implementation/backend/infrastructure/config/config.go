@@ -18,7 +18,8 @@ type Config struct {
 	AppVariant   AppVariant
 	PodName      string `envconfig:"POD_NAME" default:"none"`
 
-	DatabaseUrl       string `envconfig:"DATABASE_URL" required:"true"`
+	DatabaseUrl       string `envconfig:"DATABASE_URL"`
+	RisingwaveUrl     string `envconfig:"RISINGWAVE_URL"`
 	PaymentServiceUrl string `envconfig:"PAYMENT_SERVICE_URL" required:"true"`
 	PaymentCertPath   string `envconfig:"PAYMENT_CERT_PATH" required:"true"`
 	WebhookSecret     string `envconfig:"WEBHOOK_SECRET" required:"true"`

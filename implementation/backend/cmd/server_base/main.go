@@ -7,9 +7,16 @@ import (
 	"sync"
 	"time"
 	"tugas-akhir/backend/app/server"
+	"tugas-akhir/backend/app/server/handler"
 	"tugas-akhir/backend/app/server/middleware"
 	"tugas-akhir/backend/app/server/route"
 	"tugas-akhir/backend/infrastructure/config"
+	"tugas-akhir/backend/infrastructure/memcache"
+	"tugas-akhir/backend/infrastructure/postgres"
+	"tugas-akhir/backend/internal/bookings"
+	"tugas-akhir/backend/internal/events"
+	"tugas-akhir/backend/internal/orders"
+	"tugas-akhir/backend/internal/payments"
 	"tugas-akhir/backend/pkg/logger"
 	myvalidator "tugas-akhir/backend/pkg/validator"
 
@@ -30,7 +37,14 @@ func main() {
 		}),
 		fx.Provide(myvalidator.NewTranslastedValidator),
 		config.Module,
+		memcache.Module,
+		postgres.Module,
 		middleware.Module,
+		handler.BaseModule,
+		bookings.BaseModule,
+		events.BaseModule,
+		orders.BaseModule,
+		payments.BaseModule,
 		route.Module,
 		server.Module,
 		fx.Invoke(RunServer),
