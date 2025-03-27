@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"time"
+	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/pkg/logger"
 
 	"github.com/labstack/echo/v4"
@@ -10,60 +11,70 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// ZapLogger is a middleware and zap to provide an "access log" like logging for each request.
-func ZapLogger(l *zap.Logger) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			start := time.Now()
+type LoggerMiddleware struct {
+	LoggerMiddleware echo.MiddlewareFunc
+}
 
-			beforeReq := c.Request()
+func NewLoggerMiddleware(config *config.Config) *LoggerMiddleware {
+	l := logger.GetInfo()
 
-			id := beforeReq.Header.Get(echo.HeaderXRequestID)
+	return &LoggerMiddleware{
+		LoggerMiddleware: func(next echo.HandlerFunc) echo.HandlerFunc {
+			return func(c echo.Context) error {
+				start := time.Now()
 
-			ctx := c.Request().Context()
+				beforeReq := c.Request()
 
-			log := l.With(zap.String("request_id", id))
+				id := beforeReq.Header.Get(echo.HeaderXRequestID)
 
-			ctx = logger.WithCtx(ctx, log)
+				ctx := c.Request().Context()
 
-			beforeReq = c.Request().WithContext(ctx)
+				log := l.With(zap.String("request_id", id))
 
-			c.SetRequest(beforeReq)
+				ctx = logger.WithCtx(ctx, log)
 
-			err := next(c)
-			if err != nil {
-				c.Error(err)
+				beforeReq = c.Request().WithContext(ctx)
+
+				c.SetRequest(beforeReq)
+
+				err := next(c)
+				if err != nil {
+					c.Error(err)
+				}
+
+				afterReq := c.Request()
+				afterRes := c.Response()
+
+				// take from
+				log = logger.FromCtx(afterReq.Context())
+
+				fields := []zapcore.Field{
+					zap.String("remote_ip", c.RealIP()),
+					zap.String("latency", time.Since(start).String()),
+					zap.String("host", afterReq.Host),
+					zap.String("request", fmt.Sprintf("%s %s", afterReq.Method, afterReq.RequestURI)),
+					zap.Int("status", afterRes.Status),
+					zap.Int64("size", afterRes.Size),
+					zap.String("user_agent", afterReq.UserAgent()),
+					zap.String("app_variant", string(config.AppVariant)),
+					zap.String("test_scenario", config.TestScenario),
+					zap.String("pod_name", config.PodName),
+				}
+
+				n := afterRes.Status
+				switch {
+				case n >= 500:
+					log.With(zap.Error(err)).Error("Server error", fields...)
+				case n >= 400:
+					log.With(zap.Error(err)).Warn("Client error", fields...)
+				case n >= 300:
+					log.Info("Redirection", fields...)
+				default:
+					log.Info("Success", fields...)
+				}
+
+				return nil
 			}
-
-			afterReq := c.Request()
-			afterRes := c.Response()
-
-			// take from
-			log = logger.FromCtx(afterReq.Context())
-
-			fields := []zapcore.Field{
-				zap.String("remote_ip", c.RealIP()),
-				zap.String("latency", time.Since(start).String()),
-				zap.String("host", afterReq.Host),
-				zap.String("request", fmt.Sprintf("%s %s", afterReq.Method, afterReq.RequestURI)),
-				zap.Int("status", afterRes.Status),
-				zap.Int64("size", afterRes.Size),
-				zap.String("user_agent", afterReq.UserAgent()),
-			}
-
-			n := afterRes.Status
-			switch {
-			case n >= 500:
-				log.With(zap.Error(err)).Error("Server error", fields...)
-			case n >= 400:
-				log.With(zap.Error(err)).Warn("Client error", fields...)
-			case n >= 300:
-				log.Info("Redirection", fields...)
-			default:
-				log.Info("Success", fields...)
-			}
-
-			return nil
-		}
+		},
 	}
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/fx"
 	"net/http"
-	"os"
 	"time"
 	"tugas-akhir/backend/app/server/handler/health"
 	middleware2 "tugas-akhir/backend/app/server/middleware"
@@ -44,6 +43,7 @@ func NewServer(
 	healthHandler health.HealthcheckHandler,
 	routes *route.Routes,
 	config *config.Config,
+	loggerMiddleware *middleware2.LoggerMiddleware,
 ) *Server {
 	engine := echo.New()
 	engine.HideBanner = true
@@ -58,7 +58,7 @@ func NewServer(
 		LabelFuncs: map[string]echoprometheus.LabelValueFunc{
 			"test_scenario":  func(c echo.Context, err error) string { return config.TestScenario },
 			"app_variant":    func(c echo.Context, err error) string { return string(config.AppVariant) },
-			"kubernetes_pod": func(c echo.Context, err error) string { return os.Getenv("POD_NAME") },
+			"kubernetes_pod": func(c echo.Context, err error) string { return config.PodName },
 		},
 	}))
 
@@ -76,7 +76,7 @@ func NewServer(
 	engine.GET("/health", healthHandler.Healthcheck)
 
 	// setup common middleware=
-	engine.Use(middleware2.ZapLogger(logger.GetInfo()))
+	engine.Use(loggerMiddleware.LoggerMiddleware)
 
 	engine.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello World!")
