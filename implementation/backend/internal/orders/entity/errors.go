@@ -11,3 +11,7 @@ var OrderNotFoundError = errors.New("order not found")
 var TicketSaleNotFoundError = errors.New("ticket sale not found")
 
 var WebhookInternalError = errors.New("webhook internal error")
+
+var TicketSaleNotStartedError = errors.New("ticket sale is not yet started")
+
+var TicketSaleEndedError = errors.New("ticket sale is ended")

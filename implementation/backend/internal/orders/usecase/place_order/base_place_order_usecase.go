@@ -6,6 +6,7 @@ import (
 	errors2 "github.com/pkg/errors"
 	"net/http"
 	"strconv"
+	"time"
 	"tugas-akhir/backend/infrastructure/postgres"
 	entity2 "tugas-akhir/backend/internal/bookings/entity"
 	"tugas-akhir/backend/internal/bookings/repository/booking"
@@ -102,6 +103,24 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 		return nil, &myerror.HttpError{
 			Code:    http.StatusBadRequest,
 			Message: entity.TicketSaleNotFoundError.Error(),
+		}
+	}
+
+	// check for sale time
+
+	now := time.Now()
+
+	if now.Before(ticketSale.SaleBeginAt) {
+		return nil, &myerror.HttpError{
+			Code:    http.StatusBadRequest,
+			Message: entity.TicketSaleNotStartedError.Error(),
+		}
+	}
+
+	if now.After(ticketSale.SaleEndAt) {
+		return nil, &myerror.HttpError{
+			Code:    http.StatusBadRequest,
+			Message: entity.TicketSaleEndedError.Error(),
 		}
 	}
 

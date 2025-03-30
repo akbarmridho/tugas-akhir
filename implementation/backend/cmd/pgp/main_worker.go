@@ -42,8 +42,7 @@ func main() {
 		payments.BaseModule,
 		processor.Module,
 		fx.Invoke(func(processor *processor.Processor, c *config.Config) error {
-			c.AppVariant = config.AppVariant__Radar
-
+			c.AppVariant = config.AppVariant__PGP
 			return processor.Run()
 		},
 		),
