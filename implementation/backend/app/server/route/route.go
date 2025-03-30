@@ -39,6 +39,7 @@ func NewRoutes(
 
 var Module = fx.Options(
 	fx.Provide(NewEventsRoute),
+	fx.Provide(NewOrdersRoute),
 	fx.Provide(NewRoutes),
 	fx.Provide(NewWebhookRoute),
 )
