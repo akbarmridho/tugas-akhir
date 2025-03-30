@@ -144,10 +144,31 @@ func (r *PGBookingRepository) GetIssuedTickets(ctx context.Context, payload enti
 		return nil, errors.WithStack(errors.WithMessage(entity.IssuedTicketFetchError, "cannot get the order count"))
 	}
 
+	if count == 0 {
+		return nil, entity.IssuedTicketNotFoundError
+	}
+
 	query := `
-	SELECT *
-	FROM issued_tickets
-	WHERE order_id = $1
+		SELECT 
+			it.id, 
+			it.serial_number, 
+			it.holder_name, 
+			it.name, 
+			it.description, 
+			it.seat_id, 
+			it.order_id, 
+			it.order_item_id, 
+			it.created_at, 
+			it.updated_at,
+			ts.id AS "ticketSeat.id",
+			ts.seat_number AS "ticketSeat.seatNumber",
+			ts.status AS "ticketSeat.status",
+			ts.ticket_area_id AS "ticketSeat.ticketAreaId",
+			ts.created_at AS "ticketSeat.createdAt",
+			ts.updated_at AS "ticketSeat.updatedAt"
+		FROM issued_tickets it
+		JOIN ticket_seats ts ON it.seat_id = ts.id
+		WHERE it.order_id = $1
     `
 
 	result := make([]entity.IssuedTicket, 0)
@@ -156,6 +177,10 @@ func (r *PGBookingRepository) GetIssuedTickets(ctx context.Context, payload enti
 
 	if err != nil {
 		return nil, err
+	}
+
+	if len(result) == 0 {
+		return nil, entity.IssuedTicketNotFoundError
 	}
 
 	return result, nil

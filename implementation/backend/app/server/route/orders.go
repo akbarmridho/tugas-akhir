@@ -27,4 +27,5 @@ func (r *OrdersRoute) Setup(engine *echo.Group) {
 
 	group.POST("/", r.orderHandler.PlaceOrder)
 	group.GET("/:id", r.orderHandler.GetOrder)
+	group.GET("/:id/tickets", r.orderHandler.GetIssuedTickets)
 }

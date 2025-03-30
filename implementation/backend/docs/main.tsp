@@ -236,7 +236,28 @@ model PlaceOrderDto {
     items: OrderItemDto[];
 }
 
+model IssuedTicket {
+    id: int64;
+    serialNumber: string;
+    holderName: string;
+    name: string;
+    description: string;
+    seatId: int64;
+    orderId: int64;
+    orderItemId: int64;
+    createdAt: utcDateTime;
+    updatedAt: utcDateTime;
+
+    // Relations
+    ticketSeat: TicketSeat;
+}
+
 model GetOrderDto {
+    @path
+    id: int64;
+}
+
+model GetIssuedTicketDto {
     @path
     id: int64;
 }
@@ -287,4 +308,10 @@ namespace OrderRoutes {
     op getOrder(
         ...GetOrderDto,
     ): PayloadResponse<Order> | ResourceNotFoundResponse | InputErrorResponse;
+
+    @route("/{id}/tickets")
+    @get
+    op getIssuedTickets(
+        ...GetIssuedTicketDto,
+    ): PayloadResponse<IssuedTicket> | ResourceNotFoundResponse | InputErrorResponse;
 }

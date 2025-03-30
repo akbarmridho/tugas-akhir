@@ -224,6 +224,41 @@ paths:
         - orders
       security:
         - BearerAuth: []
+  /orders/{id}/tickets:
+    get:
+      operationId: OrderRoutes_getIssuedTickets
+      parameters:
+        - $ref: '#/components/parameters/GetIssuedTicketDto'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/IssuedTicket'
+                  message:
+                    type: string
+                required:
+                  - data
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+      tags:
+        - orders
+      security:
+        - BearerAuth: []
 components:
   parameters:
     GetAvailabilityDto:
@@ -235,6 +270,13 @@ components:
         format: int64
     GetEventDto:
       name: eventId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    GetIssuedTicketDto:
+      name: id
       in: path
       required: true
       schema:
@@ -370,6 +412,49 @@ components:
         - expired
         - failed
         - success
+    IssuedTicket:
+      type: object
+      required:
+        - id
+        - serialNumber
+        - holderName
+        - name
+        - description
+        - seatId
+        - orderId
+        - orderItemId
+        - createdAt
+        - updatedAt
+        - ticketSeat
+      properties:
+        id:
+          type: integer
+          format: int64
+        serialNumber:
+          type: string
+        holderName:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        seatId:
+          type: integer
+          format: int64
+        orderId:
+          type: integer
+          format: int64
+        orderItemId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        ticketSeat:
+          $ref: '#/components/schemas/TicketSeat'
     Order:
       type: object
       required:

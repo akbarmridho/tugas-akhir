@@ -22,7 +22,7 @@ type IssuedTicket struct {
 	TicketSeat entity.TicketSeat `json:"ticketSeat"`
 }
 
-type SeatInfo struct {
+type SeatInfoDto struct {
 	CategoryName string
 	SeatType     entity.AreaType
 	SeatNumber   string
@@ -31,7 +31,7 @@ type SeatInfo struct {
 type PublishIssuedTicketDto struct {
 	EventName      string
 	TicketSaleName string
-	SeatInfos      []SeatInfo
+	SeatInfos      []SeatInfoDto
 	Items          []entity2.OrderItem
 }
 
