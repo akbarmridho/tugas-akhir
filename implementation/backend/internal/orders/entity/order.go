@@ -50,6 +50,7 @@ type OrderItemDto struct {
 
 type PlaceOrderDto struct {
 	UserID            *string
+	IdempotencyKey    *string
 	EventID           int64 `json:"eventId"`
 	TicketSaleID      int64 `json:"ticketSaleId"`
 	FirstTicketAreaID *int64
