@@ -1,0 +1,27 @@
+{
+  "name": "tugas-akhir-backend-docs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "compile": "npx tsp compile .",
+    "serve": "npx tsp compile . && npx open-swagger-ui ./tsp-output/@typespec/openapi3/openapi.yaml --port 5000 --open"
+  },
+  "peerDependencies": {
+    "@typespec/compiler": "latest",
+    "@typespec/http": "latest",
+    "@typespec/openapi3": "latest",
+    "@typespec/rest": "latest"
+  },
+  "devDependencies": {
+    "@typespec/compiler": "latest",
+    "@typespec/http": "latest",
+    "@typespec/openapi3": "latest",
+    "@typespec/rest": "latest",
+    "open-swagger-ui": "^1.2.0"
+  },
+  "private": true,
+  "author": "Akbar Maulana Ridho",
+  "license": "ISC",
+  "description": ""
+}

@@ -1,0 +1,675 @@
+openapi: 3.0.0
+info:
+  title: Ticket Backend Service
+  version: 0.0.0
+tags:
+  - name: events
+  - name: orders
+paths:
+  /events/:
+    get:
+      operationId: EventRoutes_getEvents
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+                  message:
+                    type: string
+                required:
+                  - data
+      tags:
+        - events
+      security:
+        - BearerAuth: []
+  /events/availability/{ticketSaleId}:
+    get:
+      operationId: EventRoutes_getAvailability
+      parameters:
+        - $ref: '#/components/parameters/GetAvailabilityDto'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AreaAvailability'
+                  message:
+                    type: string
+                required:
+                  - data
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+      tags:
+        - events
+      security:
+        - BearerAuth: []
+  /events/seats/{ticketAreaId}:
+    get:
+      operationId: EventRoutes_getSeats
+      parameters:
+        - $ref: '#/components/parameters/GetSeatsDto'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TicketSeat'
+                  message:
+                    type: string
+                required:
+                  - data
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+      tags:
+        - events
+      security:
+        - BearerAuth: []
+  /events/{eventId}:
+    get:
+      operationId: EventRoutes_getEvent
+      parameters:
+        - $ref: '#/components/parameters/GetEventDto'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Event'
+                  message:
+                    type: string
+                required:
+                  - data
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+      tags:
+        - events
+      security:
+        - BearerAuth: []
+  /orders/:
+    post:
+      operationId: OrderRoutes_placeOrder
+      parameters:
+        - name: idempotency-key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Order'
+                  message:
+                    type: string
+                required:
+                  - data
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+      tags:
+        - orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceOrderDto'
+      security:
+        - BearerAuth: []
+  /orders/{id}:
+    get:
+      operationId: OrderRoutes_getOrder
+      parameters:
+        - $ref: '#/components/parameters/GetOrderDto'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Order'
+                  message:
+                    type: string
+                required:
+                  - data
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseModel'
+      tags:
+        - orders
+      security:
+        - BearerAuth: []
+components:
+  parameters:
+    GetAvailabilityDto:
+      name: ticketSaleId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    GetEventDto:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    GetOrderDto:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    GetSeatsDto:
+      name: ticketAreaId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  schemas:
+    AreaAvailability:
+      type: object
+      required:
+        - ticketPackageId
+        - ticketAreaId
+        - totalSeats
+        - availableSeats
+      properties:
+        ticketPackageId:
+          type: integer
+          format: int64
+        ticketAreaId:
+          type: integer
+          format: int64
+        totalSeats:
+          type: integer
+          format: int32
+        availableSeats:
+          type: integer
+          format: int32
+    AreaType:
+      type: string
+      enum:
+        - numbered-seating
+        - free-standing
+    ErrorResponseModel:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+    Event:
+      type: object
+      required:
+        - id
+        - name
+        - location
+        - description
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        ticketSales:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketSale'
+    FieldError:
+      type: object
+      required:
+        - field
+        - tag
+        - message
+      properties:
+        field:
+          type: string
+        tag:
+          type: string
+        message:
+          type: string
+    Invoice:
+      type: object
+      required:
+        - id
+        - status
+        - amount
+        - externalId
+        - orderId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        status:
+          $ref: '#/components/schemas/InvoiceStatus'
+        amount:
+          type: integer
+          format: int32
+        externalId:
+          type: string
+        orderId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    InvoiceStatus:
+      type: string
+      enum:
+        - pending
+        - expired
+        - failed
+        - success
+    Order:
+      type: object
+      required:
+        - id
+        - status
+        - failReason
+        - eventId
+        - ticketSaleId
+        - firstTicketAreaId
+        - externalUserId
+        - createdAt
+        - updatedAt
+        - items
+        - invoice
+      properties:
+        id:
+          type: integer
+          format: int64
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        failReason:
+          type: string
+          nullable: true
+        eventId:
+          type: integer
+          format: int64
+        ticketSaleId:
+          type: integer
+          format: int64
+        firstTicketAreaId:
+          type: integer
+          format: int64
+        externalUserId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        invoice:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Invoice'
+          nullable: true
+        event:
+          $ref: '#/components/schemas/Event'
+        ticketSale:
+          $ref: '#/components/schemas/TicketSale'
+    OrderItem:
+      type: object
+      required:
+        - id
+        - customerName
+        - customerEmail
+        - price
+        - orderId
+        - ticketCategoryId
+        - ticketSeatId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        customerName:
+          type: string
+        customerEmail:
+          type: string
+        price:
+          type: integer
+          format: int64
+        orderId:
+          type: integer
+          format: int64
+        ticketCategoryId:
+          type: integer
+          format: int64
+        ticketSeatId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        ticketSeat:
+          $ref: '#/components/schemas/TicketSeat'
+        ticketCategory:
+          $ref: '#/components/schemas/TicketCategory'
+    OrderItemDto:
+      type: object
+      required:
+        - customerName
+        - customerEmail
+        - ticketSeatId
+      properties:
+        customerName:
+          type: string
+        customerEmail:
+          type: string
+        ticketSeatId:
+          type: integer
+          format: int64
+    OrderStatus:
+      type: string
+      enum:
+        - waiting-for-payment
+        - failed
+        - success
+      description: Orders
+    PlaceOrderDto:
+      type: object
+      required:
+        - eventId
+        - ticketSaleId
+        - items
+      properties:
+        eventId:
+          type: integer
+          format: int64
+        ticketSaleId:
+          type: integer
+          format: int64
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemDto'
+          minItems: 1
+          maxItems: 5
+    SeatStatus:
+      type: string
+      enum:
+        - available
+        - on-hold
+        - sold
+      description: Events
+    TicketArea:
+      type: object
+      required:
+        - id
+        - type
+        - ticketPackageId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          $ref: '#/components/schemas/AreaType'
+        ticketPackageId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        ticketSeats:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketSeat'
+    TicketCategory:
+      type: object
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    TicketPackage:
+      type: object
+      required:
+        - id
+        - price
+        - ticketCategoryId
+        - ticketSaleId
+        - createdAt
+        - updatedAt
+        - ticketCategory
+        - ticketAreas
+      properties:
+        id:
+          type: integer
+          format: int64
+        price:
+          type: integer
+          format: int32
+        ticketCategoryId:
+          type: integer
+          format: int64
+        ticketSaleId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        ticketCategory:
+          $ref: '#/components/schemas/TicketCategory'
+        ticketAreas:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketArea'
+    TicketSale:
+      type: object
+      required:
+        - id
+        - name
+        - saleBeginAt
+        - saleEndAt
+        - eventId
+        - createdAt
+        - updatedAt
+        - ticketPackages
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        saleBeginAt:
+          type: string
+          format: date-time
+        saleEndAt:
+          type: string
+          format: date-time
+        eventId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        ticketPackages:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketPackage'
+    TicketSeat:
+      type: object
+      required:
+        - id
+        - seatNumber
+        - status
+        - ticketAreaId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        seatNumber:
+          type: string
+        status:
+          $ref: '#/components/schemas/SeatStatus'
+        ticketAreaId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        ticketArea:
+          $ref: '#/components/schemas/TicketArea'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: Bearer
+servers:
+  - url: '{protocol}://{hostname}'
+    description: Server host
+    variables:
+      protocol:
+        default: https
+        enum:
+          - http
+          - https
+      hostname:
+        default: localhost:3000

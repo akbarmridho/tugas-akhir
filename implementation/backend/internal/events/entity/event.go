@@ -16,7 +16,7 @@ type Event struct {
 
 type TicketCategory struct {
 	ID        int64     `json:"id"`
-	Name      int64     `json:"name"`
+	Name      string    `json:"name"`
 	EventID   int64     `json:"eventId"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
@@ -51,12 +51,12 @@ type TicketPackage struct {
 type TicketArea struct {
 	ID              int64     `json:"id"`
 	Type            AreaType  `json:"type"`
-	TicketPackageID int64     `json:"ticketPackageID"`
+	TicketPackageID int64     `json:"ticketPackageId"`
 	CreatedAt       time.Time `json:"createdAt"`
 	UpdatedAt       time.Time `json:"updatedAt"`
 
 	// Relations
-	TicketSeats []TicketSeat `json:"ticketSeats"`
+	TicketSeats []TicketSeat `json:"ticketSeats,omitempty"`
 }
 
 type TicketSeat struct {
