@@ -12,40 +12,32 @@ import (
 )
 
 type BookingWorker struct {
-	ctx               context.Context
 	placeOrderUsecase place_order.PlaceOrderUsecase
 	resultPublisher   *ResultPublisher
 }
 
-// Process will synchronously perform a job and return the result.
-func (w *BookingWorker) Process(rawPayload interface{}) interface{} {
-	l := logger.FromCtx(w.ctx).With(zap.String("context", "worker"))
-
-	rawMsg := rawPayload.(amqp091.Delivery)
+func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) error {
+	l := logger.FromCtx(ctx).With(zap.String("context", "worker"))
 
 	var buffer bytes.Buffer
 
-	_, writeBufferErr := buffer.Write(rawMsg.Body)
-
-	if writeBufferErr != nil {
+	if _, writeBufferErr := buffer.Write(rawMsg.Body); writeBufferErr != nil {
 		l.Sugar().Error(writeBufferErr)
 
 		rejectErr := rawMsg.Reject(true)
 
 		if rejectErr != nil {
 			l.Sugar().Error(rejectErr)
-
+			return rejectErr
 		}
 
-		return nil
+		return writeBufferErr
 	}
 
 	var payload entity.PlaceOrderMessage
 
 	decoder := gob.NewDecoder(&buffer)
-	decodeErr := decoder.Decode(&payload)
-
-	if decodeErr != nil {
+	if decodeErr := decoder.Decode(&payload); decodeErr != nil {
 		l.Sugar().Error(decodeErr)
 
 		rejectErr := rawMsg.Reject(true)
@@ -55,43 +47,34 @@ func (w *BookingWorker) Process(rawPayload interface{}) interface{} {
 
 		}
 
-		return nil
+		return decodeErr
 	}
 
-	response, httpErr := w.placeOrderUsecase.PlaceOrder(w.ctx, payload.Data)
+	response, httpErr := w.placeOrderUsecase.PlaceOrder(ctx, payload.Data)
 
-	return w.resultPublisher.Publish(w.ctx, entity.PlaceOrderReplyMessage{
+	publishErr := w.resultPublisher.Publish(ctx, entity.PlaceOrderReplyMessage{
 		Order:      response,
 		HttpErr:    httpErr,
 		ReplyRoute: payload.ReplyRoute,
 	})
+
+	if publishErr != nil {
+		l.Sugar().Error(publishErr)
+		return publishErr
+	}
+
+	return nil
 }
 
-// BlockUntilReady is called before each job is processed and must block the
-// calling goroutine until the Worker is ready to process the next job.
-func (w *BookingWorker) BlockUntilReady() {
-	// todo
-}
-
-// Interrupt is called when a job is cancelled. The worker is responsible
-// for unblocking the Process implementation.
-func (w *BookingWorker) Interrupt() {
-	// todo
-}
-
-// Terminate is called when a Worker is removed from the processing pool
-// and is responsible for cleaning up any held resources.
-func (w *BookingWorker) Terminate() {
-	// todo
+func (w *BookingWorker) Stop() error {
+	return w.resultPublisher.Stop()
 }
 
 func NewBookingWorker(
-	ctx context.Context,
 	placeOrderUsecase place_order.PlaceOrderUsecase,
 	resultPublisher *ResultPublisher,
 ) *BookingWorker {
 	return &BookingWorker{
-		ctx:               ctx,
 		placeOrderUsecase: placeOrderUsecase,
 		resultPublisher:   resultPublisher,
 	}

@@ -2,24 +2,25 @@ package processor
 
 import (
 	"context"
-	"github.com/Jeffail/tunny"
+	"github.com/platinummonkey/go-concurrency-limits/core"
+	"github.com/platinummonkey/go-concurrency-limits/limit"
+	limiter2 "github.com/platinummonkey/go-concurrency-limits/limiter"
+	"github.com/platinummonkey/go-concurrency-limits/strategy"
 	"go.uber.org/zap"
-	"runtime"
 	"tugas-akhir/backend/app/processor/worker"
 	"tugas-akhir/backend/infrastructure/amqp"
 	entity2 "tugas-akhir/backend/infrastructure/amqp/entity"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/internal/orders/entity"
-	"tugas-akhir/backend/internal/orders/usecase/place_order"
 	"tugas-akhir/backend/pkg/logger"
 )
 
 type Processor struct {
-	pool            *tunny.Pool
-	config          *config.Config
-	orderConsumer   *amqp.Consumer
-	resultPublisher *worker.ResultPublisher
-	ctx             context.Context
+	config        *config.Config
+	orderConsumer *amqp.Consumer
+	ctx           context.Context
+	limiter       core.Limiter
+	worker        *worker.BookingWorker
 }
 
 func (p *Processor) Run() error {
@@ -40,9 +41,7 @@ func (p *Processor) Stop() error {
 		l.Error(consumeErr)
 	}
 
-	p.pool.Close()
-
-	if publishErr := p.resultPublisher.Stop(); publishErr != nil {
+	if publishErr := p.worker.Stop(); publishErr != nil {
 		l.Error(publishErr)
 	}
 
@@ -74,10 +73,28 @@ func (p *Processor) ConsumePlaceOrder() error {
 					l.Info("receiving message")
 
 					go func() {
-						_, processErr := p.pool.ProcessCtx(p.ctx, rawMsg)
+						listener, ok := p.limiter.Acquire(p.ctx)
+
+						if !ok || listener == nil {
+							l.Sugar().Errorf("failed to acquire because not ok or listener is nil")
+
+							if requeueErr := rawMsg.Reject(true); requeueErr != nil {
+								l.Sugar().Error(requeueErr)
+							}
+
+							if listener != nil {
+								listener.OnDropped()
+							}
+
+							return
+						}
+
+						processErr := p.worker.Process(p.ctx, &rawMsg)
 
 						if processErr != nil {
-							l.Sugar().Error(processErr)
+							listener.OnDropped()
+						} else {
+							listener.OnSuccess()
 						}
 					}()
 				case <-p.ctx.Done():
@@ -94,10 +111,8 @@ func (p *Processor) ConsumePlaceOrder() error {
 func NewProcessor(
 	config *config.Config,
 	ctx context.Context,
-	placeOrderUsecase place_order.PlaceOrderUsecase,
-) *Processor {
-	numCPU := runtime.NumCPU()
-
+	worker *worker.BookingWorker,
+) (*Processor, error) {
 	orderConsumer := amqp.NewConsumer(
 		config,
 		entity.PlaceOrderQueue,
@@ -110,19 +125,29 @@ func NewProcessor(
 		},
 	)
 
-	resultPublisher := worker.NewResultPublisher(config)
+	// Setup concurrency limits
+	// todo integrate with prometheus metrics registry
+	// todo update logger to match zap
+	limitStrategy := strategy.NewSimpleStrategy(100)
 
-	pool := tunny.New(numCPU, func() tunny.Worker {
-		return worker.NewBookingWorker(ctx, placeOrderUsecase, resultPublisher)
-	})
+	defaultLimiter, err := limiter2.NewDefaultLimiterWithDefaults(
+		"order_processor_limiter",
+		limitStrategy,
+		limit.BuiltinLimitLogger{},
+		core.EmptyMetricRegistryInstance,
+	)
 
-	// todo ability to adjust flow rate
+	if err != nil {
+		return nil, err
+	}
+
+	limiter := limiter2.NewQueueBlockingLimiterFromConfig(defaultLimiter, limiter2.QueueLimiterConfig{})
 
 	return &Processor{
-		ctx:             ctx,
-		pool:            pool,
-		orderConsumer:   orderConsumer,
-		resultPublisher: resultPublisher,
-		config:          config,
-	}
+		ctx:           ctx,
+		orderConsumer: orderConsumer,
+		config:        config,
+		limiter:       limiter,
+		worker:        worker,
+	}, nil
 }

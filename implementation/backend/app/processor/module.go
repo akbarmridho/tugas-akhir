@@ -7,5 +7,6 @@ import (
 
 var Module = fx.Options(
 	fx.Provide(worker.NewResultPublisher),
+	fx.Provide(worker.NewBookingWorker),
 	fx.Provide(NewProcessor),
 )
