@@ -3,27 +3,40 @@ package processor
 import (
 	"context"
 	"github.com/platinummonkey/go-concurrency-limits/core"
-	"github.com/platinummonkey/go-concurrency-limits/limit"
-	limiter2 "github.com/platinummonkey/go-concurrency-limits/limiter"
-	"github.com/platinummonkey/go-concurrency-limits/strategy"
 	"go.uber.org/zap"
+	"time"
 	"tugas-akhir/backend/app/processor/worker"
 	"tugas-akhir/backend/infrastructure/amqp"
 	entity2 "tugas-akhir/backend/infrastructure/amqp/entity"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/internal/orders/entity"
+	go_metrics_prometheus "tugas-akhir/backend/pkg/go-metrics-prometheus"
 	"tugas-akhir/backend/pkg/logger"
 )
 
+const PollInterval = 3 * time.Second
+const ProcessorNamespace = string(config.AppVariant__PGP)
+const ProcessorSubsystem = "order_processor"
+const LimiterName = "order_processor_limiter"
+const StrategyLimit = 1000
+const ConcurrencyLimit = 1000
+
 type Processor struct {
-	config        *config.Config
-	orderConsumer *amqp.Consumer
-	ctx           context.Context
-	limiter       core.Limiter
-	worker        *worker.BookingWorker
+	config           *config.Config
+	orderConsumer    *amqp.Consumer
+	ctx              context.Context
+	limiter          core.Limiter
+	worker           *worker.BookingWorker
+	prometheusClient *go_metrics_prometheus.PrometheusConfig
+}
+
+func (p *Processor) PrometheusClient() *go_metrics_prometheus.PrometheusConfig {
+	return p.prometheusClient
 }
 
 func (p *Processor) Run() error {
+	go p.prometheusClient.UpdatePrometheusMetrics()
+
 	// run consume place order
 	err := p.ConsumePlaceOrder()
 
@@ -125,29 +138,18 @@ func NewProcessor(
 		},
 	)
 
-	// Setup concurrency limits
-	// todo integrate with prometheus metrics registry
-	// todo update logger to match zap
-	limitStrategy := strategy.NewSimpleStrategy(100)
-
-	defaultLimiter, err := limiter2.NewDefaultLimiterWithDefaults(
-		"order_processor_limiter",
-		limitStrategy,
-		limit.BuiltinLimitLogger{},
-		core.EmptyMetricRegistryInstance,
-	)
+	limiter, prometheusClient, err := NewLimiter(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	limiter := limiter2.NewQueueBlockingLimiterFromConfig(defaultLimiter, limiter2.QueueLimiterConfig{})
-
 	return &Processor{
-		ctx:           ctx,
-		orderConsumer: orderConsumer,
-		config:        config,
-		limiter:       limiter,
-		worker:        worker,
+		ctx:              ctx,
+		orderConsumer:    orderConsumer,
+		config:           config,
+		limiter:          limiter,
+		worker:           worker,
+		prometheusClient: prometheusClient,
 	}, nil
 }

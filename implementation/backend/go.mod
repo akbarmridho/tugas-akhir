@@ -18,7 +18,9 @@ require (
 	github.com/perimeterx/marshmallow v1.1.5
 	github.com/pkg/errors v0.9.1
 	github.com/platinummonkey/go-concurrency-limits v0.8.0
+	github.com/prometheus/client_golang v1.21.1
 	github.com/rabbitmq/amqp091-go v1.10.0
+	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475
 	github.com/redis/go-redis/v9 v9.7.1
 	github.com/thessem/zap-prettyconsole v0.5.2
 	go.uber.org/automaxprocs v1.6.0
@@ -44,7 +46,6 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/prometheus/client_golang v1.21.1 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect

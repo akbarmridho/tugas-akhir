@@ -8,7 +8,7 @@ import (
 	myerror "tugas-akhir/backend/pkg/error"
 )
 
-var PlaceOrderTimeout = 10 * time.Second
+var PlaceOrderTimeout = 30 * time.Second
 
 var PlaceOrderQueue = entity.QueueConfig{
 	Name:       "place_orders",

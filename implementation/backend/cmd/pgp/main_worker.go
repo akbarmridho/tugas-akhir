@@ -43,6 +43,8 @@ func main() {
 		processor.Module,
 		fx.Invoke(func(processor *processor.Processor, c *config.Config) error {
 			c.AppVariant = config.AppVariant__PGP
+
+			// todo
 			return processor.Run()
 		},
 		),
