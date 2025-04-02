@@ -11,6 +11,7 @@ import (
 	"tugas-akhir/backend/internal/bookings/entity"
 	"tugas-akhir/backend/internal/bookings/service"
 	entity2 "tugas-akhir/backend/internal/events/entity"
+	"tugas-akhir/backend/pkg/cursor_iterator"
 )
 
 type PGBookingRepository struct {
@@ -244,4 +245,30 @@ func (r *PGBookingRepository) GetIssuedTickets(ctx context.Context, payload enti
 	}
 
 	return result, nil
+}
+
+func (r *PGBookingRepository) IterSeats(ctx context.Context) ([]entity2.TicketSeat, *cursor_iterator.CursorIterator, error) {
+	query := `
+	SELECT 
+            ts.id, ts.seat_number, ts.status, ts.ticket_area_id, ts.created_at, ts.updated_at,
+            ta.id AS "ticket_area.id", 
+            ta.type AS "ticket_area.type", 
+            ta.ticket_package_id AS "ticket_area.ticket_package_id", 
+            ta.created_at AS "ticket_area.created_at", 
+            ta.updated_at AS "ticket_area.updated_at"
+        FROM 
+            ticket_seats ts
+        JOIN 
+            ticket_areas ta ON ts.ticket_area_id = ta.id
+    `
+
+	result := make([]entity2.TicketSeat, 100)
+
+	iter, err := cursor_iterator.NewCursorIterator(r.db.Pool, result, query)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, iter, err
 }
