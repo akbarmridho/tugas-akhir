@@ -7,9 +7,11 @@ import (
 	"io"
 	"net/http"
 	"tugas-akhir/backend/infrastructure/config"
+	"tugas-akhir/backend/infrastructure/redis"
 	"tugas-akhir/backend/internal/auth/entity"
 	entity3 "tugas-akhir/backend/internal/bookings/entity"
 	entity2 "tugas-akhir/backend/internal/orders/entity"
+	"tugas-akhir/backend/internal/orders/service"
 	"tugas-akhir/backend/internal/orders/usecase/get_order"
 	"tugas-akhir/backend/internal/orders/usecase/place_order"
 	"tugas-akhir/backend/internal/orders/usecase/webhook"
@@ -25,6 +27,7 @@ type BaseOrderHandler struct {
 	getOrderUsecase     get_order.GetOrderUsecase
 	webhookOrderUsecase webhook.WebhookOrderUsecase
 	config              *config.Config
+	redis               *redis.Redis
 }
 
 func NewBaseOrderHandler(
@@ -33,6 +36,7 @@ func NewBaseOrderHandler(
 	getOrderUsecase get_order.GetOrderUsecase,
 	webhookOrderUsecase webhook.WebhookOrderUsecase,
 	config *config.Config,
+	redis *redis.Redis,
 ) *BaseOrderHandler {
 	return &BaseOrderHandler{
 		validator:           validator,
@@ -40,6 +44,7 @@ func NewBaseOrderHandler(
 		getOrderUsecase:     getOrderUsecase,
 		webhookOrderUsecase: webhookOrderUsecase,
 		config:              config,
+		redis:               redis,
 	}
 }
 
@@ -69,7 +74,13 @@ func (h *BaseOrderHandler) PlaceOrder(c echo.Context) error {
 
 	payload.UserID = &tokenClaim.UserID
 
-	result, httpErr := h.placeOrderUsecase.PlaceOrder(ctx, payload)
+	idempotencyKey := c.Request().Header.Get(HeaderIdempotencyKey)
+
+	if idempotencyKey != "" {
+		payload.IdempotencyKey = &idempotencyKey
+	}
+
+	result, httpErr := service.WrapIdempotency(ctx, h.redis, h.placeOrderUsecase.PlaceOrder, payload)
 
 	if httpErr != nil {
 		httpErr.Log(ctx)

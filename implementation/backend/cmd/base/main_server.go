@@ -13,6 +13,7 @@ import (
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/memcache"
 	"tugas-akhir/backend/infrastructure/postgres"
+	"tugas-akhir/backend/infrastructure/redis"
 	"tugas-akhir/backend/internal/bookings"
 	"tugas-akhir/backend/internal/events"
 	"tugas-akhir/backend/internal/orders"
@@ -39,6 +40,7 @@ func main() {
 		config.Module,
 		memcache.Module,
 		postgres.Module,
+		redis.Module,
 		middleware.Module,
 		handler.BaseModule,
 		bookings.BaseModule,

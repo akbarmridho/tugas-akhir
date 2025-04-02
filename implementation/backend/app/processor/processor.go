@@ -127,7 +127,7 @@ func NewProcessor(
 		entity.PlaceOrderQueue,
 		&entity.PlaceOrderExchange,
 		entity2.ConsumeConfig{
-			PrefetchCount: 4,
+			PrefetchCount: ConcurrencyLimit,
 			PrefetchSize:  0,
 			AutoAck:       false,
 			RoutingKeys:   []string{"orders"},

@@ -26,6 +26,9 @@ type Config struct {
 	WebhookSecret     string `envconfig:"WEBHOOK_SECRET" required:"true"`
 
 	WorkerMetricsPort int `envconfig:"WORKER_METRICS_PORT" default:"5000"`
+
+	RedisHosts    string `envconfig:"REDIS_HOSTS"`
+	RedisPassword string `envconfig:"REDIS_PASSWORD"`
 }
 
 func NewConfig() (*Config, error) {

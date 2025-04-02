@@ -1,28 +1,32 @@
 package redis
 
-import baseredis "github.com/redis/go-redis/v9"
+import (
+	baseredis "github.com/redis/go-redis/v9"
+	"go.uber.org/fx"
+	"strings"
+	"tugas-akhir/backend/infrastructure/config"
+)
 
-type Cluster struct {
+type Redis struct {
 	Client *baseredis.ClusterClient
 }
 
-type Config struct {
-	Hosts    []string
-	Password *string
-}
+func NewRedis(config *config.Config) (*Redis, error) {
+	hosts := strings.Split(config.RedisHosts, ",")
 
-func NewRedis(config Config) (*Cluster, error) {
 	opts := baseredis.ClusterOptions{
-		Addrs: config.Hosts,
+		Addrs: hosts,
 	}
 
-	if config.Password != nil {
-		opts.Password = *config.Password
+	if config.RedisPassword != "" {
+		opts.Password = config.RedisPassword
 	}
 
 	rdb := baseredis.NewClusterClient(&opts)
 
-	return &Cluster{
+	return &Redis{
 		Client: rdb,
 	}, nil
 }
+
+var Module = fx.Options(fx.Provide(NewRedis))
