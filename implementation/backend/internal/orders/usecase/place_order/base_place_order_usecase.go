@@ -125,11 +125,16 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 	}
 
 	bookRequest := entity2.BookingRequestDto{
-		SeatIDs: []int64{},
+		SeatIDs:       []int64{},
+		TicketAreaIDs: []int64{},
 	}
 
 	for _, item := range payload.Items {
-		bookRequest.SeatIDs = append(bookRequest.SeatIDs, item.TicketSeatID)
+		if item.TicketSeatID != nil {
+			bookRequest.SeatIDs = append(bookRequest.SeatIDs, *item.TicketSeatID)
+		} else {
+			bookRequest.TicketAreaIDs = append(bookRequest.SeatIDs, item.TicketAreaID)
+		}
 	}
 
 	ticketSeats, err := u.bookingRepository.Book(ctx, bookRequest)
@@ -153,14 +158,31 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 
 	total := int32(0)
 
+	takenSeat := make(map[int64]bool)
+
 	// enrich item data
 	for _, item := range payload.Items {
 		var seat *entity3.TicketSeat
 
 		for _, s := range ticketSeats {
-			if item.TicketSeatID == s.ID {
-				seat = &s
-				break
+			if item.TicketSeatID == nil {
+				// free seated
+				if item.TicketAreaID == s.TicketAreaID {
+					_, ok := takenSeat[s.ID]
+
+					if ok {
+						continue
+					} else {
+						seat = &s
+						takenSeat[s.ID] = true
+						break
+					}
+				}
+			} else {
+				if *item.TicketSeatID == s.ID {
+					seat = &s
+					break
+				}
 			}
 		}
 
@@ -178,6 +200,24 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 		for _, ticketPackage := range ticketSale.TicketPackages {
 			for _, area := range ticketPackage.TicketAreas {
 				if area.ID == seat.TicketAreaID {
+					if area.Type == entity3.AreaType__NumberedSeating && item.TicketSeatID == nil {
+						err := errors2.WithStack(errors2.WithMessage(entity3.PlaceOrderBadRequest, "seat is numbered but no seat id given"))
+						return nil, &myerror.HttpError{
+							Code:         http.StatusBadRequest,
+							Message:      err.Error(),
+							ErrorContext: err,
+						}
+					}
+
+					if area.Type == entity3.AreaType__FreeStanding && item.TicketSeatID != nil {
+						err := errors2.WithStack(errors2.WithMessage(entity3.PlaceOrderBadRequest, "seat is free standing but seat id given"))
+						return nil, &myerror.HttpError{
+							Code:         http.StatusBadRequest,
+							Message:      err.Error(),
+							ErrorContext: err,
+						}
+					}
+
 					item.TicketCategoryID = &ticketPackage.TicketCategoryID
 					item.Price = &ticketPackage.Price
 					total += ticketPackage.Price
@@ -185,6 +225,8 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 				}
 			}
 		}
+
+		item.TicketSeatID = &seat.ID
 
 		if !priceSet {
 			err := errors2.WithStack(errors2.WithMessage(entity3.InternalOrderConfigurationError, "cannot find area from given payload"))

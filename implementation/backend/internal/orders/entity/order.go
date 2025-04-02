@@ -43,7 +43,8 @@ type OrderItem struct {
 type OrderItemDto struct {
 	CustomerName     string `json:"customerName" validate:"required"`
 	CustomerEmail    string `json:"customerEmail" validate:"required,email"`
-	TicketSeatID     int64  `json:"ticketSeatId" validate:"required"`
+	TicketSeatID     *int64 `json:"ticketSeatId"`
+	TicketAreaID     int64  `json:"ticketAreaId" validate:"required"`
 	Price            *int32
 	TicketCategoryID *int64
 }
