@@ -75,7 +75,7 @@ func (p *Processor) ConsumePlaceOrder() error {
 				select {
 				case rawMsg, ok := <-channel:
 					if !ok {
-						l.Info("updates channel is closed")
+						l.Info("channel is closed")
 						break mainLoop
 					}
 

@@ -1,4 +1,4 @@
-package service
+package idempotent_place_order
 
 import (
 	"context"

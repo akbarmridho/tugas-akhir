@@ -17,3 +17,7 @@ var TicketSaleNotStartedError = errors.New("ticket sale is not yet started")
 var TicketSaleEndedError = errors.New("ticket sale is ended")
 
 var IdempotencyKeyNotFound = errors.New("idempotency key not found")
+
+var PlaceOrderTimeoutError = errors.New("place order timed out")
+
+var PlaceOrderCancelled = errors.New("place order cancelled")

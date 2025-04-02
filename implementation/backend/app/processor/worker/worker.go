@@ -53,9 +53,10 @@ func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) e
 	response, httpErr := w.placeOrderUsecase.PlaceOrder(ctx, payload.Data)
 
 	publishErr := w.resultPublisher.Publish(ctx, entity.PlaceOrderReplyMessage{
-		Order:      response,
-		HttpErr:    httpErr,
-		ReplyRoute: payload.ReplyRoute,
+		Order:          response,
+		HttpErr:        httpErr,
+		ReplyRoute:     payload.ReplyRoute,
+		IdempotencyKey: *payload.Data.IdempotencyKey,
 	})
 
 	if publishErr != nil {

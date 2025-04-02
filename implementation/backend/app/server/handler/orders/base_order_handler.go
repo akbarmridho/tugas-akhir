@@ -11,7 +11,7 @@ import (
 	"tugas-akhir/backend/internal/auth/entity"
 	entity3 "tugas-akhir/backend/internal/bookings/entity"
 	entity2 "tugas-akhir/backend/internal/orders/entity"
-	"tugas-akhir/backend/internal/orders/service"
+	"tugas-akhir/backend/internal/orders/service/idempotent_place_order"
 	"tugas-akhir/backend/internal/orders/usecase/get_order"
 	"tugas-akhir/backend/internal/orders/usecase/place_order"
 	"tugas-akhir/backend/internal/orders/usecase/webhook"
@@ -80,7 +80,7 @@ func (h *BaseOrderHandler) PlaceOrder(c echo.Context) error {
 		payload.IdempotencyKey = &idempotencyKey
 	}
 
-	result, httpErr := service.WrapIdempotency(ctx, h.redis, h.placeOrderUsecase.PlaceOrder, payload)
+	result, httpErr := idempotent_place_order.WrapIdempotency(ctx, h.redis, h.placeOrderUsecase.PlaceOrder, payload)
 
 	if httpErr != nil {
 		httpErr.Log(ctx)

@@ -3,6 +3,7 @@ package entity
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"time"
 	"tugas-akhir/backend/infrastructure/amqp/entity"
 	myerror "tugas-akhir/backend/pkg/error"
@@ -19,8 +20,19 @@ var PlaceOrderQueue = entity.QueueConfig{
 	Timeout:    &PlaceOrderTimeout,
 }
 
+func NewPlaceOrderReplyQueue(identifier string) entity.QueueConfig {
+	return entity.QueueConfig{
+		Name:       fmt.Sprintf("place_orders_reply_%s", identifier),
+		Durable:    false,
+		AutoDelete: false,
+		NoWait:     false,
+		Exclusive:  false,
+		Timeout:    &PlaceOrderTimeout,
+	}
+}
+
 var PlaceOrderExchange = entity.ExchangeConfig{
-	Name:       "crawling",
+	Name:       "place_order",
 	Kind:       "topic",
 	Durable:    true,
 	AutoDelete: false,
@@ -56,9 +68,10 @@ func (m PlaceOrderMessage) ToMessage() (*entity.Message, error) {
 }
 
 type PlaceOrderReplyMessage struct {
-	Order      *Order
-	HttpErr    *myerror.HttpError
-	ReplyRoute string
+	Order          *Order
+	HttpErr        *myerror.HttpError
+	ReplyRoute     string
+	IdempotencyKey string
 }
 
 func (m PlaceOrderReplyMessage) ToMessage() (*entity.Message, error) {
