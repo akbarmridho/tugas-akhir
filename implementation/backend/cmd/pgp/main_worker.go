@@ -41,11 +41,18 @@ func main() {
 		orders.BaseModule,
 		payments.BaseModule,
 		processor.Module,
-		fx.Invoke(func(processor *processor.Processor, c *config.Config) error {
+		fx.Invoke(func(processor *processor.Processor, metricsServer *processor.MetricsServer, c *config.Config, ctx context.Context) error {
 			c.AppVariant = config.AppVariant__PGP
 
-			// todo
-			return processor.Run()
+			if err := processor.Run(); err != nil {
+				return err
+			}
+
+			if err := metricsServer.Run(ctx); err != nil {
+				return err
+			}
+
+			return nil
 		},
 		),
 	)

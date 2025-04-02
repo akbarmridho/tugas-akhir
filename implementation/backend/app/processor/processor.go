@@ -30,10 +30,6 @@ type Processor struct {
 	prometheusClient *go_metrics_prometheus.PrometheusConfig
 }
 
-func (p *Processor) PrometheusClient() *go_metrics_prometheus.PrometheusConfig {
-	return p.prometheusClient
-}
-
 func (p *Processor) Run() error {
 	go p.prometheusClient.UpdatePrometheusMetrics()
 

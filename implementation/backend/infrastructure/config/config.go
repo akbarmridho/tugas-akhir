@@ -24,6 +24,8 @@ type Config struct {
 	PaymentServiceUrl string `envconfig:"PAYMENT_SERVICE_URL" required:"true"`
 	PaymentCertPath   string `envconfig:"PAYMENT_CERT_PATH" required:"true"`
 	WebhookSecret     string `envconfig:"WEBHOOK_SECRET" required:"true"`
+
+	WorkerMetricsPort int `envconfig:"WORKER_METRICS_PORT" default:"5000"`
 }
 
 func NewConfig() (*Config, error) {
