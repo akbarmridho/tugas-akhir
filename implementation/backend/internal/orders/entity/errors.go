@@ -21,3 +21,11 @@ var IdempotencyKeyNotFound = errors.New("idempotency key not found")
 var PlaceOrderTimeoutError = errors.New("place order timed out")
 
 var PlaceOrderCancelled = errors.New("place order cancelled")
+
+var DropperSeatNotAvailable = errors.New("seat not available")
+
+var DropperInternalError = errors.New("dropper internal error")
+
+var LockAlreadyReleased = errors.New("lock already released")
+
+var CannotAcquireLock = errors.New("cannot acquire lock")
