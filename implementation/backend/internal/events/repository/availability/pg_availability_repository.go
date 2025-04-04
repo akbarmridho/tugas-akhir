@@ -7,17 +7,17 @@ import (
 	"tugas-akhir/backend/internal/events/entity"
 )
 
-type PGAvailabilityRepositoryImpl struct {
+type PGAvailabilityRepository struct {
 	pg *postgres.Postgres
 }
 
-func NewPGAvailabilityRepositoryImpl(pg *postgres.Postgres) *PGAvailabilityRepositoryImpl {
-	return &PGAvailabilityRepositoryImpl{
+func NewPGAvailabilityRepository(pg *postgres.Postgres) *PGAvailabilityRepository {
+	return &PGAvailabilityRepository{
 		pg: pg,
 	}
 }
 
-func (r *PGAvailabilityRepositoryImpl) GetAvailability(ctx context.Context, payload entity.GetAvailabilityDto) ([]entity.AreaAvailability, error) {
+func (r *PGAvailabilityRepository) GetAvailability(ctx context.Context, payload entity.GetAvailabilityDto) ([]entity.AreaAvailability, error) {
 	query := `
 	SELECT 
 		tp.id AS ticket_package_id,
@@ -26,9 +26,9 @@ func (r *PGAvailabilityRepositoryImpl) GetAvailability(ctx context.Context, payl
 		COUNT(CASE WHEN ts.status = 'available' THEN 1 END) AS available_seats
 	FROM 
 		ticket_packages tp
-	JOIN 
+	INNER JOIN 
 		ticket_areas ta ON ta.ticket_package_id = tp.id
-	JOIN 
+	INNER JOIN 
 		ticket_seats ts ON ts.ticket_area_id = ta.id
 	WHERE 
 		tp.ticket_sale_id = $1
