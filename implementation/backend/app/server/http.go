@@ -79,7 +79,13 @@ func NewServer(
 	engine.Use(loggerMiddleware.LoggerMiddleware)
 
 	engine.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello World!")
+		return c.JSON(http.StatusOK, struct {
+			AppVariant string
+			Scenario   string
+		}{
+			AppVariant: string(config.AppVariant),
+			Scenario:   config.TestScenario,
+		})
 	})
 
 	routes.Setup(engine)

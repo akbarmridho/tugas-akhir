@@ -3,12 +3,17 @@ package redis
 import (
 	"context"
 	"errors"
+	errors2 "github.com/pkg/errors"
 	baseredis "github.com/redis/go-redis/v9"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 	"strings"
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
+	"tugas-akhir/backend/pkg/logger"
 )
+
+var RedisUnhealthy = errors.New("redis cluster unhealthy")
 
 type Redis struct {
 	Client *baseredis.ClusterClient
@@ -87,4 +92,80 @@ func (r *Redis) GetOrSetWithEx(
 
 }
 
-var Module = fx.Options(fx.Provide(NewRedis))
+func (r *Redis) IsHealthy(baseCtx context.Context) error {
+	l := logger.FromCtx(baseCtx).With(zap.String("service", "redis-health-check"))
+
+	ctx, cancel := context.WithTimeout(baseCtx, 5*time.Second)
+	defer cancel()
+
+	_, err := r.Client.Ping(ctx).Result()
+	if err != nil {
+		return err
+	}
+
+	clusterInfo, err := r.Client.ClusterInfo(ctx).Result()
+
+	if err != nil {
+		return err
+	}
+
+	if !strings.Contains(clusterInfo, "cluster_state:ok") {
+		l.Warn(clusterInfo)
+		return errors2.WithMessage(RedisUnhealthy, "cluster state is not ok")
+	}
+
+	clusterNodes, err := r.Client.ClusterNodes(ctx).Result()
+	if err != nil {
+		return err
+	}
+
+	lines := strings.Split(clusterNodes, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+
+		if line == "" {
+			continue
+		}
+
+		parts := strings.Fields(line)
+
+		if len(parts) < 3 {
+			continue
+		}
+
+		flags := strings.Split(parts[2], ",")
+
+		// Check if node is a master (should be master since we only have masters)
+		isMaster := false
+		isFailing := false
+
+		for _, flag := range flags {
+			if flag == "master" {
+				isMaster = true
+			}
+			if flag == "fail" || flag == "fail?" {
+				isFailing = true
+			}
+		}
+
+		// If node is failing or not a master, the cluster is unhealthy
+		if isFailing || !isMaster {
+			l.Warn(clusterNodes)
+			return errors2.WithMessage(RedisUnhealthy, "master node is failing")
+		}
+	}
+
+	return nil
+}
+
+func (r *Redis) Stop() error {
+	return r.Client.Close()
+}
+
+var Module = fx.Options(
+	fx.Provide(fx.Annotate(NewRedis,
+		fx.OnStop(func(r *Redis) error {
+			return r.Stop()
+		}),
+	)),
+)

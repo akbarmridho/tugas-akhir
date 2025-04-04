@@ -9,6 +9,18 @@ import (
 
 var BaseModule = fx.Options(
 	fx.Provide(events.NewEventHandler),
-	fx.Provide(fx.Annotate(health.NewPGHealthcheckHandler, fx.As(new(health.HealthcheckHandler)))),
+	fx.Provide(fx.Annotate(health.NewBaseHealthcheckHandler, fx.As(new(health.HealthcheckHandler)))),
+	fx.Provide(fx.Annotate(orders.NewBaseOrderHandler, fx.As(new(orders.OrderHandler)))),
+)
+
+var PGPModule = fx.Options(
+	fx.Provide(events.NewEventHandler),
+	fx.Provide(fx.Annotate(health.NewPGPHealthcheckHandler, fx.As(new(health.HealthcheckHandler)))),
+	fx.Provide(fx.Annotate(orders.NewBaseOrderHandler, fx.As(new(orders.OrderHandler)))),
+)
+
+var EDAModule = fx.Options(
+	fx.Provide(events.NewEventHandler),
+	fx.Provide(fx.Annotate(health.NewEDAHealthcheckHandler, fx.As(new(health.HealthcheckHandler)))),
 	fx.Provide(fx.Annotate(orders.NewBaseOrderHandler, fx.As(new(orders.OrderHandler)))),
 )
