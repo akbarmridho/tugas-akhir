@@ -72,6 +72,7 @@ type TicketSeat struct {
 }
 
 type AreaAvailability struct {
+	TicketSaleID    int64 `json:"-"`
 	TicketPackageID int64 `json:"ticketPackageId"`
 	TicketAreaID    int64 `json:"ticketAreaId"`
 	TotalSeats      int32 `json:"totalSeats"`

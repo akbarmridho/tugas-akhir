@@ -62,3 +62,5 @@ FROM
     ticket_seats_rw ts ON ts.ticket_area_id = ta.id
 GROUP BY
     tp.id, ta.id, tp.ticket_sale_id;
+
+CREATE INDEX ticket_availability_by_sale_id ON ticket_availability(ticket_sale_id);
