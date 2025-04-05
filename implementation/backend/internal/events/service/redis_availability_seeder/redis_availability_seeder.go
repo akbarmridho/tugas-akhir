@@ -140,3 +140,27 @@ func (s *RedisAvailabilitySeeder) Run() error {
 	s.refreshData()
 	return nil
 }
+
+func (s *RedisAvailabilitySeeder) ApplyAvailability(ctx context.Context, items []entity2.AreaAvailability) error {
+	pipe := s.redis.Client.TxPipeline()
+
+	for _, item := range items {
+		pipe.Decr(ctx, availability2.GetAvailableSeats(item))
+	}
+
+	_, err := pipe.Exec(ctx)
+
+	return err
+}
+
+func (s *RedisAvailabilitySeeder) RevertAvailability(ctx context.Context, items []entity2.AreaAvailability) error {
+	pipe := s.redis.Client.TxPipeline()
+
+	for _, item := range items {
+		pipe.Incr(ctx, availability2.GetAvailableSeats(item))
+	}
+
+	_, err := pipe.Exec(ctx)
+
+	return err
+}

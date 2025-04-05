@@ -12,12 +12,14 @@ import (
 	"tugas-akhir/backend/internal/bookings/repository/booking"
 	entity3 "tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/events/repository/event"
+	"tugas-akhir/backend/internal/events/service/redis_availability_seeder"
 	"tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/repository/order"
 	entity4 "tugas-akhir/backend/internal/payments/entity"
 	"tugas-akhir/backend/internal/payments/repository/invoice"
 	"tugas-akhir/backend/internal/payments/service"
 	myerror "tugas-akhir/backend/pkg/error"
+	"tugas-akhir/backend/pkg/logger"
 )
 
 type BasePlaceOrderUsecase struct {
@@ -26,6 +28,7 @@ type BasePlaceOrderUsecase struct {
 	bookingRepository  booking.BookingRepository
 	invoiceRepository  invoice.InvoiceRepository
 	mockPaymentService *service.MockPaymentService
+	redisAvailability  *redis_availability_seeder.RedisAvailabilitySeeder
 	db                 *postgres.Postgres
 }
 
@@ -35,6 +38,7 @@ func NewBasePlaceOrderUsecase(
 	bookingRepository booking.BookingRepository,
 	invoiceRepository invoice.InvoiceRepository,
 	mockPaymentService *service.MockPaymentService,
+	redisAvailability *redis_availability_seeder.RedisAvailabilitySeeder,
 	db *postgres.Postgres,
 ) *BasePlaceOrderUsecase {
 	return &BasePlaceOrderUsecase{
@@ -44,10 +48,13 @@ func NewBasePlaceOrderUsecase(
 		invoiceRepository:  invoiceRepository,
 		mockPaymentService: mockPaymentService,
 		db:                 db,
+		redisAvailability:  redisAvailability,
 	}
 }
 
 func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.PlaceOrderDto) (*entity.Order, *myerror.HttpError) {
+	l := logger.FromCtx(ctx)
+
 	if payload.UserID == nil {
 		err := errors2.WithStack(errors2.WithMessage(entity3.InternalOrderConfigurationError, "user id is nil"))
 		return nil, &myerror.HttpError{
@@ -160,8 +167,15 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 
 	takenSeat := make(map[int64]bool)
 
+	appliedAvailability := make([]entity3.AreaAvailability, 0)
+
 	// enrich item data
 	for _, item := range payload.Items {
+		availabilityUpdate := entity3.AreaAvailability{
+			TicketAreaID: item.TicketAreaID,
+			TicketSaleID: ticketSale.ID,
+		}
+
 		var seat *entity3.TicketSeat
 
 		for _, s := range ticketSeats {
@@ -222,6 +236,7 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 					item.Price = &ticketPackage.Price
 					total += ticketPackage.Price
 					priceSet = true
+					availabilityUpdate.TicketPackageID = ticketPackage.ID
 				}
 			}
 		}
@@ -236,6 +251,8 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 				ErrorContext: err,
 			}
 		}
+
+		appliedAvailability = append(appliedAvailability, availabilityUpdate)
 	}
 
 	orderEntity, err := u.orderRepository.PlaceOrder(ctx, payload)
@@ -270,6 +287,11 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 			Message:      err.Error(),
 			ErrorContext: err,
 		}
+	}
+
+	// Update the counter
+	if availabilityUpdateErr := u.redisAvailability.ApplyAvailability(ctx, appliedAvailability); availabilityUpdateErr != nil {
+		l.Sugar().Error(availabilityUpdateErr)
 	}
 
 	return orderEntity, nil
