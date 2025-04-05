@@ -24,6 +24,7 @@ require (
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475
 	github.com/redis/go-redis/v9 v9.7.1
+	github.com/sony/sonyflake v1.2.0
 	github.com/thessem/zap-prettyconsole v0.5.2
 	go.uber.org/automaxprocs v1.6.0
 	go.uber.org/fx v1.23.0

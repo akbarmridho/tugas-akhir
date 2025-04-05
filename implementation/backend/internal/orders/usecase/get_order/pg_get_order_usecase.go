@@ -5,24 +5,23 @@ import (
 	"errors"
 	"net/http"
 	entity2 "tugas-akhir/backend/internal/bookings/entity"
-	"tugas-akhir/backend/internal/bookings/repository/booking"
 	"tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/repository/order"
 	myerror "tugas-akhir/backend/pkg/error"
 )
 
 type PGGetOrderUsecase struct {
-	orderRepository   order.OrderRepository
-	bookingRepository booking.BookingRepository
+	orderRepository order.OrderRepository
+	seatRepository  booked_seats.SeatRepository
 }
 
 func NewPGGetOrderUsecase(
 	orderRepository order.OrderRepository,
-	bookingRepository booking.BookingRepository,
+	seatRepository booked_seats.SeatRepository,
 ) *PGGetOrderUsecase {
 	return &PGGetOrderUsecase{
-		orderRepository:   orderRepository,
-		bookingRepository: bookingRepository,
+		orderRepository: orderRepository,
+		seatRepository:  seatRepository,
 	}
 }
 
@@ -49,7 +48,7 @@ func (u *PGGetOrderUsecase) GetOrder(ctx context.Context, payload entity.GetOrde
 }
 
 func (u *PGGetOrderUsecase) GetIssuedTicket(ctx context.Context, payload entity2.GetIssuedTicketDto) ([]entity2.IssuedTicket, *myerror.HttpError) {
-	issuedTickets, err := u.bookingRepository.GetIssuedTickets(ctx, payload)
+	issuedTickets, err := u.seatRepository.GetIssuedTickets(ctx, payload)
 
 	if err != nil {
 		if errors.Is(err, entity2.IssuedTicketNotFoundError) {

@@ -10,7 +10,6 @@ import (
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/redis"
-	"tugas-akhir/backend/internal/bookings/repository/booking"
 	entity2 "tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/pkg/logger"
@@ -28,23 +27,23 @@ func freeStandingKey(areaID int64) string {
 }
 
 type EarlyDropper struct {
-	ctx               context.Context
-	config            *config.Config
-	redis             *redis.Redis
-	bookingRepository booking.BookingRepository
+	ctx            context.Context
+	config         *config.Config
+	redis          *redis.Redis
+	seatRepository booked_seats.SeatRepository
 }
 
 func NewPGPEarlyDropper(
 	ctx context.Context,
 	config *config.Config,
 	redis *redis.Redis,
-	bookingRepository booking.BookingRepository,
+	seatRepository booked_seats.SeatRepository,
 ) *EarlyDropper {
 	return &EarlyDropper{
-		ctx:               ctx,
-		config:            config,
-		redis:             redis,
-		bookingRepository: bookingRepository,
+		ctx:            ctx,
+		config:         config,
+		redis:          redis,
+		seatRepository: seatRepository,
 	}
 }
 
@@ -74,7 +73,7 @@ func (s *EarlyDropper) refreshData() {
 	}
 
 	// refresh data
-	data, iter, err := s.bookingRepository.IterSeats(s.ctx)
+	data, iter, err := s.seatRepository.IterSeats(s.ctx)
 
 	if err != nil {
 		l.Sugar().Error(err)

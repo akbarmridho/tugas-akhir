@@ -8,8 +8,6 @@ CREATE TYPE ticket_system.order_item_type (
     price int,
     ticket_category_id bigint,
     ticket_seat_id bigint,
-    seat_number text,        -- copied from ticket_seats
-    ticket_area_id bigint,   -- copied from ticket_seats
     created_at timestamp,
     updated_at timestamp
 );
@@ -60,3 +58,6 @@ CREATE TABLE ticket_system.ticket_seats_area (
     updated_at timestamp,
     PRIMARY KEY (ticket_area_id, id)
 ) WITH CLUSTERING ORDER BY (id ASC);
+
+CREATE INDEX ON ticket_system.ticket_seats_area(id);
+CREATE INDEX ON ticket_system.orders(invoice_id);

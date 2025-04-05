@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"tugas-akhir/backend/infrastructure/postgres"
 	entity3 "tugas-akhir/backend/internal/bookings/entity"
-	"tugas-akhir/backend/internal/bookings/repository/booking"
+	"tugas-akhir/backend/internal/bookings/repository/booked_seats"
 	"tugas-akhir/backend/internal/events/repository/event"
 	entity2 "tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/repository/order"
@@ -19,26 +19,26 @@ import (
 )
 
 type PGWebhookUsecase struct {
-	orderRepository   order.OrderRepository
-	invoiceRepository invoice.InvoiceRepository
-	eventRepository   event.EventRepository
-	bookingRepository booking.BookingRepository
-	db                *postgres.Postgres
+	orderRepository       order.OrderRepository
+	invoiceRepository     invoice.InvoiceRepository
+	eventRepository       event.EventRepository
+	bookeadSeatRepository booked_seats.SeatRepository
+	db                    *postgres.Postgres
 }
 
 func NewPGWebhookUsecase(
 	orderRepository order.OrderRepository,
 	invoiceRepository invoice.InvoiceRepository,
-	bookingRepository booking.BookingRepository,
+	bookeadSeatRepository booked_seats.SeatRepository,
 	eventRepository event.EventRepository,
 	db *postgres.Postgres,
 ) *PGWebhookUsecase {
 	return &PGWebhookUsecase{
-		orderRepository:   orderRepository,
-		invoiceRepository: invoiceRepository,
-		bookingRepository: bookingRepository,
-		eventRepository:   eventRepository,
-		db:                db,
+		orderRepository:       orderRepository,
+		invoiceRepository:     invoiceRepository,
+		bookeadSeatRepository: bookeadSeatRepository,
+		eventRepository:       eventRepository,
+		db:                    db,
 	}
 }
 
@@ -153,7 +153,7 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 	}
 
 	if shouldPublish {
-		err = u.bookingRepository.PublishIssuedTickets(ctx, entity3.PublishIssuedTicketDto{
+		err = u.bookeadSeatRepository.PublishIssuedTickets(ctx, entity3.PublishIssuedTicketDto{
 			EventName:      fmt.Sprintf("%s - %s", orderEntity.Event.Name, orderEntity.Event.Location),
 			TicketSaleName: orderEntity.TicketSale.Name,
 			SeatInfos:      seatInfo,
