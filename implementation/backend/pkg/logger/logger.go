@@ -124,16 +124,3 @@ func WithCtx(ctx context.Context, l *zap.Logger) context.Context {
 
 	return context.WithValue(ctx, ctxKey{}, l)
 }
-
-type ZapToStrLogger struct {
-	zapLogger *zap.Logger
-}
-
-func (z *ZapToStrLogger) Write(p []byte) (n int, err error) {
-	z.zapLogger.Info(string(p))
-	return len(p), nil
-}
-
-func NewStdLoggerFromZap(l *zap.Logger, flag int) *log.Logger {
-	return log.New(&ZapToStrLogger{zapLogger: l}, "", flag)
-}

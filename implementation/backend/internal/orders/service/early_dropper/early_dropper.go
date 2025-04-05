@@ -10,6 +10,7 @@ import (
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/redis"
+	"tugas-akhir/backend/internal/bookings/repository/booked_seats"
 	entity2 "tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/pkg/logger"

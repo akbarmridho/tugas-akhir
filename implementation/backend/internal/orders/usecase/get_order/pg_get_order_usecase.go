@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	entity2 "tugas-akhir/backend/internal/bookings/entity"
+	"tugas-akhir/backend/internal/bookings/repository/booked_seats"
 	"tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/repository/order"
 	myerror "tugas-akhir/backend/pkg/error"
