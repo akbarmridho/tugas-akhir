@@ -29,7 +29,6 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 	if payload.FirstTicketAreaID == nil {
 		return nil, errors.WithStack(errors.WithMessage(entity.OrderPlacementInternalError, "first ticket area id is nil"))
 	}
-
 	querier := r.db.GetExecutor(ctx)
 
 	orderQuery := `

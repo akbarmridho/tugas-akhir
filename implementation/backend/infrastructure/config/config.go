@@ -20,6 +20,7 @@ type Config struct {
 
 	DatabaseUrl       string `envconfig:"DATABASE_URL"`
 	RisingwaveUrl     string `envconfig:"RISINGWAVE_URL"`
+	ScyllaHosts       string `envconfig:"SCYLLA_HOSTS"`
 	AmqpUrl           string `envconfig:"AMQP_URL"`
 	PaymentServiceUrl string `envconfig:"PAYMENT_SERVICE_URL" required:"true"`
 	PaymentCertPath   string `envconfig:"PAYMENT_CERT_PATH" required:"true"`
