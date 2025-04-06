@@ -15,7 +15,7 @@ import (
 )
 
 const PollInterval = 3 * time.Second
-const ProcessorNamespace = string(config.AppVariant__PGP)
+const ProcessorNamespace = string(config.FlowControlVariant__DropperAsync)
 const ProcessorSubsystem = "order_processor"
 const LimiterName = "order_processor_limiter"
 const StrategyLimit = 1000

@@ -14,9 +14,10 @@ type Config struct {
 	TlsKeyPath  string `envconfig:"TLS_KEY_PATH" required:"true"`
 	JwtSecret   string `envconfig:"JWT_SECRET" required:"true"`
 
-	TestScenario string `envconfig:"TEST_SCENARIO"`
-	AppVariant   AppVariant
-	PodName      string `envconfig:"POD_NAME" default:"none"`
+	TestScenario       string    `envconfig:"TEST_SCENARIO"`
+	PodName            string    `envconfig:"POD_NAME" default:"none"`
+	DBVariant          DBVariant `envconfig:"DB_VARIANT" required:"true"`
+	FlowControlVariant FlowControlVariant
 
 	DatabaseUrl       string `envconfig:"DATABASE_URL"`
 	AmqpUrl           string `envconfig:"AMQP_URL"`

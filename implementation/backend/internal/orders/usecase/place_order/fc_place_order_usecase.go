@@ -13,26 +13,26 @@ import (
 	"tugas-akhir/backend/pkg/logger"
 )
 
-type PGPPlaceOrderUsecase struct {
+type FCPlaceOrderUsecase struct {
 	config    *config.Config
 	connector *pgp_place_order_connector.PGPPlaceOrderConnector
 	dropper   *early_dropper.EarlyDropper
 }
 
-func NewPGPPlaceOrderUsecase(
+func NewFCPlaceOrderUsecase(
 	config *config.Config,
 	connector *pgp_place_order_connector.PGPPlaceOrderConnector,
 	dropper *early_dropper.EarlyDropper,
-) *PGPPlaceOrderUsecase {
+) *FCPlaceOrderUsecase {
 
-	return &PGPPlaceOrderUsecase{
+	return &FCPlaceOrderUsecase{
 		connector: connector,
 		config:    config,
 		dropper:   dropper,
 	}
 }
 
-func (u *PGPPlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.PlaceOrderDto) (*entity.Order, *myerror.HttpError) {
+func (u *FCPlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.PlaceOrderDto) (*entity.Order, *myerror.HttpError) {
 	lock, err := u.dropper.TryAcquireLock(ctx, payload)
 	l := logger.FromCtx(ctx)
 

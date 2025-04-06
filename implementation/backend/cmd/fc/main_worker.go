@@ -2,14 +2,14 @@ package main
 
 import (
 	"context"
+	_ "go.uber.org/automaxprocs"
+	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
 	"os"
 	"os/signal"
 	"sync"
 	"time"
-	"tugas-akhir/backend/app/server"
-	"tugas-akhir/backend/app/server/handler"
-	"tugas-akhir/backend/app/server/middleware"
-	"tugas-akhir/backend/app/server/route"
+	"tugas-akhir/backend/app/processor"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/memcache"
 	"tugas-akhir/backend/infrastructure/postgres"
@@ -19,44 +19,44 @@ import (
 	"tugas-akhir/backend/internal/orders"
 	"tugas-akhir/backend/internal/payments"
 	"tugas-akhir/backend/pkg/logger"
-	myvalidator "tugas-akhir/backend/pkg/validator"
-
-	_ "go.uber.org/automaxprocs"
-	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
 )
 
-func RunServer(
-	server *server.Server,
-	c *config.Config,
-) {
-	c.AppVariant = config.AppVariant__PGP
-	server.Run()
-}
-
 func main() {
+	l := logger.GetInfo()
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
+	ctx = logger.WithCtx(ctx, l)
+
 	app := fx.New(
 		fx.WithLogger(func() fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: logger.GetInfo()}
 		}),
-		fx.Provide(myvalidator.NewTranslastedValidator),
 		config.Module,
 		memcache.Module,
 		postgres.Module,
 		redis.Module,
-		middleware.Module,
-		handler.PGPModule,
 		bookings.BaseModule,
-		events.PGPModule,
-		orders.PGPModule,
+		events.BaseModule,
+		orders.FCWorkerModule,
 		payments.BaseModule,
-		route.Module,
-		server.Module,
-		fx.Invoke(RunServer),
-	)
+		processor.Module,
+		fx.Invoke(func(processor *processor.Processor, metricsServer *processor.MetricsServer, c *config.Config, ctx context.Context) error {
+			c.FlowControlVariant = config.FlowControlVariant__DropperAsync
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
+			if err := processor.Run(); err != nil {
+				return err
+			}
+
+			if err := metricsServer.Run(ctx); err != nil {
+				return err
+			}
+
+			return nil
+		},
+		),
+	)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -71,7 +71,7 @@ func main() {
 	// Wait for interrupt signal to gracefully shutdown the server with a timeout
 	<-ctx.Done()
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	if err := app.Stop(shutdownCtx); err != nil {

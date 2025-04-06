@@ -28,7 +28,7 @@ func NewPGEventRepository(
 	}
 }
 
-const EVENTS_CACHE_KEY = "events"
+const EventsCacheKey = "events"
 
 func eventCacheKey(id int64) string {
 	return fmt.Sprintf("%s:%d", "events:", id)
@@ -37,7 +37,7 @@ func eventCacheKey(id int64) string {
 func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, error) {
 	result := make([]entity.Event, 0)
 
-	cache, cacheErr := r.cache.Cache.Get(EVENTS_CACHE_KEY)
+	cache, cacheErr := r.cache.Cache.Get(EventsCacheKey)
 
 	if cacheErr != nil {
 		logger.FromCtx(ctx).Error("Cannot get events from cache")
@@ -70,7 +70,7 @@ func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, erro
 		logger.FromCtx(ctx).Error("Cannot marshall events")
 	}
 
-	if setCacheErr := r.cache.Cache.Set(EVENTS_CACHE_KEY, raw); setCacheErr != nil {
+	if setCacheErr := r.cache.Cache.Set(EventsCacheKey, raw); setCacheErr != nil {
 		logger.FromCtx(ctx).Error("Cannot set cache events")
 	}
 

@@ -1,19 +1,16 @@
 package config
 
-type AppVariant string
+type DBVariant string
 
 const (
-	AppVariant__Radar AppVariant = "radar"
-	AppVariant__PGP   AppVariant = "pgp"
-	AppVariant__EDA   AppVariant = "eda"
+	DBVariant__Postgres   DBVariant = "postgres"
+	DBVariant__Citusdata  DBVariant = "citusdata"
+	DBVariant__YugabyteDB DBVariant = "yugabytedb"
 )
 
-// todo test variants
-// Database: Postgres, CitusData, YugabyteDB (3)
-// Flow control: Early dropper + async
-// Test cases
-// Postgres + No Flow Control
-// CitusData + No Flow Control
-// YugabyteDB + No Flow Control
-// CitusData + With Flow Control
-// YugabyteDB + With Flow Control
+type FlowControlVariant string
+
+const (
+	FlowControlVariant__NoFlowControl FlowControlVariant = "no-flow-control"
+	FlowControlVariant__DropperAsync  FlowControlVariant = "dropper-async"
+)

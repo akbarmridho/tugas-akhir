@@ -26,8 +26,12 @@ import (
 	"go.uber.org/fx/fxevent"
 )
 
-func RunServer(server *server.Server, c *config.Config) {
-	c.AppVariant = config.AppVariant__Radar
+func RunServer(
+	server *server.Server,
+	c *config.Config,
+) {
+	c.FlowControlVariant = config.FlowControlVariant__DropperAsync
+
 	server.Run()
 }
 
@@ -42,10 +46,10 @@ func main() {
 		postgres.Module,
 		redis.Module,
 		middleware.Module,
-		handler.BaseModule,
+		handler.PGPModule,
 		bookings.BaseModule,
 		events.BaseModule,
-		orders.BaseModule,
+		orders.FCModule,
 		payments.BaseModule,
 		route.Module,
 		server.Module,

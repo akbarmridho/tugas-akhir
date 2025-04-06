@@ -51,14 +51,15 @@ func NewServer(
 
 	engine.Use(echoprometheus.NewMiddlewareWithConfig(echoprometheus.MiddlewareConfig{
 		Namespace: "ticket_backend",
-		Subsystem: string(config.AppVariant),
+		Subsystem: fmt.Sprintf("%s.%s", string(config.DBVariant), string(config.FlowControlVariant)),
 		Skipper: func(c echo.Context) bool {
 			return c.Path() == "/health"
 		},
 		LabelFuncs: map[string]echoprometheus.LabelValueFunc{
-			"test_scenario":  func(c echo.Context, err error) string { return config.TestScenario },
-			"app_variant":    func(c echo.Context, err error) string { return string(config.AppVariant) },
-			"kubernetes_pod": func(c echo.Context, err error) string { return config.PodName },
+			"test_scenario":        func(c echo.Context, err error) string { return config.TestScenario },
+			"db_variant":           func(c echo.Context, err error) string { return string(config.DBVariant) },
+			"flow_control_variant": func(c echo.Context, err error) string { return string(config.FlowControlVariant) },
+			"kubernetes_pod":       func(c echo.Context, err error) string { return config.PodName },
 		},
 	}))
 
@@ -80,11 +81,13 @@ func NewServer(
 
 	engine.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, struct {
-			AppVariant string
-			Scenario   string
+			FlowControlVariant string
+			DBVariant          string
+			Scenario           string
 		}{
-			AppVariant: string(config.AppVariant),
-			Scenario:   config.TestScenario,
+			FlowControlVariant: string(config.FlowControlVariant),
+			DBVariant:          string(config.DBVariant),
+			Scenario:           config.TestScenario,
 		})
 	})
 

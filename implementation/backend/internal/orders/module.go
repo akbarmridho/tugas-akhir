@@ -17,12 +17,12 @@ var BaseModule = fx.Options(
 	fx.Provide(fx.Annotate(webhook.NewPGWebhookUsecase, fx.As(new(webhook.WebhookOrderUsecase)))),
 )
 
-var PGPWorkerModule = fx.Options(
+var FCWorkerModule = fx.Options(
 	fx.Provide(fx.Annotate(order.NewPGOrderRepository, fx.As(new(order.OrderRepository)))),
 	fx.Provide(fx.Annotate(place_order.NewBasePlaceOrderUsecase, fx.As(new(place_order.PlaceOrderUsecase)))),
 )
 
-var PGPModule = fx.Options(
+var FCModule = fx.Options(
 	fx.Provide(fx.Annotate(order.NewPGOrderRepository, fx.As(new(order.OrderRepository)))),
 	fx.Provide(fx.Annotate(get_order.NewPGGetOrderUsecase, fx.As(new(get_order.GetOrderUsecase)))),
 	fx.Provide(fx.Annotate(pgp_place_order_connector.NewPGPPlaceOrderConnector,
@@ -42,7 +42,7 @@ var PGPModule = fx.Options(
 		}),
 	)),
 	fx.Provide(fx.Provide(fx.Annotate(
-		place_order.NewPGPPlaceOrderUsecase,
+		place_order.NewFCPlaceOrderUsecase,
 		fx.As(new(place_order.PlaceOrderUsecase)),
 	))),
 	fx.Provide(fx.Provide(fx.Annotate(webhook.NewPGWebhookUsecase, fx.As(new(webhook.WebhookOrderUsecase))))),
