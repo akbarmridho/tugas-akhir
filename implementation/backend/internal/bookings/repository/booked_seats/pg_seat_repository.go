@@ -13,12 +13,17 @@ import (
 )
 
 type PGBookedSeatRepository struct {
-	db *postgres.Postgres
+	db        *postgres.Postgres
+	generator *service.SerialNumberGenerator
 }
 
-func NewPGBookedSeatRepository(db *postgres.Postgres) *PGBookedSeatRepository {
+func NewPGBookedSeatRepository(
+	db *postgres.Postgres,
+	generator *service.SerialNumberGenerator,
+) *PGBookedSeatRepository {
 	return &PGBookedSeatRepository{
-		db: db,
+		db:        db,
+		generator: generator,
 	}
 }
 
@@ -40,7 +45,7 @@ func (r *PGBookedSeatRepository) PublishIssuedTickets(ctx context.Context, paylo
 
 		info := payload.SeatInfos[i]
 
-		serialNumber, err := service.GenerateSerialNumber(item)
+		serialNumber, err := r.generator.Generate(item)
 
 		if err != nil {
 			return err
