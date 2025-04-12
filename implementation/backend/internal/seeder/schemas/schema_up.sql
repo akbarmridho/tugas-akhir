@@ -73,7 +73,7 @@ CREATE TABLE "orders" (
     fail_reason text,
 
     event_id bigint not null references events(id) on update cascade on delete cascade,
-    ticket_sale_id bigint not null references events(id) on update cascade on delete cascade,
+    ticket_sale_id bigint not null references ticket_sales(id) on update cascade on delete cascade,
     first_ticket_area_id bigint not null references ticket_areas(id) on update cascade on delete cascade,
 
     external_user_id text not null,
