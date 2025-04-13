@@ -20,13 +20,13 @@ func NewPGInvoiceRepository(db *postgres.Postgres) *PGInvoiceRepository {
 
 func (r *PGInvoiceRepository) CreateInvoice(ctx context.Context, payload entity.CreateInvoiceDto) (*entity.Invoice, error) {
 	query := `
-	INSERT INTO invoices(status, amount, external_id, order_id)
-	VALUES ('pending', $1, $2, $3)
+	INSERT INTO invoices(status, amount, external_id, order_id, ticket_area_id)
+	VALUES ('pending', $1, $2, $3, $4)
     `
 
 	var invoice entity.Invoice
 
-	err := pgxscan.Get(ctx, r.db.GetExecutor(ctx), &invoice, query, payload.Amount, payload.ExternalID, payload.OrderID)
+	err := pgxscan.Get(ctx, r.db.GetExecutor(ctx), &invoice, query, payload.Amount, payload.ExternalID, payload.OrderID, payload.TicketAreaID)
 
 	if err != nil {
 		if pgxscan.NotFound(err) {

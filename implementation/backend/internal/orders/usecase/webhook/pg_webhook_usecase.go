@@ -158,6 +158,7 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 			TicketSaleName: orderEntity.TicketSale.Name,
 			SeatInfos:      seatInfo,
 			Items:          orderEntity.Items,
+			TicketAreaID:   orderEntity.TicketAreaID,
 		})
 
 		if err != nil {

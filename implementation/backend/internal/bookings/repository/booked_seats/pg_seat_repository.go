@@ -29,7 +29,7 @@ func NewPGBookedSeatRepository(
 
 func (r *PGBookedSeatRepository) PublishIssuedTickets(ctx context.Context, payload entity.PublishIssuedTicketDto) error {
 	query := `
-	INSERT INTO issued_tickets(serial_number, holder_name, seat_id, order_id, order_item_id, name, description) VALUES
+	INSERT INTO issued_tickets(serial_number, holder_name, ticket_seat_id, order_id, order_item_id, name, description, ticket_area_id) VALUES
     `
 
 	if len(payload.Items) != len(payload.SeatInfos) {
@@ -69,6 +69,7 @@ func (r *PGBookedSeatRepository) PublishIssuedTickets(ctx context.Context, paylo
 			paramOffset+5,
 			paramOffset+6,
 			paramOffset+7,
+			paramOffset+8,
 		)
 
 		args = append(args,
@@ -79,6 +80,7 @@ func (r *PGBookedSeatRepository) PublishIssuedTickets(ctx context.Context, paylo
 			item.ID,
 			fmt.Sprintf("%s - %s", payload.EventName, payload.TicketSaleName),
 			issuedTicketDescription,
+			payload.TicketAreaID,
 		)
 	}
 
@@ -113,7 +115,7 @@ func (r *PGBookedSeatRepository) GetIssuedTickets(ctx context.Context, payload e
 			it.holder_name, 
 			it.name, 
 			it.description, 
-			it.seat_id, 
+			it.ticket_seat_id, 
 			it.order_id, 
 			it.order_item_id, 
 			it.created_at, 

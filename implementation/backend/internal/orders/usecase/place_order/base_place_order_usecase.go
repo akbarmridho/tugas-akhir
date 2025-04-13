@@ -161,7 +161,17 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 		}
 	}
 
-	payload.FirstTicketAreaID = &ticketSeats[0].TicketAreaID
+	payload.TicketAreaID = &ticketSeats[0].TicketAreaID
+
+	for _, ticketSeat := range ticketSeats {
+		if *payload.TicketAreaID != ticketSeat.TicketAreaID {
+			return nil, &myerror.HttpError{
+				Code:         http.StatusBadRequest,
+				Message:      entity.OrderSameAreaID.Error(),
+				ErrorContext: entity.OrderSameAreaID,
+			}
+		}
+	}
 
 	total := int32(0)
 

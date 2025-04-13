@@ -463,7 +463,7 @@ components:
         - failReason
         - eventId
         - ticketSaleId
-        - firstTicketAreaId
+        - ticketAreaId
         - externalUserId
         - createdAt
         - updatedAt
@@ -484,7 +484,7 @@ components:
         ticketSaleId:
           type: integer
           format: int64
-        firstTicketAreaId:
+        ticketAreaId:
           type: integer
           format: int64
         externalUserId:

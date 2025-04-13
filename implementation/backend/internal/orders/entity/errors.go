@@ -29,3 +29,5 @@ var DropperInternalError = errors.New("dropper internal error")
 var LockAlreadyReleased = errors.New("lock already released")
 
 var CannotAcquireLock = errors.New("cannot acquire lock")
+
+var OrderSameAreaID = errors.New("orders must belongs to the same ticket area id")

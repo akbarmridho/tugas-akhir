@@ -12,7 +12,7 @@ type IssuedTicket struct {
 	HolderName   string    `json:"holderName"`
 	Name         string    `json:"name"`
 	Description  string    `json:"description"`
-	SeatID       int64     `json:"seatId"`
+	TicketSeatID int64     `json:"ticketSeatId"`
 	OrderID      int64     `json:"orderId"`
 	OrderItemID  int64     `json:"orderItemId"`
 	CreatedAt    time.Time `json:"createdAt"`
@@ -31,6 +31,7 @@ type SeatInfoDto struct {
 type PublishIssuedTicketDto struct {
 	EventName      string
 	TicketSaleName string
+	TicketAreaID   int64
 	SeatInfos      []SeatInfoDto
 	Items          []entity2.OrderItem
 }

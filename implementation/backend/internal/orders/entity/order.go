@@ -7,15 +7,15 @@ import (
 )
 
 type Order struct {
-	ID                int64       `json:"id"`
-	Status            OrderStatus `json:"status"`
-	FailReason        *string     `json:"failReason"`
-	EventID           int64       `json:"eventId"`
-	TicketSaleID      int64       `json:"ticketSaleId"`
-	FirstTicketAreaID int64       `json:"firstTicketAreaId"`
-	ExternalUserID    string      `json:"externalUserId"`
-	CreatedAt         time.Time   `json:"createdAt"`
-	UpdatedAt         time.Time   `json:"updatedAt"`
+	ID             int64       `json:"id"`
+	Status         OrderStatus `json:"status"`
+	FailReason     *string     `json:"failReason"`
+	EventID        int64       `json:"eventId"`
+	TicketSaleID   int64       `json:"ticketSaleId"`
+	TicketAreaID   int64       `json:"ticketAreaId"`
+	ExternalUserID string      `json:"externalUserId"`
+	CreatedAt      time.Time   `json:"createdAt"`
+	UpdatedAt      time.Time   `json:"updatedAt"`
 
 	// relations
 	Items      []OrderItem         `json:"items"`
@@ -50,12 +50,12 @@ type OrderItemDto struct {
 }
 
 type PlaceOrderDto struct {
-	UserID            *string
-	IdempotencyKey    *string
-	EventID           int64 `json:"eventId"`
-	TicketSaleID      int64 `json:"ticketSaleId"`
-	FirstTicketAreaID *int64
-	Items             []OrderItemDto `json:"items" validate:"required,min=1,max=5"`
+	UserID         *string
+	IdempotencyKey *string
+	EventID        int64 `json:"eventId"`
+	TicketSaleID   int64 `json:"ticketSaleId"`
+	TicketAreaID   *int64
+	Items          []OrderItemDto `json:"items" validate:"required,min=1,max=5"`
 }
 
 type GetOrderDto struct {

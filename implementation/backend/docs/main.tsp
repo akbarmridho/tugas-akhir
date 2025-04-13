@@ -191,7 +191,7 @@ model Order {
     failReason: string | null;
     eventId: int64;
     ticketSaleId: int64;
-    firstTicketAreaId: int64;
+    ticketAreaId: int64;
     externalUserId: string;
     createdAt: utcDateTime;
     updatedAt: utcDateTime;

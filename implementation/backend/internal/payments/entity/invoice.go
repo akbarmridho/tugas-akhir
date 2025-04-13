@@ -13,9 +13,10 @@ type Invoice struct {
 }
 
 type CreateInvoiceDto struct {
-	Amount     int32
-	ExternalID string
-	OrderID    int64
+	Amount       int32
+	ExternalID   string
+	OrderID      int64
+	TicketAreaID int64
 }
 
 type UpdateInvoiceStatusDto struct {

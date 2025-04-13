@@ -26,20 +26,20 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 		return nil, errors.WithStack(errors.WithMessage(entity.OrderPlacementInternalError, "user id is nil"))
 	}
 
-	if payload.FirstTicketAreaID == nil {
+	if payload.TicketAreaID == nil {
 		return nil, errors.WithStack(errors.WithMessage(entity.OrderPlacementInternalError, "first ticket area id is nil"))
 	}
 	querier := r.db.GetExecutor(ctx)
 
 	orderQuery := `
-	INSERT INTO orders(external_user_id, first_ticket_area_id, status, ticket_sale_id, event_id)
+	INSERT INTO orders(external_user_id, ticket_area_id, status, ticket_sale_id, event_id)
 	VALUES ($1, $2, 'waiting-for-payment', $3, $4)
 	RETURNING *
     `
 
 	var order entity.Order
 
-	err := pgxscan.Get(ctx, querier, &order, orderQuery, *payload.UserID, *payload.FirstTicketAreaID, payload.TicketSaleID, payload.EventID)
+	err := pgxscan.Get(ctx, querier, &order, orderQuery, *payload.UserID, *payload.TicketAreaID, payload.TicketSaleID, payload.EventID)
 
 	if err != nil {
 		if pgxscan.NotFound(err) {
@@ -52,7 +52,7 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 	orderItems := make([]entity.OrderItem, 0)
 
 	orderItemQuery := `
-	INSERT INTO order_items(customer_name, customer_email, price, order_id, ticket_seat_id, ticket_category_id) VALUES
+	INSERT INTO order_items(customer_name, customer_email, price, order_id, ticket_seat_id, ticket_category_id, ticket_area_id) VALUES
     `
 
 	args := []interface{}{}
@@ -70,12 +70,13 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 			return nil, errors.WithStack(errors.WithMessage(entity.OrderPlacementInternalError, "order item ticket category is nil"))
 		}
 
-		paramOffset := i * 6
-		orderItemQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d)", paramOffset+1, paramOffset+2, paramOffset+3, paramOffset+4, paramOffset+5, paramOffset+6)
-		args = append(args, item.CustomerName, item.CustomerEmail, *item.Price, order.ID, item.TicketSeatID, *item.TicketCategoryID)
+		paramOffset := i * 7
+		orderItemQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d)",
+			paramOffset+1, paramOffset+2, paramOffset+3, paramOffset+4, paramOffset+5, paramOffset+6, paramOffset+7)
+		args = append(args, item.CustomerName, item.CustomerEmail, *item.Price, order.ID, item.TicketSeatID, *item.TicketCategoryID, order.TicketAreaID)
 	}
 
-	orderItemQuery += " RETURNING *"
+	orderItemQuery += " RETURNING id, customer_name, customer_email, price, order_id, ticket_seat_id, ticket_category_id, created_at, updated_at"
 
 	err = pgxscan.Select(ctx, querier, &orderItems, orderItemQuery, args...)
 
@@ -103,7 +104,7 @@ func (r *PGOrderRepository) GetOrder(ctx context.Context, payload entity.GetOrde
 		WITH order_data AS (
 			SELECT
 				o.id, o.status, o.fail_reason, o.event_id, o.ticket_sale_id,
-				o.first_ticket_area_id, o.external_user_id, o.created_at, o.updated_at
+				o.ticket_area_id, o.external_user_id, o.created_at, o.updated_at
 			FROM orders o
 			WHERE o.id = $1 AND (o.external_user_id = $2 OR $3)
 		),
@@ -141,7 +142,7 @@ func (r *PGOrderRepository) GetOrder(ctx context.Context, payload entity.GetOrde
 				'failReason', o.fail_reason,
 				'eventId', o.event_id,
 				'ticketSaleId', o.ticket_sale_id,
-				'firstTicketAreaId', o.first_ticket_area_id,
+				'ticketAreaId', o.ticket_area_id,
 				'externalUserId', o.external_user_id,
 				'createdAt', o.created_at,
 				'updatedAt', o.updated_at,

@@ -3,6 +3,7 @@ package seeder
 import (
 	"context"
 	_ "embed"
+	"strings"
 	"tugas-akhir/backend/infrastructure/postgres"
 )
 
@@ -36,6 +37,10 @@ func (m *SchemaManager) SchemaDown(ctx context.Context) error {
 }
 
 func (m *SchemaManager) CitusSetup(ctx context.Context) error {
-	_, err := m.db.Pool.Exec(ctx, CitusSetup)
-	return err
+	for _, cmd := range strings.Split(CitusSetup, "-- marker split") {
+		_, err := m.db.Pool.Exec(ctx, cmd)
+		return err
+	}
+
+	return nil
 }
