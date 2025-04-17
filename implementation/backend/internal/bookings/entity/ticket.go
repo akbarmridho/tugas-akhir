@@ -19,7 +19,7 @@ type IssuedTicket struct {
 	UpdatedAt    time.Time `json:"updatedAt"`
 
 	// Relations
-	TicketSeat entity.TicketSeat `json:"ticketSeat"`
+	TicketSeat entity.TicketSeat `json:"ticketSeat" db:"ticket_seat"`
 }
 
 type SeatInfoDto struct {
@@ -37,6 +37,6 @@ type PublishIssuedTicketDto struct {
 }
 
 type GetIssuedTicketDto struct {
-	ID     string  `param:"id"`
+	ID     int64   `param:"id"`
 	UserID *string `json:"userId"`
 }

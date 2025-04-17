@@ -39,7 +39,7 @@ func (r *PGBookedSeatRepository) PublishIssuedTickets(ctx context.Context, paylo
 	args := []interface{}{}
 
 	for i, item := range payload.Items {
-		if i > 0 && i != (len(payload.Items)-1) {
+		if i > 0 {
 			query += ", "
 		}
 
@@ -59,9 +59,9 @@ func (r *PGBookedSeatRepository) PublishIssuedTickets(ctx context.Context, paylo
 			issuedTicketDescription = fmt.Sprintf("%s - Number %s", info.CategoryName, info.SeatNumber)
 		}
 
-		paramOffset := i * 7
+		paramOffset := i * 8
 		query += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d, $%d, $%d)",
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			paramOffset+1,
 			paramOffset+2,
 			paramOffset+3,
@@ -120,14 +120,14 @@ func (r *PGBookedSeatRepository) GetIssuedTickets(ctx context.Context, payload e
 			it.order_item_id, 
 			it.created_at, 
 			it.updated_at,
-			ts.id AS "ticketSeat.id",
-			ts.seat_number AS "ticketSeat.seatNumber",
-			ts.status AS "ticketSeat.status",
-			ts.ticket_area_id AS "ticketSeat.ticketAreaId",
-			ts.created_at AS "ticketSeat.createdAt",
-			ts.updated_at AS "ticketSeat.updatedAt"
+			ts.id AS "ticket_seat.id",
+			ts.seat_number AS "ticket_seat.seat_number",
+			ts.status AS "ticket_seat.status",
+			ts.ticket_area_id AS "ticket_seat.ticket_area_id",
+			ts.created_at AS "ticket_seat.created_at",
+			ts.updated_at AS "ticket_seat.updated_at"
 		FROM issued_tickets it
-		JOIN ticket_seats ts ON it.seat_id = ts.id
+		JOIN ticket_seats ts ON it.ticket_seat_id = ts.id
 		WHERE it.order_id = $1
     `
 
