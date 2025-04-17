@@ -22,6 +22,7 @@ func (r *PGInvoiceRepository) CreateInvoice(ctx context.Context, payload entity.
 	query := `
 	INSERT INTO invoices(status, amount, external_id, order_id, ticket_area_id)
 	VALUES ('pending', $1, $2, $3, $4)
+	RETURNING id, status, amount, external_id, order_id, created_at, updated_at
     `
 
 	var invoice entity.Invoice
