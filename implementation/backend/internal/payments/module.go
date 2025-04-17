@@ -7,6 +7,6 @@ import (
 )
 
 var BaseModule = fx.Options(
-	fx.Provide(service.NewMockPaymentService),
+	fx.Provide(fx.Annotate(service.NewMockPaymentService, fx.As(new(service.MockPayment)))),
 	fx.Provide(fx.Annotate(invoice.NewPGInvoiceRepository, fx.As(new(invoice.InvoiceRepository)))),
 )

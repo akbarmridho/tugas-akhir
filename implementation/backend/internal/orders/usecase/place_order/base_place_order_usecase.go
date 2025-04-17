@@ -27,7 +27,7 @@ type BasePlaceOrderUsecase struct {
 	orderRepository    order.OrderRepository
 	bookingRepository  booking.BookingRepository
 	invoiceRepository  invoice.InvoiceRepository
-	mockPaymentService *service.MockPaymentService
+	mockPaymentService service.MockPayment
 	redisAvailability  *redis_availability_seeder.RedisAvailabilitySeeder
 	db                 *postgres.Postgres
 }
@@ -37,7 +37,7 @@ func NewBasePlaceOrderUsecase(
 	orderRepository order.OrderRepository,
 	bookingRepository booking.BookingRepository,
 	invoiceRepository invoice.InvoiceRepository,
-	mockPaymentService *service.MockPaymentService,
+	mockPaymentService service.MockPayment,
 	redisAvailability *redis_availability_seeder.RedisAvailabilitySeeder,
 	db *postgres.Postgres,
 ) *BasePlaceOrderUsecase {

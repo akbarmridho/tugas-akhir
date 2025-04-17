@@ -121,7 +121,7 @@ func (c *CaseSeeder) Seed(ctx context.Context, payload SeederPayload) (err error
 		// --- 4. Create Ticket Packages, Areas, and Seats (Batched) ---
 
 		// --- Handle Seated Categories ---
-		fmt.Println("Processing Seated Categories...")
+		//fmt.Println("Processing Seated Categories...")
 		for _, catPayload := range payload.SeatedCategories {
 			categoryID, ok := categoryIDs[catPayload.Name]
 			if !ok {
@@ -179,7 +179,7 @@ func (c *CaseSeeder) Seed(ctx context.Context, payload SeederPayload) (err error
 		} // End seated category loop
 
 		// --- Handle Free Standing Categories ---
-		fmt.Println("Processing Free Standing Categories...")
+		//fmt.Println("Processing Free Standing Categories...")
 		for _, catPayload := range payload.FreeStandingCategories {
 			categoryID, ok := categoryIDs[catPayload.Name]
 			if !ok {

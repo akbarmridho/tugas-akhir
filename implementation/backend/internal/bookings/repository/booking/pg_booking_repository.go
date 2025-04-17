@@ -25,6 +25,14 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 	finalSeats := make([]entity2.TicketSeat, 0)
 	combinedIDs := make([]int64, 0)
 
+	if len(payload.SeatIDs)+len(payload.TicketAreaIDs) == 0 {
+		return nil, errors2.WithStack(errors2.WithMessage(entity.InternalTicketLockError, "total seat in payload must not be zero"))
+	}
+
+	if len(payload.SeatIDs) != 0 && len(payload.TicketAreaIDs) != 0 {
+		return nil, errors2.WithStack(errors2.WithMessage(entity.InternalTicketLockError, "only either ticket seat or ticket area are allowed at the same time"))
+	}
+
 	if len(payload.SeatIDs) > 0 {
 		numberedQuery := `
 	SELECT id, seat_number, status, ticket_area_id, created_at, updated_at
@@ -84,19 +92,11 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 			err := pgxscan.Select(ctx, r.db.GetExecutor(ctx), &freeSeatedSeats, freeSeatedQuery, key, val)
 
 			if err != nil {
-				var pgErr *pgconn.PgError
-				if errors.As(err, &pgErr) {
-					// PostgreSQL error codes for lock-related issues
-					// 55P03 is the error code for "no wait" lock failure
-					if pgErr.Code == "55P03" {
-						return nil, entity.LockNotAcquiredError
-					}
-				}
 				return nil, err
 			}
 
 			if len(freeSeatedSeats) != val {
-				return nil, errors2.WithStack(errors2.WithMessage(entity.InternalTicketLockError, "the result data length does not match with the param length"))
+				return nil, errors2.WithStack(errors2.WithMessage(entity.LockNotAcquiredError, "cannot acquire locks for the given seats"))
 			}
 
 			finalSeats = append(finalSeats, freeSeatedSeats...)
