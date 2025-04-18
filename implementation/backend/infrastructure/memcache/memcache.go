@@ -12,8 +12,12 @@ type Memcache struct {
 
 func NewMemcache() (*Memcache, error) {
 	config := bigcache.Config{
-		HardMaxCacheSize: 256,
-		LifeWindow:       5 * time.Minute,
+		Shards:             1024,
+		HardMaxCacheSize:   256,
+		LifeWindow:         5 * time.Minute,
+		CleanWindow:        5 * time.Minute,
+		MaxEntriesInWindow: 1000 * 10 * 60,
+		MaxEntrySize:       10000, // 10kb
 	}
 
 	cache, err := bigcache.NewBigCache(config)
