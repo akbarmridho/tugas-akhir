@@ -53,7 +53,7 @@ func (s *RedisAvailabilitySeeder) iterAvailability() ([]entity2.AreaAvailability
 		tp.id, ta.id, tp.ticket_sale_id
     `
 
-	result := make([]entity2.AreaAvailability, 0)
+	result := make([]entity2.AreaAvailability, 500)
 
 	iter, err := cursor_iterator.NewCursorIterator(s.db.Pool, result, query)
 
@@ -67,7 +67,7 @@ func (s *RedisAvailabilitySeeder) iterAvailability() ([]entity2.AreaAvailability
 func (s *RedisAvailabilitySeeder) tryAcquireSeeder() (bool, error) {
 	result, err := s.redis.GetOrSetWithEx(s.ctx, seederRedisKey, s.config.PodName, 3*time.Hour)
 
-	if err == nil {
+	if err != nil {
 		return false, err
 	}
 
@@ -103,7 +103,12 @@ func (s *RedisAvailabilitySeeder) refreshData() {
 	batchSize := 200
 
 	sendBatch := func() {
-		if err := s.redis.Client.MSet(s.ctx, toSet).Err(); err != nil {
+		pipe := s.redis.Client.Pipeline()
+		for k, v := range toSet {
+			pipe.Set(s.ctx, k, v, 0)
+		}
+
+		if _, err := pipe.Exec(s.ctx); err != nil {
 			l.Sugar().Error(err)
 		}
 

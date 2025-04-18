@@ -62,7 +62,7 @@ func NewRedisCluster(ctx context.Context) (*RedisCluster, error) {
 	}
 
 	// 1. Create a new Docker network for the cluster nodes
-	log.Println("Creating Docker network for Redis Cluster...")
+	//log.Println("Creating Docker network for Redis Cluster...")
 	net, err := network.New(ctx)
 
 	if err != nil {
@@ -71,7 +71,7 @@ func NewRedisCluster(ctx context.Context) (*RedisCluster, error) {
 
 	cluster.Network = net
 	networkName := net.Name
-	log.Printf("Network '%s' created.", networkName)
+	//log.Printf("Network '%s' created.", networkName)
 
 	// Prepare node addresses for the cluster create command (using internal network aliases)
 	nodeAddrsInternal := make([]string, nodeCount)
@@ -108,7 +108,7 @@ func NewRedisCluster(ctx context.Context) (*RedisCluster, error) {
 			WaitingFor: wait.ForLog("Ready to accept connections").WithStartupTimeout(20 * time.Second),
 		}
 
-		log.Printf("Starting Redis container %d (%s)...", i+1, nodeAliases[i])
+		//log.Printf("Starting Redis container %d (%s)...", i+1, nodeAliases[i])
 		container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 			ContainerRequest: req,
 			Started:          true,
@@ -121,7 +121,7 @@ func NewRedisCluster(ctx context.Context) (*RedisCluster, error) {
 			return nil, fmt.Errorf("failed to start container %d (%s): %w", i+1, nodeAliases[i], err)
 		}
 		cluster.Containers[i] = container
-		log.Printf("Redis container %d (%s) started.", i+1, nodeAliases[i])
+		//log.Printf("Redis container %d (%s) started.", i+1, nodeAliases[i])
 
 		// Get mapped host and port for client connection
 		host, err := container.Host(ctx)
@@ -133,18 +133,18 @@ func NewRedisCluster(ctx context.Context) (*RedisCluster, error) {
 			return nil, fmt.Errorf("failed to get mapped port for container %d: %w", i+1, err)
 		}
 		cluster.MappedAddr[i] = fmt.Sprintf("%s:%s", host, mappedPort.Port())
-		log.Printf("Container %d (%s) accessible at: %s", i+1, nodeAliases[i], cluster.MappedAddr[i])
+		//log.Printf("Container %d (%s) accessible at: %s", i+1, nodeAliases[i], cluster.MappedAddr[i])
 	}
 
 	// 3. Create the cluster using redis-cli on the first node
-	log.Println("All Redis nodes started. Attempting cluster creation...")
+	//log.Println("All Redis nodes started. Attempting cluster creation...")
 
 	// Build the cluster create command arguments dynamically
 	clusterCreateCmdArgs := []string{"redis-cli", "--cluster", "create"}
 	clusterCreateCmdArgs = append(clusterCreateCmdArgs, nodeAddrsInternal...)
 	clusterCreateCmdArgs = append(clusterCreateCmdArgs, "--cluster-replicas", "0", "--cluster-yes") // 0 replicas = all masters
 
-	log.Printf("Executing cluster create command on node 1: %v", clusterCreateCmdArgs)
+	//log.Printf("Executing cluster create command on node 1: %v", clusterCreateCmdArgs)
 
 	// Execute the command within the first container
 	exitCode, cmdOutput, err := cluster.Containers[0].Exec(ctx, clusterCreateCmdArgs)
@@ -155,7 +155,7 @@ func NewRedisCluster(ctx context.Context) (*RedisCluster, error) {
 	// Read output
 	outputBytes, readErr := io.ReadAll(cmdOutput)
 	outputString := string(outputBytes)
-	log.Printf("Cluster create command output (Exit Code: %d):\n%s", exitCode, outputString)
+	//log.Printf("Cluster create command output (Exit Code: %d):\n%s", exitCode, outputString)
 
 	cluster.AliasAddr = nodeAliases
 
@@ -183,7 +183,7 @@ func GetRedisCluster(t *testing.T) *redisInfra.Redis {
 	setupCtx, cancel := context.WithTimeout(ctx, clusterSetupTimeout)
 	defer cancel()
 
-	log.Println("Setting up 3-node Redis Cluster...")
+	//log.Println("Setting up 3-node Redis Cluster...")
 	cluster, err := NewRedisCluster(setupCtx)
 	require.NoError(t, err, "Failed to set up Redis cluster")
 
@@ -192,14 +192,14 @@ func GetRedisCluster(t *testing.T) *redisInfra.Redis {
 		cluster.Cleanup(t)
 	})
 
-	log.Println("Redis cluster nodes mapped addresses:", cluster.MappedAddr)
+	//log.Println("Redis cluster nodes mapped addresses:", cluster.MappedAddr)
 
 	cfg := config.Config{
 		RedisHosts:    strings.Join(cluster.MappedAddr, ","),
 		RedisHostsMap: strings.Join(cluster.AliasAddr, ","),
 	}
 
-	log.Println("Connecting Redis client to cluster...")
+	//log.Println("Connecting Redis client to cluster...")
 	redisConn, err := redisInfra.NewRedis(&cfg)
 	require.NoError(t, err, "Failed to create Redis client")
 

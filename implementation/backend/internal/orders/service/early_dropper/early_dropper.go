@@ -94,7 +94,12 @@ func (s *EarlyDropper) refreshData() {
 			values[numberedSeatKey(seat.ID)] = string(seat.Status)
 		}
 
-		if err := s.redis.Client.MSet(s.ctx, values).Err(); err != nil {
+		pipe := s.redis.Client.Pipeline()
+		for k, v := range values {
+			pipe.Set(s.ctx, k, v, 0)
+		}
+
+		if _, err := pipe.Exec(s.ctx); err != nil {
 			l.Sugar().Error(err)
 		}
 	}
@@ -132,7 +137,12 @@ func (s *EarlyDropper) refreshData() {
 		sendNumberedBatch()
 	}
 
-	if err := s.redis.Client.MSet(s.ctx, freeStandingAvailability).Err(); err != nil {
+	pipe := s.redis.Client.Pipeline()
+	for k, v := range freeStandingAvailability {
+		pipe.Set(s.ctx, k, v, 0)
+	}
+
+	if _, err := pipe.Exec(s.ctx); err != nil {
 		l.Sugar().Error(err)
 	}
 
