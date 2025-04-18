@@ -28,6 +28,7 @@ type Config struct {
 	WorkerMetricsPort int `envconfig:"WORKER_METRICS_PORT" default:"5000"`
 
 	RedisHosts    string `envconfig:"REDIS_HOSTS"`
+	RedisHostsMap string `envconfig:"REDIS_HOSTS_MAP"`
 	RedisPassword string `envconfig:"REDIS_PASSWORD"`
 }
 

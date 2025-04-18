@@ -7,6 +7,7 @@ import (
 	baseredis "github.com/redis/go-redis/v9"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"net"
 	"strings"
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
@@ -28,6 +29,39 @@ func NewRedis(config *config.Config) (*Redis, error) {
 
 	if config.RedisPassword != "" {
 		opts.Password = config.RedisPassword
+	}
+
+	if len(config.RedisHostsMap) != 0 {
+		hostsMap := strings.Split(config.RedisHostsMap, ",")
+
+		mapping := make(map[string]string)
+
+		for i, mapped := range hostsMap {
+			mapping[mapped] = hosts[i]
+		}
+
+		baseDialer := &net.Dialer{
+			Timeout:   5 * time.Second,
+			KeepAlive: 5 * time.Minute,
+		}
+
+		// Create the custom dialer function using the map from the cluster setup
+		customDialer := func(ctx context.Context, network, addr string) (net.Conn, error) {
+
+			if !strings.Contains(addr, "localhost") {
+				externalAddr, found := mapping[addr]
+
+				if found {
+					addr = externalAddr // Use the mapped external address
+				} else {
+					return nil, errors2.Errorf("go-redis Dialer: Dialing address '%s' directly (not found in internal map)", addr)
+				}
+			}
+
+			return baseDialer.DialContext(ctx, network, addr)
+		}
+
+		opts.Dialer = customDialer
 	}
 
 	rdb := baseredis.NewClusterClient(&opts)
