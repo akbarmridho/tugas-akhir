@@ -3,6 +3,7 @@ package availability
 import (
 	"context"
 	"fmt"
+	baseredis "github.com/redis/go-redis/v9"
 	"strconv"
 	"strings"
 	"tugas-akhir/backend/infrastructure/redis"
@@ -35,26 +36,30 @@ func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, paylo
 
 	pattern := fmt.Sprintf("%s:%d:*:*:*", prefix, payload.TicketSaleID)
 
-	// Scan for all matching keys
-	var cursor uint64
 	var keys []string
 
-	for {
-		var batch []string
+	// ForEachMaster will loop over every master node in the cluster.
+	err := r.redis.Client.ForEachMaster(ctx, func(ctx context.Context, client *baseredis.Client) error {
+		var cursor uint64 = 0
+		for {
+			// Scan on the current node.
+			ckeys, nextCursor, err := client.Scan(ctx, cursor, pattern, 100).Result()
+			if err != nil {
+				return err
+			}
 
-		scanCmd := r.redis.Client.Scan(ctx, cursor, pattern, 100)
+			keys = append(keys, ckeys...)
 
-		batch, cursor = scanCmd.Val()
-
-		if scanCmd.Err() != nil {
-			return nil, scanCmd.Err()
+			if nextCursor == 0 {
+				break
+			}
+			cursor = nextCursor
 		}
+		return nil
+	})
 
-		keys = append(keys, batch...)
-
-		if cursor == 0 {
-			break
-		}
+	if err != nil {
+		return nil, err
 	}
 
 	// Group keys by their area identifiers
@@ -76,20 +81,15 @@ func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, paylo
 		return nil, entity.AreaAvailabilityNotFoundError
 	}
 
-	valuesCmd := r.redis.Client.MGet(ctx, keys...)
-	if valuesCmd.Err() != nil {
-		return nil, valuesCmd.Err()
-	}
-
-	values := valuesCmd.Val()
 	keyToValue := make(map[string]string)
-
-	for i, key := range keys {
-		if values[i] != nil {
-			if strValue, ok := values[i].(string); ok {
-				keyToValue[key] = strValue
-			}
+	for _, key := range keys {
+		val, err := r.redis.Client.Get(ctx, key).Result()
+		if err != nil {
+			// Skip if key doesn't exist or other error
+			l.Sugar().Warnf("failed to get key %s: %v", key, err)
+			continue
 		}
+		keyToValue[key] = val
 	}
 
 	// Build the result
