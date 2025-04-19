@@ -9,7 +9,10 @@ import (
 	"tugas-akhir/backend/infrastructure/postgres"
 	entity3 "tugas-akhir/backend/internal/bookings/entity"
 	"tugas-akhir/backend/internal/bookings/repository/booked_seats"
+	"tugas-akhir/backend/internal/bookings/repository/booking"
+	entity4 "tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/events/repository/event"
+	"tugas-akhir/backend/internal/events/service/redis_availability_seeder"
 	entity2 "tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/repository/order"
 	"tugas-akhir/backend/internal/payments/entity"
@@ -19,26 +22,32 @@ import (
 )
 
 type PGWebhookUsecase struct {
-	orderRepository       order.OrderRepository
-	invoiceRepository     invoice.InvoiceRepository
-	eventRepository       event.EventRepository
-	bookeadSeatRepository booked_seats.SeatRepository
-	db                    *postgres.Postgres
+	orderRepository         order.OrderRepository
+	invoiceRepository       invoice.InvoiceRepository
+	eventRepository         event.EventRepository
+	bookeadSeatRepository   booked_seats.SeatRepository
+	bookingRepository       booking.BookingRepository
+	redisAvailabilitySeeder *redis_availability_seeder.RedisAvailabilitySeeder
+	db                      *postgres.Postgres
 }
 
 func NewPGWebhookUsecase(
 	orderRepository order.OrderRepository,
 	invoiceRepository invoice.InvoiceRepository,
 	bookeadSeatRepository booked_seats.SeatRepository,
+	bookingRepository booking.BookingRepository,
 	eventRepository event.EventRepository,
+	redisAvailabilitySeeder *redis_availability_seeder.RedisAvailabilitySeeder,
 	db *postgres.Postgres,
 ) *PGWebhookUsecase {
 	return &PGWebhookUsecase{
-		orderRepository:       orderRepository,
-		invoiceRepository:     invoiceRepository,
-		bookeadSeatRepository: bookeadSeatRepository,
-		eventRepository:       eventRepository,
-		db:                    db,
+		orderRepository:         orderRepository,
+		invoiceRepository:       invoiceRepository,
+		bookeadSeatRepository:   bookeadSeatRepository,
+		eventRepository:         eventRepository,
+		db:                      db,
+		bookingRepository:       bookingRepository,
+		redisAvailabilitySeeder: redisAvailabilitySeeder,
 	}
 }
 
@@ -142,17 +151,36 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 		}
 	}
 
-	seatInfo := make([]entity3.SeatInfoDto, 0)
+	seatIDs := make([]int64, 0)
 
 	for _, item := range orderEntity.Items {
-		seatInfo = append(seatInfo, entity3.SeatInfoDto{
-			CategoryName: item.TicketCategory.Name,
-			SeatType:     item.TicketSeat.TicketArea.Type,
-			SeatNumber:   item.TicketSeat.SeatNumber,
-		})
+		seatIDs = append(seatIDs, item.TicketSeatID)
 	}
 
 	if shouldPublish {
+		err = u.bookingRepository.UpdateSeatStatus(ctx, entity3.UpdateSeatStatusDto{
+			SeatIDs: seatIDs,
+			Status:  entity4.SeatStatus__Sold,
+		})
+
+		if err != nil {
+			return &myerror.HttpError{
+				Code:         http.StatusInternalServerError,
+				Message:      err.Error(),
+				ErrorContext: err,
+			}
+		}
+
+		seatInfo := make([]entity3.SeatInfoDto, 0)
+
+		for _, item := range orderEntity.Items {
+			seatInfo = append(seatInfo, entity3.SeatInfoDto{
+				CategoryName: item.TicketCategory.Name,
+				SeatType:     item.TicketSeat.TicketArea.Type,
+				SeatNumber:   item.TicketSeat.SeatNumber,
+			})
+		}
+
 		err = u.bookeadSeatRepository.PublishIssuedTickets(ctx, entity3.PublishIssuedTicketDto{
 			EventName:      fmt.Sprintf("%s - %s", orderEntity.Event.Name, orderEntity.Event.Location),
 			TicketSaleName: orderEntity.TicketSale.Name,
@@ -160,6 +188,39 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 			Items:          orderEntity.Items,
 			TicketAreaID:   orderEntity.TicketAreaID,
 		})
+
+		if err != nil {
+			return &myerror.HttpError{
+				Code:         http.StatusInternalServerError,
+				Message:      err.Error(),
+				ErrorContext: err,
+			}
+		}
+	} else {
+		err = u.bookingRepository.UpdateSeatStatus(ctx, entity3.UpdateSeatStatusDto{
+			SeatIDs: seatIDs,
+			Status:  entity4.SeatStatus__Available,
+		})
+
+		if err != nil {
+			return &myerror.HttpError{
+				Code:         http.StatusInternalServerError,
+				Message:      err.Error(),
+				ErrorContext: err,
+			}
+		}
+
+		revertedAvailability := make([]entity4.AreaAvailability, 0)
+
+		for _, item := range orderEntity.Items {
+			revertedAvailability = append(revertedAvailability, entity4.AreaAvailability{
+				TicketAreaID:    item.TicketSeat.TicketAreaID,
+				TicketPackageID: item.TicketSeat.TicketArea.TicketPackageID,
+				TicketSaleID:    orderEntity.TicketSaleID,
+			})
+		}
+
+		err = u.redisAvailabilitySeeder.RevertAvailability(ctx, revertedAvailability)
 
 		if err != nil {
 			return &myerror.HttpError{

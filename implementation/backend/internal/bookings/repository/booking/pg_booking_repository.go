@@ -126,3 +126,15 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 
 	return finalSeats, nil
 }
+
+func (r *PGBookingRepository) UpdateSeatStatus(ctx context.Context, payload entity.UpdateSeatStatusDto) error {
+	query := `
+	UPDATE ticket_seats
+	SET status = $1, updated_at = now()
+	WHERE id = ANY($2)
+    `
+
+	_, err := r.db.GetExecutor(ctx).Exec(ctx, query, payload.Status, payload.SeatIDs)
+
+	return err
+}
