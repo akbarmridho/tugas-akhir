@@ -105,7 +105,10 @@ func NewRedisCluster(ctx context.Context) (*RedisCluster, error) {
 				"--cluster-announce-port", nat.Port(redisPort).Port(),
 				"--cluster-announce-bus-port", nat.Port(clusterBusPort).Port(),
 			},
-			WaitingFor: wait.ForLog("Ready to accept connections").WithStartupTimeout(20 * time.Second),
+			WaitingFor: wait.ForAll(
+				wait.ForLog("Ready to accept connections").WithStartupTimeout(20*time.Second),
+				wait.ForListeningPort(redisPort).WithStartupTimeout(10*time.Second),
+			),
 		}
 
 		//log.Printf("Starting Redis container %d (%s)...", i+1, nodeAliases[i])
@@ -210,8 +213,23 @@ func GetRedisCluster(t *testing.T) *redisInfra.Redis {
 	time.Sleep(10 * time.Second)
 
 	// Use test's context for health check if appropriate, or background if needed
-	err = redisConn.IsHealthy(ctx)
-	require.NoError(t, err, "Redis client health check failed")
+	var healthcheckErr error
+
+	for i := 0; i < 10; i++ {
+		healthErr := redisConn.IsHealthy(ctx)
+
+		if healthErr != nil {
+			if i == 9 {
+				healthcheckErr = healthErr
+			} else {
+				time.Sleep(1 * time.Second)
+			}
+		} else {
+			break
+		}
+	}
+
+	require.NoError(t, healthcheckErr, "Redis client health check failed")
 	log.Println("Redis client connected and healthy.")
 
 	return redisConn

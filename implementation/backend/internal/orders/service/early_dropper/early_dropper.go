@@ -19,12 +19,12 @@ import (
 const redisPrefix = "early-dropper:"
 const referesherRedisKey = "refresher-node"
 
-func numberedSeatKey(seatID int64) string {
-	return fmt.Sprintf("%sstatus:numbered:%d", redisPrefix, seatID)
+func numberedSeatKey(areaID int64, seatID int64) string {
+	return fmt.Sprintf("%s{area-%d}status:numbered:%d", redisPrefix, areaID, seatID)
 }
 
 func freeStandingKey(areaID int64) string {
-	return fmt.Sprintf("%sstatus:free-standing:%d", redisPrefix, areaID)
+	return fmt.Sprintf("%s{area-%d}status:free-standing:%d", redisPrefix, areaID, areaID)
 }
 
 type EarlyDropper struct {
@@ -91,7 +91,7 @@ func (s *EarlyDropper) refreshData() {
 		values := make(map[string]string)
 
 		for _, seat := range numberedBuffer {
-			values[numberedSeatKey(seat.ID)] = string(seat.Status)
+			values[numberedSeatKey(seat.TicketArea.ID, seat.ID)] = string(seat.Status)
 		}
 
 		pipe := s.redis.Client.Pipeline()
@@ -159,6 +159,10 @@ func (s *EarlyDropper) Run() error {
 }
 
 func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceOrderDto) (*LockReleaser, error) {
+	if payload.TicketAreaID == nil {
+		return nil, fmt.Errorf("ticket area id must not be nil")
+	}
+
 	l := logger.FromCtx(ctx)
 
 	// Create maps to track operations we need to perform
@@ -177,7 +181,7 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 	// Collect all keys we need to watch
 	var keysToWatch []string
 	for seatID := range numberedSeatsToLock {
-		keysToWatch = append(keysToWatch, numberedSeatKey(seatID))
+		keysToWatch = append(keysToWatch, numberedSeatKey(*payload.TicketAreaID, seatID))
 	}
 	for areaID := range freeStandingAreasToLock {
 		keysToWatch = append(keysToWatch, freeStandingKey(areaID))
@@ -192,7 +196,7 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 			var numberedSeatIDs []int64
 
 			for seatID := range numberedSeatsToLock {
-				numberedKeysToCheck = append(numberedKeysToCheck, numberedSeatKey(seatID))
+				numberedKeysToCheck = append(numberedKeysToCheck, numberedSeatKey(*payload.TicketAreaID, seatID))
 				numberedSeatIDs = append(numberedSeatIDs, seatID)
 			}
 
@@ -246,7 +250,7 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 			_, err := tx.TxPipelined(ctx, func(pipe baseredis.Pipeliner) error {
 				// Lock numbered seats by changing their status to on-hold
 				for seatID := range numberedSeatsToLock {
-					key := numberedSeatKey(seatID)
+					key := numberedSeatKey(*payload.TicketAreaID, seatID)
 					pipe.Set(ctx, key, string(entity2.SeatStatus__OnHold), 0)
 				}
 
@@ -271,7 +275,7 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 
 				// Restore numbered seats to available
 				for seatID := range numberedSeatsToLock {
-					key := numberedSeatKey(seatID)
+					key := numberedSeatKey(*payload.TicketAreaID, seatID)
 					pipe.Set(ctx, key, string(entity2.SeatStatus__Available), 0)
 				}
 
@@ -318,22 +322,18 @@ func (s *EarlyDropper) FinalizeLock(ctx context.Context, items []entity.OrderIte
 	// operation success
 	if status == entity2.SeatStatus__Sold {
 		// only update seat status for numbered seat
-		var numberedSeats []int64
+		pipe := s.redis.Client.TxPipeline()
 
-		if len(numberedSeats) > 0 {
-			pipe := s.redis.Client.TxPipeline()
-
-			for _, item := range items {
-				if item.TicketSeat.TicketArea.Type == entity2.AreaType__NumberedSeating {
-					key := numberedSeatKey(item.TicketSeatID)
-					pipe.Set(ctx, key, string(entity2.SeatStatus__Sold), 0)
-				}
+		for _, item := range items {
+			if item.TicketSeat.TicketArea.Type == entity2.AreaType__NumberedSeating {
+				key := numberedSeatKey(item.TicketSeat.TicketAreaID, item.TicketSeatID)
+				pipe.Set(ctx, key, string(entity2.SeatStatus__Sold), 0)
 			}
+		}
 
-			_, err := pipe.Exec(ctx)
-			if err != nil {
-				return err
-			}
+		_, err := pipe.Exec(ctx)
+		if err != nil {
+			return err
 		}
 
 		return nil
@@ -342,25 +342,21 @@ func (s *EarlyDropper) FinalizeLock(ctx context.Context, items []entity.OrderIte
 	// operation fail
 	if status == entity2.SeatStatus__Available {
 		// only update seat status for numbered seat
-		var numberedSeats []int64
+		pipe := s.redis.Client.TxPipeline()
 
-		if len(numberedSeats) > 0 {
-			pipe := s.redis.Client.TxPipeline()
-
-			for _, item := range items {
-				if item.TicketSeat.TicketArea.Type == entity2.AreaType__NumberedSeating {
-					key := numberedSeatKey(item.TicketSeatID)
-					pipe.Set(ctx, key, string(entity2.SeatStatus__Sold), 0)
-				} else {
-					key := freeStandingKey(item.TicketSeat.TicketAreaID)
-					pipe.IncrBy(ctx, key, int64(1))
-				}
+		for _, item := range items {
+			if item.TicketSeat.TicketArea.Type == entity2.AreaType__NumberedSeating {
+				key := numberedSeatKey(item.TicketSeat.TicketAreaID, item.TicketSeatID)
+				pipe.Set(ctx, key, string(entity2.SeatStatus__Available), 0)
+			} else {
+				key := freeStandingKey(item.TicketSeat.TicketAreaID)
+				pipe.IncrBy(ctx, key, int64(1))
 			}
+		}
 
-			_, err := pipe.Exec(ctx)
-			if err != nil {
-				return err
-			}
+		_, err := pipe.Exec(ctx)
+		if err != nil {
+			return err
 		}
 
 		return nil
