@@ -15,6 +15,7 @@ import (
 	"tugas-akhir/backend/internal/events/service/redis_availability_seeder"
 	entity2 "tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/repository/order"
+	"tugas-akhir/backend/internal/orders/service/early_dropper"
 	"tugas-akhir/backend/internal/payments/entity"
 	"tugas-akhir/backend/internal/payments/repository/invoice"
 	myerror "tugas-akhir/backend/pkg/error"
@@ -29,6 +30,7 @@ type PGWebhookUsecase struct {
 	bookingRepository       booking.BookingRepository
 	redisAvailabilitySeeder *redis_availability_seeder.RedisAvailabilitySeeder
 	db                      *postgres.Postgres
+	earlyDropper            *early_dropper.EarlyDropper
 }
 
 func NewPGWebhookUsecase(
@@ -48,6 +50,28 @@ func NewPGWebhookUsecase(
 		db:                      db,
 		bookingRepository:       bookingRepository,
 		redisAvailabilitySeeder: redisAvailabilitySeeder,
+	}
+}
+
+func NewFCWebhookUsecase(
+	orderRepository order.OrderRepository,
+	invoiceRepository invoice.InvoiceRepository,
+	bookeadSeatRepository booked_seats.BookedSeatRepository,
+	bookingRepository booking.BookingRepository,
+	eventRepository event.EventRepository,
+	redisAvailabilitySeeder *redis_availability_seeder.RedisAvailabilitySeeder,
+	db *postgres.Postgres,
+	earlyDropper *early_dropper.EarlyDropper,
+) *PGWebhookUsecase {
+	return &PGWebhookUsecase{
+		orderRepository:         orderRepository,
+		invoiceRepository:       invoiceRepository,
+		bookeadSeatRepository:   bookeadSeatRepository,
+		eventRepository:         eventRepository,
+		db:                      db,
+		bookingRepository:       bookingRepository,
+		redisAvailabilitySeeder: redisAvailabilitySeeder,
+		earlyDropper:            earlyDropper,
 	}
 }
 
@@ -158,6 +182,18 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 	}
 
 	if shouldPublish {
+		if u.earlyDropper != nil {
+			err = u.earlyDropper.FinalizeLock(ctx, orderEntity.Items, entity4.SeatStatus__Sold)
+
+			if err != nil {
+				return &myerror.HttpError{
+					Code:         http.StatusInternalServerError,
+					Message:      err.Error(),
+					ErrorContext: err,
+				}
+			}
+		}
+
 		err = u.bookingRepository.UpdateSeatStatus(ctx, entity3.UpdateSeatStatusDto{
 			SeatIDs: seatIDs,
 			Status:  entity4.SeatStatus__Sold,
@@ -218,6 +254,18 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 				TicketPackageID: item.TicketSeat.TicketArea.TicketPackageID,
 				TicketSaleID:    orderEntity.TicketSaleID,
 			})
+		}
+
+		if u.earlyDropper != nil {
+			err = u.earlyDropper.FinalizeLock(ctx, orderEntity.Items, entity4.SeatStatus__Available)
+
+			if err != nil {
+				return &myerror.HttpError{
+					Code:         http.StatusInternalServerError,
+					Message:      err.Error(),
+					ErrorContext: err,
+				}
+			}
 		}
 
 		err = u.redisAvailabilitySeeder.RevertAvailability(ctx, revertedAvailability)

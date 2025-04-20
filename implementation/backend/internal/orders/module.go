@@ -45,5 +45,5 @@ var FCModule = fx.Options(
 		place_order.NewFCPlaceOrderUsecase,
 		fx.As(new(place_order.PlaceOrderUsecase)),
 	))),
-	fx.Provide(fx.Provide(fx.Annotate(webhook.NewPGWebhookUsecase, fx.As(new(webhook.WebhookOrderUsecase))))),
+	fx.Provide(fx.Provide(fx.Annotate(webhook.NewFCWebhookUsecase, fx.As(new(webhook.WebhookOrderUsecase))))),
 )

@@ -49,7 +49,7 @@ func NewPGPEarlyDropper(
 }
 
 func (s *EarlyDropper) tryAcquireRefresher() (bool, error) {
-	result, err := s.redis.GetOrSetWithEx(s.ctx, redisPrefix+referesherRedisKey, s.config.PodName, 3*time.Hour)
+	result, err := s.redis.GetOrSetWithEx(s.ctx, redisPrefix+referesherRedisKey, s.config.PodName, 15*time.Minute)
 
 	if err == nil {
 		return false, err
@@ -247,7 +247,7 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 				// Lock numbered seats by changing their status to on-hold
 				for seatID := range numberedSeatsToLock {
 					key := numberedSeatKey(seatID)
-					pipe.Set(ctx, key, string(entity2.SeatStatus__OnHold), 6*time.Hour) // bad but enough time for each test scenario to complete
+					pipe.Set(ctx, key, string(entity2.SeatStatus__OnHold), 0)
 				}
 
 				// Decrement available counts for free standing areas
@@ -307,5 +307,64 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 
 	// Max retries exceeded
 	l.Sugar().Warnf("max retries exceeded for seat locking %s", *payload.IdempotencyKey)
-	return nil, entity.CannotAcquireLock
+	return nil, errors2.WithStack(entity.CannotAcquireLock)
+}
+
+func (s *EarlyDropper) FinalizeLock(ctx context.Context, items []entity.OrderItem, status entity2.SeatStatus) error {
+	if status == entity2.SeatStatus__OnHold {
+		return fmt.Errorf("final seat status cannot be on hold")
+	}
+
+	// operation success
+	if status == entity2.SeatStatus__Sold {
+		// only update seat status for numbered seat
+		var numberedSeats []int64
+
+		if len(numberedSeats) > 0 {
+			pipe := s.redis.Client.TxPipeline()
+
+			for _, item := range items {
+				if item.TicketSeat.TicketArea.Type == entity2.AreaType__NumberedSeating {
+					key := numberedSeatKey(item.TicketSeatID)
+					pipe.Set(ctx, key, string(entity2.SeatStatus__Sold), 0)
+				}
+			}
+
+			_, err := pipe.Exec(ctx)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+
+	// operation fail
+	if status == entity2.SeatStatus__Available {
+		// only update seat status for numbered seat
+		var numberedSeats []int64
+
+		if len(numberedSeats) > 0 {
+			pipe := s.redis.Client.TxPipeline()
+
+			for _, item := range items {
+				if item.TicketSeat.TicketArea.Type == entity2.AreaType__NumberedSeating {
+					key := numberedSeatKey(item.TicketSeatID)
+					pipe.Set(ctx, key, string(entity2.SeatStatus__Sold), 0)
+				} else {
+					key := freeStandingKey(item.TicketSeat.TicketAreaID)
+					pipe.IncrBy(ctx, key, int64(1))
+				}
+			}
+
+			_, err := pipe.Exec(ctx)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+
+	return fmt.Errorf("code should be unreachable")
 }
