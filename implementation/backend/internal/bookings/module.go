@@ -9,6 +9,6 @@ import (
 
 var BaseModule = fx.Options(
 	fx.Provide(fx.Annotate(booking.NewPGBookingRepository, fx.As(new(booking.BookingRepository)))),
-	fx.Provide(fx.Annotate(booked_seats.NewPGBookedSeatRepository, fx.As(new(booked_seats.SeatRepository)))),
+	fx.Provide(fx.Annotate(booked_seats.NewPGBookedSeatRepository, fx.As(new(booked_seats.BookedSeatRepository)))),
 	fx.Provide(service.NewSerialNumberGenerator),
 )

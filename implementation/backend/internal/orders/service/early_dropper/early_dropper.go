@@ -31,14 +31,14 @@ type EarlyDropper struct {
 	ctx            context.Context
 	config         *config.Config
 	redis          *redis.Redis
-	seatRepository booked_seats.SeatRepository
+	seatRepository booked_seats.BookedSeatRepository
 }
 
 func NewPGPEarlyDropper(
 	ctx context.Context,
 	config *config.Config,
 	redis *redis.Redis,
-	seatRepository booked_seats.SeatRepository,
+	seatRepository booked_seats.BookedSeatRepository,
 ) *EarlyDropper {
 	return &EarlyDropper{
 		ctx:            ctx,

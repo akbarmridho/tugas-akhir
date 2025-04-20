@@ -27,7 +27,7 @@ type BasePlaceOrderUsecase struct {
 	orderRepository    order.OrderRepository
 	bookingRepository  booking.BookingRepository
 	invoiceRepository  invoice.InvoiceRepository
-	mockPaymentService service.MockPayment
+	mockPaymentService service.PaymentGateway
 	redisAvailability  *redis_availability_seeder.RedisAvailabilitySeeder
 	db                 *postgres.Postgres
 }
@@ -37,7 +37,7 @@ func NewBasePlaceOrderUsecase(
 	orderRepository order.OrderRepository,
 	bookingRepository booking.BookingRepository,
 	invoiceRepository invoice.InvoiceRepository,
-	mockPaymentService service.MockPayment,
+	mockPaymentService service.PaymentGateway,
 	redisAvailability *redis_availability_seeder.RedisAvailabilitySeeder,
 	db *postgres.Postgres,
 ) *BasePlaceOrderUsecase {
@@ -140,7 +140,7 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 		if item.TicketSeatID != nil {
 			bookRequest.SeatIDs = append(bookRequest.SeatIDs, *item.TicketSeatID)
 		} else {
-			bookRequest.TicketAreaIDs = append(bookRequest.SeatIDs, item.TicketAreaID)
+			bookRequest.TicketAreaIDs = append(bookRequest.TicketAreaIDs, item.TicketAreaID)
 		}
 	}
 
@@ -180,7 +180,7 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 	appliedAvailability := make([]entity3.AreaAvailability, 0)
 
 	// enrich item data
-	for _, item := range payload.Items {
+	for i, item := range payload.Items {
 		availabilityUpdate := entity3.AreaAvailability{
 			TicketAreaID: item.TicketAreaID,
 			TicketSaleID: ticketSale.ID,
@@ -262,6 +262,7 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 			}
 		}
 
+		payload.Items[i] = item
 		appliedAvailability = append(appliedAvailability, availabilityUpdate)
 	}
 
@@ -276,9 +277,10 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 	}
 
 	invoiceEntity, err := u.invoiceRepository.CreateInvoice(ctx, entity4.CreateInvoiceDto{
-		Amount:     total,
-		ExternalID: strconv.FormatInt(orderEntity.ID, 10),
-		OrderID:    orderEntity.ID,
+		Amount:       total,
+		ExternalID:   strconv.FormatInt(orderEntity.ID, 10),
+		OrderID:      orderEntity.ID,
+		TicketAreaID: *payload.TicketAreaID,
 	})
 
 	if err != nil {

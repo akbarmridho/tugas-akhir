@@ -58,7 +58,7 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 		}
 
 		if len(numberedSeats) != len(payload.SeatIDs) {
-			return nil, errors2.WithStack(errors2.WithMessage(entity.InternalTicketLockError, "the result data length does not match with the param length"))
+			return nil, errors2.WithStack(errors2.WithMessage(entity.LockNotAcquiredError, "the result data length does not match with the param length"))
 		}
 
 		finalSeats = append(finalSeats, numberedSeats...)
@@ -121,7 +121,7 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 	}
 
 	if tag.RowsAffected() != int64(len(combinedIDs)) {
-		return nil, errors2.WithStack(errors2.WithMessage(entity.InternalTicketLockError, "the updated data length does not match with the param length"))
+		return nil, errors2.WithStack(errors2.WithMessage(entity.LockNotAcquiredError, "the updated data length does not match with the param length"))
 	}
 
 	return finalSeats, nil

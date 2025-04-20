@@ -58,7 +58,7 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 	args := []interface{}{}
 
 	for i, item := range payload.Items {
-		if i > 0 && i != (len(payload.Items)-1) {
+		if i > 0 {
 			orderItemQuery += ", "
 		}
 
@@ -94,7 +94,7 @@ func (r *PGOrderRepository) PlaceOrder(ctx context.Context, payload entity.Place
 }
 
 func (r *PGOrderRepository) GetOrder(ctx context.Context, payload entity.GetOrderDto) (*entity.Order, error) {
-	if payload.UserID == nil {
+	if payload.UserID == nil && !payload.BypassUserID {
 		return nil, entity.OrderFetchInternalError
 	}
 
@@ -244,7 +244,7 @@ func (r *PGOrderRepository) GetOrder(ctx context.Context, payload entity.GetOrde
     `
 
 	var orderJSON json.RawMessage
-	err := r.db.GetExecutor(ctx).QueryRow(ctx, query, payload.OrderID, *payload.UserID, payload.BypassUserID).Scan(&orderJSON)
+	err := r.db.GetExecutor(ctx).QueryRow(ctx, query, payload.OrderID, payload.UserID, payload.BypassUserID).Scan(&orderJSON)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, entity.OrderNotFoundError

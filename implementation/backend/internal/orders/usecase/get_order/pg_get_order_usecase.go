@@ -13,12 +13,12 @@ import (
 
 type PGGetOrderUsecase struct {
 	orderRepository order.OrderRepository
-	seatRepository  booked_seats.SeatRepository
+	seatRepository  booked_seats.BookedSeatRepository
 }
 
 func NewPGGetOrderUsecase(
 	orderRepository order.OrderRepository,
-	seatRepository booked_seats.SeatRepository,
+	seatRepository booked_seats.BookedSeatRepository,
 ) *PGGetOrderUsecase {
 	return &PGGetOrderUsecase{
 		orderRepository: orderRepository,

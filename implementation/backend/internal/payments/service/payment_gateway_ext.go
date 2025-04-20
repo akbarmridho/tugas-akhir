@@ -14,13 +14,13 @@ import (
 	"tugas-akhir/backend/pkg/mock_payment"
 )
 
-type MockPaymentService struct {
+type PaymentGatewayExt struct {
 	mockPayment *mock_payment.APIClient
 	protocol    string
 	baseHost    string
 }
 
-func NewMockPaymentService(config *config.Config) (*MockPaymentService, error) {
+func NewPaymentGatewayExt(config *config.Config) (*PaymentGatewayExt, error) {
 	caCertPool := x509.NewCertPool()
 
 	certData, err := os.ReadFile(config.PaymentCertPath)
@@ -63,14 +63,14 @@ func NewMockPaymentService(config *config.Config) (*MockPaymentService, error) {
 		return nil, errors.WithStack(errors.WithMessage(entity.PaymentServiceInternalError, "failed to parse payment service url"))
 	}
 
-	return &MockPaymentService{
+	return &PaymentGatewayExt{
 		mockPayment: mockPayment,
 		protocol:    parsedURL.Scheme,
 		baseHost:    parsedURL.Host + parsedURL.Path,
 	}, nil
 }
 
-func (s *MockPaymentService) GenerateInvoice(ctx context.Context, payload mock_payment.CreateInvoiceRequest) (*mock_payment.Invoice, error) {
+func (s *PaymentGatewayExt) GenerateInvoice(ctx context.Context, payload mock_payment.CreateInvoiceRequest) (*mock_payment.Invoice, error) {
 	ctx = context.WithValue(context.Background(), mock_payment.ContextServerVariables, map[string]string{
 		"protocol": s.protocol,
 		"server":   s.baseHost,

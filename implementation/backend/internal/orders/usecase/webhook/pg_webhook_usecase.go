@@ -25,7 +25,7 @@ type PGWebhookUsecase struct {
 	orderRepository         order.OrderRepository
 	invoiceRepository       invoice.InvoiceRepository
 	eventRepository         event.EventRepository
-	bookeadSeatRepository   booked_seats.SeatRepository
+	bookeadSeatRepository   booked_seats.BookedSeatRepository
 	bookingRepository       booking.BookingRepository
 	redisAvailabilitySeeder *redis_availability_seeder.RedisAvailabilitySeeder
 	db                      *postgres.Postgres
@@ -34,7 +34,7 @@ type PGWebhookUsecase struct {
 func NewPGWebhookUsecase(
 	orderRepository order.OrderRepository,
 	invoiceRepository invoice.InvoiceRepository,
-	bookeadSeatRepository booked_seats.SeatRepository,
+	bookeadSeatRepository booked_seats.BookedSeatRepository,
 	bookingRepository booking.BookingRepository,
 	eventRepository event.EventRepository,
 	redisAvailabilitySeeder *redis_availability_seeder.RedisAvailabilitySeeder,
