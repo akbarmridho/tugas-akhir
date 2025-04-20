@@ -158,7 +158,7 @@ ensureDelivered:
 
 		if err != nil {
 			if errors.Is(err, entity2.NotConnectedError) {
-				utility.SleepWithContext(ctx, 500*time.Millisecond)
+				utility.SleepWithContext(ctx, 100*time.Millisecond)
 			} else {
 				return err
 			}

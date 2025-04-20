@@ -19,8 +19,8 @@ func buildRedisIdempotencyKey(key string) string {
 }
 
 type idempotencyData struct {
-	entity  *entity.Order
-	httpErr *myerror.HttpError
+	Entity  *entity.Order      `json:"entity"`
+	HttpErr *myerror.HttpError `json:"httpErr"`
 }
 
 func WrapIdempotency(
@@ -31,14 +31,16 @@ func WrapIdempotency(
 ) (*entity.Order, *myerror.HttpError) {
 	l := logger.FromCtx(ctx)
 
-	if payload.IdempotencyKey == nil || *payload.IdempotencyKey != "" {
+	if payload.IdempotencyKey == nil || *payload.IdempotencyKey == "" {
 		return nil, &myerror.HttpError{
 			Code:    http.StatusBadRequest,
 			Message: entity.IdempotencyKeyNotFound.Error(),
 		}
 	}
 
-	cacheVal, cacheErr := redis.Client.Get(ctx, buildRedisIdempotencyKey(*payload.IdempotencyKey)).Result()
+	redisKey := buildRedisIdempotencyKey(*payload.IdempotencyKey)
+
+	cacheVal, cacheErr := redis.Client.Get(ctx, redisKey).Result()
 
 	if cacheErr != nil {
 		if errors.Is(cacheErr, redis2.Nil) {
@@ -48,19 +50,20 @@ func WrapIdempotency(
 			if httpErr == nil {
 				// store idempotency for success operation only
 				cacheData := idempotencyData{
-					entity:  order,
-					httpErr: httpErr,
+					Entity:  order,
+					HttpErr: nil,
 				}
 
 				marshalled, err := json.Marshal(cacheData)
 
 				if err != nil {
 					l.Sugar().Error(err)
+				} else {
+					if cmdErr := redis.Client.SetEx(ctx, redisKey, string(marshalled), 15*time.Minute).Err(); cmdErr != nil {
+						l.Sugar().Error(cmdErr)
+					}
 				}
 
-				if cmdErr := redis.Client.SetEx(ctx, buildRedisIdempotencyKey(*payload.IdempotencyKey), marshalled, 15*time.Minute).Err(); cmdErr != nil {
-					l.Sugar().Error(cmdErr)
-				}
 			}
 
 			return order, httpErr
@@ -83,5 +86,5 @@ func WrapIdempotency(
 		}
 	}
 
-	return result.entity, result.httpErr
+	return result.Entity, result.HttpErr
 }
