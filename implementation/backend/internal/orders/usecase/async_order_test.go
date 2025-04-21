@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"testing"
+	"time"
 	"tugas-akhir/backend/app/processor"
 	"tugas-akhir/backend/app/processor/worker"
 	"tugas-akhir/backend/infrastructure/config"
@@ -278,6 +279,10 @@ func TestIntegration_Async_OrderFlow_Success(t *testing.T) {
 
 	areaTypes := []entity2.AreaType{entity2.AreaType__NumberedSeating, entity2.AreaType__FreeStanding}
 
+	// schrodinger bug
+	// if you don't sleep for enough time the rabbitmq queue will not be ready yet to accept incoming messages
+	time.Sleep(10 * time.Second)
+
 	for _, areaType := range areaTypes {
 		t.Run(fmt.Sprintf("Area Type %s", string(areaType)), func(t *testing.T) {
 			userID := fmt.Sprintf("user-%s", string(areaType))
@@ -409,6 +414,10 @@ func TestIntegration_Async_OrderFlow_PaymentFailed(t *testing.T) {
 		ID: events[0].ID,
 	})
 	require.NoError(t, err)
+
+	// schrodinger bug
+	// if you don't sleep for enough time the rabbitmq queue will not be ready yet to accept incoming messages
+	time.Sleep(10 * time.Second)
 
 	userID := "user-failpayment"
 
