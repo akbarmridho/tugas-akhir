@@ -25,15 +25,15 @@ var FCWorkerModule = fx.Options(
 var FCModule = fx.Options(
 	fx.Provide(fx.Annotate(order.NewPGOrderRepository, fx.As(new(order.OrderRepository)))),
 	fx.Provide(fx.Annotate(get_order.NewPGGetOrderUsecase, fx.As(new(get_order.GetOrderUsecase)))),
-	fx.Provide(fx.Annotate(pgp_place_order_connector.NewPGPPlaceOrderConnector,
-		fx.OnStart(func(connector *pgp_place_order_connector.PGPPlaceOrderConnector) error {
+	fx.Provide(fx.Annotate(pgp_place_order_connector.NewFCPlaceOrderConnector,
+		fx.OnStart(func(connector *pgp_place_order_connector.FCPlaceOrderConnector) error {
 			return connector.Run()
 		}),
-		fx.OnStop(func(connector *pgp_place_order_connector.PGPPlaceOrderConnector) error {
+		fx.OnStop(func(connector *pgp_place_order_connector.FCPlaceOrderConnector) error {
 			return connector.Stop()
 		}),
 	)),
-	fx.Provide(fx.Annotate(early_dropper.NewPGPEarlyDropper,
+	fx.Provide(fx.Annotate(early_dropper.NewFCEarlyDropper,
 		fx.OnStart(func(dropper *early_dropper.EarlyDropper) error {
 			return dropper.Run()
 		}),

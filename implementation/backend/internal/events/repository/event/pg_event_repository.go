@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/allegro/bigcache"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
@@ -41,7 +42,9 @@ func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, erro
 	cache, cacheErr := r.cache.Cache.Get(EventsCacheKey)
 
 	if cacheErr != nil {
-		logger.FromCtx(ctx).Error("Cannot get events from cache")
+		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
+			logger.FromCtx(ctx).Error("Cannot get events from cache", zap.Error(cacheErr))
+		}
 	} else {
 		marshallErr := json.Unmarshal(cache, &result)
 
@@ -68,7 +71,7 @@ func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, erro
 	raw, err := json.Marshal(result)
 
 	if err != nil {
-		logger.FromCtx(ctx).Error("Cannot marshall events")
+		logger.FromCtx(ctx).Error("Cannot marshall events", zap.Error(err))
 	}
 
 	if setCacheErr := r.cache.Cache.Set(EventsCacheKey, raw); setCacheErr != nil {
@@ -84,14 +87,16 @@ func (r *PGEventRepository) GetEvent(ctx context.Context, payload entity.GetEven
 	cache, cacheErr := r.cache.Cache.Get(eventCacheKey(payload.ID))
 
 	if cacheErr != nil {
-		logger.FromCtx(ctx).Sugar().Errorf("Cannot get event %d from cache", payload.ID)
+		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
+			logger.FromCtx(ctx).Sugar().Error(fmt.Sprintf("Cannot get event %d from cache", payload.ID), zap.Error(cacheErr))
+		}
 	} else {
 		marshallErr := json.Unmarshal(cache, &event)
 
 		if marshallErr == nil {
 			return &event, nil
 		} else {
-			logger.FromCtx(ctx).Sugar().Errorf("Cannot unmashall cached event %d", payload.ID)
+			logger.FromCtx(ctx).Sugar().Error(fmt.Sprintf("Cannot unmashall cached event %d", payload.ID), zap.Error(marshallErr))
 		}
 	}
 
@@ -214,10 +219,11 @@ func (r *PGEventRepository) GetEvent(ctx context.Context, payload entity.GetEven
 	}
 
 	if setCacheErr := r.cache.Cache.Set(eventCacheKey(payload.ID), eventJSON); setCacheErr != nil {
-		logger.FromCtx(ctx).Error("Cannot set cache events")
+		logger.FromCtx(ctx).Error("Cannot set cache events", zap.Error(setCacheErr))
 	}
 
 	if err := json.Unmarshal(eventJSON, &event); err != nil {
+		logger.FromCtx(ctx).Error("cannot unmarshal eventjson", zap.Error(err))
 		return nil, err
 	}
 

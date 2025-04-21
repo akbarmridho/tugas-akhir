@@ -14,7 +14,7 @@ import (
 	"tugas-akhir/backend/pkg/logger"
 )
 
-const PollInterval = 3 * time.Second
+const PollInterval = 1 * time.Second
 const ProcessorNamespace = string(config.FlowControlVariant__DropperAsync)
 const ProcessorSubsystem = "order_processor"
 const LimiterName = "order_processor_limiter"

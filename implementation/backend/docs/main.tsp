@@ -230,6 +230,7 @@ model OrderItemDto {
 model PlaceOrderDto {
     eventId: int64;
     ticketSaleId: int64;
+    ticketAreaId: int64;
 
     @minItems(1)
     @maxItems(5)

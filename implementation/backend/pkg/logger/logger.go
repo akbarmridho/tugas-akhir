@@ -110,7 +110,7 @@ func FromCtx(ctx context.Context) *zap.Logger {
 		return l
 	}
 
-	return zap.NewNop()
+	return GetInfo()
 }
 
 // WithCtx returns a copy of ctx with the Logger attached.

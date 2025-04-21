@@ -52,9 +52,9 @@ type OrderItemDto struct {
 type PlaceOrderDto struct {
 	UserID         *string
 	IdempotencyKey *string
-	EventID        int64 `json:"eventId"`
-	TicketSaleID   int64 `json:"ticketSaleId"`
-	TicketAreaID   *int64
+	EventID        int64          `json:"eventId" validate:"required"`
+	TicketSaleID   int64          `json:"ticketSaleId" validate:"required"`
+	TicketAreaID   *int64         `json:"ticketAreaId" validate:"required"`
 	Items          []OrderItemDto `json:"items" validate:"required,min=1,max=5"`
 }
 

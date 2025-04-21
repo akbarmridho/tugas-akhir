@@ -16,7 +16,7 @@ import (
 	"tugas-akhir/backend/pkg/utility"
 )
 
-type PGPPlaceOrderConnector struct {
+type FCPlaceOrderConnector struct {
 	placeOrderPublisher     *amqp.Publisher
 	placeOrderReplyConsumer *amqp.Consumer
 	ListenerChan            map[string]chan entity.PlaceOrderReplyMessage
@@ -25,10 +25,10 @@ type PGPPlaceOrderConnector struct {
 	ReplyRouteName          string
 }
 
-func NewPGPPlaceOrderConnector(
+func NewFCPlaceOrderConnector(
 	ctx context.Context,
 	config *config.Config,
-) *PGPPlaceOrderConnector {
+) *FCPlaceOrderConnector {
 	placeOrderPublisher := amqp.NewPublisher(config, &entity.PlaceOrderExchange)
 
 	replyRouteName := fmt.Sprintf("place_orders_reply.%s", config.PodName)
@@ -45,7 +45,7 @@ func NewPGPPlaceOrderConnector(
 		},
 	)
 
-	return &PGPPlaceOrderConnector{
+	return &FCPlaceOrderConnector{
 		ctx:                     ctx,
 		config:                  config,
 		placeOrderReplyConsumer: placeOrderReplyConsumer,
@@ -55,11 +55,20 @@ func NewPGPPlaceOrderConnector(
 	}
 }
 
-func (c *PGPPlaceOrderConnector) Stop() error {
-	return c.placeOrderPublisher.Close()
+func (c *FCPlaceOrderConnector) Stop() error {
+	err1 := c.placeOrderPublisher.Close()
+	err2 := c.placeOrderReplyConsumer.Close()
+
+	if err1 != nil {
+		return err1
+	} else if err2 != nil {
+		return err2
+	}
+
+	return nil
 }
 
-func (c *PGPPlaceOrderConnector) Run() error {
+func (c *FCPlaceOrderConnector) Run() error {
 	// run consume place order
 	err := c.consumeReply()
 
@@ -70,7 +79,7 @@ func (c *PGPPlaceOrderConnector) Run() error {
 	return nil
 }
 
-func (c *PGPPlaceOrderConnector) consumeReply() error {
+func (c *FCPlaceOrderConnector) consumeReply() error {
 	l := logger.FromCtx(c.ctx).With(zap.String("context", "place-order-reply-consumer"))
 
 	go func() {
@@ -145,7 +154,7 @@ func (c *PGPPlaceOrderConnector) consumeReply() error {
 	return nil
 }
 
-func (c *PGPPlaceOrderConnector) PublishRequest(ctx context.Context, message entity.PlaceOrderMessage) error {
+func (c *FCPlaceOrderConnector) PublishRequest(ctx context.Context, message entity.PlaceOrderMessage) error {
 	amqpMessage, err := message.ToMessage()
 
 	if err != nil {

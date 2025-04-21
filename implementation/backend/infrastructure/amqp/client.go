@@ -55,7 +55,7 @@ func (client *Client) handleReconnect(address string) {
 
 		conn, err := client.connect(address)
 		if err != nil {
-			client.Logger.Error("failed to connect. Retrying...")
+			client.Logger.Error("failed to connect. Retrying...", zap.Error(err))
 
 			select {
 			case <-client.done:

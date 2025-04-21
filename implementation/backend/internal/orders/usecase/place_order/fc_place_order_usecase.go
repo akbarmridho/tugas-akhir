@@ -15,13 +15,13 @@ import (
 
 type FCPlaceOrderUsecase struct {
 	config    *config.Config
-	connector *pgp_place_order_connector.PGPPlaceOrderConnector
+	connector *pgp_place_order_connector.FCPlaceOrderConnector
 	dropper   *early_dropper.EarlyDropper
 }
 
 func NewFCPlaceOrderUsecase(
 	config *config.Config,
-	connector *pgp_place_order_connector.PGPPlaceOrderConnector,
+	connector *pgp_place_order_connector.FCPlaceOrderConnector,
 	dropper *early_dropper.EarlyDropper,
 ) *FCPlaceOrderUsecase {
 
@@ -37,6 +37,7 @@ func (u *FCPlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.Pla
 	l := logger.FromCtx(ctx)
 
 	if err != nil {
+		err = errors2.Wrap(err, "source: early dropper")
 		if errors2.Is(err, entity.DropperSeatNotAvailable) {
 			return nil, &myerror.HttpError{
 				Code:    http.StatusConflict,

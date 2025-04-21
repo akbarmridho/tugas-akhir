@@ -34,7 +34,7 @@ type EarlyDropper struct {
 	seatRepository booked_seats.BookedSeatRepository
 }
 
-func NewPGPEarlyDropper(
+func NewFCEarlyDropper(
 	ctx context.Context,
 	config *config.Config,
 	redis *redis.Redis,
@@ -51,7 +51,7 @@ func NewPGPEarlyDropper(
 func (s *EarlyDropper) tryAcquireRefresher() (bool, error) {
 	result, err := s.redis.GetOrSetWithEx(s.ctx, redisPrefix+referesherRedisKey, s.config.PodName, 15*time.Minute)
 
-	if err == nil {
+	if err != nil {
 		return false, err
 	}
 

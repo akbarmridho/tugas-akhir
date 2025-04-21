@@ -22,7 +22,7 @@ func (r *RabbitMQContainer) Cleanup(t testing.TB) {
 
 func NewRabbitMQContainer(ctx context.Context) (*RabbitMQContainer, error) {
 	rabbitmqContainer, err := rabbitmq.Run(ctx,
-		"4.1.0-management",
+		"rabbitmq:4.1.0-management",
 		rabbitmq.WithAdminUsername(TestRabbitMQUser),
 		rabbitmq.WithAdminPassword(TestRabbitMQPassword),
 	)

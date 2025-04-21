@@ -23,7 +23,7 @@ func TestEarlyDropper_Seed(t *testing.T) {
 
 	redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewPGPEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, booked_seats.NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator()))
+	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, booked_seats.NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator()))
 	require.NotNil(t, dropper)
 	require.NoError(t, dropper.Run())
 }
@@ -32,7 +32,7 @@ func TestEarlyDropper_TryAcquireLock_NumberedSeat_Success(t *testing.T) {
 	ctx := t.Context()
 	redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewPGPEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
+	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
 	require.NotNil(t, dropper)
 
 	idempotencyKey := "test-idem-num-success"
@@ -95,7 +95,7 @@ func TestEarlyDropper_TryAcquireLock_NumberedSeat_Failure_NotAvailable(t *testin
 
 	redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewPGPEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
+	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
 	require.NotNil(t, dropper)
 
 	idempotencyKey := "test-idem-num-fail"
@@ -141,7 +141,7 @@ func TestEarlyDropper_TryAcquireLock_FreeStanding_Success(t *testing.T) {
 
 	redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewPGPEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
+	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
 	require.NotNil(t, dropper)
 
 	areaID := int64(1001)
@@ -199,7 +199,7 @@ func TestEarlyDropper_TryAcquireLock_FreeStanding_Failure_Insufficient(t *testin
 
 	redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewPGPEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
+	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
 	require.NotNil(t, dropper)
 
 	areaID := int64(1002)
@@ -241,7 +241,7 @@ func TestEarlyDropper_FinalizeLock_Success_Sold(t *testing.T) {
 
 	redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewPGPEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
+	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
 	require.NotNil(t, dropper)
 
 	seatID1 := int64(301)
@@ -297,7 +297,7 @@ func TestEarlyDropper_FinalizeLock_Failure_Available(t *testing.T) {
 
 	redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewPGPEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
+	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, nil)
 	require.NotNil(t, dropper)
 	seatID1 := int64(303)
 	areaID := int64(403)

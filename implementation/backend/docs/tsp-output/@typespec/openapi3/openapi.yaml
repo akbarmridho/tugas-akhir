@@ -576,12 +576,16 @@ components:
       required:
         - eventId
         - ticketSaleId
+        - ticketAreaId
         - items
       properties:
         eventId:
           type: integer
           format: int64
         ticketSaleId:
+          type: integer
+          format: int64
+        ticketAreaId:
           type: integer
           format: int64
         items:
