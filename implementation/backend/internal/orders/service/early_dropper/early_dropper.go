@@ -28,23 +28,23 @@ func freeStandingKey(areaID int64) string {
 }
 
 type EarlyDropper struct {
-	ctx            context.Context
-	config         *config.Config
-	redis          *redis.Redis
-	seatRepository booked_seats.BookedSeatRepository
+	ctx                  context.Context
+	config               *config.Config
+	redis                *redis.Redis
+	bookedSeatRepository booked_seats.BookedSeatRepository
 }
 
 func NewFCEarlyDropper(
 	ctx context.Context,
 	config *config.Config,
 	redis *redis.Redis,
-	seatRepository booked_seats.BookedSeatRepository,
+	bookedSeatRepository booked_seats.BookedSeatRepository,
 ) *EarlyDropper {
 	return &EarlyDropper{
-		ctx:            ctx,
-		config:         config,
-		redis:          redis,
-		seatRepository: seatRepository,
+		ctx:                  ctx,
+		config:               config,
+		redis:                redis,
+		bookedSeatRepository: bookedSeatRepository,
 	}
 }
 
@@ -58,27 +58,36 @@ func (s *EarlyDropper) tryAcquireRefresher() (bool, error) {
 	return result == s.config.PodName, nil
 }
 
-func (s *EarlyDropper) refreshData() {
+func (s *EarlyDropper) refreshData(returnOnError bool) error {
 	l := logger.FromCtx(s.ctx)
 
 	shouldGo, err := s.tryAcquireRefresher()
 
 	if err != nil {
 		l.Sugar().Error(err)
-		return
+		if returnOnError {
+			return err
+		}
+		return nil
 	}
 
 	if !shouldGo {
 		l.Info("skipping refresh early dropper because not instance with lock")
-		return
+		if returnOnError {
+			return fmt.Errorf("skipping refresh early dropper because not instance with lock")
+		}
+		return nil
 	}
 
 	// refresh data
-	data, iter, err := s.seatRepository.IterSeats(s.ctx)
+	data, iter, err := s.bookedSeatRepository.IterSeats(s.ctx)
 
 	if err != nil {
 		l.Sugar().Error(err)
-		return
+		if returnOnError {
+			return err
+		}
+		return nil
 	}
 
 	defer iter.Close(s.ctx)
@@ -87,7 +96,7 @@ func (s *EarlyDropper) refreshData() {
 	numberedBuffer := make([]entity2.TicketSeat, 0)
 	numberedBufferBatchSize := 100
 
-	sendNumberedBatch := func() {
+	sendNumberedBatch := func() error {
 		values := make(map[string]string)
 
 		for _, seat := range numberedBuffer {
@@ -101,7 +110,12 @@ func (s *EarlyDropper) refreshData() {
 
 		if _, err := pipe.Exec(s.ctx); err != nil {
 			l.Sugar().Error(err)
+			if returnOnError {
+				return err
+			}
 		}
+
+		return nil
 	}
 
 	for iter.Next(s.ctx) {
@@ -124,17 +138,26 @@ func (s *EarlyDropper) refreshData() {
 			numberedBuffer = append(numberedBuffer, seat)
 
 			if len(numberedBuffer) >= numberedBufferBatchSize {
-				sendNumberedBatch()
+				err = sendNumberedBatch()
+				if returnOnError && err != nil {
+					return err
+				}
 			}
 		}
 	}
 
 	if err := iter.Error(); err != nil {
 		l.Sugar().Error(err)
+		if returnOnError {
+			return err
+		}
 	}
 
 	if len(numberedBuffer) > 0 {
-		sendNumberedBatch()
+		err = sendNumberedBatch()
+		if returnOnError && err != nil {
+			return err
+		}
 	}
 
 	pipe := s.redis.Client.Pipeline()
@@ -144,18 +167,25 @@ func (s *EarlyDropper) refreshData() {
 
 	if _, err := pipe.Exec(s.ctx); err != nil {
 		l.Sugar().Error(err)
+		if returnOnError && err != nil {
+			return err
+		}
 	}
 
 	l.Info("completed refreshing early dropper data")
+	return nil
 }
 
 func (s *EarlyDropper) Stop() error {
 	return nil
 }
 
+func (s *EarlyDropper) RunSync() error {
+	return s.refreshData(true)
+}
+
 func (s *EarlyDropper) Run() error {
-	s.refreshData()
-	return nil
+	return s.refreshData(false)
 }
 
 func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceOrderDto) (*LockReleaser, error) {

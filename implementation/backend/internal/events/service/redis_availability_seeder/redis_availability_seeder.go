@@ -2,6 +2,7 @@ package redis_availability_seeder
 
 import (
 	"context"
+	"fmt"
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/postgres"
@@ -74,19 +75,25 @@ func (s *RedisAvailabilitySeeder) tryAcquireSeeder() (bool, error) {
 	return result == s.config.PodName, nil
 }
 
-func (s *RedisAvailabilitySeeder) refreshData() {
+func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 	l := logger.FromCtx(s.ctx)
 
 	shouldGo, err := s.tryAcquireSeeder()
 
 	if err != nil {
 		l.Sugar().Error(err)
-		return
+		if returnOnError {
+			return err
+		}
+		return nil
 	}
 
 	if !shouldGo {
 		l.Info("skipping refresh redis availability because not instance with lock")
-		return
+		if returnOnError {
+			return fmt.Errorf("skipping refresh redis availability because not instance with lock")
+		}
+		return nil
 	}
 
 	// refresh data
@@ -94,7 +101,10 @@ func (s *RedisAvailabilitySeeder) refreshData() {
 
 	if err != nil {
 		l.Sugar().Error(err)
-		return
+		if returnOnError {
+			return err
+		}
+		return nil
 	}
 
 	defer iter.Close(s.ctx)
@@ -102,7 +112,7 @@ func (s *RedisAvailabilitySeeder) refreshData() {
 	toSet := make(map[string]int32)
 	batchSize := 200
 
-	sendBatch := func() {
+	sendBatch := func() error {
 		pipe := s.redis.Client.Pipeline()
 		for k, v := range toSet {
 			pipe.Set(s.ctx, k, v, 0)
@@ -110,9 +120,13 @@ func (s *RedisAvailabilitySeeder) refreshData() {
 
 		if _, err := pipe.Exec(s.ctx); err != nil {
 			l.Sugar().Error(err)
+			if returnOnError {
+				return err
+			}
 		}
 
 		toSet = make(map[string]int32)
+		return nil
 	}
 
 	for iter.Next(s.ctx) {
@@ -122,28 +136,41 @@ func (s *RedisAvailabilitySeeder) refreshData() {
 		toSet[availability2.GetAvailableSeats(availability)] = availability.AvailableSeats
 
 		if len(toSet) >= batchSize {
-			sendBatch()
+			err = sendBatch()
+			if returnOnError {
+				return err
+			}
 		}
 	}
 
 	if err := iter.Error(); err != nil {
 		l.Sugar().Error(err)
+		if returnOnError {
+			return err
+		}
 	}
 
 	if len(toSet) > 0 {
-		sendBatch()
+		err = sendBatch()
+		if returnOnError {
+			return err
+		}
 	}
 
 	l.Info("completed seeder availability data")
+	return nil
 }
 
 func (s *RedisAvailabilitySeeder) Stop() error {
 	return nil
 }
 
+func (s *RedisAvailabilitySeeder) RunSync() error {
+	return s.refreshData(true)
+}
+
 func (s *RedisAvailabilitySeeder) Run() error {
-	s.refreshData()
-	return nil
+	return s.refreshData(false)
 }
 
 func (s *RedisAvailabilitySeeder) ApplyAvailability(ctx context.Context, items []entity2.AreaAvailability) error {
