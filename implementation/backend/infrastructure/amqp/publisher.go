@@ -93,6 +93,7 @@ func (client *Publisher) UnsafePush(message entity.Message) error {
 	payload := amqp091.Publishing{
 		ContentType: message.ContentType,
 		Body:        message.Data,
+		Timestamp:   time.Now(),
 	}
 
 	if message.Type != nil {

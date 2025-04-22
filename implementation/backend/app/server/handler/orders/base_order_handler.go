@@ -4,18 +4,21 @@ import (
 	"bytes"
 	"crypto/hmac"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/redis"
 	"tugas-akhir/backend/internal/auth/entity"
 	entity3 "tugas-akhir/backend/internal/bookings/entity"
+	entity4 "tugas-akhir/backend/internal/events/entity"
 	entity2 "tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/service/idempotent_place_order"
 	"tugas-akhir/backend/internal/orders/usecase/get_order"
 	"tugas-akhir/backend/internal/orders/usecase/place_order"
 	"tugas-akhir/backend/internal/orders/usecase/webhook"
 	myerror "tugas-akhir/backend/pkg/error"
+	"tugas-akhir/backend/pkg/logger"
 	"tugas-akhir/backend/pkg/mock_payment"
 	"tugas-akhir/backend/pkg/utility"
 	myvalidator "tugas-akhir/backend/pkg/validator"
@@ -79,6 +82,20 @@ func (h *BaseOrderHandler) PlaceOrder(c echo.Context) error {
 	if idempotencyKey != "" {
 		payload.IdempotencyKey = &idempotencyKey
 	}
+
+	// check for request type
+	var requestType entity4.AreaType
+
+	if payload.Items[0].TicketSeatID == nil {
+		requestType = entity4.AreaType__FreeStanding
+	} else {
+		requestType = entity4.AreaType__NumberedSeating
+	}
+
+	l := logger.FromCtx(ctx)
+	l = l.With(zap.String("area_type", string(requestType)))
+	ctx = logger.WithCtx(ctx, l)
+	c.SetRequest(c.Request().WithContext(ctx))
 
 	result, httpErr := idempotent_place_order.WrapIdempotency(ctx, h.redis, h.placeOrderUsecase.PlaceOrder, payload)
 

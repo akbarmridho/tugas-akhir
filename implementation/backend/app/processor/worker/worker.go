@@ -6,6 +6,7 @@ import (
 	"encoding/gob"
 	"github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
+	"time"
 	"tugas-akhir/backend/internal/orders/entity"
 	"tugas-akhir/backend/internal/orders/usecase/place_order"
 	"tugas-akhir/backend/pkg/logger"
@@ -18,6 +19,9 @@ type BookingWorker struct {
 
 func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) error {
 	l := logger.FromCtx(ctx).With(zap.String("context", "worker"))
+
+	waitTime := time.Since(rawMsg.Timestamp)
+	now := time.Now()
 
 	var buffer bytes.Buffer
 
@@ -52,6 +56,9 @@ func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) e
 
 	response, httpErr := w.placeOrderUsecase.PlaceOrder(ctx, payload.Data)
 
+	processTime := time.Since(now)
+	now = time.Now()
+
 	publishErr := w.resultPublisher.Publish(ctx, entity.PlaceOrderReplyMessage{
 		Order:          response,
 		HttpErr:        httpErr,
@@ -59,10 +66,18 @@ func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) e
 		IdempotencyKey: *payload.Data.IdempotencyKey,
 	})
 
+	publishTime := time.Since(now)
+
 	if publishErr != nil {
 		l.Sugar().Error(publishErr)
 		return publishErr
 	}
+
+	l.Info("order processed",
+		zap.Int64("wait_time", waitTime.Milliseconds()),
+		zap.Int64("process_time", processTime.Milliseconds()),
+		zap.Int64("publish_time", publishTime.Milliseconds()),
+	)
 
 	return nil
 }
