@@ -2,16 +2,26 @@ package availability
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/allegro/bigcache"
 	baseredis "github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 	"strconv"
 	"strings"
+	"sync"
+	"tugas-akhir/backend/infrastructure/memcache"
 	"tugas-akhir/backend/infrastructure/redis"
 	"tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/pkg/logger"
 )
 
 const prefix = "redis-availability"
+
+func cacheKey(pattern string) string {
+	return fmt.Sprintf("%s:key:%s", prefix, pattern)
+}
 
 func GetTotalSeatsKey(data entity.AreaAvailability) string {
 	return fmt.Sprintf("%s:%d:%d:%d:total", prefix, data.TicketSaleID, data.TicketPackageID, data.TicketAreaID)
@@ -23,11 +33,16 @@ func GetAvailableSeats(data entity.AreaAvailability) string {
 
 type RedisAvailabilityRepository struct {
 	redis *redis.Redis
+	cache *memcache.Memcache
 }
 
-func NewRedisAvailabilityRepository(redis *redis.Redis) *RedisAvailabilityRepository {
+func NewRedisAvailabilityRepository(
+	redis *redis.Redis,
+	cache *memcache.Memcache,
+) *RedisAvailabilityRepository {
 	return &RedisAvailabilityRepository{
 		redis: redis,
+		cache: cache,
 	}
 }
 
@@ -36,30 +51,78 @@ func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, paylo
 
 	pattern := fmt.Sprintf("%s:%d:*:*:*", prefix, payload.TicketSaleID)
 
-	var keys []string
+	keys := make([]string, 0)
 
-	// ForEachMaster will loop over every master node in the cluster.
-	err := r.redis.Client.ForEachMaster(ctx, func(ctx context.Context, client *baseredis.Client) error {
-		var cursor uint64 = 0
-		for {
-			// Scan on the current node.
-			ckeys, nextCursor, err := client.Scan(ctx, cursor, pattern, 100).Result()
-			if err != nil {
-				return err
+	getKeys := func() error {
+		var mu sync.Mutex
+
+		// ForEachMaster will loop over every master node in the cluster.
+		err := r.redis.Client.ForEachMaster(ctx, func(ctx context.Context, client *baseredis.Client) error {
+			var cursor uint64 = 0
+			var localKeys []string
+			for {
+				// Scan on the current node.
+				ckeys, nextCursor, err := client.Scan(ctx, cursor, pattern, 100).Result()
+				if err != nil {
+					return err
+				}
+
+				localKeys = append(localKeys, ckeys...)
+
+				if nextCursor == 0 {
+					break
+				}
+				cursor = nextCursor
 			}
 
-			keys = append(keys, ckeys...)
+			mu.Lock()
+			keys = append(keys, localKeys...)
+			mu.Unlock()
 
-			if nextCursor == 0 {
-				break
-			}
-			cursor = nextCursor
+			return nil
+		})
+
+		if err != nil {
+			return err
 		}
-		return nil
-	})
 
-	if err != nil {
-		return nil, err
+		raw, err := json.Marshal(keys)
+
+		if err != nil {
+			logger.FromCtx(ctx).Error("Cannot marshall keys", zap.Error(err))
+			return err
+		}
+
+		if setCacheErr := r.cache.Cache.Set(cacheKey(pattern), raw); setCacheErr != nil {
+			logger.FromCtx(ctx).Error("Cannot set cache keys", zap.Error(setCacheErr))
+			return setCacheErr
+		}
+
+		return nil
+	}
+
+	cache, cacheErr := r.cache.Cache.Get(cacheKey(pattern))
+
+	var getKeysError error
+
+	if cacheErr != nil {
+		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
+			logger.FromCtx(ctx).Error("Cannot get keys from cache", zap.Error(cacheErr))
+		} else {
+			getKeysError = getKeys()
+		}
+	} else {
+		marshallErr := json.Unmarshal(cache, &keys)
+
+		if marshallErr != nil {
+			logger.FromCtx(ctx).Error("Cannot unmashall cached keys")
+
+			getKeysError = marshallErr
+		}
+	}
+
+	if getKeysError != nil {
+		return nil, getKeysError
 	}
 
 	// Group keys by their area identifiers

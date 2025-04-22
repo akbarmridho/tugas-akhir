@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"testing"
 	"tugas-akhir/backend/infrastructure/config"
+	"tugas-akhir/backend/infrastructure/memcache"
 	"tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/events/repository/availability"
 	"tugas-akhir/backend/internal/events/service/redis_availability_seeder"
@@ -55,7 +56,10 @@ func TestRedisAvailabilityRepository_GetAvailability(t *testing.T) {
 			err := redisSeeder.Run()
 			require.NoError(t, err)
 
-			repo := availability.NewRedisAvailabilityRepository(redisClient)
+			cache, cerr := memcache.NewMemcache()
+			require.NoError(t, cerr)
+
+			repo := availability.NewRedisAvailabilityRepository(redisClient, cache)
 
 			// Query the necessary IDs from the database
 			var (
@@ -182,7 +186,103 @@ func TestRedisAvailabilityRepository_GetAvailability(t *testing.T) {
 					expectError: false,
 				},
 				{
+					name: "success - get availability for existing sale (Day 1) - Cached",
+					payload: entity.GetAvailabilityDto{
+						TicketSaleID: day1SaleID,
+					},
+					want: []entity.AreaAvailability{
+						// Grandstand Row A-E (seated)
+						{
+							TicketSaleID:    day1SaleID,
+							TicketPackageID: day1SeatedPkg1,
+							TicketAreaID:    day1SeatedAreas1[0],
+							TotalSeats:      100,
+							AvailableSeats:  100,
+						},
+						// Grandstand Row F-M (seated)
+						{
+							TicketSaleID:    day1SaleID,
+							TicketPackageID: day1SeatedPkg2,
+							TicketAreaID:    day1SeatedAreas2[0],
+							TotalSeats:      250,
+							AvailableSeats:  250,
+						},
+						// Front Stage Pit (free-standing)
+						{
+							TicketSaleID:    day1SaleID,
+							TicketPackageID: day1StandingPkg,
+							TicketAreaID:    day1StandingAreas[0],
+							TotalSeats:      300,
+							AvailableSeats:  300,
+						},
+						// General Lawn Area (free-standing) - two areas expected
+						{
+							TicketSaleID:    day1SaleID,
+							TicketPackageID: day1LawnPkg,
+							TicketAreaID:    day1LawnAreas[0],
+							TotalSeats:      1000,
+							AvailableSeats:  1000,
+						},
+						{
+							TicketSaleID:    day1SaleID,
+							TicketPackageID: day1LawnPkg,
+							TicketAreaID:    day1LawnAreas[1],
+							TotalSeats:      1000,
+							AvailableSeats:  1000,
+						},
+					},
+					expectError: false,
+				},
+				{
 					name: "success - get availability for existing sale (Day 2)",
+					payload: entity.GetAvailabilityDto{
+						TicketSaleID: day2SaleID,
+					},
+					want: []entity.AreaAvailability{
+						// Grandstand Row A-E (seated)
+						{
+							TicketSaleID:    day2SaleID,
+							TicketPackageID: day2SeatedPkg1,
+							TicketAreaID:    day2SeatedAreas1[0],
+							TotalSeats:      100,
+							AvailableSeats:  100,
+						},
+						// Grandstand Row F-M (seated)
+						{
+							TicketSaleID:    day2SaleID,
+							TicketPackageID: day2SeatedPkg2,
+							TicketAreaID:    day2SeatedAreas2[0],
+							TotalSeats:      250,
+							AvailableSeats:  250,
+						},
+						// Front Stage Pit (free-standing)
+						{
+							TicketSaleID:    day2SaleID,
+							TicketPackageID: day2StandingPkg,
+							TicketAreaID:    day2StandingAreas[0],
+							TotalSeats:      300,
+							AvailableSeats:  300,
+						},
+						// General Lawn Area (free-standing) - two areas expected
+						{
+							TicketSaleID:    day2SaleID,
+							TicketPackageID: day2LawnPkg,
+							TicketAreaID:    day2LawnAreas[0],
+							TotalSeats:      1000,
+							AvailableSeats:  1000,
+						},
+						{
+							TicketSaleID:    day2SaleID,
+							TicketPackageID: day2LawnPkg,
+							TicketAreaID:    day2LawnAreas[1],
+							TotalSeats:      1000,
+							AvailableSeats:  1000,
+						},
+					},
+					expectError: false,
+				},
+				{
+					name: "success - get availability for existing sale (Day 2) - Cached",
 					payload: entity.GetAvailabilityDto{
 						TicketSaleID: day2SaleID,
 					},

@@ -80,7 +80,7 @@ func setupTestEnvironment(t *testing.T, variant test_containers.RelationalDBVari
 	invoiceRepo = invoice.NewPGInvoiceRepository(db)
 	bookedSeatRepo = booked_seats.NewPGBookedSeatRepository(db, service2.NewSerialNumberGenerator())
 	seatRepo = seat.NewPGSeatRepository(db)
-	availabilityRepository = availability.NewRedisAvailabilityRepository(redisClient)
+	availabilityRepository = availability.NewRedisAvailabilityRepository(redisClient, cache)
 
 	var paymentGateway service.PaymentGateway
 	paymentGateway, _ = service.NewPaymentGatewayMock()
