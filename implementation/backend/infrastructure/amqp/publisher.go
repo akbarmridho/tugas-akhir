@@ -32,6 +32,9 @@ func NewPublisher(
 	}
 
 	go publisher.handleReconnect(config.AmqpUrl)
+
+	ConnectedPublishers = append(ConnectedPublishers, &publisher)
+
 	return &publisher
 }
 

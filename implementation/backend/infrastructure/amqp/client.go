@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+var ConnectedConsumers = make([]*Consumer, 0)
+var ConnectedPublishers = make([]*Publisher, 0)
+
 // Client is the base struct for handling connection recovery, consumption and
 // publishing. Note that this struct has an internal mutex to safeguard against
 // data races.
@@ -26,6 +29,10 @@ type Client struct {
 	notifyChanClose chan *amqp091.Error
 	notifyConfirm   chan amqp091.Confirmation
 	isReady         bool
+}
+
+func (client *Client) IsConnected() bool {
+	return !client.connection.IsClosed()
 }
 
 func (client *Client) WaitUntilReady(ctx context.Context) {

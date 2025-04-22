@@ -46,7 +46,7 @@ func main() {
 		postgres.Module,
 		redis.Module,
 		middleware.Module,
-		handler.PGPModule,
+		handler.FCModule,
 		bookings.BaseModule,
 		events.BaseModule,
 		orders.FCModule,

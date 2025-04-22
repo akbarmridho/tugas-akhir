@@ -1,51 +1,46 @@
 package health
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"sync"
+	"tugas-akhir/backend/infrastructure/amqp"
 	"tugas-akhir/backend/infrastructure/postgres"
 	"tugas-akhir/backend/infrastructure/redis"
-	"tugas-akhir/backend/infrastructure/risingwave"
 	myerror "tugas-akhir/backend/pkg/error"
 	"tugas-akhir/backend/pkg/logger"
 )
 
-type PGPHealthcheckHandler struct {
+type FCHealthcheckHandler struct {
 	db    *postgres.Postgres
-	rw    *risingwave.Risingwave
 	redis *redis.Redis
 }
 
-func NewPGPHealthcheckHandler(
-	db *postgres.Postgres,
-	rw *risingwave.Risingwave,
-	redis *redis.Redis,
-) *PGPHealthcheckHandler {
-	return &PGPHealthcheckHandler{
+func NewFCHealthcheckHandler(db *postgres.Postgres, redis *redis.Redis) *FCHealthcheckHandler {
+	return &FCHealthcheckHandler{
 		db:    db,
-		rw:    rw,
 		redis: redis,
 	}
 }
 
-type PGPHealthcheckResult struct {
+type FCHealthcheckResult struct {
 	PostgresStatus string `json:"postgresStatus"`
 	RedisStatus    string `json:"redisStatus"`
-	RisingwaveStatus string `json:"risingwaveStatus"`
+	AmqpStatus     string `json:"amqpStatus"`
 }
 
-func (h *PGPHealthcheckHandler) Healthcheck(c echo.Context) error {
+func (h *FCHealthcheckHandler) Healthcheck(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	l := logger.FromCtx(ctx)
 
 	status := http.StatusOK
 
-	response := PGPHealthcheckResult{
+	response := FCHealthcheckResult{
 		PostgresStatus: "Healthy",
 		RedisStatus:    "Healthy",
-		RisingwaveStatus: "Healthy",
+		AmqpStatus:     "Healthy",
 	}
 
 	wg := sync.WaitGroup{}
@@ -65,18 +60,6 @@ func (h *PGPHealthcheckHandler) Healthcheck(c echo.Context) error {
 	}()
 
 	go func() {
-		err := h.rw.Pool.Ping(ctx)
-
-		if err != nil {
-			l.Sugar().Error(err)
-			status = http.StatusServiceUnavailable
-			response.RisingwaveStatus = err.Error()
-		}
-
-		wg.Done()
-	}()
-
-	go func() {
 		err := h.redis.IsHealthy(ctx)
 
 		if err != nil {
@@ -86,6 +69,31 @@ func (h *PGPHealthcheckHandler) Healthcheck(c echo.Context) error {
 		}
 
 		wg.Done()
+	}()
+
+	go func() {
+		everyConnected := true
+
+		for _, consumer := range amqp.ConnectedConsumers {
+			if !consumer.Client.IsConnected() {
+				everyConnected = false
+				break
+			}
+		}
+
+		for _, publisher := range amqp.ConnectedPublishers {
+			if !publisher.Client.IsConnected() {
+				everyConnected = false
+				break
+			}
+		}
+
+		if !everyConnected {
+			theErr := fmt.Errorf("some RabbitMQ publisher or consumer is not connected")
+			l.Sugar().Error(theErr)
+			status = http.StatusServiceUnavailable
+			response.AmqpStatus = theErr.Error()
+		}
 	}()
 
 	wg.Wait()

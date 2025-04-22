@@ -56,7 +56,8 @@ func NewLoggerMiddleware(config *config.Config) *LoggerMiddleware {
 					zap.Int("status", afterRes.Status),
 					zap.Int64("size", afterRes.Size),
 					zap.String("user_agent", afterReq.UserAgent()),
-					zap.String("app_variant", string(config.AppVariant)),
+					zap.String("db_variant", string(config.DBVariant)),
+					zap.String("fc_variant", string(config.FlowControlVariant)),
 					zap.String("test_scenario", config.TestScenario),
 					zap.String("pod_name", config.PodName),
 				}

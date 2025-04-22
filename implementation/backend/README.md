@@ -1,7 +1,13 @@
 # Tugas Akhir Backend
 
-## Run Unit Tests
+## Integration Test
+
+**Prerequisites:**
+
+- Docker Engine
 
 ```sh
-go test ./...
+ bash ./integration_test.sh
 ```
+
+Then open the cover.html to see the test coverage results.

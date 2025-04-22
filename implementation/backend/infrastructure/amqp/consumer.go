@@ -37,6 +37,8 @@ func NewConsumer(
 
 	go consumer.handleReconnect(config.AmqpUrl)
 
+	ConnectedConsumers = append(ConnectedConsumers, &consumer)
+
 	return &consumer
 }
 

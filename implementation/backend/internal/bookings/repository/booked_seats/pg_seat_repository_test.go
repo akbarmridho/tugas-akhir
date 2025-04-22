@@ -19,78 +19,82 @@ import (
 )
 
 func TestPGBookedSeatRepository_Integration(t *testing.T) {
-	ctx := context.Background()
+	for _, variant := range test_containers.RelationalDBVariants {
+		t.Run(string(variant), func(t *testing.T) {
+			ctx := context.Background()
 
-	// Setup test database
-	db := seeder.GetConnAndSchema(t, test_containers.RelationalDBVariant__Postgres)
-	seeder.SeedSchema(t, ctx, db)
+			// Setup test database
+			db := seeder.GetConnAndSchema(t, variant)
+			seeder.SeedSchema(t, ctx, db)
 
-	// Create test data
-	seedData := seedTestData(t, ctx, db)
+			// Create test data
+			seedData := seedTestData(t, ctx, db)
 
-	// Initialize repository with mock serial number generator
-	repo := NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator())
+			// Initialize repository with mock serial number generator
+			repo := NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator())
 
-	// Test PublishIssuedTickets
-	t.Run("PublishIssuedTickets", func(t *testing.T) {
-		payload := createPublishTicketPayload(t, db, seedData)
-		err := repo.PublishIssuedTickets(ctx, payload)
-		require.NoError(t, err)
+			// Test PublishIssuedTickets
+			t.Run("PublishIssuedTickets", func(t *testing.T) {
+				payload := createPublishTicketPayload(t, db, seedData)
+				err := repo.PublishIssuedTickets(ctx, payload)
+				require.NoError(t, err)
 
-		// Verify tickets were created
-		var issuedTickets []entity.IssuedTicket
-		query := `SELECT id, serial_number, holder_name, name, description, ticket_seat_id, order_id, order_item_id, created_at, updated_at FROM issued_tickets WHERE order_id = $1`
-		err = pgxscan.Select(ctx, db.GetExecutor(ctx), &issuedTickets, query, payload.Items[0].OrderID)
-		require.NoError(t, err)
-		assert.Equal(t, len(payload.Items), len(issuedTickets))
-	})
+				// Verify tickets were created
+				var issuedTickets []entity.IssuedTicket
+				query := `SELECT id, serial_number, holder_name, name, description, ticket_seat_id, order_id, order_item_id, created_at, updated_at FROM issued_tickets WHERE order_id = $1`
+				err = pgxscan.Select(ctx, db.GetExecutor(ctx), &issuedTickets, query, payload.Items[0].OrderID)
+				require.NoError(t, err)
+				assert.Equal(t, len(payload.Items), len(issuedTickets))
+			})
 
-	// Test GetIssuedTickets
-	t.Run("GetIssuedTickets", func(t *testing.T) {
-		// Use the orderID from our seed data
-		getTicketPayload := entity.GetIssuedTicketDto{
-			ID:     seedData.orderID,
-			UserID: &seedData.externalUserID,
-		}
+			// Test GetIssuedTickets
+			t.Run("GetIssuedTickets", func(t *testing.T) {
+				// Use the orderID from our seed data
+				getTicketPayload := entity.GetIssuedTicketDto{
+					ID:     seedData.orderID,
+					UserID: &seedData.externalUserID,
+				}
 
-		tickets, err := repo.GetIssuedTickets(ctx, getTicketPayload)
-		require.NoError(t, err)
-		assert.NotEmpty(t, tickets)
+				tickets, err := repo.GetIssuedTickets(ctx, getTicketPayload)
+				require.NoError(t, err)
+				assert.NotEmpty(t, tickets)
 
-		// Verify ticket details
-		for _, ticket := range tickets {
-			assert.NotEmpty(t, ticket.SerialNumber)
-			assert.Equal(t, seedData.orderID, ticket.OrderID)
-			assert.NotNil(t, ticket.TicketSeat)
-		}
-	})
+				// Verify ticket details
+				for _, ticket := range tickets {
+					assert.NotEmpty(t, ticket.SerialNumber)
+					assert.Equal(t, seedData.orderID, ticket.OrderID)
+					assert.NotNil(t, ticket.TicketSeat)
+				}
+			})
 
-	// Test GetIssuedTickets with invalid user
-	t.Run("GetIssuedTickets_InvalidUser", func(t *testing.T) {
-		invalidUser := "invalid-user-id"
+			// Test GetIssuedTickets with invalid user
+			t.Run("GetIssuedTickets_InvalidUser", func(t *testing.T) {
+				invalidUser := "invalid-user-id"
 
-		getTicketPayload := entity.GetIssuedTicketDto{
-			ID:     seedData.orderID,
-			UserID: &invalidUser,
-		}
+				getTicketPayload := entity.GetIssuedTicketDto{
+					ID:     seedData.orderID,
+					UserID: &invalidUser,
+				}
 
-		_, err := repo.GetIssuedTickets(ctx, getTicketPayload)
-		assert.ErrorIs(t, err, entity.IssuedTicketNotFoundError)
-	})
+				_, err := repo.GetIssuedTickets(ctx, getTicketPayload)
+				assert.ErrorIs(t, err, entity.IssuedTicketNotFoundError)
+			})
 
-	// Test IterSeats
-	t.Run("IterSeats", func(t *testing.T) {
-		seats, iter, err := repo.IterSeats(ctx)
-		require.NoError(t, err)
-		require.NotNil(t, iter)
+			// Test IterSeats
+			t.Run("IterSeats", func(t *testing.T) {
+				seats, iter, err := repo.IterSeats(ctx)
+				require.NoError(t, err)
+				require.NotNil(t, iter)
 
-		// Just check that seats array is of expected size (100 as defined in repository)
-		assert.Len(t, seats, 100)
+				// Just check that seats array is of expected size (100 as defined in repository)
+				assert.Len(t, seats, 100)
 
-		// Verify we can iterate through cursor
-		hasNext := iter.Next(ctx)
-		assert.True(t, hasNext)
-	})
+				// Verify we can iterate through cursor
+				hasNext := iter.Next(ctx)
+				assert.True(t, hasNext)
+			})
+		})
+	}
 }
 
 // TestData holds references to created test data

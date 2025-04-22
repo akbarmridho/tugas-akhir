@@ -17,15 +17,19 @@ import (
 )
 
 func TestEarlyDropper_Seed(t *testing.T) {
-	ctx := t.Context()
-	db := seeder.GetConnAndSchema(t, test_containers.RelationalDBVariant__Postgres)
-	seeder.SeedSchema(t, ctx, db)
+	for _, variant := range test_containers.RelationalDBVariants {
+		t.Run(string(variant), func(t *testing.T) {
+			ctx := t.Context()
+			db := seeder.GetConnAndSchema(t, variant)
+			seeder.SeedSchema(t, ctx, db)
 
-	redisInstance := test_containers.GetRedisCluster(t)
+			redisInstance := test_containers.GetRedisCluster(t)
 
-	dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, booked_seats.NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator()))
-	require.NotNil(t, dropper)
-	require.NoError(t, dropper.Run())
+			dropper := NewFCEarlyDropper(ctx, &config.Config{PodName: "default"}, redisInstance, booked_seats.NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator()))
+			require.NotNil(t, dropper)
+			require.NoError(t, dropper.Run())
+		})
+	}
 }
 
 func TestEarlyDropper_TryAcquireLock_NumberedSeat_Success(t *testing.T) {

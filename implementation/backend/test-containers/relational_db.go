@@ -16,6 +16,12 @@ const (
 	RelationalDBVariant__YugabyteDB RelationalDBVariant = "yugabytedb"
 )
 
+var RelationalDBVariants = []RelationalDBVariant{
+	RelationalDBVariant__Postgres,
+	RelationalDBVariant__Citus,
+	RelationalDBVariant__YugabyteDB,
+}
+
 const TestDBName = "tugas-akhir"
 const TestDBUser = "tugas-akhir"
 const TestDBPassword = "tugas-akhir"
