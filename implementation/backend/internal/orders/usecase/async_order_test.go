@@ -323,6 +323,7 @@ func TestIntegration_Async_OrderFlow_Success(t *testing.T) {
 					require.Len(t, placedOrder.Items, len(placeOrderPayload.Items), "Number of items should match payload")
 					require.NotNil(t, placedOrder.Invoice, "Order should have an associated invoice")
 					require.NotZero(t, placedOrder.Invoice.Amount, "Invoice amount should be calculated")
+					require.Equal(t, "1", placedOrder.Invoice.ExternalID) // the id of external payment gateway
 
 					// --- Act: Handle Webhook (Success) ---
 					webhookPayloadSuccess := mock_payment.Invoice{
@@ -461,6 +462,7 @@ func TestIntegration_Async_OrderFlow_PaymentFailed(t *testing.T) {
 			require.Len(t, placedOrder.Items, len(placeOrderPayload.Items), "Number of items should match payload")
 			require.NotNil(t, placedOrder.Invoice, "Order should have an associated invoice")
 			require.NotZero(t, placedOrder.Invoice.Amount, "Invoice amount should be calculated")
+			require.Equal(t, "1", placedOrder.Invoice.ExternalID) // the id of external payment gateway
 
 			// --- Act: Handle Webhook (Failure) ---
 			webhookPayloadFail := mock_payment.Invoice{

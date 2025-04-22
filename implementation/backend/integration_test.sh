@@ -11,7 +11,7 @@ mkdir -p $COVERAGE_DIR
 
 # Run tests package-by-package
 for pkg in $(go list ./...); do
-    go test -coverprofile="$COVERAGE_DIR/$(echo "$pkg" | tr / -).cover" -covermode=atomic "$pkg"
+    go test -coverpkg=./... -coverprofile="$COVERAGE_DIR/$(echo "$pkg" | tr / -).cover" -covermode=atomic "$pkg"
 done
 
 # Combine all .cover files into one

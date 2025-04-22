@@ -3,6 +3,7 @@ package place_order
 import (
 	"context"
 	"errors"
+	"fmt"
 	errors2 "github.com/pkg/errors"
 	"net/http"
 	"strconv"
@@ -20,16 +21,17 @@ import (
 	"tugas-akhir/backend/internal/payments/service"
 	myerror "tugas-akhir/backend/pkg/error"
 	"tugas-akhir/backend/pkg/logger"
+	"tugas-akhir/backend/pkg/mock_payment"
 )
 
 type BasePlaceOrderUsecase struct {
-	eventRepository    event.EventRepository
-	orderRepository    order.OrderRepository
-	bookingRepository  booking.BookingRepository
-	invoiceRepository  invoice.InvoiceRepository
-	mockPaymentService service.PaymentGateway
-	redisAvailability  *redis_availability_seeder.RedisAvailabilitySeeder
-	db                 *postgres.Postgres
+	eventRepository   event.EventRepository
+	orderRepository   order.OrderRepository
+	bookingRepository booking.BookingRepository
+	invoiceRepository invoice.InvoiceRepository
+	paymentGateway    service.PaymentGateway
+	redisAvailability *redis_availability_seeder.RedisAvailabilitySeeder
+	db                *postgres.Postgres
 }
 
 func NewBasePlaceOrderUsecase(
@@ -37,18 +39,18 @@ func NewBasePlaceOrderUsecase(
 	orderRepository order.OrderRepository,
 	bookingRepository booking.BookingRepository,
 	invoiceRepository invoice.InvoiceRepository,
-	mockPaymentService service.PaymentGateway,
+	paymentGateway service.PaymentGateway,
 	redisAvailability *redis_availability_seeder.RedisAvailabilitySeeder,
 	db *postgres.Postgres,
 ) *BasePlaceOrderUsecase {
 	return &BasePlaceOrderUsecase{
-		eventRepository:    eventRepository,
-		orderRepository:    orderRepository,
-		bookingRepository:  bookingRepository,
-		invoiceRepository:  invoiceRepository,
-		mockPaymentService: mockPaymentService,
-		db:                 db,
-		redisAvailability:  redisAvailability,
+		eventRepository:   eventRepository,
+		orderRepository:   orderRepository,
+		bookingRepository: bookingRepository,
+		invoiceRepository: invoiceRepository,
+		paymentGateway:    paymentGateway,
+		db:                db,
+		redisAvailability: redisAvailability,
 	}
 }
 
@@ -276,9 +278,25 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 		}
 	}
 
+	description := fmt.Sprintf("Ticket purchase for %s", eventEntity.Name)
+
+	generatedInvoice, err := u.paymentGateway.GenerateInvoice(ctx, mock_payment.CreateInvoiceRequest{
+		Amount:      float32(total),
+		Description: &description,
+		ExternalId:  strconv.FormatInt(orderEntity.ID, 10),
+	})
+
+	if err != nil {
+		return nil, &myerror.HttpError{
+			Code:         http.StatusInternalServerError,
+			Message:      err.Error(),
+			ErrorContext: err,
+		}
+	}
+
 	invoiceEntity, err := u.invoiceRepository.CreateInvoice(ctx, entity4.CreateInvoiceDto{
 		Amount:       total,
-		ExternalID:   strconv.FormatInt(orderEntity.ID, 10),
+		ExternalID:   generatedInvoice.Id,
 		OrderID:      orderEntity.ID,
 		TicketAreaID: *payload.TicketAreaID,
 	})
