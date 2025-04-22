@@ -8,6 +8,8 @@
     "debug:http": "DEBUG='ioredis:*' tsx watch src/cmd/server/index.ts",
     "dev:notifier": "tsx watch src/cmd/notifier/index.ts",
     "dev:echo": "tsx watch src/cmd/echo/index.ts",
+    "start:server": "node --max-old-space-size=2560 dist/cmd/server/index.js",
+    "start:notifier": "node --max-old-space-size=2560 dist/cmd/notifier/index.js",
     "generate": "npx openapi-generator-cli generate"
   },
   "dependencies": {
