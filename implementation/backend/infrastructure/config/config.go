@@ -25,7 +25,7 @@ type Config struct {
 	PaymentCertPath   string `envconfig:"PAYMENT_CERT_PATH" required:"true"`
 	WebhookSecret     string `envconfig:"WEBHOOK_SECRET" required:"true"`
 
-	WorkerMetricsPort int `envconfig:"WORKER_METRICS_PORT" default:"5000"`
+	WorkerMetricsPort int `envconfig:"WORKER_METRICS_PORT" default:"3000"`
 
 	RedisHosts    string `envconfig:"REDIS_HOSTS"`
 	RedisHostsMap string `envconfig:"REDIS_HOSTS_MAP"`
