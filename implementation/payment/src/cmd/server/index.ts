@@ -1,26 +1,33 @@
 import { serve } from "@hono/node-server";
 import { createSecureServer } from "node:http2";
 
-import { logger } from "../common/logger.js";
-import { env } from "../common/env.js";
-import { app } from "./app.js";
-import { redis } from "../common/redis.js";
-import { queue } from "./queue.js";
+import { env } from "../../infrastructure/env.js";
 import { readFileSync } from "node:fs";
+import { createLogger } from "../../utils/logger.js";
+import { newRedisCluster } from "../../infrastructure/redis.js";
+import { createWebhookQueue } from "../../infrastructure/queue.js";
+import { createApp } from "./app.js";
 
 (async function main() {
+	const config = env;
+	const logger = createLogger(config);
+	const redis = newRedisCluster(config);
+	const webhookQueue = createWebhookQueue(redis);
+
+	const app = createApp(logger, redis, webhookQueue);
+
 	const server = serve(
 		{
 			fetch: app.fetch,
 			port: env.PORT,
 			createServer: createSecureServer,
 			serverOptions: {
-				key: readFileSync("../cert/key.pem"),
-				cert: readFileSync("../cert/cert.pem"),
+				key: readFileSync(config.KEY_PATH),
+				cert: readFileSync(config.CERT_PATH),
 			},
 		},
 		(info) => {
-			logger.info(`Server is running on http://localhost:${info.port}`);
+			logger.info(`Server is running on ${info.address}:${info.port}`);
 		},
 	);
 
@@ -30,7 +37,7 @@ import { readFileSync } from "node:fs";
 		// Close the server
 		server.close(() => {
 			logger.info("Server closed.");
-			queue.close().finally(() => {
+			webhookQueue.close().finally(() => {
 				// Disconnect redis
 				redis.disconnect(false);
 				process.exit(0);
@@ -49,6 +56,6 @@ import { readFileSync } from "node:fs";
 	process.on("SIGINT", handleShutdown);
 	process.on("SIGTERM", handleShutdown);
 })().catch((e) => {
-	logger.error("Main loop error", e);
+	console.error("Main loop error", e);
 	process.exit(1);
 });

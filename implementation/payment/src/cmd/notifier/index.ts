@@ -1,13 +1,16 @@
 import { Worker } from "bullmq";
-import { logger } from "../common/logger.js";
-import { redis } from "../common/redis.js";
-import { env } from "../common/env.js";
-import { InvoiceSchema } from "../common/schema.js";
+import { env } from "../../infrastructure/env.js";
+import { InvoiceSchema } from "../../entity/invoice.js";
 import got from "got";
 import { readFileSync } from "node:fs";
-import { computeHMACSHA256 } from "./verify.js";
+import { computeHMACSHA256 } from "../../utils/hmac.js";
+import { newRedisCluster } from "../../infrastructure/redis.js";
+import { createLogger } from "../../utils/logger.js";
 
 (async function main() {
+	const logger = createLogger(env);
+	const redis = newRedisCluster(env);
+
 	// Create the worker to process webhook jobs
 	const worker = new Worker<{ id: string }, void, "webhook">(
 		"{webhook}",
@@ -42,8 +45,8 @@ import { computeHMACSHA256 } from "./verify.js";
 						"x-webhook-verify": hash,
 					},
 					https: {
-						key: readFileSync("../cert/key.pem"),
-						certificate: readFileSync("../cert/cert.pem"),
+						key: readFileSync(env.KEY_PATH),
+						certificate: readFileSync(env.CERT_PATH),
 						rejectUnauthorized: false,
 					},
 					http2: true,
@@ -99,5 +102,5 @@ import { computeHMACSHA256 } from "./verify.js";
 	process.on("SIGTERM", shutdown);
 	process.on("SIGINT", shutdown);
 })().catch((e) => {
-	logger.error("Error", e);
+	console.error("Error", e);
 });

@@ -1,4 +1,3 @@
-import { logger } from "../common/logger.js";
 import { HTTPException } from "hono/http-exception";
 import { logger as honoLogger } from "hono/logger";
 import { serve } from "@hono/node-server";
@@ -6,8 +5,12 @@ import { createSecureServer } from "node:http2";
 import { readFileSync } from "node:fs";
 import { timeout } from "hono/timeout";
 import { Hono } from "hono";
+import { createLogger } from "../../utils/logger.js";
+import { env } from "../../infrastructure/env.js";
 
 export const app = new Hono();
+
+const logger = createLogger(env);
 
 app.use("*", timeout(30000));
 
@@ -56,12 +59,12 @@ app.all("*", async (c) => {
 			port: 3005,
 			createServer: createSecureServer,
 			serverOptions: {
-				key: readFileSync("../cert/key.pem"),
-				cert: readFileSync("../cert/cert.pem"),
+				key: readFileSync(env.KEY_PATH),
+				cert: readFileSync(env.CERT_PATH),
 			},
 		},
 		(info) => {
-			logger.info(`Echo server is running on http://localhost:${info.port}`);
+			logger.info(`Echo server is running on ${info.address}:${info.port}`);
 		},
 	);
 

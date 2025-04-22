@@ -8,6 +8,11 @@ export const env = createEnv({
 			.string()
 			.transform((value) => value.split(","))
 			.pipe(z.string().array().min(1)),
+		REDIS_HOST_MAPS: z
+			.string()
+			.default("")
+			.transform((value) => value.split(","))
+			.pipe(z.string().array()),
 		REDIS_PASSWORD: z.string().optional(),
 		PORT: z.coerce.number().int().min(50).default(3000),
 		NODE_ENV: z
@@ -15,6 +20,8 @@ export const env = createEnv({
 			.default("development"),
 		WEBHOOK_URL: z.string().url(),
 		WEBHOOK_SECRET: z.string(),
+		KEY_PATH: z.string(),
+		CERT_PATH: z.string(),
 	},
 
 	/**
@@ -46,3 +53,5 @@ export const env = createEnv({
 	 */
 	emptyStringAsUndefined: true,
 });
+
+export type Env = typeof env;

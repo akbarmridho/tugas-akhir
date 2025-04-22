@@ -1,21 +1,5 @@
 import { z } from "@hono/zod-openapi";
 
-export const IdParamsSchema = z.object({
-	id: z
-		.string()
-		.min(3)
-		.openapi({
-			param: {
-				name: "id",
-				in: "path",
-			},
-		}),
-});
-
-export const ErrorSchema = z.object({
-	message: z.string(),
-});
-
 export const InvoiceSchema = z
 	.object({
 		id: z.string(),
@@ -40,8 +24,12 @@ export const CreateInvoiceSchema = z
 	})
 	.openapi("CreateInvoiceRequest");
 
+export type CreateInvoiceType = z.infer<typeof CreateInvoiceSchema>;
+
 export const PayInvoiceSchema = z
 	.object({
 		mode: z.enum(["success", "failed"]),
 	})
 	.openapi("PayInvoiceRequest");
+
+export type PayInvoiceType = z.infer<typeof PayInvoiceSchema>;
