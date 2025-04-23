@@ -71,7 +71,7 @@ func (c *CaseSeeder) Seed(ctx context.Context, payload SeederPayload) (err error
 		INSERT INTO events (name, location, description)
 		VALUES ($1, $2, $3)
 		RETURNING id
-	`, "Music World Tour", "Jakarta International Stadium", "").Scan(&eventID)
+	`, "Music World Tour", "Gelora Bung Karno Stadium", "").Scan(&eventID)
 	if err != nil {
 		return fmt.Errorf("failed to insert event: %w", err)
 	}

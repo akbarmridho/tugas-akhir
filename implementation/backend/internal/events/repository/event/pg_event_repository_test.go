@@ -45,7 +45,7 @@ func TestPGEventRepository(t *testing.T) {
 				for _, e := range events {
 					if e.ID == eventID {
 						assert.Equal(t, "Music World Tour", e.Name)
-						assert.Equal(t, "Jakarta International Stadium", e.Location)
+						assert.Equal(t, "Gelora Bung Karno Stadium", e.Location)
 						found = true
 						break
 					}
@@ -74,7 +74,7 @@ func TestPGEventRepository(t *testing.T) {
 				// Verify the event data
 				assert.Equal(t, eventID, foundEvent.ID)
 				assert.Equal(t, "Music World Tour", foundEvent.Name)
-				assert.Equal(t, "Jakarta International Stadium", foundEvent.Location)
+				assert.Equal(t, "Gelora Bung Karno Stadium", foundEvent.Location)
 
 				// Verify relationships
 				require.NotEmpty(t, foundEvent.TicketSales, "Event should have ticket sales")
