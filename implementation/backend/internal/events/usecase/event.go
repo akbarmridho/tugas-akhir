@@ -3,7 +3,10 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
+	"sync"
+	"time"
 	"tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/events/repository/availability"
 	"tugas-akhir/backend/internal/events/repository/event"
@@ -15,6 +18,13 @@ type EventUsecase struct {
 	availabilityRepository availability.AvailabilityRepository
 	seatRepository         seat.SeatRepository
 	eventRepository        event.EventRepository
+	seatCache              sync.Map
+	ttl                    time.Duration
+}
+
+type CacheSeat struct {
+	Value     []entity.TicketSeat
+	Timestamp time.Time
 }
 
 func NewEventAvailabilityUsecase(
@@ -26,10 +36,22 @@ func NewEventAvailabilityUsecase(
 		availabilityRepository: availabilityRepository,
 		seatRepository:         seatRepository,
 		eventRepository:        eventRepository,
+		seatCache:              sync.Map{},
+		ttl:                    150 * time.Millisecond,
 	}
 }
 
 func (u *EventUsecase) GetSeats(ctx context.Context, payload entity.GetSeatsDto) ([]entity.TicketSeat, *myerror.HttpError) {
+	cacheKey := fmt.Sprintf("seats:%s", payload.TicketAreaID)
+
+	if val, ok := u.seatCache.Load(cacheKey); ok {
+		cs := val.(CacheSeat)
+		if time.Since(cs.Timestamp) < u.ttl {
+			return cs.Value, nil
+		}
+		u.seatCache.Delete(cacheKey)
+	}
+
 	data, err := u.seatRepository.GetSeats(ctx, payload)
 
 	if err != nil {
@@ -46,6 +68,11 @@ func (u *EventUsecase) GetSeats(ctx context.Context, payload entity.GetSeatsDto)
 			}
 		}
 	}
+
+	u.seatCache.Store(cacheKey, CacheSeat{
+		Value:     data,
+		Timestamp: time.Now(),
+	})
 
 	return data, nil
 }
