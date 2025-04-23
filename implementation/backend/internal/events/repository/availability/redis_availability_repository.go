@@ -145,10 +145,24 @@ func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, paylo
 	}
 
 	keyToValue := make(map[string]string)
+
+	pipe := r.redis.Client.Pipeline()
+
+	cmds := make(map[string]*baseredis.StringCmd)
+
 	for _, key := range keys {
-		val, err := r.redis.Client.Get(ctx, key).Result()
-		if err != nil {
-			// Skip if key doesn't exist or other error
+		cmds[key] = pipe.Get(ctx, key)
+	}
+
+	_, err := pipe.Exec(ctx)
+
+	if err != nil && !errors.Is(err, baseredis.Nil) {
+		return nil, err
+	}
+
+	for key, cmd := range cmds {
+		val, resultErr := cmd.Result()
+		if resultErr != nil {
 			l.Sugar().Warnf("failed to get key %s: %v", key, err)
 			continue
 		}
