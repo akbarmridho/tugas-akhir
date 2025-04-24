@@ -1,0 +1,31 @@
+
+apiVersion: k3d.io/v1alpha5 
+kind: Simple 
+metadata:
+  name: tugas-akhir
+servers: 1
+agents: 1
+kubeAPI: 
+  hostPort: "6445"
+image: rancher/k3s:v1.30.12-rc1-k3s1
+network: tugas-akhir
+ports:
+  - port: 30000-30100:30000-30100
+    nodeFilters:
+    - server:*
+  - port: 8080:80
+    nodeFilters:
+      - loadbalancer
+options:
+  k3s:
+    extraArgs:
+    - arg: --disable=traefik
+      nodeFilters:
+      - server:*
+registries: 
+  create:
+    name: registry.localhost
+    host: "0.0.0.0"
+    hostPort: "5001"
+    volumes:
+      - /tmp/reg:/var/lib/registry
