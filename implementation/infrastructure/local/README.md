@@ -27,3 +27,31 @@ Apply Nginx
 ```bash
 kubectl apply -f nginx.yaml
 ```
+
+## DNS
+
+Create a script
+
+```ps1
+# Save this as: add-host-alias.ps1
+
+# Path to the Windows hosts file
+$hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
+
+$hostEntry = "127.0.0.1 registry.localhost"
+
+# Check if the entry already exists
+if ((Get-Content $hostsPath) -notmatch "registry.localhost") {
+    Add-Content -Path $hostsPath -Value "`n$hostEntry"
+    Write-Host "Host alias added: $hostEntry"
+} else {
+    Write-Host "Host alias already exists."
+}
+```
+
+Run it
+
+```ps1
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\add-host-alias.ps1
+```
