@@ -99,6 +99,17 @@ spec:
       volumes:
       - name: pgdata
         emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: application
+                    operator: In
+                    values:
+                      - postgres
+              topologyKey: "kubernetes.io/hostname"
+
 #  volumeClaimTemplates:
 #  - metadata:
 #      labels:
