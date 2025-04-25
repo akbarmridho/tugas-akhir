@@ -1,6 +1,8 @@
 repositories:
   - name: grafana
     url: https://grafana.github.io/helm-charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
 
 releases:
   - name: grafana
@@ -21,6 +23,10 @@ releases:
                 type: loki
                 access: proxy
                 url: http://loki-gateway.monitoring.svc.cluster.local
+              - name: Prometheus
+                type: prometheus
+                access: proxy
+                url: http://prometheus-server.monitoring.svc.cluster.local
   - name: loki
     chart: grafana/loki
     namespace: monitoring
@@ -183,3 +189,7 @@ releases:
 
                 forward_to = [loki.write.default.receiver]
               }
+  - name: prometheus
+    chart: prometheus-community/prometheus
+    namespace: monitoring
+    version: 27.11.0
