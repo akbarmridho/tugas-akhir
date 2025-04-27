@@ -28,6 +28,9 @@ spec:
       labels:
         application: postgres
         cluster-name: *cluster_name
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9187'
     spec:
       serviceAccountName: pgcluster
       containers:
@@ -45,9 +48,11 @@ spec:
           successThreshold: 1
           failureThreshold: 3
         ports:
-        - containerPort: 8008
+        - name: patroni-http
+          containerPort: 8008
           protocol: TCP
-        - containerPort: 5432
+        - name: postgres
+          containerPort: 5432
           protocol: TCP
         volumeMounts:
         - mountPath: /home/postgres/pgdata
@@ -95,6 +100,18 @@ spec:
           value: '0.0.0.0:5432'
         - name: PATRONI_RESTAPI_LISTEN
           value: '0.0.0.0:8008'
+      - name: postgres-exporter
+        image: prometheuscommunity/postgres-exporter:v0.17.1
+        ports:
+        - containerPort: 9187
+          name: pg-metrics
+          protocol: TCP
+        env:
+        - name: DATA_SOURCE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: *cluster_name
+              key: postgres-exporter-url
       terminationGracePeriodSeconds: 0
       volumes:
       - name: pgdata
@@ -146,8 +163,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 5432
-    targetPort: 5432
+  - name: postgres
+    port: 5432
+    targetPort: postgres
 
 
 ---
@@ -166,8 +184,12 @@ spec:
     cluster-name: *cluster_name
     role: replica
   ports:
-  - port: 5432
-    targetPort: 5432
+  - name: postgres
+    port: 5432
+    targetPort: postgres
+  - name: patroni-http
+    port: 8008
+    targetPort: patroni-http
 
 ---
 apiVersion: v1
@@ -181,6 +203,7 @@ type: Opaque
 data:
   superuser-password: emFsYW5kbw==
   replication-password: cmVwLXBhc3M=
+  postgres-exporter-url: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnphbGFuZG9AbG9jYWxob3N0OjU0MzIvcG9zdGdyZXM/c3NsbW9kZT1kaXNhYmxl
 
 ---
 apiVersion: v1

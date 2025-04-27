@@ -27,6 +27,11 @@ releases:
                 type: prometheus
                 access: proxy
                 url: http://prometheus-server.monitoring.svc.cluster.local
+      - resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 512Mi
   - name: loki
     chart: grafana/loki
     namespace: monitoring
@@ -37,7 +42,7 @@ releases:
     values:
       - loki:
           commonConfig:
-            replication_factor: 3
+            replication_factor: 1
           schemaConfig:
             configs:
               - from: "2025-04-24"
@@ -58,7 +63,14 @@ releases:
           enabled: true      
       - deploymentMode: SingleBinary
       - singleBinary:
-          replicas: 2
+          replicas: 1
+          resources:
+            requests:
+              cpu: 500m 
+              memory: 512Mi 
+            limits:
+              cpu: 1
+              memory: 2Gi 
       - backend:
           replicas: 0
       - read:
@@ -89,6 +101,11 @@ releases:
     version: 1.0.2
     values:
       - alloy:
+          resources:
+          requests:
+            memory: 100Mi
+          limits:
+            memory: 512Mi
           configMap:
             content: |-
               loki.write "default" {
@@ -193,3 +210,34 @@ releases:
     chart: prometheus-community/prometheus
     namespace: monitoring
     version: 27.11.0
+    values:
+    - server:
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 512Mi
+        global:
+          scrape_interval: 30s
+    - extraScrapeConfigs: |
+        - job_name: 'pgcluster-patroni'
+          kubernetes_sd_configs:
+            - role: service
+              namespaces:
+                names:
+                  - default
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_service_name]
+              regex: ^(pgcluster-repl)$
+              action: keep
+            - source_labels: [__meta_kubernetes_service_port_name]
+              regex: patroni-http
+              action: keep
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: kubernetes_namespace
+            - source_labels: [__meta_kubernetes_service_name]
+              target_label: kubernetes_service_name
+            - source_labels: [__meta_kubernetes_service_label_role]
+              target_label: patroni_role
+              action: replace
+              regex: (.+)

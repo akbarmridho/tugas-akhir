@@ -30,4 +30,3 @@ kubectl --namespace monitoring port-forward $POD_NAME 9090
 ## Todo for Remote
 
 - In alloy config, change cluster name `k3d-tugas-akhir`. Run `kubectl config get-clusters` to get the cluster name.
-- 
