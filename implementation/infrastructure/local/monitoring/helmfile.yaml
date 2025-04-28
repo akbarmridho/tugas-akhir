@@ -219,8 +219,10 @@ releases:
             memory: 512Mi
         global:
           scrape_interval: 30s
+    - alertmanager:
+        enabled: false
     - extraScrapeConfigs: |
-        - job_name: 'pgcluster-patroni'
+        - job_name: 'postgres-patroni'
           kubernetes_sd_configs:
             - role: service
               namespaces:
@@ -228,7 +230,7 @@ releases:
                   - default
           relabel_configs:
             - source_labels: [__meta_kubernetes_service_name]
-              regex: ^(pgcluster-repl)$
+              regex: ^(pgcluster-repl|cituscluster-patroni)$
               action: keep
             - source_labels: [__meta_kubernetes_service_port_name]
               regex: patroni-http
