@@ -2,7 +2,11 @@
 
 Assumption:
 
-Run on Windows 11 with Ubuntu 22.04 on WSL2.
+Run on Windows 11 with Ubuntu 22.04 on WSL2 and kernel version 5.15.167.4-microsoft-standard-WSL2.
+
+## Prerequisites on WSL2
+
+Recompile your kernel. Follow [this tutorial](https://kind.sigs.k8s.io/docs/user/using-wsl2/#kubernetes-service-with-session-affinity).
 
 ## K3d
 
@@ -11,12 +15,12 @@ Prerequisites:
 - [Install Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 - [Install k3d](https://k3d.io/stable/#install-script)
 - [Install Helm](https://helm.sh/docs/intro/install/)
-<!-- - [Install Helmfile (preferably via brew)](https://helmfile.readthedocs.io/en/latest/#installation) -->
 
 Setup cluster:
 
 ```bash
 k3d cluster create --config ./k3d.yaml
+kubectl apply -f claim-standard-alias.yaml
 ```
 
 Delete cluster:
@@ -59,4 +63,30 @@ Run it
 ```ps1
 Set-ExecutionPolicy Bypass -Scope Process -Force
 .\add-host-alias.ps1
+```
+
+## Debugging
+
+### Check Pod Status
+
+```bash
+kubectl describe pod <pod_name> -n default
+```
+
+### Get Logs
+
+```bash
+kubectl logs <pod_name> -c <container_name>
+
+### Get Node Status
+
+```bash
+kubectl get nodes -o wide
+kubectl describe node <node-name>
+```
+
+### Check PVC Status
+
+```bash
+kubectl get pvc -n default
 ```
