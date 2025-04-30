@@ -33,6 +33,7 @@ Setup the service.
 
 ```bash
 kubectl apply -f payment.yaml -n payment
+```
 
 ## Cleanup
 

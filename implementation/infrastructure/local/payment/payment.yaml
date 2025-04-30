@@ -44,27 +44,15 @@ spec:
           readOnly: true
         env:
         - name: REDIS_HOSTS
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: redis-hosts
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.payment.svc.cluster.local:6379
         - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: redis-password
+          value: password
         - name: NODE_ENV
           value: production
         - name: WEBHOOK_URL
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: webhook-url
+          value: https://ticket-service.default.svc.cluster.local:3000
         - name: WEBHOOK_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: webhook-secret
+          value: secret
         - name: KEY_PATH
           value: /etc/tls/tls.key
         - name: CERT_PATH
@@ -85,27 +73,15 @@ spec:
           readOnly: true
         env:
         - name: REDIS_HOSTS
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: redis-hosts
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.payment.svc.cluster.local:6379
         - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: redis-password
+          value: password
         - name: NODE_ENV
           value: production
         - name: WEBHOOK_URL
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: webhook-url
+          value: https://ticket-service.default.svc.cluster.local:3000
         - name: WEBHOOK_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: payment-secret
-              key: webhook-secret
+          value: secret
         - name: KEY_PATH
           value: /etc/tls/tls.key
         - name: CERT_PATH
@@ -131,17 +107,3 @@ spec:
   ports:
   - port: 3000
     targetPort: 3000
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: payment-secret
-  labels:
-    app: payment
-type: Opaque
-data:
-  redis-hosts: cmVkaXMtcmVkaXMtY2x1c3Rlci0wLnJlZGlzLXJlZGlzLWNsdXN0ZXItaGVhZGxlc3MucGF5bWVudC5zdmMuY2x1c3Rlci5sb2NhbDo2Mzc5LHJlZGlzLXJlZGlzLWNsdXN0ZXItMS5yZWRpcy1yZWRpcy1jbHVzdGVyLWhlYWRsZXNzLnBheW1lbnQuc3ZjLmNsdXN0ZXIubG9jYWw6NjM3OSxyZWRpcy1yZWRpcy1jbHVzdGVyLTIucmVkaXMtcmVkaXMtY2x1c3Rlci1oZWFkbGVzcy5wYXltZW50LnN2Yy5jbHVzdGVyLmxvY2FsOjYzNzk=
-  redis-password: cGFzc3dvcmQ=
-  webhook-url: todo
-  webhook-secret: c2VjcmV0

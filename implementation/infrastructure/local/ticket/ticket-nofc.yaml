@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticket-nofc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ticket-nofc
+  template:
+    metadata:
+      labels:
+        app: ticket-nofc
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '3000'
+    spec:
+      containers:
+      - name: ticket-nofc-server
+        image: registry.localhost:5001/tugas-akhir/ticket-server:latest
+        command: ["./nofc_server"]
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "0.5"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        volumeMounts:
+        - name: tls
+          mountPath: "/etc/tls"
+          readOnly: true
+        env:
+        - name: ENVIRONMENT
+          value: production
+        - name: TLS_KEY_PATH
+          value: /etc/tls/tls.key
+        - name: TLS_CERT_PATH
+          value: /etc/tls/tls.crt
+        - name: JWT_SECRET
+          value: secret
+        - name: TEST_SCENARIO
+          value: ${TEST_SCENARIO}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: DB_VARIANT
+          value: ${DB_VARIANT}
+        - name: DATABASE_URL
+          value: ${DATABASE_URL}
+        - name: PAYMENT_SERVICE_URL
+          value: http://payment-service.payment.svc.cluster.local:3000
+        - name: PAYMENT_CERT_PATH
+          value: /etc/tls/tls.crt
+        - name: WEBHOOK_SECRET
+          value: secret
+        - name: REDIS_HOSTS
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.default.svc.cluster.local:6379
+        - name: REDIS_PASSWORD
+          value: password        
+      volumes:
+      - name: tls
+        secret:
+          secretName: service-tls
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticket-service
+spec:
+  type: ClusterIP
+  selector:
+    app: ticket-nofc
+  ports:
+  - port: 3000
+    targetPort: 3000
