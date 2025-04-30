@@ -29,6 +29,18 @@ Delete cluster:
 k3d cluster delete tugas-akhir
 ```
 
+## TLS
+
+```bash
+kubectl create secret tls service-tls \
+  --cert=../../cert/cert.pem \
+  --key=../../cert/key.pem
+
+kubectl create secret tls -n payment service-tls \
+  --cert=../../cert/cert.pem \
+  --key=../../cert/key.pem
+```
+
 ## Nginx
 
 Apply Nginx

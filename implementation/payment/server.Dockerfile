@@ -60,4 +60,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm config set loglevel error
 # for most source file changes.
 COPY . ./
 
-CMD pnpm run start:server --silent
+EXPOSE 3000
+
+CMD ["pnpm", "run", "start:server", "--silent"]

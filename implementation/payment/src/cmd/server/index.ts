@@ -1,6 +1,4 @@
 import { serve } from "@hono/node-server";
-import { createSecureServer } from "node:http2";
-
 import { env } from "../../infrastructure/env.js";
 import { readFileSync } from "node:fs";
 import { createLogger } from "../../utils/logger.js";
@@ -20,7 +18,6 @@ import { createApp } from "./app.js";
 		{
 			fetch: app.fetch,
 			port: env.PORT,
-			createServer: createSecureServer,
 			serverOptions: {
 				key: readFileSync(config.KEY_PATH),
 				cert: readFileSync(config.CERT_PATH),

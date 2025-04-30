@@ -27,12 +27,5 @@ registries:
     name: registry.localhost
     host: "0.0.0.0"
     hostPort: "5001"
-    proxy:
-      remoteURL: https://registry-1.docker.io
     volumes:
       - /tmp/reg:/var/lib/registry
-  config: |
-    mirrors:
-      "docker.io":
-        endpoint:
-          - http:/registry.localhost:5001
