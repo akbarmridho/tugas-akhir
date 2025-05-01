@@ -41,14 +41,6 @@ kubectl create secret tls -n payment service-tls \
   --key=../../cert/key.pem
 ```
 
-## Nginx
-
-Apply Nginx
-
-```bash
-kubectl apply -f nginx.yaml
-```
-
 ## DNS
 
 Create a script
@@ -59,10 +51,10 @@ Create a script
 # Path to the Windows hosts file
 $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
 
-$hostEntry = "127.0.0.1 registry.localhost"
+$hostEntry = "127.0.0.1 registry.localhost payment.tugas-akhir.local ticket.tugas-akhir.local"
 
 # Check if the entry already exists
-if ((Get-Content $hostsPath) -notmatch "registry.localhost") {
+if ((Get-Content $hostsPath) -notmatch "registry.localhost payment.tugas-akhir.local ticket.tugas-akhir.local") {
     Add-Content -Path $hostsPath -Value "`n$hostEntry"
     Write-Host "Host alias added: $hostEntry"
 } else {

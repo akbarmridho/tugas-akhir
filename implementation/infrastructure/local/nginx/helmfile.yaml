@@ -1,0 +1,36 @@
+repositories:
+  - name: jetstack  
+    url: https://charts.jetstack.io
+
+
+releases:
+  - name: cert-manager
+    chart: jetstack/cert-manager
+    namespace: cert-manager
+    version: v1.17.2
+    createNamespace: true
+    values:
+      - installCRDs: true
+      - resourcesPreset: "nano"
+  - name: nginx
+    chart: oci://registry-1.docker.io/bitnamicharts/nginx-ingress-controller
+    namespace: default
+    version: 11.6.16
+    needs:
+      - cert-manager/cert-manager
+    values:
+      - resourcesPreset: "nano"
+      - metrics:
+          enabled: true
+      - controller:
+          service:
+            type: LoadBalancer
+            ports:
+              http: 80
+              https: 443
+          ingressClassResource:
+            name: nginx
+            default: true
+            controllerValue: "k8s.io/ingress-nginx"
+          admissionWebhooks:
+            enabled: false
