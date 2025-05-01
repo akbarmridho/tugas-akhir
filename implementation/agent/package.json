@@ -8,16 +8,16 @@
     "test:demo": "npm run build && k6 run dist/tests/reqres.cjs -a localhost:6566",
     "openapi-ts": "openapi-ts",
     "client:gen": "npm run client:gen-payment && npm run client:gen-ticket",
-    "client:gen-payment": "openapi-ts -i ../payment/openapi.json -o src/client/payment -c @hey-api/client-fetch",
-    "client:gen-ticket": "openapi-ts -i ../backend/docs/tsp-output/@typespec/openapi3/openapi.yaml -o src/client/ticket -c @hey-api/client-fetch"
+    "client:gen-payment": "openapi-to-k6 ../payment/openapi.json src/client/payment",
+    "client:gen-ticket": "openapi-to-k6 ../backend/docs/tsp-output/@typespec/openapi3/openapi.yaml src/client/ticket"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "@babel/core": "^7.27.1",
-    "@biomejs/biome": "1.9.4",
-    "@hey-api/openapi-ts": "^0.66.7",
+    "@biomejs/biome": "2.0.0-beta.2",
+    "@grafana/openapi-to-k6": "^0.3.2",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@types/k6": "^1.0.2",
@@ -26,7 +26,6 @@
     "vite": "^6.3.4"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.7.0",
-    "@hey-api/client-fetch": "^0.10.0"
+    "@faker-js/faker": "^9.7.0"
   }
 }
