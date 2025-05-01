@@ -76,6 +76,18 @@ Festival can be divided into:
 
 ### Seeding the Database
 
+Setup the seeder job.
+
+```bash
+envsubst < ticket-seeder.yaml | kubectl apply -f -
+```
+
+Check the logs.
+
+```bash
+kubectl logs job/ticket-seeder -f
+```
+
 ### Setting up the Service
 
 Setup the service.

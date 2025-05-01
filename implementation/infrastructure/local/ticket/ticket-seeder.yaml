@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ticket-seeder
+  labels:
+    app: ticket-seeder
+spec:
+  ttlSecondsAfterFinished: 10800
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: task-runner
+        image: registry.localhost:5001/tugas-akhir/ticket-server:latest
+        command: ["./seeder"]
+        volumeMounts:
+        - name: tls
+          mountPath: "/etc/tls"
+          readOnly: true
+        env:
+        - name: ENVIRONMENT
+          value: production
+        - name: TLS_KEY_PATH
+          value: /etc/tls/tls.key
+        - name: TLS_CERT_PATH
+          value: /etc/tls/tls.crt
+        - name: JWT_SECRET
+          value: secret
+        - name: TEST_SCENARIO
+          value: ${TEST_SCENARIO}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: DB_VARIANT
+          value: ${DB_VARIANT}
+        - name: DATABASE_URL
+          value: ${DATABASE_URL}
+        - name: PAYMENT_SERVICE_URL
+          value: http://payment-service.payment.svc.cluster.local:3000
+        - name: PAYMENT_CERT_PATH
+          value: /etc/tls/tls.crt
+        - name: WEBHOOK_SECRET
+          value: secret
+        - name: REDIS_HOSTS
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.default.svc.cluster.local:6379
+        - name: REDIS_PASSWORD
+          value: password
+        - name: AMQP_URL
+          value: amqp://tugas-akhir:tugas-akhir@rabbitmq.default.svc.cluster.local:5672/
+      volumes:
+      - name: tls
+        secret:
+          secretName: service-tls
