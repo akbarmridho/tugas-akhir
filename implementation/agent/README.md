@@ -1,9 +1,20 @@
 # Agent
 
-## Pre-Reqs
+## Prerequisites
 
 - Download `k6` from [here](https://k6.io/docs/get-started/installation/).
-- Install dependencies `pnpm install`
+- Install `xk6` `go install go.k6.io/xk6/cmd/xk6@latest`.
+- Install dependencies `pnpm install`.
+
+List of k6 extensions used:
+
+- [xk6-faker](https://github.com/grafana/xk6-faker)
+
+Build k6 with extensions:
+
+```bash
+xk6 build --with github.com/grafana/xk6-faker@latest
+```
 
 ### Installing xk6-dashboard with Docker
 

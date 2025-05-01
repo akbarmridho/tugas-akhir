@@ -1,26 +1,29 @@
 {
-    "compilerOptions": {
-      "target": "es5",
-      "moduleResolution": "node",
-      "module": "commonjs",
-      "noEmit": true,
-      "allowJs": true,
-      "removeComments": false,
-  
-      "strict": true,
-      "noImplicitAny": true,
-      "noImplicitThis": true,
-  
-      "noUnusedLocals": true,
-      "noUnusedParameters": true,
-      "noImplicitReturns": true,
-      "noFallthroughCasesInSwitch": true,
-  
-      "allowSyntheticDefaultImports": true,
-      "esModuleInterop": true,
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-  
-      "skipLibCheck": true,
-    }
-  }
+	"compilerOptions": {
+		"target": "es6",
+		"moduleResolution": "node",
+		"module": "es6",
+		"noEmit": true,
+		"allowJs": true,
+		"removeComments": false,
+
+		"strict": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+
+		"skipLibCheck": true,
+		"paths": {
+			"k6/x/faker": ["./typings/xk6-faker/index.d.ts"]
+		}
+	}
+}

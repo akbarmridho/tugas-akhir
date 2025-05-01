@@ -36,7 +36,7 @@ export default defineConfig({
     lib: {
       entry: getEntryPoints(["./src/tests/*.ts"]),
       fileName: "[name]",
-      formats: ["cjs"],
+      formats: ["es"],
       sourcemap: true,
     },
     outDir: "dist",
