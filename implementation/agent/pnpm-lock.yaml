@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@faker-js/faker':
-        specifier: ^9.7.0
-        version: 9.7.0
     devDependencies:
       '@babel/core':
         specifier: ^7.27.1

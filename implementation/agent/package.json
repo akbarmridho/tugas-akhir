@@ -25,7 +25,5 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.4"
   },
-  "dependencies": {
-    "@faker-js/faker": "^9.7.0"
-  }
+  "dependencies": {}
 }

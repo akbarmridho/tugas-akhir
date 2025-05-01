@@ -1,1 +1,1 @@
-export const VUs = 1
+export const VUs = 1;
