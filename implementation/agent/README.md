@@ -59,67 +59,93 @@ To run the tests with monitoring with xk6-dashboard extension, we need to instal
 
 ### Profile Distribution
 
-// todo akbar
-// update the user percentage
-// check again the distribution
-// link: https://docs.google.com/spreadsheets/d/1P8nVfUZSURMNIX3XYiIoGlSC2w46wVGl0rtkMlnF_z0/edit?hl=id&gid=0#gid=0
+**Seating Distribution:**
 
-| Day Pref. | Seating Tier | Quantity | Persistence | Percentage Users |
-| --------- | ------------ | -------- | ----------- | ---------------- |
-| Specific  | Seated-Low   | Solo     | Low         | 1.80%            |
-| Specific  | Seated-Low   | Solo     | Medium      | 3.00%            |
-| Specific  | Seated-Low   | Solo     | High        | 1.00%            |
-| Specific  | Seated-Low   | Couple   | Low         | 2.30%            |
-| Specific  | Seated-Low   | Couple   | Medium      | 4.50%            |
-| Specific  | Seated-Low   | Couple   | High        | 1.80%            |
-| Specific  | Seated-Low   | Group    | Low         | 1.00%            |
-| Specific  | Seated-Low   | Group    | Medium      | 2.50%            |
-| Specific  | Seated-Mid   | Solo     | Low         | 1.00%            |
-| Specific  | Seated-Mid   | Solo     | Medium      | 3.00%            |
-| Specific  | Seated-Mid   | Solo     | High        | 1.00%            |
-| Specific  | Seated-Mid   | Couple   | Low         | 2.30%            |
-| Specific  | Seated-Mid   | Couple   | Medium      | 5.10%            |
-| Specific  | Seated-Mid   | Couple   | High        | 2.30%            |
-| Specific  | Seated-Mid   | Group    | Low         | 1.00%            |
-| Specific  | Seated-Mid   | Group    | Medium      | 2.50%            |
-| Specific  | Seated-High  | Solo     | Medium      | 1.80%            |
-| Specific  | Seated-High  | Solo     | High        | 1.80%            |
-| Specific  | Seated-High  | Couple   | Medium      | 2.30%            |
-| Specific  | Seated-High  | Couple   | High        | 3.00%            |
-| Specific  | Seated-High  | Group    | Medium      | 0.80%            |
-| Specific  | Area-Mid     | Solo     | Low         | 0.80%            |
-| Specific  | Area-Mid     | Solo     | Medium      | 2.50%            |
-| Specific  | Area-Mid     | Solo     | High        | 0.70%            |
-| Specific  | Area-Mid     | Couple   | Low         | 1.80%            |
-| Specific  | Area-Mid     | Couple   | Medium      | 4.00%            |
-| Specific  | Area-Mid     | Couple   | High        | 1.80%            |
-| Specific  | Area-Mid     | Group    | Medium      | 2.00%            |
-| Specific  | Area-High    | Solo     | Medium      | 1.30%            |
-| Specific  | Area-High    | Solo     | High        | 2.20%            |
-| Specific  | Area-High    | Couple   | Medium      | 1.90%            |
-| Specific  | Area-High    | Couple   | High        | 3.10%            |
-| Any Day   | Seated-Low   | Solo     | Medium      | 1.00%            |
-| Any Day   | Seated-Low   | Couple   | Low         | 1.00%            |
-| Any Day   | Seated-Low   | Couple   | Medium      | 2.40%            |
-| Any Day   | Seated-Low   | Couple   | High        | 0.80%            |
-| Any Day   | Seated-Low   | Group    | Medium      | 1.00%            |
-| Any Day   | Seated-Mid   | Solo     | Medium      | 1.40%            |
-| Any Day   | Seated-Mid   | Couple   | Low         | 1.00%            |
-| Any Day   | Seated-Mid   | Couple   | Medium      | 3.00%            |
-| Any Day   | Seated-Mid   | Couple   | High        | 1.00%            |
-| Any Day   | Seated-Mid   | Group    | Medium      | 1.00%            |
-| Any Day   | Seated-High  | Solo     | Medium      | 0.70%            |
-| Any Day   | Seated-High  | Solo     | High        | 0.70%            |
-| Any Day   | Seated-High  | Couple   | Medium      | 1.00%            |
-| Any Day   | Seated-High  | Couple   | High        | 1.30%            |
-| Any Day   | Area-Mid     | Solo     | Medium      | 1.00%            |
-| Any Day   | Area-Mid     | Couple   | Low         | 0.70%            |
-| Any Day   | Area-Mid     | Couple   | Medium      | 2.20%            |
-| Any Day   | Area-Mid     | Couple   | High        | 0.70%            |
-| Any Day   | Area-Mid     | Group    | Medium      | 0.70%            |
-| Any Day   | Area-High    | Solo     | High        | 0.80%            |
-| Any Day   | Area-High    | Couple   | Medium      | 0.70%            |
-| Any Day   | Area-High    | Couple   | High        | 1.30%            |
+| Tier        | Distribution |
+| ----------- | ------------ |
+| Seated Low  | 27%          |
+| Seated Mid  | 26%          |
+| Seated High | 19%          |
+| Area Mid    | 17%          |
+| Area High   | 11%          |
+
+**Day Distribution:**
+
+| Day      | Distribution |
+| -------- | ------------ |
+| Specific | 52%          |
+| Any      | 48%          |
+
+**Persistence:**
+
+| Persistence | Distribution |
+| ----------- | ------------ |
+| Low         | 19%          |
+| Medium      | 51%          |
+| High        | 30%          |
+
+**Quantity:**
+
+| Quantity | Distribution |
+| -------- | ------------ |
+| Solo     | 28%          |
+| Couple   | 48%          |
+| Group    | 24%          |
+
+**Profile Distribution:**
+
+| Day Preference | Seating Tier | Quantity | Persistence | Percentage |
+| -------------- | ------------ | -------- | ----------- | ---------- |
+| Specific       | Seated-Low   | Solo     | Medium      | 1.00%      |
+| Specific       | Seated-Low   | Solo     | High        | 2.00%      |
+| Specific       | Seated-Low   | Couple   | Low         | 2.00%      |
+| Specific       | Seated-Low   | Couple   | Medium      | 3.00%      |
+| Specific       | Seated-Low   | Couple   | High        | 2.00%      |
+| Specific       | Seated-Low   | Group    | Low         | 2.00%      |
+| Specific       | Seated-Low   | Group    | Medium      | 2.00%      |
+| Specific       | Seated-Mid   | Solo     | Medium      | 1.00%      |
+| Specific       | Seated-Mid   | Solo     | High        | 2.00%      |
+| Specific       | Seated-Mid   | Couple   | Low         | 2.00%      |
+| Specific       | Seated-Mid   | Couple   | Medium      | 2.00%      |
+| Specific       | Seated-Mid   | Couple   | High        | 2.00%      |
+| Specific       | Seated-Mid   | Group    | Low         | 3.00%      |
+| Specific       | Seated-Mid   | Group    | Medium      | 2.00%      |
+| Specific       | Seated-High  | Solo     | Medium      | 2.00%      |
+| Specific       | Seated-High  | Solo     | High        | 2.00%      |
+| Specific       | Seated-High  | Couple   | Medium      | 2.00%      |
+| Specific       | Seated-High  | Couple   | High        | 2.00%      |
+| Specific       | Seated-High  | Group    | Medium      | 2.00%      |
+| Specific       | Area-Mid     | Solo     | Low         | 1.00%      |
+| Specific       | Area-Mid     | Solo     | Medium      | 2.00%      |
+| Specific       | Area-Mid     | Couple   | Low         | 1.00%      |
+| Specific       | Area-Mid     | Couple   | Medium      | 2.00%      |
+| Specific       | Area-Mid     | Couple   | High        | 1.00%      |
+| Specific       | Area-Mid     | Group    | Medium      | 2.00%      |
+| Specific       | Area-High    | Solo     | Medium      | 2.00%      |
+| Specific       | Area-High    | Solo     | High        | 1.00%      |
+| Specific       | Area-High    | Couple   | Medium      | 1.00%      |
+| Specific       | Area-High    | Couple   | High        | 1.00%      |
+| Any Day        | Seated-Low   | Solo     | Medium      | 2.00%      |
+| Any Day        | Seated-Low   | Couple   | Low         | 3.00%      |
+| Any Day        | Seated-Low   | Couple   | Medium      | 3.00%      |
+| Any Day        | Seated-Low   | Couple   | High        | 3.00%      |
+| Any Day        | Seated-Low   | Group    | Medium      | 2.00%      |
+| Any Day        | Seated-Mid   | Solo     | Medium      | 2.00%      |
+| Any Day        | Seated-Mid   | Couple   | Low         | 3.00%      |
+| Any Day        | Seated-Mid   | Couple   | Medium      | 1.00%      |
+| Any Day        | Seated-Mid   | Couple   | High        | 2.00%      |
+| Any Day        | Seated-Mid   | Group    | Medium      | 4.00%      |
+| Any Day        | Seated-High  | Solo     | Medium      | 2.00%      |
+| Any Day        | Seated-High  | Solo     | High        | 2.00%      |
+| Any Day        | Seated-High  | Group    | Medium      | 3.00%      |
+| Any Day        | Seated-High  | Couple   | High        | 2.00%      |
+| Any Day        | Area-Mid     | Solo     | Medium      | 2.00%      |
+| Any Day        | Area-Mid     | Couple   | Low         | 2.00%      |
+| Any Day        | Area-Mid     | Couple   | High        | 2.00%      |
+| Any Day        | Area-Mid     | Group    | Medium      | 2.00%      |
+| Any Day        | Area-High    | Solo     | High        | 2.00%      |
+| Any Day        | Area-High    | Couple   | Medium      | 2.00%      |
+| Any Day        | Area-High    | Couple   | High        | 2.00%      |
 
 ## Tests
 
