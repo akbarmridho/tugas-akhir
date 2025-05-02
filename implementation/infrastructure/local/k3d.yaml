@@ -13,10 +13,10 @@ ports:
   - port: 30000-30100:30000-30100
     nodeFilters:
     - server:*
-  - port: 8080:80
+  - port: "80:80"
     nodeFilters:
       - loadbalancer
-  - port: 8443:443
+  - port: "443:443"
     nodeFilters:
       - loadbalancer
 options:

@@ -6,7 +6,7 @@ function base64urlEncode(data: string | ArrayBuffer) {
 	return encoding.b64encode(data, "rawurl");
 }
 
-interface JWTPayload {
+export interface JWTPayload {
 	userId: string;
 	jwtToken: string;
 }

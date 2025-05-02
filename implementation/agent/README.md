@@ -53,9 +53,9 @@ To run the tests with monitoring with xk6-dashboard extension, we need to instal
   - `couple` - purchase 2 tickets.
   - `group` - purchase 3-5 tickets.
 - **Persistence**
-  - `high` - iterate until the preferred ticket is purchased. If no options, choose any available ticket for 2 tries.
-  - `medium` - iterate until the preferred ticket is purchased with at most 10 tries.
-  - `low` - iterate until the purchased ticket is purchased with at most 5 tries.
+  - `high` - iterate until the preferred ticket is purchased with at most 21 tries.
+  - `medium` - iterate until the preferred ticket is purchased with at most 14 tries.
+  - `low` - iterate until the purchased ticket is purchased with at most 7 tries.
 
 ### Profile Distribution
 

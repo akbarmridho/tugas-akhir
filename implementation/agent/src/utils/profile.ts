@@ -1,13 +1,22 @@
+import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
+import { Event, TicketSale } from "../client/ticket/ticketBackendService";
+import { shuffle } from "./random";
+
+export type DayPreference = "Specific" | "Any Day";
+export type SeatingTier =
+	| "Seated-Low"
+	| "Seated-Mid"
+	| "Seated-High"
+	| "Area-Mid"
+	| "Area-High";
+export type Quantity = "Solo" | "Couple" | "Group";
+export type Persistence = "Low" | "Medium" | "High";
+
 export interface UserProfile {
-	dayPreference: "Specific" | "Any Day";
-	seatingTier:
-		| "Seated-Low"
-		| "Seated-Mid"
-		| "Seated-High"
-		| "Area-Mid"
-		| "Area-High";
-	quantity: "Solo" | "Couple" | "Group";
-	persistence: "Low" | "Medium" | "High";
+	dayPreference: DayPreference;
+	seatingTier: SeatingTier;
+	quantity: Quantity;
+	persistence: Persistence;
 }
 
 const userProfilesData: (UserProfile & { probability: number })[] = [
@@ -388,3 +397,76 @@ export function getUserProfile(): UserProfile {
 		profilesWithCumulative[profilesWithCumulative.length - 1];
 	return profileData;
 }
+
+export interface ProfileState {
+	saleSelection: TicketSale[];
+	ticketCount: number;
+	tierOrder: string[];
+	currentTries: number;
+	maxTries: number;
+}
+
+export const getProfileState = (
+	profile: UserProfile,
+	event: Event,
+): ProfileState => {
+	const state: ProfileState = {
+		saleSelection: [],
+		ticketCount: 0,
+		tierOrder: [],
+		currentTries: 0,
+		maxTries: 0,
+	};
+
+	// choose the sale selection
+	const allSales = event.ticketSales || [];
+	shuffle(allSales);
+
+	if (profile.dayPreference === "Any Day") {
+		state.saleSelection = allSales;
+	} else {
+		// for specific day we choose from 1 to at most floor(n/2) day
+		const selectedCount = randomIntBetween(1, Math.floor(allSales.length / 2));
+		state.saleSelection = allSales.slice(0, selectedCount);
+	}
+
+	// choose the ticket count
+	if (profile.quantity === "Solo") {
+		state.ticketCount = 1;
+	} else if (profile.quantity === "Couple") {
+		state.ticketCount = 2;
+	} else {
+		state.ticketCount = randomIntBetween(3, 5);
+	}
+
+	// persistence
+	if (profile.persistence === "High") {
+		state.maxTries = 21;
+	} else if (profile.persistence === "Medium") {
+		state.maxTries = 14;
+	} else if (profile.persistence === "Low") {
+		state.maxTries = 7;
+	}
+
+	// tier order
+	// first is main second and rest is fallback
+	if (profile.seatingTier === "Seated-Low") {
+		state.tierOrder = ["Bronze", "Silver"];
+	} else if (profile.seatingTier === "Seated-Mid") {
+		const secondChoice = ["Gold", "Bronze"];
+		shuffle(secondChoice); // shuffle the second choice
+		state.tierOrder = ["Silver", ...secondChoice]; // Keep silver as main choice
+	} else if (profile.seatingTier === "Seated-High") {
+		const choices = ["Platinum", "Gold"];
+		shuffle(choices); // shuffle the primary choice
+		state.tierOrder = choices;
+	} else if (profile.seatingTier === "Area-Mid") {
+		state.tierOrder = ["VIP", "Zone A"];
+	} else if (profile.seatingTier === "Area-High") {
+		const choices = ["Zone A", "Zone B"];
+		shuffle(choices); // shuffle the primary choice
+		state.tierOrder = choices;
+	}
+
+	return state;
+};
