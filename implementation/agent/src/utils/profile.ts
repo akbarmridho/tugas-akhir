@@ -1,6 +1,10 @@
-import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
+import {
+	randomIntBetween,
+	randomItem,
+} from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
 import { Event, TicketSale } from "../client/ticket/ticketBackendService";
 import { shuffle } from "./random";
+import { Customer, generateCustomer } from "./faker";
 
 export type DayPreference = "Specific" | "Any Day";
 export type SeatingTier =
@@ -402,8 +406,16 @@ export interface ProfileState {
 	saleSelection: TicketSale[];
 	ticketCount: number;
 	tierOrder: string[];
-	currentTries: number;
-	maxTries: number;
+	customers: Customer[];
+	currentBrowseAttempt: number;
+	maxBrowseAttempt: number;
+	currentOrderAttempt: number;
+	maxOrderAttempt: number;
+	fallbackType: "Same Day" | "Same Category";
+	areaType: "Area" | "Seated";
+	saleSkip: Set<number>;
+	seatSkip: Set<number>;
+	areaSkip: Set<number>;
 }
 
 export const getProfileState = (
@@ -414,8 +426,16 @@ export const getProfileState = (
 		saleSelection: [],
 		ticketCount: 0,
 		tierOrder: [],
-		currentTries: 0,
-		maxTries: 0,
+		customers: [],
+		currentBrowseAttempt: 0,
+		maxBrowseAttempt: 0,
+		currentOrderAttempt: 0,
+		maxOrderAttempt: 0,
+		fallbackType: randomItem(["Same Day", "Same Category"]),
+		areaType: "Seated",
+		saleSkip: new Set(),
+		seatSkip: new Set(),
+		areaSkip: new Set(),
 	};
 
 	// choose the sale selection
@@ -439,13 +459,20 @@ export const getProfileState = (
 		state.ticketCount = randomIntBetween(3, 5);
 	}
 
+	for (let i = 0; i < state.ticketCount; i++) {
+		state.customers.push(generateCustomer());
+	}
+
 	// persistence
 	if (profile.persistence === "High") {
-		state.maxTries = 21;
+		state.maxBrowseAttempt = 27;
+		state.maxOrderAttempt = 9;
 	} else if (profile.persistence === "Medium") {
-		state.maxTries = 14;
+		state.maxBrowseAttempt = 18;
+		state.maxOrderAttempt = 6;
 	} else if (profile.persistence === "Low") {
-		state.maxTries = 7;
+		state.maxBrowseAttempt = 9;
+		state.maxOrderAttempt = 3;
 	}
 
 	// tier order
@@ -462,10 +489,12 @@ export const getProfileState = (
 		state.tierOrder = choices;
 	} else if (profile.seatingTier === "Area-Mid") {
 		state.tierOrder = ["VIP", "Zone A"];
+		state.areaType = "Area";
 	} else if (profile.seatingTier === "Area-High") {
 		const choices = ["Zone A", "Zone B"];
 		shuffle(choices); // shuffle the primary choice
 		state.tierOrder = choices;
+		state.areaType = "Area";
 	}
 
 	return state;

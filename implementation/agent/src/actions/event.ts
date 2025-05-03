@@ -7,7 +7,7 @@ import { group, check } from "k6";
 export const getEvent = (
 	ticketService: TicketBackendServiceClient,
 ): Event | null => {
-	return group("test", () => {
+	return group("get event", () => {
 		const eventsResponse = ticketService.eventRoutesGetEvents();
 
 		const eventsCheck = check(eventsResponse, {

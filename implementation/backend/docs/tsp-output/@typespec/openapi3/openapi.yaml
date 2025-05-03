@@ -555,13 +555,16 @@ components:
       required:
         - customerName
         - customerEmail
-        - ticketSeatId
+        - ticketAreaId
       properties:
         customerName:
           type: string
         customerEmail:
           type: string
         ticketSeatId:
+          type: integer
+          format: int64
+        ticketAreaId:
           type: integer
           format: int64
     OrderStatus:

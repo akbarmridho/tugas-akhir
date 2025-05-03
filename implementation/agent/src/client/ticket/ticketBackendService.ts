@@ -122,7 +122,8 @@ export interface OrderItem {
 export interface OrderItemDto {
 	customerName: string;
 	customerEmail: string;
-	ticketSeatId: number;
+	ticketSeatId?: number;
+	ticketAreaId: number;
 }
 
 /**

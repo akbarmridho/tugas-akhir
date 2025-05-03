@@ -224,7 +224,8 @@ model OrderItem {
 model OrderItemDto {
     customerName: string;
     customerEmail: string;
-    ticketSeatId: int64;
+    ticketSeatId?: int64;
+    ticketAreaId: int64;
 }
 
 model PlaceOrderDto {

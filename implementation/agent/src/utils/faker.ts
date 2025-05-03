@@ -1,6 +1,6 @@
 import faker from "k6/x/faker";
 
-interface Customer {
+export interface Customer {
 	name: string;
 	email: string;
 }
