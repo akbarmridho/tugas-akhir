@@ -41,7 +41,11 @@ const getAvailability = (
 	state: ProfileState,
 ): AreaAvailability[][] | null => {
 	return group("get availability", () => {
-		const response = ticketService.eventRoutesGetAvailability(ticketSale.id);
+		const response = ticketService.eventRoutesGetAvailability(ticketSale.id, {
+			tags: {
+				name: "GetAvailability",
+			},
+		});
 
 		const ok = check(response, {
 			"is status 200": (r) => r.response.status === 200,
@@ -99,7 +103,11 @@ const getSeats = (
 	area: AreaAvailability,
 ): TicketSeat[] | null => {
 	return group("get seats", () => {
-		const response = ticketService.eventRoutesGetSeats(area.ticketAreaId);
+		const response = ticketService.eventRoutesGetSeats(area.ticketAreaId, {
+			tags: {
+				name: "GetSeat",
+			},
+		});
 
 		const ok = check(response, {
 			"is status 200": (r) => r.response.status === 200,

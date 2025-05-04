@@ -77,9 +77,17 @@ export const payOrder = (
 	paymentSuccess: boolean,
 ): Invoice | null => {
 	return group("pay invoice", () => {
-		const response = paymentService.postInvoicesIdPayment(`${order.id}`, {
-			mode: paymentSuccess ? "success" : "failed",
-		});
+		const response = paymentService.postInvoicesIdPayment(
+			`${order.id}`,
+			{
+				mode: paymentSuccess ? "success" : "failed",
+			},
+			{
+				tags: {
+					name: "PayInvoice",
+				},
+			},
+		);
 
 		const ok = check(response, {
 			"is status 200": (r) => r.response.status === 200,

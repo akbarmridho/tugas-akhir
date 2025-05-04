@@ -59,6 +59,10 @@ To run the tests with monitoring with xk6-dashboard extension, we need to instal
 
 ### Profile Distribution
 
+**Payment Failure:**
+
+When the user successfully placed an order, there are 10% probability that the user's payment fails for simulating user backing off or cancelling the payment.
+
 **Seating Distribution:**
 
 | Tier        | Distribution |

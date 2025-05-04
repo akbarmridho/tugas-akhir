@@ -21,7 +21,11 @@ export const getEvent = (
 
 		const id = eventsResponse.data.data[0].id;
 
-		const eventResponse = ticketService.eventRoutesGetEvent(id);
+		const eventResponse = ticketService.eventRoutesGetEvent(id, {
+			tags: {
+				name: "GetEvent",
+			},
+		});
 
 		const eventCheck = check(eventResponse, {
 			"is status 200": (r) => r.response.status === 200,

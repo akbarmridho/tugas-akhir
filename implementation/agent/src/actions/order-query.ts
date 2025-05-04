@@ -11,7 +11,11 @@ export const getOrder = (
 	id: number,
 ): Order | null => {
 	return group("get order", () => {
-		const orderResponse = ticketService.orderRoutesGetOrder(id);
+		const orderResponse = ticketService.orderRoutesGetOrder(id, {
+			tags: {
+				name: "GetOrder",
+			},
+		});
 
 		const orderCheck = check(orderResponse, {
 			"is status 200": (r) => r.response.status === 200,
@@ -33,7 +37,11 @@ export const getIssuedTickets = (
 	id: number,
 ): IssuedTicket[] | null => {
 	return group("get issued tickets", () => {
-		const orderResponse = ticketService.orderRoutesGetIssuedTickets(id);
+		const orderResponse = ticketService.orderRoutesGetIssuedTickets(id, {
+			tags: {
+				name: "GetIssuedTickets",
+			},
+		});
 
 		const orderCheck = check(orderResponse, {
 			"is status 200": (r) => r.response.status === 200,
