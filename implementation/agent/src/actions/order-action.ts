@@ -1,4 +1,4 @@
-import { group, sleep } from "k6";
+import { check, group, sleep } from "k6";
 import {
 	Order,
 	OrderItemDto,
@@ -9,7 +9,10 @@ import { ProfileState } from "../utils/profile";
 import { v4 as uuidv4 } from "https://jslib.k6.io/uuid/1.0.0/index.js";
 import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
 import { logger } from "../utils/logger";
-import { PaymentServiceClient } from "../client/payment/paymentService";
+import {
+	Invoice,
+	PaymentServiceClient,
+} from "../client/payment/paymentService";
 
 interface PlaceOrderResponse {
 	state: "Ok" | "Bad Request" | "Retry";
@@ -70,8 +73,26 @@ export const placeOrder = (
 
 export const payOrder = (
 	paymentService: PaymentServiceClient,
-	state: ProfileState,
 	order: Order,
-) => {
-	//
+	paymentSuccess: boolean,
+): Invoice | null => {
+	return group("pay invoice", () => {
+		const response = paymentService.postInvoicesIdPayment(`${order.id}`, {
+			mode: paymentSuccess ? "success" : "failed",
+		});
+
+		const ok = check(response, {
+			"is status 200": (r) => r.response.status === 200,
+		});
+
+		if (ok) {
+			logger.error(
+				`Pay invoice got error ${response.response.status} ${JSON.stringify(response.response.json())}`,
+			);
+
+			return response.data;
+		}
+
+		return null;
+	});
 };

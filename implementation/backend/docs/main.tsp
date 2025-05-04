@@ -315,5 +315,5 @@ namespace OrderRoutes {
     @get
     op getIssuedTickets(
         ...GetIssuedTicketDto,
-    ): PayloadResponse<IssuedTicket> | ResourceNotFoundResponse | InputErrorResponse;
+    ): PayloadResponse<IssuedTicket[]> | ResourceNotFoundResponse | InputErrorResponse;
 }

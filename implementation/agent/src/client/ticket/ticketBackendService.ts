@@ -248,7 +248,7 @@ export type OrderRoutesGetOrder200 = {
 };
 
 export type OrderRoutesGetIssuedTickets200 = {
-	data: IssuedTicket;
+	data: IssuedTicket[];
 	message?: string;
 };
 

@@ -238,7 +238,9 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/IssuedTicket'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IssuedTicket'
                   message:
                     type: string
                 required:
