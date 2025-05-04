@@ -153,22 +153,5 @@ When the user successfully placed an order, there are 10% probability that the u
 
 ## Tests
 
-### reqres
-
-We use the [reqres](https://reqres.in/) publicly hosted REST API to showcase the testing with k6
-
-To execute the first sample test that showcases how `per-vu-iterations` works, you can run:
-
-`yarn test:demo`
-
-To test with monitoring in place, run:
-
-`yarn test-with-monitoring:demo`
-
-To execute the second sample test that showcases how to use `stages`, you can run:
-
-`yarn test:demo-stages`
-
-To test with monitoring in place, run:
-
-`yarn test-with-monitoring:demo-stages`
+- How many time to complete x user flow?? (shared iterations)
+- Poisson distribution.
