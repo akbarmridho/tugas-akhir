@@ -141,6 +141,8 @@ export default function test() {
 		let invoiceOk = false;
 		const shouldSuccess = Math.random() <= 0.9;
 
+		tags.profile_payment_success = shouldSuccess;
+
 		sleep(randomIntBetween(1, 3));
 
 		while (tries < 3) {

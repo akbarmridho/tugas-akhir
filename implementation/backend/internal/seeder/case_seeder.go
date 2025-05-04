@@ -156,8 +156,7 @@ func (c *CaseSeeder) Seed(ctx context.Context, payload SeederPayload) (err error
 
 				// Prepare seats for batch insert
 				for seatIdx := 0; seatIdx < catPayload.SeatPerArea; seatIdx++ {
-					// Example: Seat numbering like "R1-A1", "R1-A2" .. "R5-B100"
-					seatNumber := fmt.Sprintf("S-A%d-%d", areaIdx+1, seatIdx+1)
+					seatNumber := fmt.Sprintf("S-%d-%d", areaIdx+1, seatIdx+1)
 					seatData = append(seatData, []interface{}{
 						seatNumber,
 						"available", // default status
@@ -214,8 +213,7 @@ func (c *CaseSeeder) Seed(ctx context.Context, payload SeederPayload) (err error
 
 				// Prepare seats (conceptual spots) for batch insert
 				for seatIdx := 0; seatIdx < catPayload.SeatPerArea; seatIdx++ {
-					// Example: Seat numbering like "FS-A1-1", "FS-A1-2" ... "FS-A3-200"
-					seatNumber := fmt.Sprintf("FS-A%d-%d", areaIdx+1, seatIdx+1) // Use a distinct naming scheme
+					seatNumber := fmt.Sprintf("FS-%d-%d", areaIdx+1, seatIdx+1) // Use a distinct naming scheme
 					seatData = append(seatData, []interface{}{
 						seatNumber,
 						"available", // default status

@@ -85,14 +85,14 @@ export const payOrder = (
 			"is status 200": (r) => r.response.status === 200,
 		});
 
-		if (ok) {
+		if (!ok) {
 			logger.error(
 				`Pay invoice got error ${response.response.status} ${JSON.stringify(response.response.json())}`,
 			);
 
-			return response.data;
+			return null;
 		}
 
-		return null;
+		return response.data;
 	});
 };

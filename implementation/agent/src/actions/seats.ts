@@ -120,7 +120,15 @@ const getSeats = (
 		// assume consecutive id correlates to consecutive area number
 		const availableSeats = data
 			.filter((seat) => seat.status === "available")
-			.sort((a, b) => a.id - b.id);
+			.map((e) => {
+				const splitted = e.seatNumber.split("-");
+				const seatNumber = parseInt(splitted[splitted.length - 1]);
+				return {
+					...e,
+					parsedNumber: seatNumber,
+				};
+			})
+			.sort((a, b) => a.parsedNumber - b.parsedNumber);
 
 		const options = availableSeats
 			.reduce((prev, curr) => {
