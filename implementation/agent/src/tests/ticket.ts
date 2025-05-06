@@ -1,4 +1,4 @@
-import { Options } from "k6/options";
+import { Options, Scenario } from "k6/options";
 import { forgeJwt } from "../utils/jwt";
 import {
 	Order,
@@ -16,14 +16,102 @@ import { check, sleep } from "k6";
 import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
 import { getIssuedTickets, getOrder } from "../actions/order-query";
 
+const { SCENARIO, DB_VARIANT, FC, RUN_ID, VARIANT } = __ENV;
+
+const scenarioName = `${VARIANT}.${SCENARIO}`;
+
+const generateScenario = (): Scenario => {
+	if (VARIANT === "smoke") {
+		return {
+			executor: "constant-vus",
+			vus: 50,
+			duration: "5m",
+		};
+	} else if (VARIANT === "sim-1") {
+		return {
+			executor: "ramping-arrival-rate",
+			preAllocatedVUs: 25000,
+			stages: [
+				{ target: 3964, duration: "30s" },
+				{ target: 11850, duration: "30s" },
+				{ target: 11500, duration: "30s" },
+				{ target: 8329, duration: "30s" },
+				{ target: 5280, duration: "30s" },
+				{ target: 3244, duration: "30s" },
+				{ target: 2100, duration: "30s" },
+				{ target: 1300, duration: "30s" },
+				{ target: 825, duration: "30s" },
+				{ target: 515, duration: "30s" },
+				{ target: 354, duration: "30s" },
+				{ target: 235, duration: "30s" },
+				{ target: 146, duration: "30s" },
+				{ target: 115, duration: "30s" },
+				{ target: 74, duration: "30s" },
+				{ target: 55, duration: "30s" },
+				{ target: 35, duration: "30s" },
+				{ target: 18, duration: "30s" },
+				{ target: 13, duration: "30s" },
+				{ target: 9, duration: "30s" },
+			],
+		};
+	} else if (VARIANT === "sim-2") {
+		return {
+			executor: "ramping-arrival-rate",
+			preAllocatedVUs: 50000,
+			stages: [
+				{ target: 6606, duration: "30s" },
+				{ target: 23664, duration: "30s" },
+				{ target: 23777, duration: "30s" },
+				{ target: 16826, duration: "30s" },
+				{ target: 10861, duration: "30s" },
+				{ target: 6789, duration: "30s" },
+				{ target: 4138, duration: "30s" },
+				{ target: 2559, duration: "30s" },
+				{ target: 1622, duration: "30s" },
+				{ target: 1069, duration: "30s" },
+				{ target: 682, duration: "30s" },
+				{ target: 446, duration: "30s" },
+				{ target: 283, duration: "30s" },
+				{ target: 193, duration: "30s" },
+				{ target: 122, duration: "30s" },
+				{ target: 102, duration: "30s" },
+				{ target: 71, duration: "30s" },
+				{ target: 61, duration: "30s" },
+				{ target: 34, duration: "30s" },
+				{ target: 22, duration: "30s" },
+			],
+		};
+	} else if (VARIANT === "stress-1") {
+		return {
+			executor: "shared-iterations",
+			vus: 20000,
+			iterations: 500000,
+			maxDuration: "15m",
+		};
+	} else if (VARIANT === "stress-2") {
+		return {
+			executor: "shared-iterations",
+			vus: 40000,
+			iterations: 1000000,
+			maxDuration: "15m",
+		};
+	}
+
+	throw new Error("Invalid variant");
+};
+
 export const options: Options = {
 	insecureSkipTLSVerify: true,
-	// todo pass as CLI parameter
-	// tags: {
-	// 	scenario: "sf-2",
-	// 	dbvariant: "postgres",
-	// 	fc: "nofc",
-	// },
+	tags: {
+		scenario: SCENARIO,
+		dbvariant: DB_VARIANT,
+		fc: FC,
+		runid: RUN_ID,
+		variant: VARIANT,
+	},
+	scenarios: {
+		[scenarioName]: generateScenario(),
+	},
 };
 
 const vuEndStateCounter = new Counter("vu_end_state");

@@ -103,6 +103,18 @@ func seedPayloadByScenario(scenario string) *seeder.SeederPayload {
 		payload := getScaledCategories(5)
 		payload.DayCount = 1
 		return &payload
+	case "s10-4":
+		payload := getScaledCategories(10)
+		payload.DayCount = 4
+		return &payload
+	case "s10-2":
+		payload := getScaledCategories(10)
+		payload.DayCount = 2
+		return &payload
+	case "s10-1":
+		payload := getScaledCategories(10)
+		payload.DayCount = 1
+		return &payload
 	default:
 		return nil
 	}

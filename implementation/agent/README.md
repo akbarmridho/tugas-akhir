@@ -16,14 +16,6 @@ Build k6 with extensions:
 xk6 build --with github.com/grafana/xk6-faker@latest
 ```
 
-### Installing xk6-dashboard with Docker
-
-[xk6-dashboard](https://github.com/grafana/xk6-dashboard) is a k6 extension that can be used to visualise your performance test in real time.
-
-To run the tests with monitoring with xk6-dashboard extension, we need to install it. The simplest way to install is via docker and can be done via
-
-`docker pull ghcr.io/grafana/xk6-dashboard:0.6.1`
-
 ## Agent Behavior
 
 ### Agent Flow
@@ -153,5 +145,14 @@ When the user successfully placed an order, there are 10% probability that the u
 
 ## Tests
 
-- How many time to complete x user flow?? (shared iterations)
-- Poisson distribution.
+Refer to [this docs](./test-plan/README.md) for test plan.
+
+## Running Tests
+
+Required envs:
+
+- `SCENARIO` with the following pattern `s(f|2|5|10)-(1|2|4)`.
+- `DB_VARIANT` with the following values: `postgres`, `yugabytedb`, or `citusdata`.
+- `FC` with the following values: `no-flow-control` or `dropper-async`.
+- `RUN_ID` any randomly generated unique string.
+- `VARIANT` with the following values: `smoke`, `sim-1`, `sim-2`, `stress-1`, and `stress-2`. This differentiate the k6 agent request pattern and behaviour.
