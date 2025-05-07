@@ -1,0 +1,88 @@
+# Agent Tester
+
+Prerequisites:
+
+- `sudo apt-get install gettext-base`
+
+## Build Image
+
+From the `implementation/agent` folder context.
+
+### Build Agent
+
+```bash
+docker build -f Dockerfile -t tugas-akhir/agent:latest .
+docker tag tugas-akhir/agent:latest registry.localhost:5002/tugas-akhir/agent:latest
+docker push registry.localhost:5002/tugas-akhir/agent:latest
+```
+
+## K6 Operator and Monitoring
+
+```bash
+chmod +x helmfile
+./helmfile apply
+```
+
+### Accessing Grafana
+
+```bash
+# Get the password
+kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+# Get the pod name
+export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
+
+# Port forward
+kubectl --namespace monitoring port-forward $POD_NAME 3000
+```
+
+The username is `admin` and the password is `tugas-akhir`.
+
+### Accessing Prometheus
+
+```bash
+export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=prometheus,app.kubernetes.io/instance=prometheus" -o jsonpath="{.items[0].metadata.name}")
+kubectl --namespace monitoring port-forward $POD_NAME 9090
+```
+
+## Running Test
+
+Required envs:
+
+- `SCENARIO` with the following pattern `s(f|2|5|10)-(1|2|4)`.
+- `DB_VARIANT` with the following values: `postgres`, `yugabytedb`, or `citusdata`.
+- `FC` with the following values: `no-flow-control` or `dropper-async`.
+- `RUN_ID` any randomly generated unique string.
+- `VARIANT` with the following values: `smoke`, `sim-1`, `sim-2`, `stress-1`, and `stress-2`. This differentiate the k6 agent request pattern and behaviour.
+
+### Start the Test
+
+Before running the test, generate a `RUN_ID`. This is will be used to start and clean up the test.
+
+```bash
+openssl rand -hex 6
+```
+
+Prepare the env.
+
+```bash
+export RUN_ID=<your_ run_id>
+export SCENARIO=<your_scenario>
+export DB_VARIANT=<your_db_variant>
+export FC=<your_fc>
+export VARIANT=<your_variant>
+```
+
+Start the test.
+
+```bash
+envsubst < k6.yaml | kubectl apply -f -
+```
+
+### Test Cleanup
+
+Ensure that the env used still exist and equal.
+
+```bash
+envsubst < k6.yaml | kubectl delete -f -
+```

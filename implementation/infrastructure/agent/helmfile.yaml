@@ -1,0 +1,56 @@
+repositories:
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: grafana
+    chart: grafana/grafana
+    namespace: monitoring
+    version: 8.13.1
+    values:
+      - persistence:
+          type: pvc
+          enabled: true
+          size: 10Gi
+      - adminPassword: tugas-akhir
+      - datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Prometheus
+                type: prometheus
+                access: proxy
+                url: http://prometheus-server.monitoring.svc.cluster.local
+      - dashboards:
+          default:
+            k6-dashboard:
+              gnetId: 18030
+              revision: 8
+              datasource: Prometheus
+      - resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 512Mi
+  - name: prometheus
+    chart: prometheus-community/prometheus
+    namespace: monitoring
+    version: 27.11.0
+    values:
+    - server:
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 512Mi
+    - alertmanager:
+        enabled: false
+    - defaultFlagsOverride:
+        - "--enable-feature=native-histograms"
+    - extraArgs: 
+        web.enable-remote-write-receiver: true
+  - name: k6-operator
+    chart: grafana/k6-operator
+    version: 3.13.0

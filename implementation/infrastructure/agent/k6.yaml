@@ -1,0 +1,28 @@
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: k6-run-${RUN_ID}
+spec:
+  parallelism: 3
+  script:
+    configMap:
+      name: ticket.js
+      file: ../../agent/dist/tests/ticket.js
+  arguments: -o experimental-prometheus-rw
+  runner:
+    image: registry.localhost:5002/tugas-akhir/agent:latest
+    env:
+      - name: K6_PROMETHEUS_RW_SERVER_URL
+        value: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
+      - name: K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM
+        value: true
+      - name: SCENARIO
+        value: ${SCENARIO}
+      - name: DB_VARIANT
+        value: ${DB_VARIANT}
+      - name: FC
+        value: ${FC}
+      - name: RUN_ID
+        value: ${RUN_ID}
+      - name: VARIANT
+        value: ${VARIANT}
