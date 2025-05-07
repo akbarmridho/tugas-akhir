@@ -31,6 +31,23 @@ releases:
           default:
             yugabytedb:
               url: https://raw.githubusercontent.com/yugabyte/yugabyte-db/master/cloud/grafana/YugabyteDB.json
+            nginx:
+              url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/refs/heads/main/deploy/grafana/dashboards/nginx.json
+            patroni:
+              gnetId: 18870
+              revision: 1
+            postgres:
+              gnetId: 9628
+              revision: 8
+            rabbitmq:
+              gnetId: 10991
+              revision: 15
+            redis:
+              gnetId: 763
+              revision: 6
+            ticket:
+              gnetId: 10913
+              revision: 1
       - resources:
           limits:
             memory: 1Gi
