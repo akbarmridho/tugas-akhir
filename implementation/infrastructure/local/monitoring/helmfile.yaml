@@ -49,10 +49,13 @@ releases:
               gnetId: 10913
               revision: 1
       - resources:
-          limits:
-            memory: 1Gi
           requests:
+            cpu: 0.25
+            memory: 384Mi
+          limits:
+            cpu: 0.5
             memory: 512Mi
+          
   - name: loki
     chart: grafana/loki
     namespace: monitoring
@@ -89,11 +92,11 @@ releases:
           replicas: 1
           resources:
             requests:
-              cpu: 500m 
+              cpu: 0.5 
               memory: 512Mi 
             limits:
               cpu: 1
-              memory: 2Gi 
+              memory: 1Gi 
       - backend:
           replicas: 0
       - read:
@@ -126,8 +129,10 @@ releases:
       - alloy:
           resources:
           requests:
+            cpu: 0.15
             memory: 100Mi
           limits:
+            cpu: 0.25
             memory: 512Mi
           configMap:
             content: |-
@@ -237,8 +242,10 @@ releases:
     - server:
         resources:
           limits:
+            cpu: 1
             memory: 1Gi
           requests:
+            cpu: 0.5
             memory: 512Mi
         global:
           scrape_interval: 30s

@@ -50,6 +50,13 @@ spec:
       containers:
       - name: *cluster_name
         image: registry.localhost:5001/tugas-akhir/citus:latest
+        resources:
+          requests:
+            cpu: "1"
+            memory: 2Gi
+          limits:
+            cpu: "1.5"
+            memory: 3Gi
         imagePullPolicy: IfNotPresent
         readinessProbe:
           httpGet:
@@ -120,6 +127,13 @@ spec:
           value: '0.0.0.0:8008'
       - name: postgres-exporter
         image: prometheuscommunity/postgres-exporter:v0.17.1
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: 256Mi
+          limits:
+            cpu: "0.5"
+            memory: 512Mi
         ports:
         - containerPort: 9187
           name: pg-metrics
@@ -187,6 +201,13 @@ spec:
       containers:
       - name: *cluster_name
         image: registry.localhost:5001/tugas-akhir/citus:latest
+        resources:
+          requests:
+            cpu: "1"
+            memory: 2Gi
+          limits:
+            cpu: "1.5"
+            memory: 3Gi
         imagePullPolicy: IfNotPresent
         readinessProbe:
           httpGet:
@@ -257,6 +278,13 @@ spec:
           value: '0.0.0.0:8008'
       - name: postgres-exporter
         image: prometheuscommunity/postgres-exporter:v0.17.1
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: 256Mi
+          limits:
+            cpu: "0.5"
+            memory: 512Mi
         ports:
         - containerPort: 9187
           name: pg-metrics

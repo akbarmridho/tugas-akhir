@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: payment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: payment
@@ -30,11 +30,11 @@ spec:
           failureThreshold: 3
         resources:
           requests:
+            memory: "512Mi"
+            cpu: "0.25"
+          limits:
             memory: "1Gi"
             cpu: "0.5"
-          limits:
-            memory: "2Gi"
-            cpu: "1"
         ports:
         - containerPort: 3000
           protocol: TCP
@@ -62,11 +62,11 @@ spec:
         imagePullPolicy: IfNotPresent
         resources:
           requests:
+            memory: "512Mi"
+            cpu: "0.25"
+          limits:
             memory: "1Gi"
             cpu: "0.5"
-          limits:
-            memory: "2Gi"
-            cpu: "1"
         volumeMounts:
         - name: tls
           mountPath: "/etc/tls"

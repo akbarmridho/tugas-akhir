@@ -6,9 +6,15 @@ releases:
     version: 11.5.3
     values:
       - password: password
-      - resourcesPreset: "nano"
       - cluster:
           nodes: 3
           replicas: 0
       - metrics:
           enabled: true
+      -  resources:
+          requests:
+            cpu: "0.15"
+            memory: "384Mi"
+          limits:
+            cpu: "0.25"
+            memory: "512Mi"

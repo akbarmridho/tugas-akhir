@@ -5,7 +5,13 @@ releases:
     namespace: default
     version: 16.0.1
     values:
-      - resourcesPreset: "nano"
+      - resources:
+          requests:
+            cpu: "0.25"
+            memory: "512Mi"
+          limits:
+            cpu: "0.5"
+            memory: "768Mi"
       - metrics:
           enabled: true
       - auth:
