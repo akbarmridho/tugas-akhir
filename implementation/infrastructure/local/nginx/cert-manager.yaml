@@ -15,7 +15,7 @@ spec:
   secretName: app-tls-secret
   issuerRef:
     name: selfsigned-issuer
-    kind: ClusterIssuerr
+    kind: ClusterIssuer
   dnsNames:
   - payment.tugas-akhir.local
   - ticket.tugas-akhir.local

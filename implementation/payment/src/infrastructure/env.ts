@@ -11,7 +11,7 @@ export const env = createEnv({
 		REDIS_HOST_MAPS: z
 			.string()
 			.default("")
-			.transform((value) => value.split(","))
+			.transform((value) => value.split(",").filter(e => !!e))
 			.pipe(z.string().array()),
 		REDIS_PASSWORD: z.string().optional(),
 		PORT: z.coerce.number().int().min(50).default(3000),

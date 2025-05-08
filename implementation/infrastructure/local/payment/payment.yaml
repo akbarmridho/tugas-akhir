@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
       - name: payment-server
-        image: registry.localhost:5001/tugas-akhir/payment-server:latest
-        imagePullPolicy: IfNotPresent
+        image: registry.localhost:5001/tugas-akhir/payment:latest
+        command: ["pnpm", "run", "start:server", "--silent"]
         readinessProbe:
           httpGet:
             path: /health
@@ -58,8 +58,8 @@ spec:
         - name: CERT_PATH
           value: /etc/tls/tls.crt
       - name: payment-notifier
-        image: registry.localhost:5001/tugas-akhir/payment-notifier:latest
-        imagePullPolicy: IfNotPresent
+        image: registry.localhost:5001/tugas-akhir/payment:latest
+        command: ["pnpm", "run", "start:notifier", "--silent"]
         resources:
           requests:
             memory: "512Mi"

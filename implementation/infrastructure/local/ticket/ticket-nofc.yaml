@@ -19,7 +19,6 @@ spec:
       - name: ticket-nofc-server
         image: registry.localhost:5001/tugas-akhir/ticket-server:latest
         command: ["./nofc_server"]
-        imagePullPolicy: IfNotPresent
         readinessProbe:
           httpGet:
             path: /health

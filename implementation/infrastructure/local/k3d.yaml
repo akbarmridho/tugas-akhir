@@ -10,9 +10,6 @@ kubeAPI:
 image: rancher/k3s:v1.30.12-rc1-k3s1
 network: tugas-akhir
 ports:
-  - port: 30000-30100:30000-30100
-    nodeFilters:
-    - server:*
   - port: "80:80"
     nodeFilters:
       - loadbalancer

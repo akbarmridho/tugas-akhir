@@ -4,6 +4,20 @@ Prerequisites:
 
 - `sudo apt-get install gettext-base`
 
+## K3d Cluster
+
+Setup cluster:
+
+```bash
+k3d cluster create --config ./k3d.yaml
+```
+
+Delete cluster:
+
+```bash
+k3d cluster delete k6-agent
+```
+
 ## Build Image
 
 From the `implementation/agent` folder context.

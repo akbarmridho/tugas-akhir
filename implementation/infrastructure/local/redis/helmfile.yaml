@@ -11,10 +11,11 @@ releases:
           replicas: 0
       - metrics:
           enabled: true
-      - resources:
-          requests:
-            cpu: "0.25"
-            memory: "512Mi"
-          limits:
-            cpu: "0.5"
-            memory: "768Mi"
+      - redis:
+          resources:
+            requests:
+              cpu: 0.25
+              memory: 512Mi
+            limits:
+              cpu: 0.5
+              memory: 768Mi

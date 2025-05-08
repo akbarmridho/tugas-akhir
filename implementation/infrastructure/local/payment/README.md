@@ -4,20 +4,10 @@
 
 From the `implementation/payment` folder context.
 
-### Build Payment Backend
-
 ```bash
-docker build -f server.Dockerfile -t tugas-akhir/payment-server:latest .
-docker tag tugas-akhir/payment-server:latest registry.localhost:5001/tugas-akhir/payment-server:latest
-docker push registry.localhost:5001/tugas-akhir/payment-server:latest
-```
-
-### Build Payment Notifier
-
-```bash
-docker build -f notifier.Dockerfile -t tugas-akhir/payment-notifier:latest .
-docker tag tugas-akhir/payment-notifier:latest registry.localhost:5001/tugas-akhir/payment-notifier:latest
-docker push registry.localhost:5001/tugas-akhir/payment-notifier:latest
+docker build -f Dockerfile -t tugas-akhir/payment:latest .
+docker tag tugas-akhir/payment:latest registry.localhost:5001/tugas-akhir/payment:latest
+docker push registry.localhost:5001/tugas-akhir/payment:latest
 ```
 
 ## Setup
@@ -39,6 +29,7 @@ kubectl apply -f payment.yaml -n payment
 
 ```bash
 ./helmfile delete
+kubectl delete -f payment.yaml -n payment
 kubectl delete pvc redis-data-redis-redis-cluster-0 -n payment
 kubectl delete pvc redis-data-redis-redis-cluster-1 -n payment
 kubectl delete pvc redis-data-redis-redis-cluster-2 -n payment

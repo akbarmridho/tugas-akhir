@@ -59,5 +59,3 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm config set loglevel error
 # Since we do this after NPM install, quick build will be really fast
 # for most source file changes.
 COPY . ./
-
-CMD ["pnpm", "run", "start:notifier", "--silent"]

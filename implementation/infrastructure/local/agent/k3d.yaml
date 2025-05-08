@@ -1,33 +1,29 @@
-
-apiVersion: k3d.io/v1alpha5 
-kind: Simple 
+apiVersion: k3d.io/v1alpha5
+kind: Simple
 metadata:
   name: k6-agent
 servers: 1
-agents: 1
-kubeAPI: 
+agents: 2
+kubeAPI:
   hostPort: "6443"
 image: rancher/k3s:v1.30.12-rc1-k3s1
 network: k6-agent
 ports:
-  - port: 30000-30100:30000-30100
-    nodeFilters:
-    - server:*
-  - port: "80:80"
+  - port: "8080:80"
     nodeFilters:
       - loadbalancer
-  - port: "443:443"
+  - port: "8443:443"
     nodeFilters:
       - loadbalancer
 options:
   k3s:
     extraArgs:
-    - arg: --disable=traefik
-      nodeFilters:
-      - server:*
-registries: 
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:*
+registries:
   create:
-    name: registry.localhost
+    name: registry2.localhost
     host: "0.0.0.0"
     hostPort: "5002"
     volumes:

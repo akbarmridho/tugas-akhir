@@ -15,6 +15,7 @@ Prerequisites:
 - [Install Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 - [Install k3d](https://k3d.io/stable/#install-script)
 - [Install Helm](https://helm.sh/docs/intro/install/)
+- [Install Kubectx](https://github.com/ahmetb/kubectx)
 
 Setup cluster:
 
@@ -36,6 +37,8 @@ kubectl create secret tls service-tls \
   --cert=../../cert/cert.pem \
   --key=../../cert/key.pem
 
+kubectl create namespace payment
+
 kubectl create secret tls -n payment service-tls \
   --cert=../../cert/cert.pem \
   --key=../../cert/key.pem
@@ -51,10 +54,10 @@ Create a script
 # Path to the Windows hosts file
 $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
 
-$hostEntry = "127.0.0.1 registry.localhost payment.tugas-akhir.local ticket.tugas-akhir.local"
+$hostEntry = "127.0.0.1 registry.localhost registry2.localhost payment.tugas-akhir.local ticket.tugas-akhir.local"
 
 # Check if the entry already exists
-if ((Get-Content $hostsPath) -notmatch "registry.localhost payment.tugas-akhir.local ticket.tugas-akhir.local") {
+if ((Get-Content $hostsPath) -notmatch "registry.localhost registry2.localhost payment.tugas-akhir.local ticket.tugas-akhir.local") {
     Add-Content -Path $hostsPath -Value "`n$hostEntry"
     Write-Host "Host alias added: $hostEntry"
 } else {
@@ -93,4 +96,10 @@ kubectl describe node <node-name>
 
 ```bash
 kubectl get pvc -n default
+```
+
+### Get Summary of Resource Limits
+
+```bash
+kubectl get pods --all-namespaces -o custom-columns='NAME:.metadata.name,CPU_REQ:spec.containers[].resources.requests.cpu,CPU_LIM:spec.containers[].resources.limits.cpu,MEMORY_REQ:spec.containers[].resources.requests.memory,MEM_LIM:spec.containers[].resources.limits.memory'
 ```
