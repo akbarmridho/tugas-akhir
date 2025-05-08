@@ -30,10 +30,12 @@ releases:
               revision: 8
               datasource: Prometheus
       - resources:
-          limits:
-            memory: 1Gi
           requests:
-            memory: 512Mi
+            cpu: "0.25"
+            memory: "384Mi"
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
   - name: prometheus
     chart: prometheus-community/prometheus
     namespace: monitoring
@@ -42,9 +44,11 @@ releases:
     - server:
         resources:
           limits:
-            memory: 1Gi
+            cpu: "1"
+            memory: "1Gi"
           requests:
-            memory: 512Mi
+            cpu: "0.5"
+            memory: "512Mi"
     - alertmanager:
         enabled: false
     - defaultFlagsOverride:

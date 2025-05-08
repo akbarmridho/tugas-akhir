@@ -21,11 +21,11 @@ releases:
     values:
       - resources:
           requests:
-            cpu: 0.5
-            memory: 512Mi
+            cpu: "0.5"
+            memory: "512Mi"
           limits:
-            cpu: 1
-            memory: 1Gi
+            cpu: "1"
+            memory: "1Gi"
       - metrics:
           enabled: true
       - controller:

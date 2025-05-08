@@ -53,10 +53,10 @@ spec:
         resources:
           requests:
             cpu: "1"
-            memory: 2Gi
+            memory: "2Gi"
           limits:
             cpu: "1.5"
-            memory: 3Gi
+            memory: "3Gi"
         imagePullPolicy: IfNotPresent
         readinessProbe:
           httpGet:
@@ -130,10 +130,10 @@ spec:
         resources:
           requests:
             cpu: "0.25"
-            memory: 256Mi
+            memory: "256Mi"
           limits:
             cpu: "0.5"
-            memory: 512Mi
+            memory: "512Mi"
         ports:
         - containerPort: 9187
           name: pg-metrics
@@ -204,10 +204,10 @@ spec:
         resources:
           requests:
             cpu: "1"
-            memory: 2Gi
+            memory: "2Gi"
           limits:
             cpu: "1.5"
-            memory: 3Gi
+            memory: "3Gi"
         imagePullPolicy: IfNotPresent
         readinessProbe:
           httpGet:
@@ -281,10 +281,10 @@ spec:
         resources:
           requests:
             cpu: "0.25"
-            memory: 256Mi
+            memory: "256Mi"
           limits:
             cpu: "0.5"
-            memory: 512Mi
+            memory: "512Mi"
         ports:
         - containerPort: 9187
           name: pg-metrics

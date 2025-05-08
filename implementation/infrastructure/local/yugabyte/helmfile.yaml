@@ -22,17 +22,17 @@ releases:
           master:
             requests:
               cpu: "0.5"
-              memory: 1Gi
+              memory: "1Gi"
             limits:
               cpu: "0.5"
-              memory: 1Gi
+              memory: "1Gi"
           tserver:
             requests:
-              cpu: 1
-              memory: 2Gi
+              cpu: "1"
+              memory: "2Gi"
             limits:
-              cpu: 1
-              memory: 2Gi
+              cpu: "1"
+              memory: "2Gi"
       - replicas:
           master: 2
           tserver: 2
