@@ -1,0 +1,35 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ext-grafana
+spec:
+  type: ExternalName
+  externalName: grafana.monitoring.svc.cluster.local
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - grafana.tugas-akhir.local
+    secretName: app-tls-secret
+  rules:
+  - host: grafana.tugas-akhir.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ext-grafana
+            port:
+              number: 80

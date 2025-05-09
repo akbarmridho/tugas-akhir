@@ -19,3 +19,4 @@ spec:
   dnsNames:
   - payment.tugas-akhir.local
   - ticket.tugas-akhir.local
+  - grafana.tugas-akhir.local

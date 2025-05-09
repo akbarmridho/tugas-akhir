@@ -175,6 +175,10 @@ metadata:
     cluster-name: *cluster_name
 spec:
   type: ClusterIP
+  selector:
+    application: postgres
+    cluster-name: *cluster_name
+    role: primary
   ports:
   - name: postgres
     port: 5432

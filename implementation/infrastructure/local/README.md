@@ -54,10 +54,10 @@ Create a script
 # Path to the Windows hosts file
 $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
 
-$hostEntry = "127.0.0.1 registry.localhost registry2.localhost payment.tugas-akhir.local ticket.tugas-akhir.local"
+$hostEntry = "127.0.0.1 registry.localhost registry2.localhost payment.tugas-akhir.local ticket.tugas-akhir.local grafana.tugas-akhir.local"
 
 # Check if the entry already exists
-if ((Get-Content $hostsPath) -notmatch "registry.localhost registry2.localhost payment.tugas-akhir.local ticket.tugas-akhir.local") {
+if ((Get-Content $hostsPath) -notmatch "registry.localhost registry2.localhost payment.tugas-akhir.local ticket.tugas-akhir.local grafana.tugas-akhir.local") {
     Add-Content -Path $hostsPath -Value "`n$hostEntry"
     Write-Host "Host alias added: $hostEntry"
 } else {

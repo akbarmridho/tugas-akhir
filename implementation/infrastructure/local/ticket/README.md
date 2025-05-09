@@ -24,21 +24,21 @@ docker push registry.localhost:5001/tugas-akhir/ticket-server:latest
 
 ```bash
 export DB_VARIANT=postgres
-export DATABASE_URL=postgresql://postgres:zaland@pgcluster.default.svc.cluster.local,pgcluster-repl.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write
+export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster.local,pgcluster-repl.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&sslmode=disable"
 ```
 
 - For Citusdata cluster.
 
 ```bash
 export DB_VARIANT=citusdata
-export DATABASE_URL=postgresql://postgres:zalando@cituscluster-0:5432/citus
+export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0:5432/citus?sslmode=disable"
 ```
 
 - For YugabyteDB cluster.
 
 ```bash
 export DB_VARIANT=yugabytedb
-export DATABASE_URL=postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte
+export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte"
 ```
 
 ### Prepare the Scenario
@@ -47,7 +47,7 @@ export DATABASE_URL=postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.c
 export TEST_SCENARIO=<your_scenario>
 ```
 
-Supported scenarios: `sf-4`, `sf-2`, `sf-1`, `s2-4`, `s2-2`, `s2-1`, `s5-4`, `s5-2`, `s5-1`.
+Supported scenarios: `sf-4`, `sf-2`, `sf-1`, `s2-4`, `s2-2`, `s2-1`, `s5-4`, `s5-2`, `s5-1`, `s10-4`, `s10-2`, `s10-1`.
 
 List of scenario
 xx-y
@@ -86,6 +86,12 @@ Check the logs.
 
 ```bash
 kubectl logs job/ticket-seeder -f
+```
+
+Cleanup the logs.
+
+```bash
+kubectl delete job ticket-seeder
 ```
 
 ### Setting up the Service
