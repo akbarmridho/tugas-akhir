@@ -28,10 +28,10 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 
 			t.Run("Seeder loads availability data into Redis", func(t *testing.T) {
 				// Create the seeder
-				redisSeeder := NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
 
 				// Run the seeder
-				err := redisSeeder.Run()
+				err := redisSeeder.Run(ctx)
 				require.NoError(t, err)
 
 				// Verify data was loaded into Redis correctly
@@ -59,7 +59,7 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 
 			t.Run("ApplyAvailability decrements available seats", func(t *testing.T) {
 				// Create the seeder
-				redisSeeder := NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
 
 				// Get a sample of data to test with
 				data, iter, err := redisSeeder.iterAvailability()
@@ -86,7 +86,7 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 
 			t.Run("RevertAvailability increments available seats", func(t *testing.T) {
 				// Create the seeder
-				redisSeeder := NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
 
 				// Get a sample of data to test with
 				data, iter, err := redisSeeder.iterAvailability()
@@ -113,12 +113,12 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 
 			t.Run("Lock mechanism allows only one instance to refresh data", func(t *testing.T) {
 				// Create two seeders with different pod names
-				seeder1 := NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+				seeder1 := NewRedisAvailabilitySeeder(cfg, redisClient, db)
 
 				cfg2 := &config.Config{
 					PodName: "test-pod-2",
 				}
-				seeder2 := NewRedisAvailabilitySeeder(ctx, cfg2, redisClient, db)
+				seeder2 := NewRedisAvailabilitySeeder(cfg2, redisClient, db)
 
 				// First seeder should acquire the lock
 				acquired1, err := seeder1.tryAcquireSeeder()
@@ -142,7 +142,7 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 
 			t.Run("Seeder handles multiple areas in batch", func(t *testing.T) {
 				// Create seeder
-				redisSeeder := NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
 
 				// Get multiple items to test batch operations
 				data, iter, err := redisSeeder.iterAvailability()

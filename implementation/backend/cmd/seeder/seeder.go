@@ -189,16 +189,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	availabilitySeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(ctx, c, redisInstance, db)
-	err = availabilitySeeder.RunSync()
+	availabilitySeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(c, redisInstance, db)
+	err = availabilitySeeder.RunSync(ctx)
 	if err != nil {
 		l.Error("failed running availability seeder", zap.Error(err))
 		os.Exit(1)
 	}
 
 	if c.FlowControlVariant == config.FlowControlVariant__DropperAsync {
-		earlyDropper := early_dropper.NewFCEarlyDropper(ctx, c, redisInstance, booked_seats.NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator()))
-		err = earlyDropper.RunSync()
+		earlyDropper := early_dropper.NewFCEarlyDropper(c, redisInstance, booked_seats.NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator()))
+		err = earlyDropper.RunSync(ctx)
 		if err != nil {
 			l.Error("failed running early dropper seeder", zap.Error(err))
 			os.Exit(1)

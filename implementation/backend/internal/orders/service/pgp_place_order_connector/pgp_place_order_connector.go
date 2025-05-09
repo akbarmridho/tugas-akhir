@@ -26,7 +26,6 @@ type FCPlaceOrderConnector struct {
 }
 
 func NewFCPlaceOrderConnector(
-	ctx context.Context,
 	config *config.Config,
 ) *FCPlaceOrderConnector {
 	placeOrderPublisher := amqp.NewPublisher(config, &entity.PlaceOrderExchange)
@@ -46,7 +45,7 @@ func NewFCPlaceOrderConnector(
 	)
 
 	return &FCPlaceOrderConnector{
-		ctx:                     ctx,
+		ctx:                     context.Background(),
 		config:                  config,
 		placeOrderReplyConsumer: placeOrderReplyConsumer,
 		placeOrderPublisher:     placeOrderPublisher,
@@ -68,7 +67,8 @@ func (c *FCPlaceOrderConnector) Stop() error {
 	return nil
 }
 
-func (c *FCPlaceOrderConnector) Run() error {
+func (c *FCPlaceOrderConnector) Run(ctx context.Context) error {
+	c.ctx = ctx
 	// run consume place order
 	err := c.consumeReply()
 

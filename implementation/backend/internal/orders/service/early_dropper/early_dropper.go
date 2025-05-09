@@ -35,13 +35,12 @@ type EarlyDropper struct {
 }
 
 func NewFCEarlyDropper(
-	ctx context.Context,
 	config *config.Config,
 	redis *redis.Redis,
 	bookedSeatRepository booked_seats.BookedSeatRepository,
 ) *EarlyDropper {
 	return &EarlyDropper{
-		ctx:                  ctx,
+		ctx:                  context.Background(),
 		config:               config,
 		redis:                redis,
 		bookedSeatRepository: bookedSeatRepository,
@@ -180,11 +179,13 @@ func (s *EarlyDropper) Stop() error {
 	return nil
 }
 
-func (s *EarlyDropper) RunSync() error {
+func (s *EarlyDropper) RunSync(ctx context.Context) error {
+	s.ctx = ctx
 	return s.refreshData(true)
 }
 
-func (s *EarlyDropper) Run() error {
+func (s *EarlyDropper) Run(ctx context.Context) error {
+	s.ctx = ctx
 	return s.refreshData(false)
 }
 

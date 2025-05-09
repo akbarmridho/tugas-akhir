@@ -42,10 +42,10 @@ func main() {
 		orders.FCWorkerModule,
 		payments.BaseModule,
 		processor.Module,
-		fx.Invoke(func(processor *processor.Processor, metricsServer *processor.MetricsServer, c *config.Config, ctx context.Context) error {
+		fx.Invoke(func(processor *processor.Processor, metricsServer *processor.MetricsServer, c *config.Config) error {
 			c.FlowControlVariant = config.FlowControlVariant__DropperAsync
 
-			if err := processor.Run(); err != nil {
+			if err := processor.Run(ctx); err != nil {
 				return err
 			}
 

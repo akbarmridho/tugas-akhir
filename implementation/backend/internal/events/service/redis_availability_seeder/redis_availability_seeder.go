@@ -23,13 +23,12 @@ type RedisAvailabilitySeeder struct {
 }
 
 func NewRedisAvailabilitySeeder(
-	ctx context.Context,
 	config *config.Config,
 	redis *redis.Redis,
 	db *postgres.Postgres,
 ) *RedisAvailabilitySeeder {
 	return &RedisAvailabilitySeeder{
-		ctx:    ctx,
+		ctx:    context.Background(),
 		config: config,
 		redis:  redis,
 		db:     db,
@@ -165,11 +164,13 @@ func (s *RedisAvailabilitySeeder) Stop() error {
 	return nil
 }
 
-func (s *RedisAvailabilitySeeder) RunSync() error {
+func (s *RedisAvailabilitySeeder) RunSync(ctx context.Context) error {
+	s.ctx = ctx
 	return s.refreshData(true)
 }
 
-func (s *RedisAvailabilitySeeder) Run() error {
+func (s *RedisAvailabilitySeeder) Run(ctx context.Context) error {
+	s.ctx = ctx
 	return s.refreshData(false)
 }
 

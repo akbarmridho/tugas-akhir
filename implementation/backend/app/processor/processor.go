@@ -30,11 +30,22 @@ type Processor struct {
 	prometheusClient *go_metrics_prometheus.PrometheusConfig
 }
 
-func (p *Processor) Run() error {
+func (p *Processor) Run(ctx context.Context) error {
+	// hacky but it is what is is
+	// should be on constructor
+	limiter, prometheusClient, err := NewLimiter(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	p.limiter = limiter
+	p.prometheusClient = prometheusClient
+
 	go p.prometheusClient.UpdatePrometheusMetrics()
 
 	// run consume place order
-	err := p.ConsumePlaceOrder()
+	err = p.ConsumePlaceOrder()
 
 	if err != nil {
 		return err
@@ -119,7 +130,6 @@ func (p *Processor) ConsumePlaceOrder() error {
 
 func NewProcessor(
 	config *config.Config,
-	ctx context.Context,
 	worker *worker.BookingWorker,
 ) (*Processor, error) {
 	orderConsumer := amqp.NewConsumer(
@@ -134,18 +144,12 @@ func NewProcessor(
 		},
 	)
 
-	limiter, prometheusClient, err := NewLimiter(ctx)
-
-	if err != nil {
-		return nil, err
-	}
-
 	return &Processor{
-		ctx:              ctx,
+		ctx:              context.Background(),
 		orderConsumer:    orderConsumer,
 		config:           config,
-		limiter:          limiter,
+		limiter:          nil,
 		worker:           worker,
-		prometheusClient: prometheusClient,
+		prometheusClient: nil,
 	}, nil
 }

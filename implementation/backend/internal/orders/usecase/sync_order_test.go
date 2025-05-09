@@ -60,10 +60,10 @@ func setupTestEnvironment(t *testing.T, variant test_containers.RelationalDBVari
 		PodName: "test-pod-1",
 	}
 
-	redisSeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+	redisSeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(cfg, redisClient, db)
 	cache, merr := memcache.NewMemcache()
 	require.NoError(t, merr)
-	err := redisSeeder.Run()
+	err := redisSeeder.Run(ctx)
 	require.NoError(t, err)
 
 	var orderRepo order.OrderRepository

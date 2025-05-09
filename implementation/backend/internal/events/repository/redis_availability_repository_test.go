@@ -50,10 +50,10 @@ func TestRedisAvailabilityRepository_GetAvailability(t *testing.T) {
 			}
 
 			// Create the redis seeder
-			redisSeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+			redisSeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(cfg, redisClient, db)
 
 			// Run the seeder
-			err := redisSeeder.Run()
+			err := redisSeeder.Run(ctx)
 			require.NoError(t, err)
 
 			cache, cerr := memcache.NewMemcache()

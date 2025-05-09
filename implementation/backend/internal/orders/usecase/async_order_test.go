@@ -88,10 +88,10 @@ func setupAsyncTestEnvironment(t *testing.T, variant test_containers.RelationalD
 
 	t.Logf("amqp url: %s", cfg.AmqpUrl)
 
-	redisSeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(ctx, cfg, redisClient, db)
+	redisSeeder := redis_availability_seeder.NewRedisAvailabilitySeeder(cfg, redisClient, db)
 	cache, merr := memcache.NewMemcache()
 	require.NoError(t, merr)
-	err = redisSeeder.Run()
+	err = redisSeeder.Run(ctx)
 	require.NoError(t, err)
 
 	var orderRepo order.OrderRepository
@@ -124,10 +124,10 @@ func setupAsyncTestEnvironment(t *testing.T, variant test_containers.RelationalD
 		db,
 	)
 
-	connector := pgp_place_order_connector.NewFCPlaceOrderConnector(ctx, cfg)
-	require.NoError(t, connector.Run())
-	earlyDropper := early_dropper.NewFCEarlyDropper(ctx, cfg, redisClient, bookedSeatRepo)
-	require.NoError(t, earlyDropper.Run())
+	connector := pgp_place_order_connector.NewFCPlaceOrderConnector(cfg)
+	require.NoError(t, connector.Run(ctx))
+	earlyDropper := early_dropper.NewFCEarlyDropper(cfg, redisClient, bookedSeatRepo)
+	require.NoError(t, earlyDropper.Run(ctx))
 
 	placeOrderUsecase := place_order.NewFCPlaceOrderUsecase(cfg, connector, earlyDropper)
 
@@ -149,9 +149,9 @@ func setupAsyncTestEnvironment(t *testing.T, variant test_containers.RelationalD
 
 	resultPublisher := worker.NewResultPublisher(cfg)
 	bookingWorker := worker.NewBookingWorker(basePlaceOrder, resultPublisher)
-	asyncProcessor, err := processor.NewProcessor(cfg, ctx, bookingWorker)
+	asyncProcessor, err := processor.NewProcessor(cfg, bookingWorker)
 	require.NoError(t, err)
-	require.NoError(t, asyncProcessor.Run())
+	require.NoError(t, asyncProcessor.Run(ctx))
 
 	t.Cleanup(func() {
 		t.Log(asyncProcessor.Stop())

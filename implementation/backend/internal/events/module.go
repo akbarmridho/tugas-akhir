@@ -1,6 +1,7 @@
 package events
 
 import (
+	"context"
 	"go.uber.org/fx"
 	"tugas-akhir/backend/internal/events/repository/availability"
 	"tugas-akhir/backend/internal/events/repository/event"
@@ -12,8 +13,8 @@ import (
 var BaseModule = fx.Options(
 	fx.Provide(fx.Annotate(availability.NewRedisAvailabilityRepository, fx.As(new(availability.AvailabilityRepository)))),
 	fx.Provide(fx.Annotate(redis_availability_seeder.NewRedisAvailabilitySeeder,
-		fx.OnStart(func(seeder *redis_availability_seeder.RedisAvailabilitySeeder) error {
-			return seeder.Run()
+		fx.OnStart(func(seeder *redis_availability_seeder.RedisAvailabilitySeeder, ctx context.Context) error {
+			return seeder.Run(ctx)
 		}),
 		fx.OnStop(func(seeder *redis_availability_seeder.RedisAvailabilitySeeder) error {
 			return seeder.Stop()

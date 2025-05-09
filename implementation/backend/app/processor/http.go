@@ -33,10 +33,12 @@ func (s *MetricsServer) Run(ctx context.Context) error {
 	l := logger.FromCtx(ctx)
 
 	l.Sugar().Infof("Starting metrics server on %s\n", s.server.Addr)
-	if err := s.server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		l.Sugar().Errorw("metrics server failed", err)
-		return err
-	}
+
+	go func() {
+		if err := s.server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+			l.Sugar().Errorw("metrics server failed", err)
+		}
+	}()
 
 	return nil
 }
