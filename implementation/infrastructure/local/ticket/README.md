@@ -103,3 +103,13 @@ envsubst < ticket-nofc.yaml | kubectl apply -f -
 # or for async case
 envsubst < ticket-fc.yaml | kubectl apply -f -
 ```
+
+### Deleting the Service
+
+Delete the service.
+
+```bash
+envsubst < ticket-nofc.yaml | kubectl delete -f -
+# or for async case
+envsubst < ticket-fc.yaml | kubectl delete -f -
+```
