@@ -20,5 +20,5 @@ func NewWebhookRoute(
 func (r *WebhookRoute) Setup(engine *echo.Group) {
 	group := engine.Group("/webhooks")
 
-	group.POST("/", r.webhookHandler.HandleWebhook)
+	group.POST("", r.webhookHandler.HandleWebhook)
 }

@@ -71,7 +71,7 @@ spec:
         - name: REDIS_HOSTS
           value: redis-redis-cluster-0.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.default.svc.cluster.local:6379
         - name: REDIS_PASSWORD
-          value: password        
+          value: password
       volumes:
       - name: tls
         secret:

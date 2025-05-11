@@ -67,6 +67,8 @@ func NewServer(
 		Timeout: 3 * time.Minute,
 	}))
 
+	engine.Pre(middleware.RemoveTrailingSlash())
+
 	engine.Use(middleware.RequestID())
 
 	// default error handler

@@ -3,6 +3,7 @@ package orders
 import (
 	"bytes"
 	"crypto/hmac"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"io"
@@ -73,7 +74,8 @@ func (h *BaseOrderHandler) PlaceOrder(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, myerror.NewFromFieldError(validationError))
 	}
 
-	tokenClaim := c.Get(entity.JwtContextKey).(*entity.TokenClaim)
+	userToken := c.Get(entity.JwtContextKey).(*jwt.Token)
+	tokenClaim := userToken.Claims.(*entity.TokenClaim)
 
 	payload.UserID = &tokenClaim.UserID
 
@@ -131,7 +133,8 @@ func (h *BaseOrderHandler) GetOrder(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, myerror.NewFromFieldError(validationError))
 	}
 
-	tokenClaim := c.Get(entity.JwtContextKey).(*entity.TokenClaim)
+	userToken := c.Get(entity.JwtContextKey).(*jwt.Token)
+	tokenClaim := userToken.Claims.(*entity.TokenClaim)
 
 	payload.UserID = &tokenClaim.UserID
 
@@ -169,7 +172,8 @@ func (h *BaseOrderHandler) GetIssuedTickets(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, myerror.NewFromFieldError(validationError))
 	}
 
-	tokenClaim := c.Get(entity.JwtContextKey).(*entity.TokenClaim)
+	userToken := c.Get(entity.JwtContextKey).(*jwt.Token)
+	tokenClaim := userToken.Claims.(*entity.TokenClaim)
 
 	payload.UserID = &tokenClaim.UserID
 

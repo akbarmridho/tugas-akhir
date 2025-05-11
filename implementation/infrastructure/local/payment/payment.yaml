@@ -50,7 +50,7 @@ spec:
         - name: NODE_ENV
           value: production
         - name: WEBHOOK_URL
-          value: https://ticket-service.default.svc.cluster.local:3000
+          value: https://ticket-service.default.svc.cluster.local:3000/webhooks
         - name: WEBHOOK_SECRET
           value: secret
         - name: KEY_PATH
@@ -79,7 +79,7 @@ spec:
         - name: NODE_ENV
           value: production
         - name: WEBHOOK_URL
-          value: https://ticket-service.default.svc.cluster.local:3000
+          value: https://ticket-service.default.svc.cluster.local:3000/webhooks
         - name: WEBHOOK_SECRET
           value: secret
         - name: KEY_PATH

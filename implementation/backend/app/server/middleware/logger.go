@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"strings"
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/pkg/logger"
@@ -60,6 +61,11 @@ func NewLoggerMiddleware(config *config.Config) *LoggerMiddleware {
 					zap.String("fc_variant", string(config.FlowControlVariant)),
 					zap.String("test_scenario", config.TestScenario),
 					zap.String("pod_name", config.PodName),
+				}
+
+				if strings.Contains(afterReq.RequestURI, "health") {
+					// skip healthcheck endpoint
+					return nil
 				}
 
 				n := afterRes.Status

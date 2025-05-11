@@ -28,5 +28,5 @@ func (r *EventsRoute) Setup(engine *echo.Group) {
 	group.GET("/availability/:ticketSaleId", r.eventHandler.GetAvailability)
 	group.GET("/seats/:ticketAreaId", r.eventHandler.GetSeats)
 	group.GET("/:eventId", r.eventHandler.GetEvent)
-	group.GET("/", r.eventHandler.GetEvents)
+	group.GET("", r.eventHandler.GetEvents)
 }
