@@ -18,7 +18,7 @@ export const getOrder = (
 		});
 
 		const orderCheck = check(orderResponse, {
-			"is status 200": (r) => r.response.status === 200,
+			"get-order: is status 200": (r) => r.response.status === 200,
 		});
 
 		if (!orderCheck) {
@@ -44,7 +44,7 @@ export const getIssuedTickets = (
 		});
 
 		const orderCheck = check(orderResponse, {
-			"is status 200": (r) => r.response.status === 200,
+			"get-issued: is status 200": (r) => r.response.status === 200,
 		});
 
 		if (!orderCheck) {

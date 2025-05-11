@@ -10,7 +10,7 @@ List of k6 extensions used:
 
 - [xk6-faker](https://github.com/grafana/xk6-faker)
 
-Build k6 with extensions:
+From the current folder, build k6 with extensions:
 
 ```bash
 xk6 build --with github.com/grafana/xk6-faker@latest
@@ -155,4 +155,40 @@ Required envs:
 - `DB_VARIANT` with the following values: `postgres`, `yugabytedb`, or `citusdata`.
 - `FC` with the following values: `no-flow-control` or `dropper-async`.
 - `RUN_ID` any randomly generated unique string.
-- `VARIANT` with the following values: `smoke`, `sim-1`, `sim-2`, `stress-1`, and `stress-2`. This differentiate the k6 agent request pattern and behaviour.
+- `VARIANT` with the following values: `debug`, `smoke`, `sim-1`, `sim-2`, `stress-1`, and `stress-2`. This differentiate the k6 agent request pattern and behaviour.
+
+### Running Locally
+
+Generate random run ID.
+
+```bash
+openssl rand -hex 6
+```
+
+Prepare the environment.
+
+```bash
+export SCENARIO=<your-scenario>
+export DB_VARIANT=<db-variant>
+export FC=<fc-type>
+export RUN_ID=<any string>
+export VARIANT=<variant>
+```
+
+For example
+
+```bash
+export SCENARIO=s10-2
+export DB_VARIANT=postgres
+export FC=no-flow-control
+export RUN_ID=906023a363ed
+export VARIANT=debug
+```
+
+Running the code.
+
+```bash
+npm run test
+# or
+npm run test-debug
+```

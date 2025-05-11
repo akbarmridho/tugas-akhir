@@ -48,8 +48,8 @@ const getAvailability = (
 		});
 
 		const ok = check(response, {
-			"is status 200": (r) => r.response.status === 200,
-			"not empty": (r) => r.data.data.length !== 0,
+			"availability: is status 200": (r) => r.response.status === 200,
+			"availability: not empty": (r) => r.data.data.length !== 0,
 		});
 
 		if (!ok) {
@@ -110,8 +110,8 @@ const getSeats = (
 		});
 
 		const ok = check(response, {
-			"is status 200": (r) => r.response.status === 200,
-			"not empty": (r) => r.data.data.length !== 0,
+			"seats: is status 200": (r) => r.response.status === 200,
+			"seats: not empty": (r) => r.data.data.length !== 0,
 		});
 
 		if (!ok) {
@@ -181,7 +181,7 @@ const getSeats = (
 		);
 
 		check(selectedSeats, {
-			"selected seat and want equal": (s) => s.length === state.ticketCount,
+			"selected-seats: selected seat and want equal": (s) => s.length === state.ticketCount,
 		});
 
 		return selectedSeats;

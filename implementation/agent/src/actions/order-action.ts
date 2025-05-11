@@ -6,7 +6,7 @@ import {
 	TicketSale,
 } from "../client/ticket/ticketBackendService";
 import { ProfileState } from "../utils/profile";
-import { v4 as uuidv4 } from "https://jslib.k6.io/uuid/1.0.0/index.js";
+import { uuidv4 } from "https://jslib.k6.io/k6-utils/1.4.0/index.js";
 import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
 import { logger } from "../utils/logger";
 import {
@@ -78,7 +78,7 @@ export const payOrder = (
 ): Invoice | null => {
 	return group("pay invoice", () => {
 		const response = paymentService.postInvoicesIdPayment(
-			`${order.id}`,
+			`${order.invoice!.externalId}`,
 			{
 				mode: paymentSuccess ? "success" : "failed",
 			},
@@ -90,7 +90,7 @@ export const payOrder = (
 		);
 
 		const ok = check(response, {
-			"is status 200": (r) => r.response.status === 200,
+			"pay-invoice: is status 200": (r) => r.response.status === 200,
 		});
 
 		if (!ok) {

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "test": "npm run build && k6 run --summary-mode=full dist/tests/ticket.cjs",
+    "test": "npm run build && ./k6 run --summary-mode=full --summary-export=summary.json dist/tests/ticket.js",
+    "test-debug": "npm run build && ./k6 run --summary-mode=full --http-debug=\"full\" --summary-export=summary.json dist/tests/ticket.js",
     "openapi-ts": "openapi-ts",
     "client:gen": "npm run client:gen-payment && npm run client:gen-ticket",
     "client:gen-payment": "openapi-to-k6 ../payment/openapi.json src/client/payment",

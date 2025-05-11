@@ -11,8 +11,8 @@ export const getEvent = (
 		const eventsResponse = ticketService.eventRoutesGetEvents();
 
 		const eventsCheck = check(eventsResponse, {
-			"is status 200": (r) => r.response.status === 200,
-			"length is 1": (r) => r.data.data.length === 1,
+			"events: is status 200": (r) => r.response.status === 200,
+			"events: length is 1": (r) => r.data.data.length === 1,
 		});
 
 		if (!eventsCheck) {
@@ -28,7 +28,7 @@ export const getEvent = (
 		});
 
 		const eventCheck = check(eventResponse, {
-			"is status 200": (r) => r.response.status === 200,
+			"event: is status 200": (r) => r.response.status === 200,
 		});
 
 		if (!eventCheck) {

@@ -18,10 +18,17 @@ import { getIssuedTickets, getOrder } from "../actions/order-query";
 
 const { SCENARIO, DB_VARIANT, FC, RUN_ID, VARIANT } = __ENV;
 
-const scenarioName = `${VARIANT}.${SCENARIO}`;
+const scenarioName = `${VARIANT}_${SCENARIO}`;
 
 const generateScenario = (): Scenario => {
-	if (VARIANT === "smoke") {
+	if (VARIANT === "debug") {
+		return {
+			executor: "shared-iterations",
+			vus: 1,
+			iterations: 10,
+			maxDuration: "5m",
+		};
+	} else if (VARIANT === "smoke") {
 		return {
 			executor: "constant-vus",
 			vus: 50,
@@ -148,7 +155,7 @@ export default function test() {
 			baseUrl: "https://ticket.tugas-akhir.local",
 			commonRequestParameters: {
 				headers: {
-					Authorization: jwt.jwtToken,
+					Authorization: `Bearer ${jwt.jwtToken}`,
 				},
 			},
 		});

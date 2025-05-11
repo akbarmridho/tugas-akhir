@@ -1,5 +1,5 @@
-declare module "https://jslib.k6.io/uuid/1.0.0/index.js" {
-	export const v4: () => string;
+declare module "https://jslib.k6.io/k6-utils/1.4.0/index.js" {
+	export const uuidv4: () => string;
 }
 
 declare module "https://jslib.k6.io/k6-utils/1.2.0/index.js" {
