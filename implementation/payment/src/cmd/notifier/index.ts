@@ -6,10 +6,14 @@ import { readFileSync } from "node:fs";
 import { computeHMACSHA256 } from "../../utils/hmac.js";
 import { newRedisCluster } from "../../infrastructure/redis.js";
 import { createLogger } from "../../utils/logger.js";
+import { InvoiceService } from "../../service/invoice.js";
+import { IdGenerator } from "../../utils/id-generator.js";
 
 (async function main() {
+	const idGenerator = new IdGenerator();
 	const logger = createLogger(env);
 	const redis = newRedisCluster(env);
+	const invoiceService = new InvoiceService(redis, logger, idGenerator);
 
 	// Create the worker to process webhook jobs
 	const worker = new Worker<{ id: string }, void, "webhook">(
@@ -20,19 +24,22 @@ import { createLogger } from "../../utils/logger.js";
 			const l = logger.child({ id });
 			l.info("handling job");
 
-			const data = await redis.get(`invoices:${id}`);
+			let invoice = await invoiceService.getInvoice(id);
 
-			if (data === null) {
+			if (invoice === null) {
 				throw new Error("Invoice Not Found");
 			}
 
-			const rawInvoice = await InvoiceSchema.safeParseAsync(JSON.parse(data));
+			if (invoice.status === "pending") {
+				// status still pending, which mean it's expired
+				const newInvoice = await invoiceService.expireInvoice(id);
 
-			if (!rawInvoice.success) {
-				throw new Error("Cannot parse invoice data from redis");
+				if (newInvoice === null) {
+					throw new Error("Expire invoice result must not be null");
+				}
+
+				invoice = newInvoice;
 			}
-
-			const invoice = rawInvoice.data;
 
 			const payload = JSON.stringify(invoice);
 			const hash = computeHMACSHA256(env.WEBHOOK_SECRET, payload);

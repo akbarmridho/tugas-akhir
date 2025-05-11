@@ -63,7 +63,7 @@ func NewLoggerMiddleware(config *config.Config) *LoggerMiddleware {
 					zap.String("pod_name", config.PodName),
 				}
 
-				if strings.Contains(afterReq.RequestURI, "health") {
+				if strings.Contains(afterReq.RequestURI, "health") || strings.Contains(afterReq.RequestURI, "metrics") {
 					// skip healthcheck endpoint
 					return nil
 				}

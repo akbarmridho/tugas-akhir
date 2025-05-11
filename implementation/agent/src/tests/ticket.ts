@@ -24,7 +24,7 @@ const generateScenario = (): Scenario => {
 	if (VARIANT === "debug") {
 		return {
 			executor: "shared-iterations",
-			vus: 1,
+			vus: 2,
 			iterations: 10,
 			maxDuration: "5m",
 		};
@@ -135,13 +135,14 @@ const END_STATES = {
 	FAIL_ORDER_VERIFICATION: "FAIL_ORDER_VERIFICATION",
 	FAIL_TICKET_ISSUANCE: "FAIL_TICKET_ISSUANCE",
 	ERROR_UNEXPECTED_ORDER_STATE: "ERROR_UNEXPECTED_ORDER_STATE",
+	NOT_SET: "NOT_SET",
 	UNKNOWN: "UNKNOWN_EXIT", // Fallback
 };
 
 export default function test() {
 	const tags = vu.metrics.tags;
 
-	tags.state = END_STATES.UNKNOWN;
+	tags.state = END_STATES.NOT_SET;
 
 	try {
 		const jwt = forgeJwt();

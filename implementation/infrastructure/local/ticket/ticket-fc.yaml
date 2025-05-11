@@ -14,6 +14,7 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '3000'
+        prometheus.io/scheme: "https"
     spec:
       containers:
       - name: ticket-fc-server
@@ -114,16 +115,6 @@ spec:
       - name: ticket-fc-server
         image: registry.localhost:5001/tugas-akhir/ticket-server:latest
         command: ["./fc_worker"]
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3000
-            scheme: HTTPS
-          initialDelaySeconds: 3
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 3
         resources:
           requests:
             cpu: "0.5"

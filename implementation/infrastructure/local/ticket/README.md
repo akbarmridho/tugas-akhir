@@ -11,8 +11,8 @@ From the `implementation/backend` folder context.
 ### Build Ticket Backend
 
 ```bash
-docker build -f Dockerfile -t tugas-akhir/ticket-server:latest .
-docker tag tugas-akhir/ticket-server:latest registry.localhost:5001/tugas-akhir/ticket-server:latest
+docker build -f Dockerfile -t tugas-akhir/ticket-server:latest . &&
+docker tag tugas-akhir/ticket-server:latest registry.localhost:5001/tugas-akhir/ticket-server:latest &&
 docker push registry.localhost:5001/tugas-akhir/ticket-server:latest
 ```
 

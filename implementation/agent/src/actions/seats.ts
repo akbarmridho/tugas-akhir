@@ -352,9 +352,9 @@ export const getSeat = (
 	}
 
 	// seated
-	const saetSale = getSeatCaseNumbered(ticketService, state);
+	const seatSale = getSeatCaseNumbered(ticketService, state);
 
-	if (!saetSale) {
+	if (!seatSale) {
 		return null;
 	}
 
@@ -362,7 +362,7 @@ export const getSeat = (
 
 	for (let i = 0; i < state.ticketCount; i++) {
 		const customer = state.customers[i];
-		const seat = saetSale.seats[i];
+		const seat = seatSale.seats[i];
 		items.push({
 			customerEmail: customer.email,
 			customerName: customer.name,
@@ -373,6 +373,6 @@ export const getSeat = (
 
 	return {
 		items,
-		sale: saetSale.sale,
+		sale: seatSale.sale,
 	};
 };

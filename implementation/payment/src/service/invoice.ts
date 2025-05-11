@@ -65,6 +65,34 @@ export class InvoiceService {
 		return data;
 	}
 
+	public async expireInvoice(
+		id: string,
+	): Promise<InvoiceType | null> {
+		const invoice = await this.getInvoice(id);
+
+		if (!invoice) {
+			return null;
+		}
+
+		if (
+			invoice.status !== "pending"
+		) {
+			throw new HTTPException(400, {
+				message: "Invoice must not be not be pending",
+			});
+		}
+
+		invoice.status = "expired"
+	
+		await this.redis.setex(
+			`invoices:${id}`,
+			5 * 60 * 60 * 1000,
+			JSON.stringify(invoice),
+		);
+
+		return invoice;
+	}
+
 	public async payInvoice(
 		id: string,
 		payload: PayInvoiceType,
