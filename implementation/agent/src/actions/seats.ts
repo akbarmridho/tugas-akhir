@@ -139,24 +139,27 @@ const getSeats = (
 			.sort((a, b) => a.parsedNumber - b.parsedNumber);
 
 		const options = availableSeats
-			.reduce((prev, curr) => {
-				if (prev.length === 0) {
-					prev.push([curr]);
+			.reduce(
+				(prev, curr) => {
+					if (prev.length === 0) {
+						prev.push([curr]);
+						return prev;
+					}
+
+					const last = prev[prev.length - 1];
+					const lastSeat = last[last.length - 1];
+
+					// not consecutive
+					if (Math.abs(lastSeat.parsedNumber - curr.parsedNumber) > 1) {
+						prev.push([curr]);
+					} else {
+						last.push(curr);
+					}
+
 					return prev;
-				}
-
-				const last = prev[prev.length - 1];
-				const lastSeat = last[last.length - 1];
-
-				// not consecutive
-				if (Math.abs(lastSeat.id - curr.id) > 1) {
-					prev.push([curr]);
-				} else {
-					last.push(curr);
-				}
-
-				return prev;
-			}, [] as TicketSeat[][])
+				},
+				[] as (TicketSeat & { parsedNumber: number })[][],
+			)
 			// user want consecutive
 			.filter((option) => option.length >= state.ticketCount);
 
@@ -181,7 +184,8 @@ const getSeats = (
 		);
 
 		check(selectedSeats, {
-			"selected-seats: selected seat and want equal": (s) => s.length === state.ticketCount,
+			"selected-seats: selected seat and want equal": (s) =>
+				s.length === state.ticketCount,
 		});
 
 		return selectedSeats;

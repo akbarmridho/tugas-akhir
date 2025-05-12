@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Environment string `envconfig:"ENVIRONMENT" required:"true" default:"development"`
-	ServerPort  int    `envconfig:"SERVER_PORT" default:"3000"`
-	TlsCertPath string `envconfig:"TLS_CERT_PATH" required:"true"`
-	TlsKeyPath  string `envconfig:"TLS_KEY_PATH" required:"true"`
-	JwtSecret   string `envconfig:"JWT_SECRET" required:"true"`
+	Environment    string `envconfig:"ENVIRONMENT" required:"true" default:"development"`
+	ServerPort     int    `envconfig:"SERVER_PORT" default:"3000"`
+	PrometheusPort int    `envconfig:"PROMETHEUS_PORT" default:"3001"`
+	TlsCertPath    string `envconfig:"TLS_CERT_PATH" required:"true"`
+	TlsKeyPath     string `envconfig:"TLS_KEY_PATH" required:"true"`
+	JwtSecret      string `envconfig:"JWT_SECRET" required:"true"`
 
 	TestScenario       string    `envconfig:"TEST_SCENARIO"`
 	PodName            string    `envconfig:"POD_NAME" default:"none"`

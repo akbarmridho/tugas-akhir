@@ -24,3 +24,4 @@ COPY --from=builder /app/fc_server /app/fc_server
 COPY --from=builder /app/seeder /app/seeder
 
 EXPOSE 3000
+EXPOSE 3001

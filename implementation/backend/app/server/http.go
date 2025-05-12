@@ -20,17 +20,29 @@ import (
 type Server struct {
 	config *config.Config
 	engine *echo.Echo
-	Port   int
 }
 
 func (s *Server) Run() {
-	address := fmt.Sprintf(":%d", s.Port)
+	address := fmt.Sprintf(":%d", s.config.ServerPort)
 
 	// start server
 	go func() {
-		logger.GetInfo().Sugar().Infof("Server started on port %d", s.Port)
+		logger.GetInfo().Sugar().Infof("Server started on port %d", s.config.ServerPort)
 		if err := s.engine.StartTLS(address, s.config.TlsCertPath, s.config.TlsKeyPath); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			s.engine.Logger.Fatal("Shutting down the server")
+		}
+	}()
+
+	// start prometheus server
+	go func() {
+		metricServer := echo.New()
+		metricServer.HideBanner = true
+		metricServer.HidePort = true
+
+		metricServer.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
+
+		if err := metricServer.Start(fmt.Sprintf(":%d", s.config.PrometheusPort)); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			metricServer.Logger.Fatal("Shutting down the server")
 		}
 	}()
 }
@@ -74,7 +86,7 @@ func NewServer(
 	// default error handler
 	engine.Use(middleware.Recover())
 
-	engine.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
+	//engine.GET("/metrics", echoprometheus.NewHandler()) // adds route to serve gathered metrics
 
 	engine.GET("/health", healthHandler.Healthcheck)
 
@@ -98,7 +110,6 @@ func NewServer(
 	return &Server{
 		config: config,
 		engine: engine,
-		Port:   config.ServerPort,
 	}
 }
 

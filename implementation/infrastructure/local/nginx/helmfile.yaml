@@ -35,6 +35,9 @@ releases:
             memory: 1Gi
       - metrics:
           enabled: true
+          service:
+            ports:
+              metrics: 10254
       - controller:
           service:
             type: LoadBalancer
