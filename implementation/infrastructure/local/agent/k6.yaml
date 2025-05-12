@@ -6,9 +6,9 @@ spec:
   parallelism: 3
   script:
     configMap:
-      name: ticket.js
-      file: ../../agent/dist/tests/ticket.js
-  arguments: -o experimental-prometheus-rw
+      name: ticket-code
+      file: ticket.js
+  arguments: -o experimental-prometheus-rw --include-system-env-vars
   runner:
     image: registry2.localhost:5002/tugas-akhir/agent:latest
     resources:
@@ -22,7 +22,7 @@ spec:
       - name: K6_PROMETHEUS_RW_SERVER_URL
         value: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
       - name: K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM
-        value: true
+        value: "true"
       - name: SCENARIO
         value: ${SCENARIO}
       - name: DB_VARIANT
@@ -33,3 +33,5 @@ spec:
         value: ${RUN_ID}
       - name: VARIANT
         value: ${VARIANT}
+      - name: HOST_FORWARD
+        value: ${HOST_FORWARD}

@@ -119,6 +119,10 @@ export const options: Options = {
 	scenarios: {
 		[scenarioName]: generateScenario(),
 	},
+	hosts: {
+		"payment.tugas-akhir.local": __ENV.HOST_FORWARD || "127.0.0.1",
+		"ticket.tugas-akhir.local": __ENV.HOST_FORWARD || "127.0.0.1",
+	}
 };
 
 const vuEndStateCounter = new Counter("vu_end_state");
