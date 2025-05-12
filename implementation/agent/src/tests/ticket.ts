@@ -142,6 +142,19 @@ const END_STATES = {
 export default function test() {
 	const tags = vu.metrics.tags;
 
+	const submitMetric = () => {
+		const result: Record<string, string> = {};
+		for (const key of Object.keys(tags)) {
+			const tagVal = `${tags[key]}`;
+			if (!tagVal) {
+				continue;
+			}
+			result[key] = tagVal;
+		}
+
+		vuEndStateCounter.add(1, result);
+	};
+
 	tags.state = END_STATES.NOT_SET;
 
 	try {
@@ -168,6 +181,7 @@ export default function test() {
 			// should not reach this
 			logger.error("Event not found");
 			tags.state = END_STATES.FAIL_EVENT_NOT_FOUND;
+			submitMetric();
 			return;
 		}
 
@@ -188,6 +202,7 @@ export default function test() {
 			if (orderItems === null) {
 				if (state.currentBrowseAttempt >= state.maxBrowseAttempt) {
 					tags.state = END_STATES.FAIL_SEAT_NOT_FOUND;
+					submitMetric();
 					break;
 				} else {
 					sleep(randomIntBetween(2, 8));
@@ -207,6 +222,7 @@ export default function test() {
 				// error already logger
 				logger.error("Order placement returned Bad Request");
 				tags.state = END_STATES.FAIL_ORDER_BAD_REQUEST;
+				submitMetric();
 				return;
 			} else if (orderResponse.state === "Retry") {
 				state.currentOrderAttempt++;
@@ -217,6 +233,7 @@ export default function test() {
 			if (orderResponse.state !== "Ok" || orderResponse.order === null) {
 				logger.error("Response should be ok and order is not null");
 				tags.state = END_STATES.UNKNOWN;
+				submitMetric();
 				return;
 			}
 
@@ -228,6 +245,7 @@ export default function test() {
 		if (!order) {
 			logger.error("Max order placement attempt reached");
 			tags.state = END_STATES.FAIL_ORDER_ATTEMPTS_EXCEEDED;
+			submitMetric();
 			return;
 		}
 
@@ -257,6 +275,7 @@ export default function test() {
 		if (!invoiceOk) {
 			logger.error("Failed to pay invoice after retries");
 			tags.state = END_STATES.FAIL_PAYMENT_SYSTEM_ERROR;
+			submitMetric();
 			return;
 		}
 
@@ -289,6 +308,7 @@ export default function test() {
 					// not desirable
 					logger.error("Expected order to be success but received failed");
 					tags.state = END_STATES.ERROR_UNEXPECTED_ORDER_STATE;
+					submitMetric();
 					return;
 				}
 			} else {
@@ -296,6 +316,7 @@ export default function test() {
 					// not desirable
 					logger.error("Expected order to be failed but received success");
 					tags.state = END_STATES.ERROR_UNEXPECTED_ORDER_STATE;
+					submitMetric();
 					return;
 				} else if (newOrder.status === "waiting-for-payment") {
 					// retry
@@ -312,6 +333,7 @@ export default function test() {
 		if (!orderConfirmend) {
 			logger.error("Cannot verify the order status");
 			tags.state = END_STATES.FAIL_ORDER_VERIFICATION;
+			submitMetric();
 			return;
 		}
 
@@ -319,6 +341,7 @@ export default function test() {
 		if (!shouldSuccess) {
 			// this is end state for failed payment
 			tags.state = END_STATES.SUCCESS_PAYMENT_FAILED_EXPECTED;
+			submitMetric();
 			return;
 		}
 
@@ -330,6 +353,7 @@ export default function test() {
 
 			if (issuedTicketResponse === null) {
 				sleep(randomIntBetween(5, 15));
+				tries++;
 				continue;
 			}
 
@@ -349,20 +373,16 @@ export default function test() {
 		if (!ticketIssued) {
 			logger.error("Failed to get issued tickets after retries.");
 			tags.state = END_STATES.FAIL_TICKET_ISSUANCE;
+			submitMetric();
 			return; // Exit
 		}
 
 		// --- Final Success State ---
 		tags.state = END_STATES.SUCCESS_PURCHASED;
+		submitMetric();
 	} catch (e) {
 		logger.error(`Unhandled exception in VU script: ${e}`);
 		tags.state = END_STATES.UNKNOWN;
-	} finally {
-		const result: Record<string, string> = {};
-
-		for (const key of Object.keys(tags)) {
-			result[key] = `${tags[key]}`;
-		}
-		vuEndStateCounter.add(1, result);
+		submitMetric();
 	}
 }
