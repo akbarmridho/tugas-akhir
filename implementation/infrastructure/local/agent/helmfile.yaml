@@ -38,9 +38,7 @@ releases:
       - dashboards:
           default:
             k6-dashboard:
-              gnetId: 18030
-              revision: 8
-              datasource: Prometheus
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/agent/dashboards/k6.json
       - resources:
           requests:
             cpu: "0.25"
@@ -61,12 +59,11 @@ releases:
           requests:
             cpu: "0.5"
             memory: "512Mi"
+        extraArgs: 
+          web.enable-remote-write-receiver: null
+          enable-feature: "native-histograms"
     - alertmanager:
         enabled: false
-    - defaultFlagsOverride:
-        - "--enable-feature=native-histograms"
-    - extraArgs: 
-        web.enable-remote-write-receiver: true
   - name: k6-operator
     chart: grafana/k6-operator
     version: 3.13.0
