@@ -276,7 +276,7 @@ releases:
                   - default
           relabel_configs:
             - source_labels: [__meta_kubernetes_service_name]
-              regex: ^(pgcluster-repl|cituscluster-patroni)$
+              regex: ^(pgcluster|pgcluster-repl|cituscluster-patroni-coordinator|cituscluster-patroni-worker)$
               action: keep
             - source_labels: [__meta_kubernetes_service_port_name]
               regex: patroni-http

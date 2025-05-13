@@ -183,6 +183,9 @@ spec:
   - name: postgres
     port: 5432
     targetPort: postgres
+  - name: patroni-http
+    port: 8008
+    targetPort: patroni-http
 
 
 ---

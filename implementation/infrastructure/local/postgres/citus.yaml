@@ -404,7 +404,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cituscluster-patroni
+  name: cituscluster-patroni-coordinator
   labels:
     application: citus
     cluster-name: cituscluster
@@ -415,6 +415,26 @@ spec:
     application: citus
     cluster-name: cituscluster
     citus-type: coordinator
+  ports:
+  - name: patroni-http
+    port: 8008
+    targetPort: patroni-http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cituscluster-patroni-worker
+  labels:
+    application: citus
+    cluster-name: cituscluster
+    citus-type: worker
+spec:
+  type: ClusterIP
+  selector:
+    application: citus
+    cluster-name: cituscluster
+    citus-type: worker
   ports:
   - name: patroni-http
     port: 8008
