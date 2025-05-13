@@ -8,7 +8,11 @@ export const getEvent = (
 	ticketService: TicketBackendServiceClient,
 ): Event | null => {
 	return group("get event", () => {
-		const eventsResponse = ticketService.eventRoutesGetEvents();
+		const eventsResponse = ticketService.eventRoutesGetEvents({
+			tags: {
+				name: "GetEvents",
+			},
+		});
 
 		const eventsCheck = check(eventsResponse, {
 			"events: is status 200": (r) => r.response.status === 200,

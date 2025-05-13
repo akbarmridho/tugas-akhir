@@ -113,7 +113,7 @@ export const options: Options = {
 		scenario: SCENARIO,
 		dbvariant: DB_VARIANT,
 		fc: FC,
-		runid: RUN_ID,
+		testid: RUN_ID,
 		variant: VARIANT,
 	},
 	scenarios: {

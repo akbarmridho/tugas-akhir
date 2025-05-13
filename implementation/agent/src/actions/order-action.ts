@@ -37,7 +37,11 @@ export const placeOrder = (
 
 	while (tries < 3) {
 		const data = group("place order", () => {
-			return ticketService.orderRoutesPlaceOrder(payload, headers);
+			return ticketService.orderRoutesPlaceOrder(payload, headers, {
+				tags: {
+					name: "PlaceOrder",
+				},
+			});
 		});
 
 		if (data.response.status >= 500) {
