@@ -45,14 +45,20 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* /root/.cache
 
-ADD entrypoint.sh /
-ENV PGSSLMODE=verify-ca PGSSLKEY=/etc/ssl/private/ssl-cert-snakeoil.key PGSSLCERT=/etc/ssl/certs/ssl-cert-snakeoil.pem PGSSLROOTCERT=/etc/ssl/certs/ssl-cert-snakeoil.pem
+COPY entrypoint-citus.sh /entrypoint.sh
+COPY certs/ca.pem /etc/ssl/pg-ca.pem
+COPY certs/server.crt /etc/ssl/pg-server-cert.crt
+COPY certs/server.key /etc/ssl/private/pg-server-key.key
 
-RUN sed -i 's/^postgresql:/&\n  basebackup:\n    checkpoint: fast/' /entrypoint.sh \
-    && sed -i "s|^    postgresql:|&\n      parameters:\n        max_connections: 100\n        shared_buffers: 16MB\n        ssl: 'on'\n        ssl_ca_file: $PGSSLROOTCERT\n        ssl_cert_file: $PGSSLCERT\n        ssl_key_file: $PGSSLKEY\n        citus.node_conninfo: 'sslrootcert=$PGSSLROOTCERT sslkey=$PGSSLKEY sslcert=$PGSSLCERT sslmode=$PGSSLMODE'|"  /entrypoint.sh \
-    && sed -i 's/^      pg_hba:/&\n      - local all all trust/' /entrypoint.sh \
-    && sed -i "s/^\(.*\) \(.*\) \(.*\) \(.*\) \(.*\) md5.*$/\1 hostssl \3 \4 all md5 clientcert=$PGSSLMODE/" /entrypoint.sh \
-    && sed -i "s#^    \(superuser\|replication\):#&\n      sslmode: $PGSSLMODE\n      sslkey: $PGSSLKEY\n      sslcert: $PGSSLCERT\n      sslrootcert: $PGSSLROOTCERT#" /entrypoint.sh
+RUN chmod 664 /etc/ssl/pg-ca.pem
+RUN chmod 664 /etc/ssl/pg-server-cert.crt
+RUN chown postgres /etc/ssl/private/pg-server-key.key
+RUN chmod 600 /etc/ssl/private/pg-server-key.key
+
+ENV PGSSLMODE=verify-ca 
+ENV PGSSLKEY=/etc/ssl/private/pg-server-key.key
+ENV PGSSLCERT=/etc/ssl/pg-server-cert.crt
+ENV PGSSLROOTCERT=/etc/ssl/pg-ca.pem
 
 EXPOSE 5432 8008
 ENV LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 EDITOR=/usr/bin/editor

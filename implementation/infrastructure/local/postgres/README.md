@@ -7,8 +7,8 @@ Original source: [Patroni](https://github.com/patroni/patroni/blob/master/kubern
 ### Build Postgres Docker Image
 
 ```bash
-docker build -f postgres.Dockerfile -t tugas-akhir/postgres:latest .
-docker tag tugas-akhir/postgres:latest registry.localhost:5001/tugas-akhir/postgres:latest
+docker build -f postgres.Dockerfile -t tugas-akhir/postgres:latest . &&
+docker tag tugas-akhir/postgres:latest registry.localhost:5001/tugas-akhir/postgres:latest &&
 docker push registry.localhost:5001/tugas-akhir/postgres:latest
 ```
 
@@ -16,6 +16,12 @@ docker push registry.localhost:5001/tugas-akhir/postgres:latest
 
 ```bash
 kubectl apply -f postgres.yaml
+```
+
+### Delete Postgres Kubernetes
+
+```bash
+kubectl delete -f postgres.yaml
 ```
 
 ### Temporary Access
@@ -44,8 +50,8 @@ patronictl list
 ### Build Citus Docker Image
 
 ```bash
-docker build -f citus.Dockerfile -t tugas-akhir/citus:latest .
-docker tag tugas-akhir/citus:latest registry.localhost:5001/tugas-akhir/citus:latest
+docker build -f citus.Dockerfile -t tugas-akhir/citus:latest . &&
+docker tag tugas-akhir/citus:latest registry.localhost:5001/tugas-akhir/citus:latest &&
 docker push registry.localhost:5001/tugas-akhir/citus:latest
 ```
 
@@ -53,6 +59,12 @@ docker push registry.localhost:5001/tugas-akhir/citus:latest
 
 ```bash
 kubectl apply -f citus.yaml
+```
+
+### Delete Citus Kubernetes
+
+```bash
+kubectl delete -f citus.yaml
 ```
 
 ### Check

@@ -18,6 +18,14 @@ FROM builder AS runtime
 
 WORKDIR /app
 
+COPY ./ca.pem /etc/ssl/pg-ca.pem
+COPY ./client.crt /etc/ssl/pg-client-cert.crt
+COPY ./client.key /etc/ssl/private/pg-client-key.key
+
+RUN chmod 664 /etc/ssl/pg-ca.pem
+RUN chmod 664 /etc/ssl/pg-client-cert.crt
+RUN chmod 600 /etc/ssl/private/pg-client-key.key
+
 COPY --from=builder /app/nofc_server /app/nofc_server
 COPY --from=builder /app/fc_worker /app/fc_worker
 COPY --from=builder /app/fc_server /app/fc_server

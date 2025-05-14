@@ -340,13 +340,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cituscluster-0
-  labels:
+  labels: &labels
     application: citus
     cluster-name: cituscluster
     citus-group: '0'
     citus-type: coordinator
 spec:
   type: ClusterIP
+  selector:
+    <<: *labels
   ports:
   - name: postgres
     port: 5432
@@ -369,28 +371,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cituscluster-1
-  labels:
+  labels: &labels
     application: citus
     cluster-name: cituscluster
     citus-group: '1'
     citus-type: worker
-spec:
-  type: ClusterIP
-  ports:
-  - name: postgres
-    port: 5432
-    targetPort: postgres
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: cituscluster-workers
-  labels: &labels
-    application: citus
-    cluster-name: cituscluster
-    citus-type: worker
-    role: primary
 spec:
   type: ClusterIP
   selector:

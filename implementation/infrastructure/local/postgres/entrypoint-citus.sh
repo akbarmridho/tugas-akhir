@@ -18,6 +18,7 @@ bootstrap:
         ssl_ca_file: ${PGSSLROOTCERT}
         ssl_cert_file: ${PGSSLCERT}
         ssl_key_file: ${PGSSLKEY}
+        citus.node_conninfo: 'sslrootcert=/etc/ssl/certs/ssl-cert-snakeoil.pem sslkey=/etc/ssl/private/ssl-cert-snakeoil.key sslcert=/etc/ssl/certs/ssl-cert-snakeoil.pem sslmode=verify-ca'
       use_pg_rewind: true
       pg_hba:
       - local all all trust

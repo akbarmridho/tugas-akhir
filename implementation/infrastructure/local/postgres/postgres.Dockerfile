@@ -24,7 +24,21 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* /root/.cache
 
-COPY entrypoint.sh /
+COPY entrypoint.sh /entrypoint.sh
+
+COPY certs/ca.pem /etc/ssl/pg-ca.pem
+COPY certs/server.crt /etc/ssl/pg-server-cert.crt
+COPY certs/server.key /etc/ssl/private/pg-server-key.key
+
+RUN chmod 664 /etc/ssl/pg-ca.pem
+RUN chmod 664 /etc/ssl/pg-server-cert.crt
+RUN chown postgres /etc/ssl/private/pg-server-key.key
+RUN chmod 600 /etc/ssl/private/pg-server-key.key
+
+ENV PGSSLMODE=verify-ca 
+ENV PGSSLKEY=/etc/ssl/private/pg-server-key.key
+ENV PGSSLCERT=/etc/ssl/pg-server-cert.crt
+ENV PGSSLROOTCERT=/etc/ssl/pg-ca.pem
 
 EXPOSE 5432 8008
 ENV LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 EDITOR=/usr/bin/editor
