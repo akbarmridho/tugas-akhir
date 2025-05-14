@@ -37,6 +37,8 @@ releases:
                 url: http://prometheus-server.monitoring.svc.cluster.local
       - dashboards:
           default:
+            kubernetes:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/kubernetes.json  
             k6-dashboard:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/agent/dashboards/k6.json
       - resources:

@@ -31,7 +31,7 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster
 
 ```bash
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0:5432/citus?sslmode=disable"
+export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cluster.local:5432/citus?sslmode=disable"
 ```
 
 - For YugabyteDB cluster.

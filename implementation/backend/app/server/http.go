@@ -63,7 +63,6 @@ func NewServer(
 
 	engine.Use(echoprometheus.NewMiddlewareWithConfig(echoprometheus.MiddlewareConfig{
 		Namespace: "ticket_backend",
-		Subsystem: fmt.Sprintf("%s.%s", string(config.DBVariant), string(config.FlowControlVariant)),
 		Skipper: func(c echo.Context) bool {
 			return c.Path() == "/health"
 		},

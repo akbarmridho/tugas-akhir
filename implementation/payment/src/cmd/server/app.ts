@@ -27,18 +27,7 @@ export const createApp = (
 	const invoiceService = new InvoiceService(redis, logger, idGenerator);
 
 	const { printMetrics, registerMetrics } = prometheus({
-		metricOptions: {
-			requestDuration: {
-				customLabels: {
-					instanceId: () => idGenerator.getInstanceId(),
-				},
-			},
-			requestsTotal: {
-				customLabels: {
-					instanceId: () => idGenerator.getInstanceId(),
-				},
-			},
-		},
+		prefix: "payment",
 	});
 
 	const app = new OpenAPIHono();
@@ -47,6 +36,7 @@ export const createApp = (
 	app.use("/invoices/*", registerMetrics);
 
 	app.use(
+		"/invoices/*",
 		honoLogger((message, meta) => {
 			logger.info(message, meta);
 		}),

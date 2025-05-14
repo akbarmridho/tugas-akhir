@@ -42,27 +42,25 @@ releases:
       - dashboards:
           default:
             kubernetes:
-              gnetId: 1860
-              revision: 40        
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/kubernetes.json    
             yugabytedb:
               url: https://raw.githubusercontent.com/yugabyte/yugabyte-db/master/cloud/grafana/YugabyteDB.json
             nginx:
               url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/refs/heads/main/deploy/grafana/dashboards/nginx.json
             patroni:
-              gnetId: 18870
-              revision: 1
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/patroni.json
+            redis-cluster:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/redis-cluster.json
+            redis-instance:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/redis-instance.json
+            ticket-backend:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/ticket-backend.json
             postgres:
               gnetId: 9628
               revision: 8
             rabbitmq:
               gnetId: 10991
               revision: 15
-            redis:
-              gnetId: 763
-              revision: 6
-            ticket:
-              gnetId: 10913
-              revision: 1
       - resources:
           requests:
             cpu: 0.25

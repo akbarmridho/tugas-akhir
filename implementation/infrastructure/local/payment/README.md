@@ -5,8 +5,8 @@
 From the `implementation/payment` folder context.
 
 ```bash
-docker build -f Dockerfile -t tugas-akhir/payment:latest .
-docker tag tugas-akhir/payment:latest registry.localhost:5001/tugas-akhir/payment:latest
+docker build -f Dockerfile -t tugas-akhir/payment:latest . &&
+docker tag tugas-akhir/payment:latest registry.localhost:5001/tugas-akhir/payment:latest &&
 docker push registry.localhost:5001/tugas-akhir/payment:latest
 ```
 

@@ -1,0 +1,1082 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "datasource",
+                    "uid": "grafana"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            },
+            {
+                "datasource": {
+                    "uid": "${DS_PROMETHEUS:BACKSTAGE}"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "description": "Dashboard for applications that use https://github.com/globocom/echo-prometheus",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": 16,
+    "links": [],
+    "panels": [
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 41,
+            "panels": [],
+            "title": "Traffic",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 1
+            },
+            "id": 17,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(rate(ticket_backend_requests_total{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[2m])) by (job)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "range": true,
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Traffic - Req/s",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 10
+            },
+            "id": 34,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(rate(ticket_backend_requests_total{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[2m])) by (job, method, handler)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ method }} {{handler}}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Traffic - Req/s by handler",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 19
+            },
+            "id": 43,
+            "panels": [],
+            "title": "Errors",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percentunit"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 20
+            },
+            "id": 35,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(rate(ticket_backend_requests_total{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\", status=\"5xx\"}[5m])) by (job)/sum(rate(ticket_backend_requests_total{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])) by (job)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ method }} {{handler}}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Errors - % (5xx)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percentunit"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 29
+            },
+            "id": 36,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(rate(ticket_backend_requests_total{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\", status=\"5xx\"}[5m])) by (job, method, handler)/sum(rate(ticket_backend_requests_total{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])) by (job, method, handler)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ method }} {{handler}}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Errors - % by handler (5xx)",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 38
+            },
+            "id": 45,
+            "panels": [],
+            "title": "Latêncy",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 39
+            },
+            "id": 37,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.5, sum by (job, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - p50",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.95, sum by (job, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - p95",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.99, sum by (job, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - p99",
+                    "refId": "C"
+                }
+            ],
+            "title": "Latency - General",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 48
+            },
+            "id": 38,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.5, sum by (job, method, handler, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ method }} {{ handler }} - p50",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.95, sum by (job, method, handler, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ method }} {{ handler }} - p95",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.99, sum by (job, method, handler, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ method }} {{ handler }} - p99",
+                    "refId": "C"
+                }
+            ],
+            "title": "Latency by handler",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 57
+            },
+            "id": 39,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.5, sum by (job, instance, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ instance }} - p50",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.95, sum by (job, instance, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ instance }} - p95",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "histogram_quantile(0.99, sum by (job, instance, le) (rate(ticket_backend_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", handler=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ instance }} - p99",
+                    "refId": "C"
+                }
+            ],
+            "title": "Latency by instance",
+            "type": "timeseries"
+        }
+    ],
+    "preload": false,
+    "refresh": "10s",
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "text": "Prometheus",
+                    "value": "PBFA97CFB590B2093"
+                },
+                "label": "DataSource",
+                "name": "datasource",
+                "options": [],
+                "query": "prometheus",
+                "refresh": 1,
+                "regex": "",
+                "type": "datasource"
+            },
+            {
+                "current": {
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": "$datasource",
+                "definition": "",
+                "includeAll": true,
+                "label": "Job",
+                "name": "job",
+                "options": [],
+                "query": "label_values(ticket_backend_requests_total, job)",
+                "refresh": 1,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "current": {
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": "$datasource",
+                "definition": "",
+                "includeAll": true,
+                "label": "Instance",
+                "name": "instance",
+                "options": [],
+                "query": "label_values(ticket_backend_requests_total, instance)",
+                "refresh": 1,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "current": {
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": "$datasource",
+                "definition": "",
+                "includeAll": true,
+                "label": "Handler",
+                "name": "handler",
+                "options": [],
+                "query": "label_values(ticket_backend_requests_total, handler)",
+                "refresh": 1,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Ticket Backend",
+    "uid": "KzznqEpZz1",
+    "version": 1
+}
