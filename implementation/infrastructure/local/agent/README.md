@@ -95,6 +95,9 @@ kubectl exec -n monitoring -ti <pod_name> -- bash
 
 # get the resolved ip for host.k3d.internal
 nslookup host.k3d.internal
+
+# or host.docker.internal
+nslookup host.docker.internal
 ```
 
 Set the ip returned as the `HOST_FORWARD` value.

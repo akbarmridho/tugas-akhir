@@ -1,3 +1,4 @@
 node_modules/
 dist/
 k6
+summary.json

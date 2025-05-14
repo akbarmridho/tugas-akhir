@@ -16,10 +16,11 @@ import (
 const seederRedisKey = "redis-availability-seeder-node"
 
 type RedisAvailabilitySeeder struct {
-	ctx    context.Context
-	config *config.Config
-	redis  *redis.Redis
-	db     *postgres.Postgres
+	ctx        context.Context
+	cancelFunc context.CancelFunc
+	config     *config.Config
+	redis      *redis.Redis
+	db         *postgres.Postgres
 }
 
 func NewRedisAvailabilitySeeder(
@@ -27,11 +28,13 @@ func NewRedisAvailabilitySeeder(
 	redis *redis.Redis,
 	db *postgres.Postgres,
 ) *RedisAvailabilitySeeder {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &RedisAvailabilitySeeder{
-		ctx:    context.Background(),
-		config: config,
-		redis:  redis,
-		db:     db,
+		ctx:        ctx,
+		cancelFunc: cancel,
+		config:     config,
+		redis:      redis,
+		db:         db,
 	}
 }
 
@@ -161,16 +164,15 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 }
 
 func (s *RedisAvailabilitySeeder) Stop() error {
+	s.cancelFunc()
 	return nil
 }
 
 func (s *RedisAvailabilitySeeder) RunSync(ctx context.Context) error {
-	s.ctx = ctx
 	return s.refreshData(true)
 }
 
 func (s *RedisAvailabilitySeeder) Run(ctx context.Context) error {
-	s.ctx = ctx
 	return s.refreshData(false)
 }
 

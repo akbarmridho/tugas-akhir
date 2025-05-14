@@ -21,6 +21,7 @@ type FCPlaceOrderConnector struct {
 	placeOrderReplyConsumer *amqp.Consumer
 	ListenerChan            map[string]chan entity.PlaceOrderReplyMessage
 	ctx                     context.Context
+	cancelCtx               context.CancelFunc
 	config                  *config.Config
 	ReplyRouteName          string
 }
@@ -44,8 +45,11 @@ func NewFCPlaceOrderConnector(
 		},
 	)
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	return &FCPlaceOrderConnector{
-		ctx:                     context.Background(),
+		ctx:                     ctx,
+		cancelCtx:               cancel,
 		config:                  config,
 		placeOrderReplyConsumer: placeOrderReplyConsumer,
 		placeOrderPublisher:     placeOrderPublisher,
@@ -55,6 +59,8 @@ func NewFCPlaceOrderConnector(
 }
 
 func (c *FCPlaceOrderConnector) Stop() error {
+	c.cancelCtx()
+
 	err1 := c.placeOrderPublisher.Close()
 	err2 := c.placeOrderReplyConsumer.Close()
 
@@ -68,7 +74,6 @@ func (c *FCPlaceOrderConnector) Stop() error {
 }
 
 func (c *FCPlaceOrderConnector) Run(ctx context.Context) error {
-	c.ctx = ctx
 	// run consume place order
 	err := c.consumeReply()
 

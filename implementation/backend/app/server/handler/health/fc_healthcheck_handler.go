@@ -94,6 +94,8 @@ func (h *FCHealthcheckHandler) Healthcheck(c echo.Context) error {
 			status = http.StatusServiceUnavailable
 			response.AmqpStatus = theErr.Error()
 		}
+
+		wg.Done()
 	}()
 
 	wg.Wait()

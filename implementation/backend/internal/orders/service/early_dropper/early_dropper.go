@@ -29,6 +29,7 @@ func freeStandingKey(areaID int64) string {
 
 type EarlyDropper struct {
 	ctx                  context.Context
+	cancelFunc           context.CancelFunc
 	config               *config.Config
 	redis                *redis.Redis
 	bookedSeatRepository booked_seats.BookedSeatRepository
@@ -39,8 +40,10 @@ func NewFCEarlyDropper(
 	redis *redis.Redis,
 	bookedSeatRepository booked_seats.BookedSeatRepository,
 ) *EarlyDropper {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &EarlyDropper{
-		ctx:                  context.Background(),
+		ctx:                  ctx,
+		cancelFunc:           cancel,
 		config:               config,
 		redis:                redis,
 		bookedSeatRepository: bookedSeatRepository,
@@ -176,16 +179,15 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 }
 
 func (s *EarlyDropper) Stop() error {
+	s.cancelFunc()
 	return nil
 }
 
 func (s *EarlyDropper) RunSync(ctx context.Context) error {
-	s.ctx = ctx
 	return s.refreshData(true)
 }
 
 func (s *EarlyDropper) Run(ctx context.Context) error {
-	s.ctx = ctx
 	return s.refreshData(false)
 }
 
