@@ -3,6 +3,7 @@ package redis_availability_seeder
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/postgres"
@@ -111,12 +112,15 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 
 	defer iter.Close(s.ctx)
 
+	totalSet := 0
+
 	toSet := make(map[string]int32)
 	batchSize := 200
 
 	sendBatch := func() error {
 		pipe := s.redis.Client.Pipeline()
 		for k, v := range toSet {
+			totalSet++
 			pipe.Set(s.ctx, k, v, 0)
 		}
 
@@ -159,7 +163,7 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 		}
 	}
 
-	l.Info("completed seeder availability data")
+	l.Info("completed seeder availability data", zap.String("sendCount", string(rune(totalSet))))
 	return nil
 }
 

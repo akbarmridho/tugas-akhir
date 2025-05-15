@@ -179,7 +179,7 @@ func main() {
 	seedPayload := seedPayloadByScenario(c.TestScenario)
 
 	if seedPayload == nil {
-		l.Error("Invalid scneario")
+		l.Error("Invalid scenario")
 		os.Exit(1)
 	}
 
@@ -196,7 +196,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if c.FlowControlVariant == config.FlowControlVariant__DropperAsync {
+	// stupid bug
+	if c.SeedDropper != "no" {
 		earlyDropper := early_dropper.NewFCEarlyDropper(c, redisInstance, booked_seats.NewPGBookedSeatRepository(db, service.NewSerialNumberGenerator()))
 		err = earlyDropper.RunSync(ctx)
 		if err != nil {

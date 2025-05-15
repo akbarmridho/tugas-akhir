@@ -78,7 +78,16 @@ Festival can be divided into:
 
 Setup the seeder job.
 
+**No Flow Control:**
+
 ```bash
+envsubst < ticket-seeder.yaml | kubectl apply -f -
+```
+
+**With Flow Control:**
+
+```bash
+export SEED_DROPPER=yes
 envsubst < ticket-seeder.yaml | kubectl apply -f -
 ```
 

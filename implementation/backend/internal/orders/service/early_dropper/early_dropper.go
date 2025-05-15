@@ -6,6 +6,7 @@ import (
 	"fmt"
 	errors2 "github.com/pkg/errors"
 	baseredis "github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 	"strconv"
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
@@ -94,6 +95,8 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 
 	defer iter.Close(s.ctx)
 
+	countSet := 0
+
 	freeStandingAvailability := make(map[string]int)
 	numberedBuffer := make([]entity2.TicketSeat, 0)
 	numberedBufferBatchSize := 100
@@ -107,6 +110,7 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 
 		pipe := s.redis.Client.Pipeline()
 		for k, v := range values {
+			countSet++
 			pipe.Set(s.ctx, k, v, 0)
 		}
 
@@ -164,6 +168,7 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 
 	pipe := s.redis.Client.Pipeline()
 	for k, v := range freeStandingAvailability {
+		countSet++
 		pipe.Set(s.ctx, k, v, 0)
 	}
 
@@ -174,7 +179,7 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 		}
 	}
 
-	l.Info("completed refreshing early dropper data")
+	l.Info("completed refreshing early dropper data", zap.String("countSet", string(rune(countSet))))
 	return nil
 }
 

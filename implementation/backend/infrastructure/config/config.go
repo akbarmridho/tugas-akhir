@@ -19,6 +19,7 @@ type Config struct {
 	PodName            string    `envconfig:"POD_NAME" default:"none"`
 	DBVariant          DBVariant `envconfig:"DB_VARIANT" required:"true"`
 	FlowControlVariant FlowControlVariant
+	SeedDropper        string `envconfig:"SEED_DROPPER" default:"no"`
 
 	DatabaseUrl       string `envconfig:"DATABASE_URL"`
 	AmqpUrl           string `envconfig:"AMQP_URL"`

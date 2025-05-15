@@ -60,7 +60,6 @@ func NewLoggerMiddleware(config *config.Config) *LoggerMiddleware {
 					zap.String("db_variant", string(config.DBVariant)),
 					zap.String("fc_variant", string(config.FlowControlVariant)),
 					zap.String("test_scenario", config.TestScenario),
-					zap.String("pod_name", config.PodName),
 				}
 
 				if strings.Contains(afterReq.RequestURI, "health") || strings.Contains(afterReq.RequestURI, "metrics") {
