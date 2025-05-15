@@ -18,10 +18,11 @@ bootstrap:
         ssl_ca_file: ${PGSSLROOTCERT}
         ssl_cert_file: ${PGSSLCERT}
         ssl_key_file: ${PGSSLKEY}
-        citus.node_conninfo: 'sslrootcert=/etc/ssl/certs/ssl-cert-snakeoil.pem sslkey=/etc/ssl/private/ssl-cert-snakeoil.key sslcert=/etc/ssl/certs/ssl-cert-snakeoil.pem sslmode=verify-ca'
+        citus.node_conninfo: 'sslrootcert=${PGSSLROOTCERT} sslcert=${PGSSLCERT} sslkey=${PGSSLKEY} sslmode=${PGSSLMODE}'
       use_pg_rewind: true
       pg_hba:
       - local all all trust
+      - host all all 127.0.0.1/32 trust
       - hostssl all all all md5 clientcert=${PGSSLMODE}
       - hostssl replication ${PATRONI_REPLICATION_USERNAME} all md5 clientcert=${PGSSLMODE}
   initdb:

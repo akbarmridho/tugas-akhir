@@ -10,4 +10,4 @@ ST = Jawa Barat
 L  = Bandung
 O  = Institut Teknologi Bandung
 OU = Dev
-CN = postgres.local
+CN = localhost
