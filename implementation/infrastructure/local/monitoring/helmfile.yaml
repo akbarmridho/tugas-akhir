@@ -55,6 +55,8 @@ releases:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/redis-instance.json
             ticket-backend:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/ticket-backend.json
+            ticket-queue:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/ticket-queue.json
             postgres:
               gnetId: 9628
               revision: 8

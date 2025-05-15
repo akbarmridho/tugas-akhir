@@ -53,7 +53,7 @@ xk6 build --with github.com/grafana/xk6-faker@latest
 
 **Payment Failure:**
 
-When the user successfully placed an order, there are 10% probability that the user's payment fails for simulating user backing off or cancelling the payment.
+When the user successfully placed an order, there are 5% probability that the user's payment fails for simulating user backing off or cancelling the payment.
 
 **Seating Distribution:**
 

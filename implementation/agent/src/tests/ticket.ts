@@ -257,7 +257,7 @@ export default function test() {
 		// retry until 3 time if fail
 		let tries = 0;
 		let invoiceOk = false;
-		const shouldSuccess = Math.random() <= 0.9;
+		const shouldSuccess = Math.random() <= 0.95;
 
 		tags.profile_payment_success = shouldSuccess;
 
