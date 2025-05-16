@@ -99,6 +99,8 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 		return nil
 	}
 
+	l.Info("refreshing redis availability")
+
 	// refresh data
 	data, iter, err := s.iterAvailability()
 
@@ -143,7 +145,7 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 
 		if len(toSet) >= batchSize {
 			err = sendBatch()
-			if returnOnError {
+			if returnOnError && err != nil {
 				return err
 			}
 		}
@@ -163,7 +165,7 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 		}
 	}
 
-	l.Info("completed seeder availability data", zap.String("sendCount", string(rune(totalSet))))
+	l.Info("completed seeder availability data", zap.Int("sendCount", totalSet))
 	return nil
 }
 

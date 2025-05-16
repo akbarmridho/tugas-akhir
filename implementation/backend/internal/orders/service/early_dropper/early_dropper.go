@@ -114,6 +114,8 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 			pipe.Set(s.ctx, k, v, 0)
 		}
 
+		numberedBuffer = make([]entity2.TicketSeat, 0)
+
 		if _, err := pipe.Exec(s.ctx); err != nil {
 			l.Sugar().Error(err)
 			if returnOnError {
@@ -179,7 +181,7 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 		}
 	}
 
-	l.Info("completed refreshing early dropper data", zap.String("countSet", string(rune(countSet))))
+	l.Info("completed refreshing early dropper data", zap.Int("countSet", countSet))
 	return nil
 }
 
