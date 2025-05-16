@@ -12,9 +12,9 @@ kubectl apply -f ingress-ticket.yaml
 ## Cleanup
 
 ```bash
-./helmfile delete
-kubectl delete -f cert-manager.yaml
 kubectl delete -f ingress-payment.yaml
 kubectl delete -f ingress-grafana.yaml
 kubectl delete -f ingress-ticket.yaml
+kubectl delete -f cert-manager.yaml
+./helmfile delete
 ```

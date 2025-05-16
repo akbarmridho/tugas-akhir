@@ -17,15 +17,15 @@ import (
 	"tugas-akhir/backend/pkg/logger"
 )
 
-const redisPrefix = "early-dropper:"
+const DropperRedisPrefix = "early-dropper:"
 const referesherRedisKey = "refresher-node"
 
 func numberedSeatKey(areaID int64, seatID int64) string {
-	return fmt.Sprintf("%s{area-%d}status:numbered:%d", redisPrefix, areaID, seatID)
+	return fmt.Sprintf("%s{area-%d}status:numbered:%d", DropperRedisPrefix, areaID, seatID)
 }
 
 func freeStandingKey(areaID int64) string {
-	return fmt.Sprintf("%s{area-%d}status:free-standing:%d", redisPrefix, areaID, areaID)
+	return fmt.Sprintf("%s{area-%d}status:free-standing:%d", DropperRedisPrefix, areaID, areaID)
 }
 
 type EarlyDropper struct {
@@ -52,7 +52,7 @@ func NewFCEarlyDropper(
 }
 
 func (s *EarlyDropper) tryAcquireRefresher() (bool, error) {
-	result, err := s.redis.GetOrSetWithEx(s.ctx, redisPrefix+referesherRedisKey, s.config.PodName, 15*time.Minute)
+	result, err := s.redis.GetOrSetWithEx(s.ctx, DropperRedisPrefix+referesherRedisKey, s.config.PodName, 15*time.Minute)
 
 	if err != nil {
 		return false, err
@@ -172,6 +172,8 @@ func (s *EarlyDropper) refreshData(returnOnError bool) error {
 	for k, v := range freeStandingAvailability {
 		countSet++
 		pipe.Set(s.ctx, k, v, 0)
+		// add original count here
+		pipe.Set(s.ctx, fmt.Sprintf("debug:%s", k), v, 0)
 	}
 
 	if _, err := pipe.Exec(s.ctx); err != nil {

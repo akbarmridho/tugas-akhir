@@ -13,6 +13,7 @@ RUN go build -o ./nofc_server ./cmd/nofc/server/main_server.go
 RUN go build -o ./fc_worker ./cmd/fc/worker/main_worker.go
 RUN go build -o ./fc_server ./cmd/fc/server/main_server.go
 RUN go build -o ./seeder ./cmd/seeder/seeder.go
+RUN go build -o ./sanity ./cmd/sanity/main_sanity_check.go
 
 FROM builder AS runtime
 

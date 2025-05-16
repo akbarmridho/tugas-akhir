@@ -17,18 +17,18 @@ import (
 	"tugas-akhir/backend/pkg/logger"
 )
 
-const prefix = "redis-availability"
+const AvailabilityPrefix = "redis-availability"
 
 func cacheKey(pattern string) string {
-	return fmt.Sprintf("%s:key:%s", prefix, pattern)
+	return fmt.Sprintf("%s:key:%s", AvailabilityPrefix, pattern)
 }
 
 func GetTotalSeatsKey(data entity.AreaAvailability) string {
-	return fmt.Sprintf("%s:%d:%d:%d:total", prefix, data.TicketSaleID, data.TicketPackageID, data.TicketAreaID)
+	return fmt.Sprintf("%s:%d:%d:%d:total", AvailabilityPrefix, data.TicketSaleID, data.TicketPackageID, data.TicketAreaID)
 }
 
 func GetAvailableSeats(data entity.AreaAvailability) string {
-	return fmt.Sprintf("%s:%d:%d:%d:available", prefix, data.TicketSaleID, data.TicketPackageID, data.TicketAreaID)
+	return fmt.Sprintf("%s:%d:%d:%d:available", AvailabilityPrefix, data.TicketSaleID, data.TicketPackageID, data.TicketAreaID)
 }
 
 type RedisAvailabilityRepository struct {
@@ -49,7 +49,7 @@ func NewRedisAvailabilityRepository(
 func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, payload entity.GetAvailabilityDto) ([]entity.AreaAvailability, error) {
 	l := logger.FromCtx(ctx)
 
-	pattern := fmt.Sprintf("%s:%d:*:*:*", prefix, payload.TicketSaleID)
+	pattern := fmt.Sprintf("%s:%d:*:*:*", AvailabilityPrefix, payload.TicketSaleID)
 
 	keys := make([]string, 0)
 
@@ -190,8 +190,8 @@ func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, paylo
 		}
 
 		// Construct keys for total and available
-		totalKey := fmt.Sprintf("%s:%d:%d:%d:total", prefix, saleID, packageID, areaID)
-		availableKey := fmt.Sprintf("%s:%d:%d:%d:available", prefix, saleID, packageID, areaID)
+		totalKey := fmt.Sprintf("%s:%d:%d:%d:total", AvailabilityPrefix, saleID, packageID, areaID)
+		availableKey := fmt.Sprintf("%s:%d:%d:%d:available", AvailabilityPrefix, saleID, packageID, areaID)
 
 		// Get values
 		if totalStr, ok := keyToValue[totalKey]; ok {

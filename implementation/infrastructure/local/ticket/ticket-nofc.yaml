@@ -91,3 +91,75 @@ spec:
   ports:
   - port: 3000
     targetPort: 3000
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticket-fc-sanity
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticket-fc-sanity
+  template:
+    metadata:
+      labels:
+        app: ticket-fc-sanity
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '3000'
+    spec:
+      containers:
+      - name: ticket-fc-sanity
+        image: registry.localhost:5001/tugas-akhir/ticket-server:latest
+        command: ["./sanity"]
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: "1Gi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        volumeMounts:
+        - name: tls
+          mountPath: "/etc/tls"
+          readOnly: true
+        env:
+        - name: ENVIRONMENT
+          value: production
+        - name: TLS_KEY_PATH
+          value: /etc/tls/tls.key
+        - name: TLS_CERT_PATH
+          value: /etc/tls/tls.crt
+        - name: JWT_SECRET
+          value: secret
+        - name: TEST_SCENARIO
+          value: ${TEST_SCENARIO}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: DB_VARIANT
+          value: ${DB_VARIANT}
+        - name: DATABASE_URL
+          value: ${DATABASE_URL}
+        - name: PAYMENT_SERVICE_URL
+          value: http://payment-service.payment.svc.cluster.local:3000
+        - name: PAYMENT_CERT_PATH
+          value: /etc/tls/tls.crt
+        - name: WEBHOOK_SECRET
+          value: secret
+        - name: REDIS_HOSTS
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.default.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.default.svc.cluster.local:6379
+        - name: REDIS_PASSWORD
+          value: password
+      volumes:
+      - name: tls
+        secret:
+          secretName: service-tls
