@@ -62,11 +62,9 @@ releases:
             sanity-check:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/sanity-check.json
             postgres:
-              gnetId: 9628
-              revision: 8
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/postgres.json
             rabbitmq:
-              gnetId: 10991
-              revision: 15
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/rabbitmq.json
       - resources:
           requests:
             cpu: 0.25
