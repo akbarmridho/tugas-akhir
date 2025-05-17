@@ -34,6 +34,12 @@ const generateScenario = (): Scenario => {
 			vus: 50,
 			duration: "5m",
 		};
+	} else if (VARIANT === "smokey") {
+		return {
+			executor: "constant-vus",
+			vus: 200,
+			duration: "10m",
+		};
 	} else if (VARIANT === "sim-1") {
 		return {
 			executor: "ramping-arrival-rate",
@@ -88,6 +94,33 @@ const generateScenario = (): Scenario => {
 				{ target: 22, duration: "30s" },
 			],
 		};
+	} else if (VARIANT === "sim-test") {
+		return {
+			executor: "ramping-arrival-rate",
+			preAllocatedVUs: 5000,
+			stages: [
+				{ target: 1118, duration: "30s" },
+				{ target: 2918, duration: "30s" },
+				{ target: 2696, duration: "30s" },
+				{ target: 1955, duration: "30s" },
+				{ target: 1210, duration: "30s" },
+				{ target: 726, duration: "30s" },
+				{ target: 507, duration: "30s" },
+				{ target: 304, duration: "30s" },
+				{ target: 168, duration: "30s" },
+				{ target: 135, duration: "30s" },
+				{ target: 88, duration: "30s" },
+				{ target: 53, duration: "30s" },
+				{ target: 40, duration: "30s" },
+				{ target: 28, duration: "30s" },
+				{ target: 22, duration: "30s" },
+				{ target: 9, duration: "30s" },
+				{ target: 4, duration: "30s" },
+				{ target: 5, duration: "30s" },
+				{ target: 5, duration: "30s" },
+				{ target: 2, duration: "30s" },
+			],
+		};
 	} else if (VARIANT === "stress-1") {
 		return {
 			executor: "shared-iterations",
@@ -100,6 +133,13 @@ const generateScenario = (): Scenario => {
 			executor: "shared-iterations",
 			vus: 40000,
 			iterations: 1000000,
+			maxDuration: "15m",
+		};
+	} else if (VARIANT === "stress-test") {
+		return {
+			executor: "shared-iterations",
+			vus: 4000,
+			iterations: 12000,
 			maxDuration: "15m",
 		};
 	}
@@ -122,7 +162,7 @@ export const options: Options = {
 	hosts: {
 		"payment.tugas-akhir.local": __ENV.HOST_FORWARD || "127.0.0.1",
 		"ticket.tugas-akhir.local": __ENV.HOST_FORWARD || "127.0.0.1",
-	}
+	},
 };
 
 const vuEndStateCounter = new Counter("vu_end_state");
