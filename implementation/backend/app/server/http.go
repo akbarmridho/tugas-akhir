@@ -94,9 +94,9 @@ func NewServer(
 
 	engine.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, struct {
-			FlowControlVariant string
-			DBVariant          string
-			Scenario           string
+			FlowControlVariant string `json:"flowControlVariant"`
+			DBVariant          string `json:"dbVariant"`
+			Scenario           string `json:"scenario"`
 		}{
 			FlowControlVariant: string(config.FlowControlVariant),
 			DBVariant:          string(config.DBVariant),

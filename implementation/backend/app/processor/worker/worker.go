@@ -56,6 +56,11 @@ func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) e
 
 	response, httpErr := w.placeOrderUsecase.PlaceOrder(ctx, payload.Data)
 
+	if httpErr.ErrorContext != nil {
+		l.Sugar().Error("internal error", zap.Error(httpErr.ErrorContext))
+		httpErr.ErrorContext = nil
+	}
+
 	processTime := time.Since(now)
 	now = time.Now()
 
@@ -65,6 +70,10 @@ func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) e
 		ReplyRoute:     payload.ReplyRoute,
 		IdempotencyKey: *payload.Data.IdempotencyKey,
 	})
+
+	if ackErr := rawMsg.Ack(false); ackErr != nil {
+		l.Sugar().Error(ackErr)
+	}
 
 	publishTime := time.Since(now)
 

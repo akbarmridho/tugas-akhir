@@ -76,6 +76,28 @@ Festival can be divided into:
 
 ### Seeding the Database
 
+**Reset RabbitMQ:**
+
+If using flow control.
+
+```bash
+kubectl exec -ti rabbitmq-0 -- bash
+
+# inside the rabbitmq terminal
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl start_app
+```
+
+**Reset Payment Service:**
+
+Inside the `implementation/infrastructure/payment`/
+
+```bash
+# teardown the payment service
+kubectl delete -f payment.yaml -n payment
+```
+
 Setup the seeder job.
 
 **No Flow Control:**

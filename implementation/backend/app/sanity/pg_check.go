@@ -16,9 +16,9 @@ func (s *PGCheck) GetAvailability(ctx context.Context) (*AvailabilityCheck, erro
 	raw := make([]DBAvailabilityRow, 0)
 
 	err := pgxscan.Select(ctx, s.db.GetExecutor(ctx), &raw, `
-		SELECT seat_status, count(*) as total
+		SELECT status, count(*) as total
 		FROM ticket_seats
-		GROUP BY seat_status
+		GROUP BY status
 	`)
 
 	if err != nil {
@@ -36,11 +36,11 @@ func (s *PGCheck) GetAvailability(ctx context.Context) (*AvailabilityCheck, erro
 	}
 
 	for _, row := range raw {
-		if row.SeatStatus == entity.SeatStatus__Available {
+		if row.Status == entity.SeatStatus__Available {
 			result.Available += row.Total
-		} else if row.SeatStatus == entity.SeatStatus__Sold {
+		} else if row.Status == entity.SeatStatus__Sold {
 			result.Unavailable += row.Total
-		} else if row.SeatStatus == entity.SeatStatus__OnHold {
+		} else if row.Status == entity.SeatStatus__OnHold {
 			result.Unavailable += row.Total
 		}
 
@@ -58,7 +58,7 @@ func (s *PGCheck) CheckDoubleOrder(ctx context.Context) (*DoubleOrderCheck, erro
 		SELECT COUNT(*) as total
 		FROM (
 			SELECT 
-				ticket_area_id,
+				order_items.ticket_area_id as ticket_area_id,
 				ticket_seat_id
 			FROM 
 				order_items
@@ -68,7 +68,7 @@ func (s *PGCheck) CheckDoubleOrder(ctx context.Context) (*DoubleOrderCheck, erro
 			WHERE 
 				orders.status != 'failed'
 			GROUP BY 
-				ticket_area_id, ticket_seat_id
+				order_items.ticket_area_id, ticket_seat_id
 			HAVING 
 				COUNT(*) > 1
 		) as double_bookings;

@@ -47,6 +47,9 @@ func (s *SanityCheck) Run(ctx context.Context) {
 	}()
 
 	s.quitChan = &quit
+
+	// run immediately after started
+	s.Collect(ctx)
 }
 
 func (s *SanityCheck) Stop() {

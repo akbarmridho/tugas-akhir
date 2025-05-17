@@ -9,8 +9,8 @@ type AvailabilityCheck struct {
 }
 
 type DBAvailabilityRow struct {
-	SeatStatus entity.SeatStatus
-	Total      int
+	Status entity.SeatStatus
+	Total  int
 }
 
 type DoubleOrderCheck struct {

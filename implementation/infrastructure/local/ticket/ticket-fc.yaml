@@ -114,7 +114,7 @@ spec:
         prometheus.io/port: '3000'
     spec:
       containers:
-      - name: ticket-fc-server
+      - name: ticket-fc-worker
         image: registry.localhost:5001/tugas-akhir/ticket-server:latest
         command: ["./fc_worker"]
         resources:

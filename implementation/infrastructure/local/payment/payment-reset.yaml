@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: payment-reset
+  labels:
+    app: payment-reset
+spec:
+  ttlSecondsAfterFinished: 10800
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: task-runner
+        image: registry.localhost:5001/tugas-akhir/payment:latest
+        command: ["pnpm", "run", "reset", "--silent"]
+        volumeMounts:
+        - name: tls
+          mountPath: "/etc/tls"
+          readOnly: true
+        env:
+        - name: REDIS_HOSTS
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.payment.svc.cluster.local:6379
+        - name: REDIS_PASSWORD
+          value: password
+        - name: NODE_ENV
+          value: production
+        - name: WEBHOOK_URL
+          value: https://ticket-service.default.svc.cluster.local:3000/webhooks
+        - name: WEBHOOK_SECRET
+          value: secret
+        - name: KEY_PATH
+          value: /etc/tls/tls.key
+        - name: CERT_PATH
+          value: /etc/tls/tls.crt
+      volumes:
+      - name: tls
+        secret:
+          secretName: service-tls

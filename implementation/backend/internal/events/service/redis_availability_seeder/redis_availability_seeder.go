@@ -160,7 +160,7 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 
 	if len(toSet) > 0 {
 		err = sendBatch()
-		if returnOnError {
+		if returnOnError && err != nil {
 			return err
 		}
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "go.uber.org/automaxprocs"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"os"
