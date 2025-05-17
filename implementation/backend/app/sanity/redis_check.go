@@ -277,7 +277,7 @@ func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityC
 		return nil, getKeysError
 	}
 
-	l.Sugar().Infof("got %d keys to scan", len(keys))
+	//l.Sugar().Infof("got %d keys to scan", len(keys))
 
 	result := AvailabilityCheck{
 		Count:       0,
@@ -298,6 +298,11 @@ func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityC
 		cmds := make(map[string]*baseredis.StringCmd)
 
 		for _, key := range buffer {
+			// wrong key
+			if key == "early-dropper:refresher-node" {
+				continue
+			}
+			
 			cmds[key] = pipe.Get(ctx, key)
 		}
 

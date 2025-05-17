@@ -8,6 +8,9 @@ releases:
     namespace: default
     version: 2024.2.2
     values:
+      - gflags:
+          tserver:
+            ysql_output_buffer_size: 4194304
       - storage:
           ephemeral: true
           master:

@@ -90,7 +90,7 @@ func (p *Processor) ConsumePlaceOrder() error {
 						break mainLoop
 					}
 
-					l.Info("receiving message")
+					//l.Info("receiving message")
 
 					go func() {
 						listener, ok := p.limiter.Acquire(p.ctx)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgconn"
 	errors2 "github.com/pkg/errors"
 	"net/http"
 	"strconv"
@@ -55,6 +56,41 @@ func NewBasePlaceOrderUsecase(
 }
 
 func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.PlaceOrderDto) (*entity.Order, *myerror.HttpError) {
+	// retry transaction if needed
+	l := logger.FromCtx(ctx)
+
+	var order *entity.Order
+	var httpErr *myerror.HttpError
+
+	for i := 0; i < 3; i++ {
+		order, httpErr = u.placeOrder(ctx, payload)
+
+		// try more
+		if httpErr != nil && httpErr.ErrorContext != nil {
+			// check for the error code
+
+			errCtx := httpErr.ErrorContext
+
+			var pgErr *pgconn.PgError
+
+			if errors.As(errCtx, &pgErr) {
+				l.Warn("serializability error. restarting transactions ...")
+
+				// PostgreSQL error codes for transaction related issue
+				// 40001 is the error code retry read
+				if pgErr.Code == "40001" {
+					continue
+				}
+			}
+		}
+
+		break
+	}
+
+	return order, httpErr
+}
+
+func (u *BasePlaceOrderUsecase) placeOrder(ctx context.Context, payload entity.PlaceOrderDto) (*entity.Order, *myerror.HttpError) {
 	l := logger.FromCtx(ctx)
 
 	if payload.UserID == nil {

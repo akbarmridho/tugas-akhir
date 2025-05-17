@@ -106,7 +106,7 @@ func (c *FCPlaceOrderConnector) consumeReply() error {
 						break mainLoop
 					}
 
-					l.Info("receiving message")
+					//l.Info("receiving message")
 
 					go func() {
 						var buffer bytes.Buffer
@@ -144,8 +144,17 @@ func (c *FCPlaceOrderConnector) consumeReply() error {
 
 						if exists {
 							ch <- payload
+
+							if ackErr := rawMsg.Ack(false); ackErr != nil {
+								l.Error("ack err", zap.Error(ackErr))
+							}
+
 						} else {
 							l.Warn("cannot find the corresponding listener", zap.String("idempotency-key", payload.IdempotencyKey))
+							// just ack in this case to prevent redelivery
+							if ackErr := rawMsg.Ack(false); ackErr != nil {
+								l.Error("ack err", zap.Error(ackErr))
+							}
 						}
 					}()
 				case <-c.ctx.Done():

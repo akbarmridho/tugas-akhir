@@ -9,7 +9,7 @@ import (
 	myerror "tugas-akhir/backend/pkg/error"
 )
 
-var PlaceOrderTimeout = 30 * time.Second
+var PlaceOrderTimeout = 130 * time.Second
 
 var PlaceOrderQueue = entity.QueueConfig{
 	Name:       "place_orders",
@@ -61,7 +61,7 @@ func (m PlaceOrderMessage) ToMessage() (*entity.Message, error) {
 		RoutingKey:   "orders",
 		Type:         nil,
 		IsPersistent: true,
-		LogDelivery:  true,
+		LogDelivery:  false,
 	}
 
 	return &res, nil
@@ -90,7 +90,7 @@ func (m PlaceOrderReplyMessage) ToMessage() (*entity.Message, error) {
 		RoutingKey:   m.ReplyRoute,
 		Type:         nil,
 		IsPersistent: true,
-		LogDelivery:  true,
+		LogDelivery:  false,
 	}
 
 	return &res, nil

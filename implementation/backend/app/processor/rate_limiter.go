@@ -59,9 +59,9 @@ func NewLimiter(ctx context.Context) (core.Limiter, *go_metrics_prometheus.Prome
 
 	gradient2Limit, err := limit.NewGradient2Limit(
 		LimiterName,
-		20,
+		100,
 		ConcurrencyLimit,
-		20,
+		100,
 		func(limit int) int { return 100 },
 		0.5,
 		600,
@@ -92,7 +92,7 @@ func NewLimiter(ctx context.Context) (core.Limiter, *go_metrics_prometheus.Prome
 
 	limiter := limiter2.NewQueueBlockingLimiterFromConfig(defaultLimiter, limiter2.QueueLimiterConfig{
 		Ordering:          limiter2.OrderingFIFO,
-		MaxBacklogTimeout: 5 * time.Minute,
+		MaxBacklogTimeout: 2 * time.Minute,
 		MetricRegistry:    limiterMetricsRegistry,
 	})
 

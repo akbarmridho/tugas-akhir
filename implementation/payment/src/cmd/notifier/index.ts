@@ -57,10 +57,13 @@ import { IdGenerator } from "../../utils/id-generator.js";
 						rejectUnauthorized: false,
 					},
 					http2: true,
+					throwHttpErrors: false,
 				});
 
 				if (response.ok) {
 					l.info(`Webhook success ${id}`);
+				} else if (response.statusCode === 404) {
+					l.warn("Received not found error. ignoring ...");
 				} else if (response.statusCode >= 400) {
 					const statusCode = response.statusCode;
 
@@ -81,7 +84,7 @@ import { IdGenerator } from "../../utils/id-generator.js";
 
 					// For other status codes, throw a generic error that will trigger retry
 					throw new Error(
-						`HTTP Error: ${statusCode} ${response.statusMessage}`,
+						`HTTP Error: ${statusCode} ${response.statusMessage} with body ${errorBody}`,
 					);
 				}
 			} catch (error) {

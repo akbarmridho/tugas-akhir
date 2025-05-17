@@ -3,6 +3,7 @@ package webhook
 import (
 	"context"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
@@ -19,6 +20,7 @@ import (
 	"tugas-akhir/backend/internal/payments/entity"
 	"tugas-akhir/backend/internal/payments/repository/invoice"
 	myerror "tugas-akhir/backend/pkg/error"
+	"tugas-akhir/backend/pkg/logger"
 	"tugas-akhir/backend/pkg/mock_payment"
 )
 
@@ -76,6 +78,40 @@ func NewFCWebhookUsecase(
 }
 
 func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payment.Invoice) *myerror.HttpError {
+	// retry transaction if needed
+	l := logger.FromCtx(ctx)
+
+	var httpErr *myerror.HttpError
+
+	for i := 0; i < 3; i++ {
+		httpErr = u.handleWebhook(ctx, payload)
+
+		// try more
+		if httpErr != nil && httpErr.ErrorContext != nil {
+			// check for the error code
+
+			errCtx := httpErr.ErrorContext
+
+			var pgErr *pgconn.PgError
+
+			if errors.As(errCtx, &pgErr) {
+				l.Warn("serializability error. restarting transactions ...")
+
+				// PostgreSQL error codes for transaction related issue
+				// 40001 is the error code retry read
+				if pgErr.Code == "40001" {
+					continue
+				}
+			}
+		}
+
+		break
+	}
+
+	return httpErr
+}
+
+func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payment.Invoice) *myerror.HttpError {
 	tx, err := u.db.Pool.Begin(ctx)
 
 	defer tx.Rollback(ctx)
@@ -109,9 +145,8 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 	if err != nil {
 		if errors.Is(err, entity2.OrderNotFoundError) {
 			return &myerror.HttpError{
-				Code:         http.StatusNotFound,
-				Message:      err.Error(),
-				ErrorContext: err,
+				Code:    http.StatusNotFound,
+				Message: err.Error(),
 			}
 		}
 
