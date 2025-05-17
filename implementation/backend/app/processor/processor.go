@@ -109,13 +109,9 @@ func (p *Processor) ConsumePlaceOrder() error {
 							return
 						}
 
-						processErr := p.worker.Process(p.ctx, &rawMsg)
+						_ = p.worker.Process(p.ctx, &rawMsg)
 
-						if processErr != nil {
-							listener.OnDropped()
-						} else {
-							listener.OnSuccess()
-						}
+						listener.OnSuccess()
 					}()
 				case <-p.ctx.Done():
 					l.Info("consume place order context is done")

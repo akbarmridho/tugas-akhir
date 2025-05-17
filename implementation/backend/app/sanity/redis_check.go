@@ -194,9 +194,9 @@ func (s *RedisCheck) GetAvailability(ctx context.Context) (*AvailabilityCheck, e
 }
 
 func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityCheck, error) {
-	l := logger.FromCtx(ctx)
+	l := logger.FromCtx(ctx).With(zap.String("func", "dropper_availability"))
 
-	pattern := fmt.Sprintf("%s:*", early_dropper.DropperRedisPrefix)
+	pattern := fmt.Sprintf("%s*", early_dropper.DropperRedisPrefix)
 
 	keys := make([]string, 0)
 
@@ -262,15 +262,22 @@ func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityC
 		marshallErr := json.Unmarshal(cache, &keys)
 
 		if marshallErr != nil {
-			logger.FromCtx(ctx).Error("Cannot unmashall cached keys")
+			l.Error("Cannot unmashall cached keys")
 
 			getKeysError = marshallErr
+		}
+
+		if len(keys) == 0 {
+			l.Warn("got empty keys length from cache")
+			getKeysError = getKeys()
 		}
 	}
 
 	if getKeysError != nil {
 		return nil, getKeysError
 	}
+
+	l.Sugar().Infof("got %d keys to scan", len(keys))
 
 	result := AvailabilityCheck{
 		Count:       0,
@@ -282,11 +289,15 @@ func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityC
 	bufferCount := 400
 
 	batchCheck := func() error {
+		//defer func() {
+		//	l.Sugar().Infof("current result: total %d, available %d, unavailable %d", result.Count, result.Available, result.Unavailable)
+		//}()
+
 		pipe := s.redis.Client.Pipeline()
 
 		cmds := make(map[string]*baseredis.StringCmd)
 
-		for _, key := range keys {
+		for _, key := range buffer {
 			cmds[key] = pipe.Get(ctx, key)
 		}
 
@@ -340,8 +351,11 @@ func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityC
 		cmds = make(map[string]*baseredis.StringCmd)
 
 		for _, key := range freeSeatCheck {
-			cmds[key] = pipe.Get(ctx, fmt.Sprintf("debug:%s", key))
+			debugKey := fmt.Sprintf("debug:%s", key)
+			cmds[debugKey] = pipe.Get(ctx, debugKey)
 		}
+
+		_, err = pipe.Exec(ctx)
 
 		if err != nil && !errors.Is(err, baseredis.Nil) {
 			return err

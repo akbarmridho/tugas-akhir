@@ -84,9 +84,7 @@ If using flow control.
 kubectl exec -ti rabbitmq-0 -- bash
 
 # inside the rabbitmq terminal
-rabbitmqctl stop_app
-rabbitmqctl reset
-rabbitmqctl start_app
+rabbitmqctl stop_app && rabbitmqctl reset && rabbitmqctl start_app && exit
 ```
 
 **Reset Payment Service:**

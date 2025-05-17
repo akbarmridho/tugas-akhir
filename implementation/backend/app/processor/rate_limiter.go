@@ -62,8 +62,8 @@ func NewLimiter(ctx context.Context) (core.Limiter, *go_metrics_prometheus.Prome
 		20,
 		ConcurrencyLimit,
 		20,
-		func(limit int) int { return 10 },
-		0.2,
+		func(limit int) int { return 100 },
+		0.5,
 		600,
 		&limitLogger,
 		limiterMetricsRegistry,
@@ -92,7 +92,7 @@ func NewLimiter(ctx context.Context) (core.Limiter, *go_metrics_prometheus.Prome
 
 	limiter := limiter2.NewQueueBlockingLimiterFromConfig(defaultLimiter, limiter2.QueueLimiterConfig{
 		Ordering:          limiter2.OrderingFIFO,
-		MaxBacklogTimeout: 25 * time.Second,
+		MaxBacklogTimeout: 5 * time.Minute,
 		MetricRegistry:    limiterMetricsRegistry,
 	})
 
