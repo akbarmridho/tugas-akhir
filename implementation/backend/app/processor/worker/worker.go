@@ -56,7 +56,7 @@ func (w *BookingWorker) Process(ctx context.Context, rawMsg *amqp091.Delivery) e
 
 	response, httpErr := w.placeOrderUsecase.PlaceOrder(ctx, payload.Data)
 
-	if httpErr.ErrorContext != nil {
+	if httpErr != nil && httpErr.ErrorContext != nil {
 		l.Sugar().Error("internal error", zap.Error(httpErr.ErrorContext))
 		httpErr.ErrorContext = nil
 	}

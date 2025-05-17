@@ -59,6 +59,8 @@ releases:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/ticket-queue.json
             payment-backend:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/payment-backend.json
+            sanity-check:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/sanity-check.json
             postgres:
               gnetId: 9628
               revision: 8

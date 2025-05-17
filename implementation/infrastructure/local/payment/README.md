@@ -19,6 +19,16 @@ chmod +x helmfile
 ./helmfile apply
 ```
 
+Reset redis data.
+
+```bash
+# run the reset
+kubectl apply -f payment-reset.yaml -n payment
+
+# wait for finish
+kubectl delete -f payment-reset.yaml -n payment
+```
+
 Setup the service.
 
 ```bash

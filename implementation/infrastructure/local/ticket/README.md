@@ -96,6 +96,15 @@ Inside the `implementation/infrastructure/payment`/
 ```bash
 # teardown the payment service
 kubectl delete -f payment.yaml -n payment
+
+# run the reset
+kubectl apply -f payment-reset.yaml -n payment
+
+# wait for finish
+kubectl delete -f payment-reset.yaml -n payment
+
+# up again
+kubectl apply -f payment.yaml -n payment
 ```
 
 Setup the seeder job.

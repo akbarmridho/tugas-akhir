@@ -44,7 +44,7 @@ export const placeOrder = (
 			});
 		});
 
-		if (data.response.status >= 500) {
+		if (data.response.status >= 500 || data.response.status === 408) {
 			// retry
 			tries++;
 			sleep(randomIntBetween(3, 10));
