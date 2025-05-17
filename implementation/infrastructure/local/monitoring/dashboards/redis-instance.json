@@ -19,7 +19,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 15,
+    "id": 7,
     "links": [],
     "panels": [
         {
@@ -1519,7 +1519,7 @@
                     "uid": "${DS_PROMETHEUS}"
                 },
                 "definition": "label_values(redis_up{namespace=~\"$namespace\"},instance)",
-                "includeAll": false,
+                "includeAll": true,
                 "multi": true,
                 "name": "instance",
                 "options": [],
@@ -1556,5 +1556,5 @@
     "timezone": "browser",
     "title": "Redis Instance",
     "uid": "e008bc3f-81a2-40f9-baf2-a33fd8dec7eca",
-    "version": 5
+    "version": 1
 }

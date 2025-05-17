@@ -28,11 +28,11 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 11,
+    "id": 3,
     "links": [],
     "panels": [
         {
-            "collapsed": true,
+            "collapsed": false,
             "gridPos": {
                 "h": 1,
                 "w": 24,
@@ -40,1098 +40,1094 @@
                 "y": 0
             },
             "id": 41,
-            "panels": [
-                {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 10,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "never",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            },
-                            "unit": "short"
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 0,
-                        "y": 10
-                    },
-                    "id": 17,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "multi",
-                            "sort": "desc"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "application": {
-                                "filter": ""
-                            },
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])) by (job)",
-                            "format": "time_series",
-                            "functions": [],
-                            "group": {
-                                "filter": ""
-                            },
-                            "host": {
-                                "filter": ""
-                            },
-                            "intervalFactor": 1,
-                            "item": {
-                                "filter": ""
-                            },
-                            "legendFormat": "{{ job }}",
-                            "mode": 0,
-                            "options": {
-                                "showDisabledItems": false,
-                                "skipEmptyValues": false
-                            },
-                            "range": true,
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "table": {
-                                "skipEmptyValues": false
-                            },
-                            "triggers": {
-                                "acknowledged": 2,
-                                "count": true,
-                                "minSeverity": 3
-                            }
-                        }
-                    ],
-                    "title": "Traffic - Req/s",
-                    "type": "timeseries"
-                },
-                {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 10,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "never",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            },
-                            "unit": "short"
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 12,
-                        "y": 10
-                    },
-                    "id": 34,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "multi",
-                            "sort": "desc"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "application": {
-                                "filter": ""
-                            },
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])) by (job, method, route)",
-                            "format": "time_series",
-                            "functions": [],
-                            "group": {
-                                "filter": ""
-                            },
-                            "host": {
-                                "filter": ""
-                            },
-                            "intervalFactor": 1,
-                            "item": {
-                                "filter": ""
-                            },
-                            "legendFormat": "{{ job }} - {{ method }} {{handler}}",
-                            "mode": 0,
-                            "options": {
-                                "showDisabledItems": false,
-                                "skipEmptyValues": false
-                            },
-                            "range": true,
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "table": {
-                                "skipEmptyValues": false
-                            },
-                            "triggers": {
-                                "acknowledged": 2,
-                                "count": true,
-                                "minSeverity": 3
-                            }
-                        }
-                    ],
-                    "title": "Traffic - Req/s by handler",
-                    "type": "timeseries"
-                }
-            ],
+            "panels": [],
             "title": "Traffic",
             "type": "row"
         },
         {
-            "collapsed": true,
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 1
+            },
+            "id": 17,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])) by (job)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "range": true,
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Traffic - Req/s",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 1
+            },
+            "id": 34,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])) by (job, method, route)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ method }} {{handler}}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "range": true,
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Traffic - Req/s by handler",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
             "gridPos": {
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 1
+                "y": 9
             },
             "id": 43,
-            "panels": [
-                {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 10,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "never",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            },
-                            "unit": "percentunit"
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 0,
-                        "y": 11
-                    },
-                    "id": 35,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "multi",
-                            "sort": "desc"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "application": {
-                                "filter": ""
-                            },
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\", code=\"500\"}[$__rate_interval])) by (job)/sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[$__rate_interval])) by (job)",
-                            "format": "time_series",
-                            "functions": [],
-                            "group": {
-                                "filter": ""
-                            },
-                            "host": {
-                                "filter": ""
-                            },
-                            "instant": false,
-                            "interval": "",
-                            "intervalFactor": 1,
-                            "item": {
-                                "filter": ""
-                            },
-                            "legendFormat": "{{ job }}",
-                            "mode": 0,
-                            "options": {
-                                "showDisabledItems": false,
-                                "skipEmptyValues": false
-                            },
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "table": {
-                                "skipEmptyValues": false
-                            },
-                            "triggers": {
-                                "acknowledged": 2,
-                                "count": true,
-                                "minSeverity": 3
-                            }
-                        }
-                    ],
-                    "title": "Errors - % (5xx)",
-                    "type": "timeseries"
-                },
-                {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 10,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "never",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            },
-                            "unit": "percentunit"
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 12,
-                        "y": 11
-                    },
-                    "id": 36,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "multi",
-                            "sort": "desc"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "application": {
-                                "filter": ""
-                            },
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\", code=\"500\"}[$__rate_interval])) by (job, method, route)/sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[$__rate_interval])) by (job, method, route)",
-                            "format": "time_series",
-                            "functions": [],
-                            "group": {
-                                "filter": ""
-                            },
-                            "host": {
-                                "filter": ""
-                            },
-                            "instant": false,
-                            "interval": "",
-                            "intervalFactor": 1,
-                            "item": {
-                                "filter": ""
-                            },
-                            "legendFormat": "{{ job }} - {{ method }} {{route}}",
-                            "mode": 0,
-                            "options": {
-                                "showDisabledItems": false,
-                                "skipEmptyValues": false
-                            },
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "table": {
-                                "skipEmptyValues": false
-                            },
-                            "triggers": {
-                                "acknowledged": 2,
-                                "count": true,
-                                "minSeverity": 3
-                            }
-                        }
-                    ],
-                    "title": "Errors - % by handler (5xx)",
-                    "type": "timeseries"
-                }
-            ],
+            "panels": [],
             "title": "Errors",
             "type": "row"
         },
         {
-            "collapsed": true,
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percentunit"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 10
+            },
+            "id": 35,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\", code=\"500\"}[$__rate_interval])) by (job)/sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[$__rate_interval])) by (job)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Errors - % (5xx)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percentunit"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 10
+            },
+            "id": 36,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\", code=\"500\"}[$__rate_interval])) by (job, method, route)/sum(rate(paymenthttp_request_duration_seconds_count{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[$__rate_interval])) by (job, method, route)",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ method }} {{route}}",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                }
+            ],
+            "title": "Errors - % by handler (5xx)",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
             "gridPos": {
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 2
+                "y": 18
             },
             "id": 45,
-            "panels": [
-                {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 10,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "never",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            },
-                            "unit": "s"
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 0,
-                        "y": 12
-                    },
-                    "id": 37,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "multi",
-                            "sort": "desc"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "application": {
-                                "filter": ""
-                            },
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.5, sum by (job, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "functions": [],
-                            "group": {
-                                "filter": ""
-                            },
-                            "host": {
-                                "filter": ""
-                            },
-                            "instant": false,
-                            "interval": "",
-                            "intervalFactor": 1,
-                            "item": {
-                                "filter": ""
-                            },
-                            "legendFormat": "{{ job }} - p50",
-                            "mode": 0,
-                            "options": {
-                                "showDisabledItems": false,
-                                "skipEmptyValues": false
-                            },
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "table": {
-                                "skipEmptyValues": false
-                            },
-                            "triggers": {
-                                "acknowledged": 2,
-                                "count": true,
-                                "minSeverity": 3
-                            }
-                        },
-                        {
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.95, sum by (job, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "intervalFactor": 1,
-                            "legendFormat": "{{ job }} - p95",
-                            "range": true,
-                            "refId": "B"
-                        },
-                        {
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.99, sum by (job, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "intervalFactor": 1,
-                            "legendFormat": "{{ job }} - p99",
-                            "range": true,
-                            "refId": "C"
-                        }
-                    ],
-                    "title": "Latency - General",
-                    "type": "timeseries"
-                },
-                {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 10,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "never",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            },
-                            "unit": "s"
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 12,
-                        "y": 12
-                    },
-                    "id": 38,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "multi",
-                            "sort": "desc"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "application": {
-                                "filter": ""
-                            },
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.5, sum by (job, method, route, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "functions": [],
-                            "group": {
-                                "filter": ""
-                            },
-                            "host": {
-                                "filter": ""
-                            },
-                            "instant": false,
-                            "interval": "",
-                            "intervalFactor": 1,
-                            "item": {
-                                "filter": ""
-                            },
-                            "legendFormat": "{{ job }} - {{ method }} {{ route }} - p50",
-                            "mode": 0,
-                            "options": {
-                                "showDisabledItems": false,
-                                "skipEmptyValues": false
-                            },
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "table": {
-                                "skipEmptyValues": false
-                            },
-                            "triggers": {
-                                "acknowledged": 2,
-                                "count": true,
-                                "minSeverity": 3
-                            }
-                        },
-                        {
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.95, sum by (job , method, route, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "intervalFactor": 1,
-                            "legendFormat": "{{ job }} - {{ method }} {{ route }} - p95",
-                            "range": true,
-                            "refId": "B"
-                        },
-                        {
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.99, sum by (job, method, route, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "intervalFactor": 1,
-                            "legendFormat": "{{ job }} - {{ method }} {{ route }} - p99",
-                            "range": true,
-                            "refId": "C"
-                        }
-                    ],
-                    "title": "Latency by handler",
-                    "type": "timeseries"
-                },
-                {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 10,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "never",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            },
-                            "unit": "s"
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 0,
-                        "y": 20
-                    },
-                    "id": 39,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "multi",
-                            "sort": "desc"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "application": {
-                                "filter": ""
-                            },
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.5, sum by (job, instance, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "functions": [],
-                            "group": {
-                                "filter": ""
-                            },
-                            "host": {
-                                "filter": ""
-                            },
-                            "instant": false,
-                            "interval": "",
-                            "intervalFactor": 1,
-                            "item": {
-                                "filter": ""
-                            },
-                            "legendFormat": "{{ job }} - {{ instance }} - p50",
-                            "mode": 0,
-                            "options": {
-                                "showDisabledItems": false,
-                                "skipEmptyValues": false
-                            },
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "table": {
-                                "skipEmptyValues": false
-                            },
-                            "triggers": {
-                                "acknowledged": 2,
-                                "count": true,
-                                "minSeverity": 3
-                            }
-                        },
-                        {
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.95, sum by (job, instance, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "intervalFactor": 1,
-                            "legendFormat": "{{ job }} - {{ instance }} - p95",
-                            "range": true,
-                            "refId": "B"
-                        },
-                        {
-                            "datasource": {
-                                "uid": "$datasource"
-                            },
-                            "editorMode": "code",
-                            "expr": "histogram_quantile(0.99, sum by (job, instance, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
-                            "format": "time_series",
-                            "intervalFactor": 1,
-                            "legendFormat": "{{ job }} - {{ instance }} - p99",
-                            "range": true,
-                            "refId": "C"
-                        }
-                    ],
-                    "title": "Latency by instance",
-                    "type": "timeseries"
-                }
-            ],
+            "panels": [],
             "title": "Latêncy",
             "type": "row"
         },
         {
-            "collapsed": true,
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 19
+            },
+            "id": 37,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.5, sum by (job, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - p50",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.95, sum by (job, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - p95",
+                    "range": true,
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.99, sum by (job, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - p99",
+                    "range": true,
+                    "refId": "C"
+                }
+            ],
+            "title": "Latency - General",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 19
+            },
+            "id": 38,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.5, sum by (job, method, route, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ method }} {{ route }} - p50",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.95, sum by (job , method, route, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ method }} {{ route }} - p95",
+                    "range": true,
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.99, sum by (job, method, route, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ method }} {{ route }} - p99",
+                    "range": true,
+                    "refId": "C"
+                }
+            ],
+            "title": "Latency by handler",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 27
+            },
+            "id": 39,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.5, sum by (job, instance, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ instance }} - p50",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.95, sum by (job, instance, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ instance }} - p95",
+                    "range": true,
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.99, sum by (job, instance, le) (rate(paymenthttp_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", route=~\"$handler\"}[5m])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ instance }} - p99",
+                    "range": true,
+                    "refId": "C"
+                }
+            ],
+            "title": "Latency by instance",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
             "gridPos": {
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 3
+                "y": 35
             },
             "id": 46,
-            "panels": [
+            "panels": [],
+            "title": "Queue",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 36
+            },
+            "id": 47,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "11.6.1",
+            "targets": [
                 {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "${datasource}"
                     },
-                    "fieldConfig": {
-                        "defaults": {
-                            "color": {
-                                "mode": "palette-classic"
-                            },
-                            "custom": {
-                                "axisBorderShow": false,
-                                "axisCenteredZero": false,
-                                "axisColorMode": "text",
-                                "axisLabel": "",
-                                "axisPlacement": "auto",
-                                "barAlignment": 0,
-                                "barWidthFactor": 0.6,
-                                "drawStyle": "line",
-                                "fillOpacity": 0,
-                                "gradientMode": "none",
-                                "hideFrom": {
-                                    "legend": false,
-                                    "tooltip": false,
-                                    "viz": false
-                                },
-                                "insertNulls": false,
-                                "lineInterpolation": "linear",
-                                "lineWidth": 1,
-                                "pointSize": 5,
-                                "scaleDistribution": {
-                                    "type": "linear"
-                                },
-                                "showPoints": "auto",
-                                "spanNulls": false,
-                                "stacking": {
-                                    "group": "A",
-                                    "mode": "none"
-                                },
-                                "thresholdsStyle": {
-                                    "mode": "off"
-                                }
-                            },
-                            "mappings": [],
-                            "thresholds": {
-                                "mode": "absolute",
-                                "steps": [
-                                    {
-                                        "color": "green"
-                                    },
-                                    {
-                                        "color": "red",
-                                        "value": 80
-                                    }
-                                ]
-                            }
-                        },
-                        "overrides": []
-                    },
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 0,
-                        "y": 1
-                    },
-                    "id": 47,
-                    "options": {
-                        "legend": {
-                            "calcs": [],
-                            "displayMode": "list",
-                            "placement": "bottom",
-                            "showLegend": true
-                        },
-                        "tooltip": {
-                            "hideZeros": false,
-                            "mode": "single",
-                            "sort": "none"
-                        }
-                    },
-                    "pluginVersion": "11.6.1",
-                    "targets": [
-                        {
-                            "datasource": {
-                                "type": "prometheus",
-                                "uid": "${datasource}"
-                            },
-                            "disableTextWrap": false,
-                            "editorMode": "builder",
-                            "expr": "bullmq_job_count{instance=~\"$instance\"}",
-                            "fullMetaSearch": false,
-                            "includeNullMetadata": true,
-                            "instant": false,
-                            "legendFormat": "{{instance}} {{state}}",
-                            "range": true,
-                            "refId": "A",
-                            "useBackend": false
-                        }
-                    ],
-                    "title": "Queue",
-                    "type": "timeseries"
+                    "disableTextWrap": false,
+                    "editorMode": "builder",
+                    "expr": "bullmq_job_count{instance=~\"$instance\"}",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
+                    "instant": false,
+                    "legendFormat": "{{instance}} {{state}}",
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
                 }
             ],
             "title": "Queue",
-            "type": "row"
+            "type": "timeseries"
         }
     ],
     "preload": false,
@@ -1226,5 +1222,5 @@
     "timezone": "browser",
     "title": "Payment Dashboard",
     "uid": "KzznqEpZz3",
-    "version": 8
+    "version": 1
 }

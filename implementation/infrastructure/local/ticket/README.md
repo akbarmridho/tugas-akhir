@@ -110,6 +110,7 @@ Setup the seeder job.
 **No Flow Control:**
 
 ```bash
+export SEED_DROPPER=no
 envsubst < ticket-seeder.yaml | kubectl apply -f -
 ```
 
