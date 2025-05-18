@@ -39,6 +39,8 @@ releases:
           default:
             kubernetes:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/kubernetes.json
+            nginx:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/nginx.json
             pod-overall:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-overall.json
             pod-overview:
@@ -69,6 +71,7 @@ releases:
             memory: "512Mi"
         extraArgs: 
           web.enable-remote-write-receiver: null
+          web.enable-admin-api: null
           enable-feature: "native-histograms"
     - alertmanager:
         enabled: false

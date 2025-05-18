@@ -271,8 +271,8 @@ releases:
           requests:
             cpu: 0.5
             memory: 512Mi
-        global:
-          scrape_interval: 30s
+        extraArgs: 
+          web.enable-admin-api: null
     - alertmanager:
         enabled: false
     - extraScrapeConfigs: |

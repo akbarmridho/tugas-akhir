@@ -17,7 +17,5 @@ spec:
     name: selfsigned-issuer
     kind: ClusterIssuer
   dnsNames:
-  - payment.tugas-akhir.local
-  - ticket.tugas-akhir.local
-  - grafana.tugas-akhir.local
-  - prometheus.tugas-akhir.local
+  - grafana.k6-agent.local
+  - prometheus.k6-agent.local

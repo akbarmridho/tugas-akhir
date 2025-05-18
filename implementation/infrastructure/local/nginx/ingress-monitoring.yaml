@@ -1,0 +1,72 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ext-grafana
+spec:
+  type: ExternalName
+  externalName: grafana.monitoring.svc.cluster.local
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ext-prometheus
+spec:
+  type: ExternalName
+  externalName: prometheus-server.monitoring.svc.cluster.local
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - grafana.tugas-akhir.local
+    secretName: app-tls-secret
+  rules:
+  - host: grafana.tugas-akhir.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ext-grafana
+            port:
+              number: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - prometheus.tugas-akhir.local
+    secretName: app-tls-secret
+  rules:
+  - host: prometheus.tugas-akhir.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ext-prometheus
+            port:
+              number: 80
