@@ -2,12 +2,12 @@
 
 ```bash
 chmod +x helmfile
-./helmfile apply
+helmfile apply
 ```
 
 ## Cleanup
 
 ```bash
-./helmfile delete
+helmfile delete
 kubectl delete pvc data-rabbitmq-0
 ```

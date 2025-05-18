@@ -2,7 +2,7 @@
 
 ```bash
 chmod +x helmfile
-./helmfile apply
+helmfile apply
 kubectl apply -f cert-manager.yaml
 kubectl apply -f ingress-payment.yaml
 kubectl apply -f ingress-monitoring.yaml
@@ -16,5 +16,5 @@ kubectl delete -f ingress-payment.yaml
 kubectl delete -f ingress-monitoring.yaml
 kubectl delete -f ingress-ticket.yaml
 kubectl delete -f cert-manager.yaml
-./helmfile delete
+helmfile delete
 ```

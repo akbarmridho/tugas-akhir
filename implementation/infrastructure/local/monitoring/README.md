@@ -2,7 +2,7 @@
 
 ```bash
 chmod +x helmfile
-./helmfile apply
+helmfile apply
 ```
 
 ## Accessing Grafana

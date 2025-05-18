@@ -36,7 +36,7 @@ docker push registry.localhost:5002/tugas-akhir/agent:latest
 
 ```bash
 chmod +x helmfile
-./helmfile apply
+helmfile apply
 ```
 
 ### Accessing Grafana

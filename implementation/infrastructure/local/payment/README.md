@@ -16,7 +16,7 @@ Setup the dependencies (Redis Cluster).
 
 ```bash
 chmod +x helmfile
-./helmfile apply
+helmfile apply
 ```
 
 Reset redis data.
@@ -38,7 +38,7 @@ kubectl apply -f payment.yaml -n payment
 ## Cleanup
 
 ```bash
-./helmfile delete
+helmfile delete
 kubectl delete -f payment.yaml -n payment
 kubectl delete pvc redis-data-redis-redis-cluster-0 -n payment
 kubectl delete pvc redis-data-redis-redis-cluster-1 -n payment

@@ -16,6 +16,14 @@ Prerequisites:
 - [Install k3d](https://k3d.io/stable/#install-script)
 - [Install Helm](https://helm.sh/docs/intro/install/)
 - [Install Kubectx](https://github.com/ahmetb/kubectx)
+- Install Helmfile
+
+Setup helmfile:
+
+```bash
+# add this line to .bashrc
+alias helmfile='docker run --rm --net=host -v "${HOME}/.kube:/helm/.kube" -v "${HOME}/.config/helm:/helm/.config/helm" -v "${PWD}:/wd" --workdir /wd ghcr.io/helmfile/helmfile:v0.171.0 helmfile "$@"'
+```
 
 Setup cluster:
 

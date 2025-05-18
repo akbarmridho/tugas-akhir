@@ -2,13 +2,13 @@
 
 ```bash
 chmod +x helmfile
-./helmfile apply
+helmfile apply
 ```
 
 ## Cleanup
 
 ```bash
-./helmfile delete
+helmfile delete
 kubectl delete pvc redis-data-redis-redis-cluster-0
 kubectl delete pvc redis-data-redis-redis-cluster-1
 kubectl delete pvc redis-data-redis-redis-cluster-2
