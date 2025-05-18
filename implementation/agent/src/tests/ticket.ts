@@ -16,9 +16,9 @@ import { check, sleep } from "k6";
 import { randomIntBetween } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
 import { getIssuedTickets, getOrder } from "../actions/order-query";
 
-const { SCENARIO, DB_VARIANT, FC, RUN_ID, VARIANT } = __ENV;
+const { RUN_ID, VARIANT } = __ENV;
 
-const scenarioName = `${VARIANT}_${SCENARIO}`;
+const scenarioName = `${VARIANT}_${RUN_ID}`;
 
 const generateScenario = (): Scenario => {
 	if (VARIANT === "debug") {
@@ -150,9 +150,6 @@ const generateScenario = (): Scenario => {
 export const options: Options = {
 	insecureSkipTLSVerify: true,
 	tags: {
-		scenario: SCENARIO,
-		dbvariant: DB_VARIANT,
-		fc: FC,
 		testid: RUN_ID,
 		variant: VARIANT,
 	},

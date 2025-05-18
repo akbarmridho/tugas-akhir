@@ -50,16 +50,16 @@ func NewLoggerMiddleware(config *config.Config) *LoggerMiddleware {
 				log = logger.FromCtx(afterReq.Context())
 
 				fields := []zapcore.Field{
-					zap.String("remote_ip", c.RealIP()),
+					//zap.String("remote_ip", c.RealIP()),
 					zap.String("latency", time.Since(start).String()),
-					zap.String("host", afterReq.Host),
+					//zap.String("host", afterReq.Host),
 					zap.String("request", fmt.Sprintf("%s %s", afterReq.Method, afterReq.RequestURI)),
 					zap.Int("status", afterRes.Status),
 					zap.Int64("size", afterRes.Size),
-					zap.String("user_agent", afterReq.UserAgent()),
-					zap.String("db_variant", string(config.DBVariant)),
-					zap.String("fc_variant", string(config.FlowControlVariant)),
-					zap.String("test_scenario", config.TestScenario),
+					//zap.String("user_agent", afterReq.UserAgent()),
+					//zap.String("db_variant", string(config.DBVariant)),
+					//zap.String("fc_variant", string(config.FlowControlVariant)),
+					//zap.String("test_scenario", config.TestScenario),
 				}
 
 				if strings.Contains(afterReq.RequestURI, "health") || strings.Contains(afterReq.RequestURI, "metrics") {
@@ -76,7 +76,8 @@ func NewLoggerMiddleware(config *config.Config) *LoggerMiddleware {
 				case n >= 300:
 					log.Info("Redirection", fields...)
 				default:
-					log.Info("Success", fields...)
+					// skip 2xx response
+					//log.Info("Success", fields...)
 				}
 
 				return nil

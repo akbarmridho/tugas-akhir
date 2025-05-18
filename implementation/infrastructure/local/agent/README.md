@@ -57,9 +57,6 @@ export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/
 
 Required envs:
 
-- `SCENARIO` with the following pattern `s(f|2|5|10)-(1|2|4)`.
-- `DB_VARIANT` with the following values: `postgres`, `yugabytedb`, or `citusdata`.
-- `FC` with the following values: `no-flow-control` or `dropper-async`.
 - `RUN_ID` any randomly generated unique string.
 - `VARIANT` with the following values: `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2`, and `stress-test`. This differentiate the k6 agent request pattern and behaviour.
 
@@ -76,9 +73,6 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export SCENARIO=<your_scenario>
-export DB_VARIANT=<your_db_variant>
-export FC=<your_fc>
-export VARIANT=<your_variant>
 export HOST_FORWARD=<host-ip>
 ```
 

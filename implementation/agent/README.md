@@ -151,9 +151,6 @@ Refer to [this docs](./test-plan/README.md) for test plan.
 
 Required envs:
 
-- `SCENARIO` with the following pattern `s(f|2|5|10)-(1|2|4)`.
-- `DB_VARIANT` with the following values: `postgres`, `yugabytedb`, or `citusdata`.
-- `FC` with the following values: `no-flow-control` or `dropper-async`.
 - `RUN_ID` any randomly generated unique string.
 - `VARIANT` with the following values: `debug`, `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2` and `stress-test`. This differentiate the k6 agent request pattern and behaviour.
 
@@ -168,9 +165,6 @@ openssl rand -hex 6
 Prepare the environment.
 
 ```bash
-export SCENARIO=<your-scenario>
-export DB_VARIANT=<db-variant>
-export FC=<fc-type>
 export RUN_ID=<any string>
 export VARIANT=<variant>
 ```
@@ -178,9 +172,6 @@ export VARIANT=<variant>
 For example
 
 ```bash
-export SCENARIO=s10-2
-export DB_VARIANT=postgres
-export FC=no-flow-control
 export RUN_ID=906023a363ed
 export VARIANT=debug
 ```
