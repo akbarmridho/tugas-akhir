@@ -65,6 +65,12 @@ releases:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/postgres.json
             rabbitmq:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/rabbitmq.json
+            pod-overall:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-overall.json
+            pod-overview:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-overview.json
+            pod-detail:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-detail.json
       - resources:
           requests:
             cpu: 0.25
