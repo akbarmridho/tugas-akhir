@@ -1,7 +1,6 @@
 # YugaByteDB
 
 ```bash
-chmod +x helmfile
 helmfile apply
 ```
 

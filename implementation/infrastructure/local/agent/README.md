@@ -10,8 +10,6 @@ Setup cluster:
 
 ```bash
 k3d cluster create --config ./k3d.yaml
-kubectl apply -f dns.yaml
-kubectl rollout restart deployment coredns -n kube-system
 ```
 
 Delete cluster:
@@ -35,7 +33,6 @@ docker push registry.localhost:5002/tugas-akhir/agent:latest
 ## K6 Operator and Monitoring
 
 ```bash
-chmod +x helmfile
 helmfile apply
 ```
 
@@ -72,7 +69,7 @@ Prepare the env.
 
 ```bash
 export RUN_ID=<your_ run_id>
-export SCENARIO=<your_scenario>
+export VARIANT=<your_scenario>
 export HOST_FORWARD=<host-ip>
 ```
 

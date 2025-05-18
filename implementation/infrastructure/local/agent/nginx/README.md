@@ -1,7 +1,6 @@
 # Nginx Ingress Controller
 
 ```bash
-chmod +x helmfile
 helmfile apply
 kubectl apply -f cert-manager.yaml
 kubectl apply -f ingress-monitoring.yaml

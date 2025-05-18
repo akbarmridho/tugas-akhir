@@ -1,7 +1,6 @@
 # Redis Cluster
 
 ```bash
-chmod +x helmfile
 helmfile apply
 ```
 

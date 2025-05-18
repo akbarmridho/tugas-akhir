@@ -15,7 +15,6 @@ docker push registry.localhost:5001/tugas-akhir/payment:latest
 Setup the dependencies (Redis Cluster).
 
 ```bash
-chmod +x helmfile
 helmfile apply
 ```
 
