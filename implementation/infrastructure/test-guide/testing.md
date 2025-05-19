@@ -210,9 +210,9 @@ Writing the test time (with the format) -> how to write run id?
 
 Write down the test data with the following format:
 
-| Test Variant | Scenario | Start Time             | End Time               | Run ID  |
-| ------------ | -------- | ---------------------- | ---------------------- | ------- |
-| `sim-1`      | `s2-2`   | `2025-05-18T12:00:00Z` | `2025-05-18T13:00:00Z` | `anyid` |
+| Run ID  | Test Variant | Scenario | Flow Control | Start Time             | End Time               |
+| ------- | ------------ | -------- | ------------ | ---------------------- | ---------------------- |
+| `anyid` | `sim-1`      | `s2-2`   | `yes/no`     | `2025-05-18T12:00:00Z` | `2025-05-18T13:00:00Z` |
 
 **Note: the start time and end time should be in UTC time.**
 
