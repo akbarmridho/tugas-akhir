@@ -163,7 +163,6 @@ const getSeats = (
 			// user want consecutive
 			.filter((option) => option.length >= state.ticketCount);
 
-		// todo select n consecutive seats
 		if (options.length === 0) {
 			return null;
 		}
