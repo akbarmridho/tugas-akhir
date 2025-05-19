@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '3000'
+    spec:
+      containers:
+      - name: payment-server
+        image: haiakbar/ta-payment:latest
+        command: ["pnpm", "run", "start:server", "--silent"]
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+          limits:
+            cpu: "2.5Gi"
+            memory: "1.25"
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        volumeMounts:
+        - name: tls
+          mountPath: "/etc/tls"
+          readOnly: true
+        env:
+        - name: REDIS_HOSTS
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.payment.svc.cluster.local:6379
+        - name: REDIS_PASSWORD
+          value: password
+        - name: NODE_ENV
+          value: production
+        - name: WEBHOOK_URL
+          value: https://ticket-service.default.svc.cluster.local:3000/webhooks
+        - name: WEBHOOK_SECRET
+          value: secret
+        - name: KEY_PATH
+          value: /etc/tls/tls.key
+        - name: CERT_PATH
+          value: /etc/tls/tls.crt
+      - name: payment-notifier
+        image: haiakbar/ta-payment:latest
+        command: ["pnpm", "run", "start:notifier", "--silent"]
+        resources:
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+          limits:
+            cpu: "2.5Gi"
+            memory: "1.25"
+        volumeMounts:
+        - name: tls
+          mountPath: "/etc/tls"
+          readOnly: true
+        env:
+        - name: REDIS_HOSTS
+          value: redis-redis-cluster-0.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-1.redis-redis-cluster-headless.payment.svc.cluster.local:6379,redis-redis-cluster-2.redis-redis-cluster-headless.payment.svc.cluster.local:6379
+        - name: REDIS_PASSWORD
+          value: password
+        - name: NODE_ENV
+          value: production
+        - name: WEBHOOK_URL
+          value: https://ticket-service.default.svc.cluster.local:3000/webhooks
+        - name: WEBHOOK_SECRET
+          value: secret
+        - name: KEY_PATH
+          value: /etc/tls/tls.key
+        - name: CERT_PATH
+          value: /etc/tls/tls.crt
+      volumes:
+      - name: tls
+        secret:
+          secretName: service-tls
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics-queue'
+    prometheus.io/port: '3000'
+spec:
+  type: ClusterIP
+  selector:
+    app: payment
+  ports:
+  - port: 3000
+    targetPort: 3000

@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {} 
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-tls-cert
+  namespace: default
+spec:
+  secretName: app-tls-secret
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+  dnsNames:
+  - payment.tugas-akhir.local
+  - ticket.tugas-akhir.local
+  - grafana.tugas-akhir.local
+  - prometheus.tugas-akhir.local

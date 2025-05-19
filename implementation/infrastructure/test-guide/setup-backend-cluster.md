@@ -26,3 +26,17 @@ kubectl apply -f ingress-ticket.yaml
 ## Redis Cluster
 
 Inside the `infrastructure/simulation/redis` and `infrastructure/simulation/payment` folder context, run `helmfile apply`.
+
+## TLS
+
+```bash
+kubectl create secret tls service-tls \
+  --cert=../../cert/cert.pem \
+  --key=../../cert/key.pem
+
+kubectl create namespace payment
+
+kubectl create secret tls -n payment service-tls \
+  --cert=../../cert/cert.pem \
+  --key=../../cert/key.pem
+```

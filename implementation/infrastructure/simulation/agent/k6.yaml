@@ -13,11 +13,11 @@ spec:
     image: haiakbar/ta-agent:latest
     resources:
       limits:
-        cpu: "12"
-        memory: "24Gi"
+        cpu: "13"
+        memory: "26Gi"
       requests:
-        cpu: "12"
-        memory: "24Gi"
+        cpu: "13"
+        memory: "26Gi"
     env:
       - name: K6_PROMETHEUS_RW_SERVER_URL
         value: "http://prometheus-server.monitoring.svc.cluster.local/api/v1/write"

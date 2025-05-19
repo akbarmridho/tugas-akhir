@@ -1,0 +1,352 @@
+repositories:
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: grafana
+    chart: grafana/grafana
+    namespace: monitoring
+    version: 8.13.1
+    values:
+      - persistence:
+          type: pvc
+          enabled: true
+          size: 10Gi
+      - adminPassword: tugas-akhir
+      - dashboardProviders:
+          dashboardproviders.yaml:
+            apiVersion: 1
+            providers:
+            - name: 'default'
+              orgId: 1
+              folder: ''
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/default
+      - datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Loki
+                type: loki
+                access: proxy
+                url: http://loki-gateway.monitoring.svc.cluster.local
+              - name: Prometheus
+                type: prometheus
+                access: proxy
+                url: http://prometheus-server.monitoring.svc.cluster.local
+      - dashboards:
+          default:
+            kubernetes:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/kubernetes.json    
+            yugabytedb:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/yugabyte.json
+            nginx:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/nginx.json
+            patroni:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/patroni.json
+            redis-cluster:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/redis-cluster.json
+            redis-instance:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/redis-instance.json
+            ticket-backend:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/ticket-backend.json
+            ticket-queue:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/ticket-queue.json
+            payment-backend:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/payment-backend.json
+            sanity-check:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/sanity-check.json
+            postgres:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/postgres.json
+            rabbitmq:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/rabbitmq.json
+            pod-overall:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-overall.json
+            pod-overview:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-overview.json
+            pod-detail:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-detail.json
+      - resources:
+          requests:
+            cpu: 0.5
+            memory: 0.75Gi
+          limits:
+            cpu: 1
+            memory: 1.5Gi
+          
+  - name: loki
+    chart: grafana/loki
+    namespace: monitoring
+    version: 6.29.0
+    set:
+      - name: loki.auth_enabled
+        value: false
+    values:
+      - loki:
+          commonConfig:
+            replication_factor: 1
+          schemaConfig:
+            configs:
+              - from: "2025-04-24"
+                store: tsdb
+                object_store: s3
+                schema: v13
+                index:
+                  prefix: loki_index_
+                  period: 24h
+          pattern_ingester:
+              enabled: true
+          limits_config:
+            allow_structured_metadata: true
+            volume_enabled: true
+          ruler:
+            enable_api: true
+      - minio:
+          enabled: true
+      - chunksCache:
+          enabled: false      
+      - deploymentMode: SingleBinary
+      - singleBinary:
+          replicas: 1
+          resources:
+            requests:
+              cpu: 1.5
+              memory: 3Gi
+            limits:
+              cpu: 2
+              memory: 3.5Gi
+      - backend:
+          replicas: 0
+      - read:
+          replicas: 0
+      - write:
+          replicas: 0
+      - ingester:
+          replicas: 0
+      - querier:
+          replicas: 0
+      - queryFrontend:
+          replicas: 0
+      - queryScheduler:
+          replicas: 0
+      - distributor:
+          replicas: 0
+      - compactor:
+          replicas: 0
+      - indexGateway:
+          replicas: 0
+      - bloomCompactor:
+          replicas: 0
+      - bloomGateway:
+          replicas: 0
+  - name: alloy
+    chart: grafana/alloy
+    namespace: monitoring
+    version: 1.0.2
+    values:
+      - alloy:
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 1Gi
+            limits:
+              cpu: 0.75
+              memory: 1.25Gi
+          configMap:
+            content: |-
+              loki.write "default" {
+                endpoint {
+                  url = "http://loki.monitoring.svc:3100/loki/api/v1/push"
+                }
+              }
+
+              // discovery.kubernetes allows you to find scrape targets from Kubernetes resources.
+              // It watches cluster state and ensures targets are continually synced with what is currently running in your cluster.
+              discovery.kubernetes "pod" {
+                role = "pod"
+              }
+
+              // discovery.relabel rewrites the label set of the input targets by applying one or more relabeling rules.
+              // If no rules are defined, then the input targets are exported as-is.
+              discovery.relabel "pod_logs" {
+                targets = discovery.kubernetes.pod.targets
+
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  regex = "monitoring"
+                  action = "drop"
+                }
+
+                // Label creation - "namespace" field from "__meta_kubernetes_namespace"
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  action = "replace"
+                  target_label = "namespace"
+                }
+
+                // Label creation - "pod" field from "__meta_kubernetes_pod_name"
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_name"]
+                  action = "replace"
+                  target_label = "pod"
+                }
+
+                // Label creation - "container" field from "__meta_kubernetes_pod_container_name"
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_container_name"]
+                  action = "replace"
+                  target_label = "container"
+                }
+
+                // Label creation -  "app" field from "__meta_kubernetes_pod_label_app_kubernetes_io_name"
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  action = "replace"
+                  target_label = "app"
+                }
+
+                // Label creation -  "job" field from "__meta_kubernetes_namespace" and "__meta_kubernetes_pod_container_name"
+                // Concatenate values __meta_kubernetes_namespace/__meta_kubernetes_pod_container_name
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+                  action = "replace"
+                  target_label = "job"
+                  separator = "/"
+                  replacement = "$1"
+                }
+
+                // Label creation - "container" field from "__meta_kubernetes_pod_uid" and "__meta_kubernetes_pod_container_name"
+                // Concatenate values __meta_kubernetes_pod_uid/__meta_kubernetes_pod_container_name.log
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+                  action = "replace"
+                  target_label = "__path__"
+                  separator = "/"
+                  replacement = "/var/log/pods/*$1/*.log"
+                }
+
+                // Label creation -  "container_runtime" field from "__meta_kubernetes_pod_container_id"
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_container_id"]
+                  action = "replace"
+                  target_label = "container_runtime"
+                  regex = "^(\\S+):\\/\\/.+$"
+                  replacement = "$1"
+                }
+              }
+
+              // loki.source.kubernetes tails logs from Kubernetes containers using the Kubernetes API.
+              loki.source.kubernetes "pod_logs" {
+                targets    = discovery.relabel.pod_logs.output
+                forward_to = [loki.process.pod_logs.receiver]
+              }
+
+              // loki.process receives log entries from other Loki components, applies one or more processing stages,
+              // and forwards the results to the list of receivers in the component's arguments.
+              loki.process "pod_logs" {
+                stage.static_labels {
+                    values = {
+                      cluster = "k3d-tugas-akhir",
+                    }
+                }
+
+                forward_to = [loki.write.default.receiver]
+              }
+  - name: prometheus
+    chart: prometheus-community/prometheus
+    namespace: monitoring
+    version: 27.11.0
+
+    values:
+    - server:
+        resources:
+          limits:
+            cpu: 2
+            memory: 4Gi
+          requests:
+            cpu: 2.5
+            memory: 4.5Gi
+        extraArgs: 
+          web.enable-admin-api: null
+    - alertmanager:
+        enabled: false
+    - extraScrapeConfigs: |
+        - job_name: 'postgres-patroni'
+          kubernetes_sd_configs:
+            - role: service
+              namespaces:
+                names:
+                  - default
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_service_name]
+              regex: ^(pgcluster|pgcluster-repl|cituscluster-patroni-coordinator|cituscluster-patroni-worker)$
+              action: keep
+            - source_labels: [__meta_kubernetes_service_port_name]
+              regex: patroni-http
+              action: keep
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: kubernetes_namespace
+            - source_labels: [__meta_kubernetes_service_name]
+              target_label: kubernetes_service_name
+            - source_labels: [__meta_kubernetes_service_label_role]
+              target_label: patroni_role
+              action: replace
+              regex: (.+)
+        - job_name: "yugabytedb"
+          metrics_path: /prometheus-metrics
+          relabel_configs:
+            - target_label: "node_prefix"
+              replacement: "cluster-1"
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: kubernetes_namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              target_label: kubernetes_pod_name
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              target_label: kubernetes_node
+          metric_relabel_configs:
+            - source_labels: ["__name__"]
+              regex: "(.*)"
+              target_label: "saved_name"
+              replacement: "$1"
+            - source_labels: ["__name__"]
+              regex: "handler_latency_(yb_[^_]*)_([^_]*)_([^_]*)(.*)"
+              target_label: "server_type"
+              replacement: "$1"
+            - source_labels: ["__name__"]
+              regex: "handler_latency_(yb_[^_]*)_([^_]*)_([^_]*)(.*)"
+              target_label: "service_type"
+              replacement: "$2"
+            - source_labels: ["__name__"]
+              regex: "handler_latency_(yb_[^_]*)_([^_]*)_([^_]*)(_sum|_count)?"
+              target_label: "service_method"
+              replacement: "$3"
+            - source_labels: ["__name__"]
+              regex: "handler_latency_(yb_[^_]*)_([^_]*)_([^_]*)(_sum|_count)?"
+              target_label: "__name__"
+              replacement: "rpc_latency$4"
+
+          static_configs:
+            - targets: ["yb-master-0.yb-masters.default.svc.cluster.local:7000", "yb-master-1.yb-masters.default.svc.cluster.local:7000"]
+              labels:
+                export_type: "master_export"
+
+            - targets: ["yb-tserver-0.yb-tservers.default.svc.cluster.local:9000", "yb-tserver-1.yb-tservers.default.svc.cluster.local:9000"]
+              labels:
+                export_type: "tserver_export"
+
+            - targets: ["yb-tserver-0.yb-tservers.default.svc.cluster.local:12000", "yb-tserver-1.yb-tservers.default.svc.cluster.local:12000"]
+              labels:
+                export_type: "cql_export"
+
+            - targets: ["yb-tserver-0.yb-tservers.default.svc.cluster.local:13000", "yb-tserver-1.yb-tservers.default.svc.cluster.local:13000"]
+              labels:
+                export_type: "ysql_export"
+
+            - targets: ["yb-tserver-0.yb-tservers.default.svc.cluster.local:13000", "yb-tserver-1.yb-tservers.default.svc.cluster.local:13000"]
+              labels:
+                export_type: "redis_export"
