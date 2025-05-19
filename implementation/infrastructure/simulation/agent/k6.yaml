@@ -10,14 +10,14 @@ spec:
       file: ticket.js
   arguments: -o experimental-prometheus-rw --include-system-env-vars
   runner:
-    image: registry2.localhost:5002/tugas-akhir/agent:latest
+    image: haiakbar/ta-agent:latest
     resources:
       limits:
-        cpu: "2"
-        memory: "4Gi"
+        cpu: "12"
+        memory: "24Gi"
       requests:
-        cpu: "1.5"
-        memory: "3Gi"
+        cpu: "12"
+        memory: "24Gi"
     env:
       - name: K6_PROMETHEUS_RW_SERVER_URL
         value: "http://prometheus-server.monitoring.svc.cluster.local/api/v1/write"

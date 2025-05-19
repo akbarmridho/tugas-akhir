@@ -1,0 +1,82 @@
+repositories:
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: grafana
+    chart: grafana/grafana
+    namespace: monitoring
+    version: 8.13.1
+    values:
+      - persistence:
+          type: pvc
+          enabled: true
+          size: 10Gi
+      - adminPassword: tugas-akhir
+      - dashboardProviders:
+          dashboardproviders.yaml:
+            apiVersion: 1
+            providers:
+            - name: 'default'
+              orgId: 1
+              folder: ''
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/default
+      - datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Prometheus
+                type: prometheus
+                access: proxy
+                url: http://prometheus-server.monitoring.svc.cluster.local
+      - dashboards:
+          default:
+            kubernetes:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/kubernetes.json
+            nginx:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/nginx.json
+            pod-overall:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-overall.json
+            pod-overview:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-overview.json
+            pod-detail:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-detail.json  
+            k6-dashboard:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/agent/dashboards/k6.json
+      - resources:
+          requests:
+            cpu: "0.5"
+            memory: "768Mi"
+          limits:
+            cpu: "1"
+            memory: "1.5Gi"
+  - name: prometheus
+    chart: prometheus-community/prometheus
+    namespace: monitoring
+    version: 27.11.0
+    values:
+    - server:
+        resources:
+          limits:
+            cpu: "4"
+            memory: "8Gi"
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+        extraArgs: 
+          web.enable-remote-write-receiver: null
+          web.enable-admin-api: null
+          enable-feature: "native-histograms"
+        persistentVolume:
+          size: 50Gi
+    - alertmanager:
+        enabled: false
+  - name: k6-operator
+    chart: grafana/k6-operator
+    version: 3.13.0
