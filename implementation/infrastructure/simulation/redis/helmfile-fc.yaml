@@ -1,0 +1,21 @@
+
+releases:
+  - name: redis
+    chart: oci://registry-1.docker.io/bitnamicharts/redis-cluster
+    namespace: default
+    version: 11.5.3
+    values:
+      - password: password
+      - cluster:
+          nodes: 3
+          replicas: 0
+      - metrics:
+          enabled: true
+      - redis:
+          resources:
+            requests:
+              cpu: 1
+              memory: 2Gi
+            limits:
+              cpu: 1
+              memory: 2Gi

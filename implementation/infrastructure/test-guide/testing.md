@@ -31,6 +31,32 @@ Insire the `infrastructure/simulation/payment folder context, run the following 
 kubectl delete -f payment.yaml -n payment
 ```
 
+### Ticket Redis Cluster
+
+#### Setup
+
+Inside the `infrastructure/simulation/redis` folder context, run the following commands:
+
+```bash
+helmfile apply -f helmfile-nofc.yaml
+# or
+helmfile apply -f helmfile-fc.yaml
+```
+
+#### Teardown
+
+Insire the `infrastructure/simulation/redis` folder context, run the following command:
+
+```bash
+helmfile delete -f helmfile-nofc.yaml
+# or
+helmfile delete -f helmfile-fc.yaml
+
+kubectl delete pvc redis-data-redis-redis-cluster-0
+kubectl delete pvc redis-data-redis-redis-cluster-1
+kubectl delete pvc redis-data-redis-redis-cluster-2
+```
+
 ### PostgreSQL
 
 #### Setup
@@ -56,7 +82,9 @@ kubectl delete -f postgres.yaml
 Inside the `infrastructure/simulation/postgres` folder context, run the following commands:
 
 ```bash
-kubectl apply -f citus.yaml
+kubectl apply -f citus-nofc.yaml
+# or
+kubectl apply -f citus-fc.yaml
 ```
 
 #### Teardown
@@ -64,7 +92,9 @@ kubectl apply -f citus.yaml
 Inside the `infrastructure/simulation/postgres` folder context, run the following command:
 
 ```bash
-kubectl delete -f citus.yaml
+kubectl delete -f citus-nofc.yaml
+# or
+kubectl delete -f citus-fc.yaml
 ```
 
 ### YugaByteDB
@@ -74,7 +104,9 @@ kubectl delete -f citus.yaml
 Inside the `infrastructure/simulation/yugabyte` folder context, run the following commands:
 
 ```bash
-helmfile apply
+helmfile apply -f helmfile-nofc.yaml
+# or
+helmfile apply -f helmfile-fc.yaml
 ```
 
 #### Teardown
@@ -82,7 +114,10 @@ helmfile apply
 Inside the `infrastructure/simulation/yugabyte` folder context, run the following command:
 
 ```bash
-helmfile delete
+helmfile delete -f helmfile-nofc.yaml
+# or
+helmfile delete -f helmfile-fc.yaml
+
 kubectl delete pvc --namespace default -l app=yb-master
 kubectl delete pvc --namespace default -l app=yb-tserver
 ```

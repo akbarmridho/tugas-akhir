@@ -23,9 +23,9 @@ kubectl apply -f ingress-monitoring.yaml
 kubectl apply -f ingress-ticket.yaml
 ```
 
-## Redis Cluster
+## Payment Redis Cluster
 
-Inside the `infrastructure/simulation/redis` and `infrastructure/simulation/payment` folder context, run `helmfile apply`.
+Inside the `infrastructure/simulation/payment` folder context, run `helmfile apply`.
 
 ## TLS
 

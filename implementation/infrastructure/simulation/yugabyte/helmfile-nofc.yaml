@@ -1,0 +1,66 @@
+repositories:
+  - name: yugabytedb
+    url: https://charts.yugabyte.com
+
+releases:
+  - name: yugabytedb
+    chart: yugabytedb/yugabyte
+    namespace: default
+    version: 2024.2.2
+    values:
+      - gflags:
+          tserver:
+            ysql_output_buffer_size: 4194304
+      - storage:
+          ephemeral: true
+          master:
+            count: 2
+            size: 5Gi
+            storageClass: standard
+          tserver:
+            count: 2
+            size: 5Gi
+            storageClass: standard
+      - resource:
+          master:
+            requests:
+              cpu: "0.5"
+              memory: "1Gi"
+            limits:
+              cpu: "0.5"
+              memory: "1Gi"
+          tserver:
+            requests:
+              cpu: "3"
+              memory: "7Gi"
+            limits:
+              cpu: "3"
+              memory: "7Gi"
+      - replicas:
+          master: 2
+          tserver: 2
+      - partition:
+          master: 2
+          tserver: 2
+      - master:
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - "yb-master"
+                topologyKey: kubernetes.io/hostname
+      - tserver:
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - "yb-tserver"
+                topologyKey: kubernetes.io/hostname

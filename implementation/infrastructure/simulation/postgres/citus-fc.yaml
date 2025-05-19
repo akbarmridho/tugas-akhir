@@ -1,0 +1,549 @@
+# headless services to avoid deletion of cituscluster-*-config endpoints
+apiVersion: v1
+kind: Service
+metadata:
+  name: cituscluster-0-config
+  labels:
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '0'
+spec:
+  clusterIP: None
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cituscluster-1-config
+  labels:
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '1'
+spec:
+  clusterIP: None
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: &cluster_name cituscluster-0
+  labels: &labels
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '0'
+    citus-type: coordinator
+spec:
+  replicas: 1
+  serviceName: *cluster_name
+  selector:
+    matchLabels:
+      <<: *labels
+  template:
+    metadata:
+      labels:
+        <<: *labels
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9187'
+    spec:
+      serviceAccountName: cituscluster
+      containers:
+      - name: *cluster_name
+        image: haiakbar/ta-citus:latest
+        resources:
+          requests:
+            cpu: "3.5"
+            memory: "7Gi"
+          limits:
+            cpu: "3.5"
+            memory: "7Gi"
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /readiness
+            port: 8008
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+        - name: patroni-http
+          containerPort: 8008
+          protocol: TCP
+        - name: postgres
+          containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /home/postgres/pgdata
+          name: pgdata
+        env:
+        - name: PATRONI_KUBERNETES_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: PATRONI_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: PATRONI_KUBERNETES_BYPASS_API_SERVICE
+          value: 'true'
+        - name: PATRONI_KUBERNETES_USE_ENDPOINTS
+          value: 'true'
+        - name: PATRONI_KUBERNETES_LABELS
+          value: '{application: citus, cluster-name: cituscluster}'
+        - name: PATRONI_CITUS_DATABASE
+          value: citus
+        - name: PATRONI_CITUS_GROUP
+          value: '0'
+        - name: PATRONI_SUPERUSER_USERNAME
+          value: postgres
+        - name: PATRONI_SUPERUSER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cituscluster
+              key: superuser-password
+        - name: PATRONI_REPLICATION_USERNAME
+          value: standby
+        - name: PATRONI_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cituscluster
+              key: replication-password
+        - name: PATRONI_SCOPE
+          value: cituscluster
+        - name: PATRONI_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: PATRONI_POSTGRESQL_DATA_DIR
+          value: /home/postgres/pgdata/pgroot/data
+        - name: PATRONI_POSTGRESQL_PGPASS
+          value: /tmp/pgpass
+        - name: PATRONI_POSTGRESQL_LISTEN
+          value: '0.0.0.0:5432'
+        - name: PATRONI_RESTAPI_LISTEN
+          value: '0.0.0.0:8008'
+      - name: postgres-exporter
+        image: prometheuscommunity/postgres-exporter:v0.17.1
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: "256Mi"
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+        ports:
+        - containerPort: 9187
+          name: pg-metrics
+          protocol: TCP
+        env:
+        - name: DATA_SOURCE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: cituscluster
+              key: postgres-exporter-url
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - name: pgdata
+        emptyDir: {}
+      affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                    - key: citus-group
+                      operator: In
+                      values:
+                        - '1'
+                topologyKey: "kubernetes.io/hostname"
+#  volumeClaimTemplates:
+#  - metadata:
+#      labels:
+#        application: spilo
+#        spilo-cluster: *cluster_name
+#      annotations:
+#        volume.alpha.kubernetes.io/storage-class: anything
+#      name: pgdata
+#    spec:
+#      accessModes:
+#      - ReadWriteOnce
+#      resources:
+#        requests:
+#          storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: &cluster_name cituscluster-1
+  labels: &labels
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '1'
+    citus-type: worker
+spec:
+  replicas: 1
+  serviceName: *cluster_name
+  selector:
+    matchLabels:
+      <<: *labels
+  template:
+    metadata:
+      labels:
+        <<: *labels
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9187'
+    spec:
+      serviceAccountName: cituscluster
+      containers:
+      - name: *cluster_name
+        image: haiakbar/ta-citus:latest
+        resources:
+          requests:
+            cpu: "2.5"
+            memory: "7Gi"
+          limits:
+            cpu: "2.5"
+            memory: "7Gi"
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /readiness
+            port: 8008
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+        - name: patroni-http
+          containerPort: 8008
+          protocol: TCP
+        - name: postgres
+          containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /home/postgres/pgdata
+          name: pgdata
+        env:
+        - name: PATRONI_KUBERNETES_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: PATRONI_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: PATRONI_KUBERNETES_BYPASS_API_SERVICE
+          value: 'true'
+        - name: PATRONI_KUBERNETES_USE_ENDPOINTS
+          value: 'true'
+        - name: PATRONI_KUBERNETES_LABELS
+          value: '{application: citus, cluster-name: cituscluster}'
+        - name: PATRONI_CITUS_DATABASE
+          value: citus
+        - name: PATRONI_CITUS_GROUP
+          value: '1'
+        - name: PATRONI_SUPERUSER_USERNAME
+          value: postgres
+        - name: PATRONI_SUPERUSER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cituscluster
+              key: superuser-password
+        - name: PATRONI_REPLICATION_USERNAME
+          value: standby
+        - name: PATRONI_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cituscluster
+              key: replication-password
+        - name: PATRONI_SCOPE
+          value: cituscluster
+        - name: PATRONI_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: PATRONI_POSTGRESQL_DATA_DIR
+          value: /home/postgres/pgdata/pgroot/data
+        - name: PATRONI_POSTGRESQL_PGPASS
+          value: /tmp/pgpass
+        - name: PATRONI_POSTGRESQL_LISTEN
+          value: '0.0.0.0:5432'
+        - name: PATRONI_RESTAPI_LISTEN
+          value: '0.0.0.0:8008'
+      - name: postgres-exporter
+        image: prometheuscommunity/postgres-exporter:v0.17.1
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: "256Mi"
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+        ports:
+        - containerPort: 9187
+          name: pg-metrics
+          protocol: TCP
+        env:
+        - name: DATA_SOURCE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: cituscluster
+              key: postgres-exporter-url
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - name: pgdata
+        emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: citus-group
+                    operator: In
+                    values:
+                      - '0'
+              topologyKey: "kubernetes.io/hostname"
+
+#  volumeClaimTemplates:
+#  - metadata:
+#      labels:
+#        application: spilo
+#        spilo-cluster: *cluster_name
+#      annotations:
+#        volume.alpha.kubernetes.io/storage-class: anything
+#      name: pgdata
+#    spec:
+#      accessModes:
+#      - ReadWriteOnce
+#      resources:
+#        requests:
+#          storage: 5Gi
+          
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: cituscluster-0
+  labels:
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '0'
+    citus-type: coordinator
+subsets: []
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cituscluster-0
+  labels: &labels
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '0'
+    citus-type: coordinator
+spec:
+  type: ClusterIP
+  selector:
+    <<: *labels
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: postgres
+
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: cituscluster-1
+  labels:
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '1'
+    citus-type: worker
+subsets: []
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cituscluster-1
+  labels: &labels
+    application: citus
+    cluster-name: cituscluster
+    citus-group: '1'
+    citus-type: worker
+spec:
+  type: ClusterIP
+  selector:
+    <<: *labels
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: postgres
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cituscluster-patroni-coordinator
+  labels:
+    application: citus
+    cluster-name: cituscluster
+    citus-type: coordinator
+spec:
+  type: ClusterIP
+  selector:
+    application: citus
+    cluster-name: cituscluster
+    citus-type: coordinator
+  ports:
+  - name: patroni-http
+    port: 8008
+    targetPort: patroni-http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cituscluster-patroni-worker
+  labels:
+    application: citus
+    cluster-name: cituscluster
+    citus-type: worker
+spec:
+  type: ClusterIP
+  selector:
+    application: citus
+    cluster-name: cituscluster
+    citus-type: worker
+  ports:
+  - name: patroni-http
+    port: 8008
+    targetPort: patroni-http
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: &cluster_name cituscluster
+  labels:
+    application: citus
+    cluster-name: *cluster_name
+type: Opaque
+data:
+  superuser-password: emFsYW5kbw==
+  replication-password: cmVwLXBhc3M=
+  postgres-exporter-url: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnphbGFuZG9AbG9jYWxob3N0OjU0MzIvcG9zdGdyZXM/c3NsbW9kZT1kaXNhYmxl
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cituscluster
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cituscluster
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+  # delete and deletecollection are required only for 'patronictl remove'
+  - delete
+  - deletecollection
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - get
+  - patch
+  - update
+  # the following three privileges are necessary only when using endpoints
+  - create
+  - list
+  - watch
+  # delete and deletecollection are required only for for 'patronictl remove'
+  - delete
+  - deletecollection
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+# The following privilege is only necessary for creation of headless service
+# for cituscluster-config endpoint, in order to prevent cleaning it up by the
+# k8s master. You can avoid giving this privilege by explicitly creating the
+# service like it is done in this manifest (lines 2..10)
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cituscluster
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cituscluster
+subjects:
+- kind: ServiceAccount
+  name: cituscluster
+
+# Following privileges are only required if deployed not in the "default"
+# namespace and you want Patroni to bypass kubernetes service
+# (PATRONI_KUBERNETES_BYPASS_API_SERVICE=true)
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: patroni-k8s-ep-access
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  resourceNames:
+  - kubernetes
+  verbs:
+  - get
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: patroni-k8s-ep-access
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: patroni-k8s-ep-access
+subjects:
+- kind: ServiceAccount
+  name: cituscluster
+# The namespace must be specified explicitly.
+# If deploying to the different namespace you have to change it.
+  namespace: default

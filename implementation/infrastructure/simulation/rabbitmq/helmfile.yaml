@@ -1,0 +1,20 @@
+
+releases:
+  - name: rabbitmq
+    chart: oci://registry-1.docker.io/bitnamicharts/rabbitmq
+    namespace: default
+    version: 16.0.1
+    values:
+      - resources:
+          requests:
+            cpu: "1.5"
+            memory: "3Gi"
+          limits:
+            cpu: "1.5"
+            memory: "3Gi"
+      - metrics:
+          enabled: true
+      - auth:
+          username: tugas-akhir
+          password: tugas-akhir
+          securePassword: false

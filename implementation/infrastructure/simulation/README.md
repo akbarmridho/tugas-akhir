@@ -43,16 +43,18 @@ Total RAM request: 17.75 GB RAM.
 
 | Service Name             | Postgres No FC | Citus No FC | YugaByte No FC | Citus FC | YugaByte FC |
 | ------------------------ | -------------- | ----------- | -------------- | -------- | ----------- |
-| Postgres Primary         | 4.5/9Gi        | -           | -              | -        | -           |
-| Postgres Replica         | 2.5/7Gi        | -           | -              | -        | -           |
+| Postgres Primary         | 3.5/8Gi        | -           | -              | -        | -           |
+| Postgres Replica         | 3.5/8Gi        | -           | -              | -        | -           |
 | Citusdata Node 1 (Coord) | -              | 4/8Gi       | -              | 3.5/7Gi  | -           |
 | Citusdata Node 2         | -              | 3/8Gi       | -              | 2.5/7Gi  | -           |
 | YugabyteDB Node 1        | -              | -           | 3.5/8Gi        | -        | 3/7Gi       |
 | YugabyteDB Node 2        | -              | -           | 3.5/8Gi        | -        | 3/7Gi       |
 | Redis Cluster (total)    | 3/4.5Gi        | 3/4.5Gi     | 3/4.5Gi        | 3/6Gi    | 3/6Gi       |
 | RabbitMQ                 | -              | -           | -              | 1.5/3Gi  | 1.5/3Gi     |
-| Ticket Backend (total)   | 11/24Gi        | 11/24Gi     | 11/24Gi        | 7/14Gi   | 7/14Gi      |
-| Ticket Worker (total)    | -              | -           | -              | 3.5/7Gi  | 3.5/7Gi     |
+| Ticket Backend (total)   | 11/24Gi        | 11/24Gi     | 11/24Gi        | 8.5/17Gi | 8.5/17Gi    |
+| Ticket Worker (total)    | -              | -           | -              | 2/4Gi    | 2/4Gi       |
+
+For YugaByteDB, 0.5 CPU and 1Gi RAM will be allocated for master and the rest will be allocated to tserver.
 
 Postgres No FC total CPU: 21 CPU.
 Postgres No FC total RAM: 44.5 GB.

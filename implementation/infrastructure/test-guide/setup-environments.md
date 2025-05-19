@@ -22,7 +22,7 @@ Build and push the following images:
 
 - [ ] Custom K6 Build (`implementation/agent`) under `haiakbar/ta-agent`.
 - [ ] Payment Backend (`implementation/payment`) under `haiakbar/ta-payment`.
-- [ ] Ticket Backend (`implementation/backend`) under `haiakbar/ta-backend`.
+- [ ] Ticket Backend (`implementation/backend`) under `haiakbar/ta-ticket`.
 - [ ] Citus Database (`implementation/infrastructure/local/citus.Dockerfile`) under `haiakbar/ta-citus`.
 - [ ] Postgres Database (`implementation/infrastructure/local/postgres.Dockerfile`) under `haiakbar/ta-postgres`.
 
