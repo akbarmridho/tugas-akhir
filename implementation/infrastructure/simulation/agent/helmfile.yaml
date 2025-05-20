@@ -62,6 +62,8 @@ releases:
     version: 27.11.0
     values:
     - server:
+        global:
+          scrape_interval: 15s
         resources:
           limits:
             cpu: "4"

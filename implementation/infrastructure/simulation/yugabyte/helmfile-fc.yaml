@@ -8,9 +8,11 @@ releases:
     namespace: default
     version: 2024.2.2
     values:
+      - yugabytedUi:
+          enabled: false  
       - gflags:
           tserver:
-            ysql_output_buffer_size: 4194304
+            ysql_output_buffer_size: "4194304"
       - storage:
           ephemeral: true
           master:

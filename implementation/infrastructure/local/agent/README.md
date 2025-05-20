@@ -73,6 +73,14 @@ export VARIANT=<your_scenario>
 export HOST_FORWARD=<host-ip>
 ```
 
+For local:
+
+```bash
+export RUN_ID=local-test
+export VARIANT=smokey
+export HOST_FORWARD=192.168.65.254
+```
+
 To get the host ip, run the following commands:
 
 ```bash
