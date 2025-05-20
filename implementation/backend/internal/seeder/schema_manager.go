@@ -39,7 +39,10 @@ func (m *SchemaManager) SchemaDown(ctx context.Context) error {
 func (m *SchemaManager) CitusSetup(ctx context.Context) error {
 	for _, cmd := range strings.Split(CitusSetup, "-- marker split") {
 		_, err := m.db.Pool.Exec(ctx, cmd)
-		return err
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

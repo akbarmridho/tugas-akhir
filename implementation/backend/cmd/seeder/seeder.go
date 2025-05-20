@@ -167,6 +167,7 @@ func main() {
 	}
 
 	if c.DBVariant == config.DBVariant__Citusdata {
+		l.Info("Citus setup is run")
 		err = schemaManager.CitusSetup(ctx)
 		if err != nil {
 			l.Error("failed running citus setup", zap.Error(err))
