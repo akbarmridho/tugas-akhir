@@ -3,7 +3,7 @@ kind: TestRun
 metadata:
   name: k6-run-${RUN_ID}
 spec:
-  parallelism: 3
+  parallelism: 1
   script:
     configMap:
       name: ticket-code
@@ -16,8 +16,8 @@ spec:
         cpu: "2"
         memory: "4Gi"
       requests:
-        cpu: "1.5"
-        memory: "3Gi"
+        cpu: "2"
+        memory: "4Gi"
     env:
       - name: K6_PROMETHEUS_RW_SERVER_URL
         value: "http://prometheus-server.monitoring.svc.cluster.local/api/v1/write"

@@ -41,8 +41,8 @@ spec:
             cpu: "1"
             memory: "2Gi"
           limits:
-            cpu: "1.5"
-            memory: "3Gi"
+            cpu: "1"
+            memory: "2Gi"
         readinessProbe:
           httpGet:
             scheme: HTTP
@@ -113,8 +113,8 @@ spec:
             cpu: "0.25"
             memory: "256Mi"
           limits:
-            cpu: "0.5"
-            memory: "512Mi"
+            cpu: "0.25"
+            memory: "256Mi"
         ports:
         - containerPort: 9187
           name: pg-metrics

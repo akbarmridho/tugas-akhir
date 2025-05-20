@@ -222,6 +222,10 @@ export default function test() {
 			// should not reach this
 			logger.error("Event not found");
 			tags.state = END_STATES.FAIL_EVENT_NOT_FOUND;
+
+			// reach this
+			// let's just sleep for 10 seconds so that it does not spam the server
+			sleep(randomIntBetween(8, 12));
 			submitMetric();
 			return;
 		}

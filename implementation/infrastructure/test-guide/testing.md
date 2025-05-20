@@ -156,7 +156,7 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster
 
 ```bash
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cluster.local:5432/postgres?sslmode=verify-ca&sslrootcert=/etc/ssl/pg-ca.pem&sslcert=/etc/ssl/pg-client-cert.crt&sslkey=/etc/ssl/private/pg-client-key.key"
+export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cluster.local:5432/citus?sslmode=verify-ca&sslrootcert=/etc/ssl/pg-ca.pem&sslcert=/etc/ssl/pg-client-cert.crt&sslkey=/etc/ssl/private/pg-client-key.key"
 ```
 
 - For YugabyteDB cluster.

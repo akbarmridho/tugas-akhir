@@ -3,7 +3,7 @@ kind: Simple
 metadata:
   name: k6-agent
 servers: 1
-agents: 2
+agents: 0
 kubeAPI:
   hostPort: "6443"
 image: rancher/k3s:v1.30.12-rc1-k3s1

@@ -55,8 +55,8 @@ spec:
             cpu: "1"
             memory: "2Gi"
           limits:
-            cpu: "1.5"
-            memory: "3Gi"
+            cpu: "1"
+            memory: "2Gi"
         readinessProbe:
           httpGet:
             scheme: HTTP
@@ -131,8 +131,8 @@ spec:
             cpu: "0.25"
             memory: "256Mi"
           limits:
-            cpu: "0.5"
-            memory: "512Mi"
+            cpu: "0.25"
+            memory: "256Mi"
         ports:
         - containerPort: 9187
           name: pg-metrics
@@ -205,8 +205,8 @@ spec:
             cpu: "1"
             memory: "2Gi"
           limits:
-            cpu: "1.5"
-            memory: "3Gi"
+            cpu: "1"
+            memory: "2Gi"
         readinessProbe:
           httpGet:
             scheme: HTTP
@@ -281,8 +281,8 @@ spec:
             cpu: "0.25"
             memory: "256Mi"
           limits:
-            cpu: "0.5"
-            memory: "512Mi"
+            cpu: "0.25"
+            memory: "256Mi"
         ports:
         - containerPort: 9187
           name: pg-metrics
@@ -437,7 +437,7 @@ type: Opaque
 data:
   superuser-password: emFsYW5kbw==
   replication-password: cmVwLXBhc3M=
-  postgres-exporter-url: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnphbGFuZG9AbG9jYWxob3N0OjU0MzIvcG9zdGdyZXM/c3NsbW9kZT1kaXNhYmxl
+  postgres-exporter-url: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnphbGFuZG9AbG9jYWxob3N0OjU0MzIvY2l0dXM/c3NsbW9kZT1kaXNhYmxl
 
 ---
 apiVersion: v1

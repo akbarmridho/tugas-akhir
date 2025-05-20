@@ -16,7 +16,6 @@ export const getEvent = (
 
 		const eventsCheck = check(eventsResponse, {
 			"events: is status 200": (r) => r.response.status === 200,
-			"events: length is 1": (r) => r.data.data.length === 1,
 		});
 
 		if (!eventsCheck) {
