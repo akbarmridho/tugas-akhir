@@ -49,6 +49,8 @@ releases:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pod-detail.json  
             k6-dashboard:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/agent/dashboards/k6.json
+            kube-state-metrics:
+              url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/kube-state-metrics.json
       - resources:
           requests:
             cpu: "0.5"

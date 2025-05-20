@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"go.uber.org/zap"
+	"sync"
 	"time"
 	"tugas-akhir/backend/infrastructure/amqp"
 	entity2 "tugas-akhir/backend/infrastructure/amqp/entity"
@@ -19,11 +20,12 @@ import (
 type FCPlaceOrderConnector struct {
 	placeOrderPublisher     *amqp.Publisher
 	placeOrderReplyConsumer *amqp.Consumer
-	ListenerChan            map[string]chan entity.PlaceOrderReplyMessage
-	ctx                     context.Context
-	cancelCtx               context.CancelFunc
-	config                  *config.Config
-	ReplyRouteName          string
+	//ListenerChan            map[string]chan entity.PlaceOrderReplyMessage
+	ListenerChan   sync.Map
+	ctx            context.Context
+	cancelCtx      context.CancelFunc
+	config         *config.Config
+	ReplyRouteName string
 }
 
 func NewFCPlaceOrderConnector(
@@ -54,7 +56,7 @@ func NewFCPlaceOrderConnector(
 		placeOrderReplyConsumer: placeOrderReplyConsumer,
 		placeOrderPublisher:     placeOrderPublisher,
 		ReplyRouteName:          replyRouteName,
-		ListenerChan:            make(map[string]chan entity.PlaceOrderReplyMessage),
+		ListenerChan:            sync.Map{},
 	}
 }
 
@@ -140,7 +142,10 @@ func (c *FCPlaceOrderConnector) consumeReply() error {
 						}
 
 						// pass the result to channel
-						ch, exists := c.ListenerChan[payload.IdempotencyKey]
+						//ch, exists := c.ListenerChan[payload.IdempotencyKey]
+						rawCh, exists := c.ListenerChan.Load(payload.IdempotencyKey)
+
+						ch := rawCh.(chan entity.PlaceOrderReplyMessage)
 
 						if exists {
 							ch <- payload

@@ -261,10 +261,10 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 					return err
 				}
 
-				for _, result := range results {
+				for k, result := range results {
 					status, ok := result.(string)
 					if !ok || status != string(entity2.SeatStatus__Available) {
-						return errors2.WithMessagef(entity.DropperSeatNotAvailable, "seat %d is not available", numberedSeatIDs[i])
+						return errors2.WithMessagef(entity.DropperSeatNotAvailable, "seat %d is not available", numberedSeatIDs[k])
 					}
 				}
 			}

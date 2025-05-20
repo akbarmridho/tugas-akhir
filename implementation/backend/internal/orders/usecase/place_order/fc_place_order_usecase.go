@@ -64,10 +64,10 @@ func (u *FCPlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.Pla
 	}
 
 	replyChan := make(chan entity.PlaceOrderReplyMessage, 1)
-	u.connector.ListenerChan[*payload.IdempotencyKey] = replyChan
+	u.connector.ListenerChan.Store(*payload.IdempotencyKey, replyChan)
 
 	defer func() {
-		delete(u.connector.ListenerChan, *payload.IdempotencyKey)
+		u.connector.ListenerChan.Delete(*payload.IdempotencyKey)
 		close(replyChan)
 	}()
 
