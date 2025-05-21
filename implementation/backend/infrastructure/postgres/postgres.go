@@ -36,6 +36,7 @@ func (p *Postgres) GetExecutor(ctx context.Context) QueryExecutor {
 // postgresql://username:password@leader.example.com:5432,follower1.example.com:5432,follower2.example.com:5432/dbname?target_session_attrs=primary
 func NewPostgres(config *config.Config) (*Postgres, error) {
 	c, err := pgxpool.ParseConfig(config.DatabaseUrl)
+	c.MinConns = int32(config.DbMinPoolSize)
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), c)
 	if err != nil {

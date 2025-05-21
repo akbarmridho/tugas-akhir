@@ -111,20 +111,6 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 }
 
 func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payment.Invoice) *myerror.HttpError {
-	tx, err := u.db.Pool.Begin(ctx)
-
-	defer tx.Rollback(ctx)
-
-	if err != nil {
-		return &myerror.HttpError{
-			Code:         http.StatusInternalServerError,
-			Message:      err.Error(),
-			ErrorContext: err,
-		}
-	}
-
-	ctx = context.WithValue(ctx, postgres.PostgresTransactionContextKey, tx)
-
 	orderID, err := strconv.ParseInt(payload.ExternalId, 10, 64)
 
 	if err != nil {
@@ -155,6 +141,20 @@ func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payme
 			ErrorContext: err,
 		}
 	}
+
+	tx, err := u.db.Pool.Begin(ctx)
+
+	defer tx.Rollback(ctx)
+
+	if err != nil {
+		return &myerror.HttpError{
+			Code:         http.StatusInternalServerError,
+			Message:      err.Error(),
+			ErrorContext: err,
+		}
+	}
+
+	ctx = context.WithValue(ctx, postgres.PostgresTransactionContextKey, tx)
 
 	updateInvoice := entity.UpdateInvoiceStatusDto{
 		ID: orderEntity.Invoice.ID,

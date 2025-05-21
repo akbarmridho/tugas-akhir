@@ -12,8 +12,8 @@ bootstrap:
   dcs:
     postgresql:
       parameters:
-        max_connections: 150
-        shared_buffers: 16MB
+        max_connections: 200
+        shared_buffers: 512MB
         ssl: 'on'
         ssl_ca_file: ${PGSSLROOTCERT}
         ssl_cert_file: ${PGSSLCERT}

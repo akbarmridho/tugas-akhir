@@ -16,6 +16,9 @@ var SchemaDown string
 //go:embed schemas/citus_setup.sql
 var CitusSetup string
 
+//go:embed schemas/pg_prewarm.sql
+var Prewarm string
+
 type SchemaManager struct {
 	db *postgres.Postgres
 }
@@ -46,4 +49,9 @@ func (m *SchemaManager) CitusSetup(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (m *SchemaManager) Prewarm(ctx context.Context) error {
+	_, err := m.db.Pool.Exec(ctx, Prewarm)
+	return err
 }

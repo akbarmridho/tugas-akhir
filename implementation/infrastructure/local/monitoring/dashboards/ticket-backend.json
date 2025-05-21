@@ -28,7 +28,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 16,
+    "id": 4,
     "links": [],
     "panels": [
         {
@@ -906,7 +906,7 @@
                     "item": {
                         "filter": ""
                     },
-                    "legendFormat": "{{ job }} - {{ method }} {{handler}}",
+                    "legendFormat": "{{ job }} - {{ method }} {{url}}",
                     "mode": 0,
                     "options": {
                         "showDisabledItems": false,
@@ -1732,5 +1732,5 @@
     "timezone": "browser",
     "title": "Ticket Overview",
     "uid": "ticket-overview",
-    "version": 4
+    "version": 1
 }

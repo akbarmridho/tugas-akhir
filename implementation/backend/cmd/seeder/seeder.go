@@ -207,6 +207,15 @@ func main() {
 		}
 	}
 
+	if c.DBVariant != config.DBVariant__YugabyteDB {
+		l.Info("Prewarm is run")
+		err = schemaManager.Prewarm(ctx)
+		if err != nil {
+			l.Error("failed running prewarm", zap.Error(err))
+			os.Exit(1)
+		}
+	}
+
 	l.Info("seeder success")
 	os.Exit(0)
 }

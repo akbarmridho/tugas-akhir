@@ -40,8 +40,9 @@ Total RAM request: 17.75 GB RAM.
 | ------------------------ | -------------- | ----------- | -------------- | -------- | ----------- |
 | Postgres Primary         | 3.5/8Gi        | -           | -              | -        | -           |
 | Postgres Replica         | 3.5/8Gi        | -           | -              | -        | -           |
-| Citusdata Node 1 (Coord) | -              | 4/8Gi       | -              | 3.5/7Gi  | -           |
-| Citusdata Node 2         | -              | 3/8Gi       | -              | 2.5/7Gi  | -           |
+| Citusdata Node 0 (Coord) | -              | 2/4Gi       | -              | 2/4Gi    | -           |
+| Citusdata Node 1         | -              | 2.5/6Gi     | -              | 2/5Gi    | -           |
+| Citusdata Node 2         | -              | 2.5/6Gi     | -              | 2/5Gi    | -           |
 | YugabyteDB Node 1        | -              | -           | 3.5/8Gi        | -        | 3/7Gi       |
 | YugabyteDB Node 2        | -              | -           | 3.5/8Gi        | -        | 3/7Gi       |
 | Redis Cluster (total)    | 3/4.5Gi        | 3/4.5Gi     | 3/4.5Gi        | 3/6Gi    | 3/6Gi       |

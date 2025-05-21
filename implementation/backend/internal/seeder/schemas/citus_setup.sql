@@ -9,7 +9,10 @@ ALTER TABLE issued_tickets DROP CONSTRAINT issued_tickets_order_items_id_fk;
 -- marker split
 
 -- Fine tuning Citus configuration
-SET citus.shard_count = 64; -- Or your desired count
+SET citus.shard_count = 32;
+SET citus.max_adaptive_executor_pool_size = 1;
+SET citus.max_cached_conns_per_worker = 4;
+SET citus.executor_slow_start_interval = 75;
 
 -- Convert small, static tables to reference tables
 SELECT create_reference_table('events');
