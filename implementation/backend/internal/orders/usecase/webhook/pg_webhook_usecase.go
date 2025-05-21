@@ -95,11 +95,10 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 			var pgErr *pgconn.PgError
 
 			if errors.As(errCtx, &pgErr) {
-				l.Warn("serializability error. restarting transactions ...")
-
 				// PostgreSQL error codes for transaction related issue
 				// 40001 is the error code retry read
 				if pgErr.Code == "40001" {
+					l.Warn("serializability error. restarting transactions ...")
 					continue
 				}
 			}

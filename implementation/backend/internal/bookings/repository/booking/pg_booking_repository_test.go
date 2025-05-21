@@ -13,13 +13,18 @@ import (
 )
 
 type SeatStructID struct {
+	ID           int64
+	TicketAreaID int64
+}
+
+type IDStruct struct {
 	ID int64
 }
 
 func TestPGBookingRepository_Book(t *testing.T) {
 	for _, variant := range test_containers.RelationalDBVariants {
 		t.Run(string(variant), func(t *testing.T) {
-			db := seeder.GetConnAndSchema(t, test_containers.RelationalDBVariant__Postgres)
+			db := seeder.GetConnAndSchema(t, variant)
 			seeder.SeedSchema(t, t.Context(), db)
 
 			repo := NewPGBookingRepository(db)
@@ -38,7 +43,7 @@ func TestPGBookingRepository_Book(t *testing.T) {
 				var ids []SeatStructID
 
 				queryErr := pgxscan.Select(ctx, tx, &ids, `
-SELECT ts.id as id
+SELECT ts.id as id, ts.ticket_area_id as ticket_area_id
 FROM ticket_seats ts
 INNER JOIN ticket_areas ta
 ON ts.ticket_area_id = ta.id
@@ -52,7 +57,8 @@ LIMIT 2
 
 				// Arrange
 				payload := entity.BookingRequestDto{
-					SeatIDs: []int64{},
+					SeatIDs:      []int64{},
+					TicketAreaID: ids[0].TicketAreaID,
 				}
 
 				for _, id := range ids {
@@ -84,7 +90,7 @@ LIMIT 2
 				// Create a new context with the transaction
 				txCtx := context.WithValue(ctx, postgres.PostgresTransactionContextKey, tx)
 
-				var ids []SeatStructID
+				var ids []IDStruct
 
 				queryErr := pgxscan.Select(ctx, tx, &ids, `
 SELECT id
@@ -100,6 +106,7 @@ LIMIT 1
 				// Arrange
 				payload := entity.BookingRequestDto{
 					TicketAreaIDs: []int64{ids[0].ID, ids[0].ID}, // Request 2 seats from free-standing area
+					TicketAreaID:  ids[0].ID,
 				}
 
 				// Act
@@ -134,7 +141,7 @@ LIMIT 1
 				var ids []SeatStructID
 
 				queryErr := pgxscan.Select(ctx, tx1, &ids, `
-SELECT ts.id as id
+SELECT ts.id as id, ts.ticket_area_id as ticket_area_id
 FROM ticket_seats ts
 INNER JOIN ticket_areas ta
 ON ts.ticket_area_id = ta.id
@@ -148,7 +155,8 @@ LIMIT 2
 
 				// Book seats in first transaction
 				payload := entity.BookingRequestDto{
-					SeatIDs: []int64{},
+					SeatIDs:      []int64{},
+					TicketAreaID: ids[0].TicketAreaID,
 				}
 
 				for _, id := range ids {
@@ -191,7 +199,8 @@ LIMIT 2
 
 				// Arrange
 				payload := entity.BookingRequestDto{
-					SeatIDs: []int64{10000000}, // Non-existent seat ID
+					SeatIDs:      []int64{10000000}, // Non-existent seat ID
+					TicketAreaID: 1,
 				}
 
 				// Act
@@ -221,6 +230,7 @@ LIMIT 2
 				// Arrange - Request more seats than available in the area
 				payload := entity.BookingRequestDto{
 					TicketAreaIDs: []int64{ticketAreaID, ticketAreaID, ticketAreaID, ticketAreaID}, // Request 4 seats where no seat
+					TicketAreaID:  ticketAreaID,
 				}
 
 				// Act

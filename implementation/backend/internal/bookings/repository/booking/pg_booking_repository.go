@@ -37,13 +37,13 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 		numberedQuery := `
 	SELECT id, seat_number, status, ticket_area_id, created_at, updated_at
 	FROM ticket_seats
-	WHERE id = ANY($1) and status = 'available'
+	WHERE ticket_area_id = $1 and id = ANY($2) and status = 'available'
 	FOR UPDATE NOWAIT
     `
 
 		numberedSeats := make([]entity2.TicketSeat, 0)
 
-		err := pgxscan.Select(ctx, r.db.GetExecutor(ctx), &numberedSeats, numberedQuery, payload.SeatIDs)
+		err := pgxscan.Select(ctx, r.db.GetExecutor(ctx), &numberedSeats, numberedQuery, payload.TicketAreaID, payload.SeatIDs)
 
 		if err != nil {
 			var pgErr *pgconn.PgError
@@ -111,10 +111,10 @@ func (r *PGBookingRepository) Book(ctx context.Context, payload entity.BookingRe
 	updateQuery := `
 	UPDATE ticket_seats
 	SET status = 'on-hold'
-	WHERE id = ANY($1) and status = 'available'
+	WHERE ticket_area_id = $1 and id = ANY($2) and status = 'available'
     `
 
-	tag, err := r.db.GetExecutor(ctx).Exec(ctx, updateQuery, combinedIDs)
+	tag, err := r.db.GetExecutor(ctx).Exec(ctx, updateQuery, payload.TicketAreaID, combinedIDs)
 
 	if err != nil {
 		return nil, err

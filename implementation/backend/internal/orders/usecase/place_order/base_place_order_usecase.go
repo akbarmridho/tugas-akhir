@@ -74,11 +74,10 @@ func (u *BasePlaceOrderUsecase) PlaceOrder(ctx context.Context, payload entity.P
 			var pgErr *pgconn.PgError
 
 			if errors.As(errCtx, &pgErr) {
-				l.Warn("serializability error. restarting transactions ...")
-
 				// PostgreSQL error codes for transaction related issue
 				// 40001 is the error code retry read
 				if pgErr.Code == "40001" {
+					l.Warn("serializability error. restarting transactions ...")
 					continue
 				}
 			}
@@ -172,6 +171,7 @@ func (u *BasePlaceOrderUsecase) placeOrder(ctx context.Context, payload entity.P
 	bookRequest := entity2.BookingRequestDto{
 		SeatIDs:       []int64{},
 		TicketAreaIDs: []int64{},
+		TicketAreaID:  *payload.TicketAreaID,
 	}
 
 	for _, item := range payload.Items {

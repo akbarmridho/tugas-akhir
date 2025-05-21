@@ -127,7 +127,7 @@ func (r *PGBookedSeatRepository) GetIssuedTickets(ctx context.Context, payload e
 			ts.created_at AS "ticket_seat.created_at",
 			ts.updated_at AS "ticket_seat.updated_at"
 		FROM issued_tickets it
-		JOIN ticket_seats ts ON it.ticket_seat_id = ts.id
+		JOIN ticket_seats ts ON it.ticket_seat_id = ts.id AND it.ticket_area_id = ts.ticket_area_id
 		WHERE it.order_id = $1
     `
 
@@ -158,7 +158,7 @@ func (r *PGBookedSeatRepository) IterSeats(ctx context.Context) ([]entity2.Ticke
         FROM 
             ticket_seats ts
         JOIN 
-            ticket_areas ta ON ts.ticket_area_id = ta.id
+            ticket_areas ta ON ts.ticket_area_id = ta.id 
     `
 
 	result := make([]entity2.TicketSeat, 100)

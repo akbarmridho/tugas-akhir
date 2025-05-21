@@ -42,7 +42,7 @@ func NewEventAvailabilityUsecase(
 }
 
 func (u *EventUsecase) GetSeats(ctx context.Context, payload entity.GetSeatsDto) ([]entity.TicketSeat, *myerror.HttpError) {
-	cacheKey := fmt.Sprintf("seats:%s", payload.TicketAreaID)
+	cacheKey := fmt.Sprintf("seats:%d", payload.TicketAreaID)
 
 	if val, ok := u.seatCache.Load(cacheKey); ok {
 		cs := val.(CacheSeat)

@@ -200,6 +200,8 @@ mainLoop:
 		}
 	}
 
+	placeOrderPayload.TicketAreaID = &ticketArea.ID
+
 	return ticketArea, ticketPackage, &ticketSale, placeOrderPayload
 }
 
