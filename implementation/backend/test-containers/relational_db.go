@@ -17,8 +17,8 @@ const (
 )
 
 var RelationalDBVariants = []RelationalDBVariant{
-	//RelationalDBVariant__Postgres,
-	//RelationalDBVariant__Citus,
+	RelationalDBVariant__Postgres,
+	RelationalDBVariant__Citus,
 	RelationalDBVariant__YugabyteDB,
 }
 
