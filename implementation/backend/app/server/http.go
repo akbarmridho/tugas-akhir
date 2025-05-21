@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/labstack/echo-contrib/echoprometheus"
+	"github.com/labstack/echo-contrib/pprof"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/fx"
@@ -57,9 +58,15 @@ func NewServer(
 	config *config.Config,
 	loggerMiddleware *middleware2.LoggerMiddleware,
 ) *Server {
+	l := logger.FromCtx(context.Background())
 	engine := echo.New()
 	engine.HideBanner = true
 	engine.HidePort = true
+
+	if config.EnableProfiling {
+		l.Info("Profiling enabled")
+		pprof.Register(engine)
+	}
 
 	engine.Use(echoprometheus.NewMiddlewareWithConfig(echoprometheus.MiddlewareConfig{
 		Namespace: "ticket_backend",

@@ -48,6 +48,8 @@ spec:
         env:
         - name: ENVIRONMENT
           value: production
+        - name: ENABLE_PROFILING
+          value: 'true'
         - name: TLS_KEY_PATH
           value: /etc/tls/tls.key
         - name: TLS_CERT_PATH
