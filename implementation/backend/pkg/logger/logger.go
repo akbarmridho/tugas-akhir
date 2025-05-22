@@ -45,6 +45,40 @@ func GetInfo() *zap.Logger {
 	return infoLogger
 }
 
+var debugOnce sync.Once
+
+var debugLogger *zap.Logger
+
+func GetDebug() *zap.Logger {
+	debugOnce.Do(func() {
+		stdout := zapcore.AddSync(os.Stdout)
+
+		level := zap.DebugLevel
+
+		logLevel := zap.NewAtomicLevelAt(level)
+
+		isProduction := os.Getenv("ENVIRONMENT") == "production"
+
+		var encoder zapcore.Encoder
+
+		if isProduction {
+			encoder = zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+		} else {
+			//encoder = zapcore.NewConsoleEncoder(zap.NewProductionEncoderConfig())
+			encoder = prettyconsole.NewEncoder(prettyconsole.NewEncoderConfig())
+		}
+
+		core := zapcore.NewTee(
+			zapcore.NewCore(encoder, stdout, logLevel),
+		)
+
+		debugLogger = zap.New(core)
+		defer debugLogger.Sync()
+	})
+
+	return debugLogger
+}
+
 // FromCtx returns the Logger associated with the ctx. If no logger
 // is associated, the default logger is returned, unless it is nil
 // in which case a disabled logger is returned.

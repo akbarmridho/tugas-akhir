@@ -18,6 +18,7 @@ bootstrap:
         ssl_ca_file: ${PGSSLROOTCERT}
         ssl_cert_file: ${PGSSLCERT}
         ssl_key_file: ${PGSSLKEY}
+        shared_preload_libraries: 'pg_stat_statements'
       use_pg_rewind: true
       pg_hba:
       - local all all trust

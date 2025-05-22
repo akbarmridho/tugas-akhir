@@ -149,21 +149,21 @@ kubectl delete pvc data-rabbitmq-0
 
 ```bash
 export DB_VARIANT=postgres
-export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster.local,pgcluster-repl.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&sslmode=verify-ca&sslrootcert=/etc/ssl/pg-ca.pem&sslcert=/etc/ssl/pg-client-cert.crt&sslkey=/etc/ssl/private/pg-client-key.key"
+export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster.local,pgcluster-repl.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&sslmode=verify-ca&sslrootcert=/etc/ssl/pg-ca.pem&sslcert=/etc/ssl/pg-client-cert.crt&sslkey=/etc/ssl/private/pg-client-key.key&pool_max_conns=40&pool_min_conns=1"
 ```
 
 - For Citusdata cluster.
 
 ```bash
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cluster.local:5432/citus?sslmode=verify-ca&sslrootcert=/etc/ssl/pg-ca.pem&sslcert=/etc/ssl/pg-client-cert.crt&sslkey=/etc/ssl/private/pg-client-key.key"
+export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cluster.local:5432/citus?sslmode=verify-ca&sslrootcert=/etc/ssl/pg-ca.pem&sslcert=/etc/ssl/pg-client-cert.crt&sslkey=/etc/ssl/private/pg-client-key.key&pool_max_conns=40&pool_min_conns=1"
 ```
 
 - For YugabyteDB cluster.
 
 ```bash
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte"
+export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte&pool_max_conns=40&pool_min_conns=1"
 ```
 
 ### Seed the Data

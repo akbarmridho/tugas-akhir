@@ -133,8 +133,6 @@ spec:
         env:
         - name: ENVIRONMENT
           value: production
-        - name: DB_MIN_POOL_SIZE
-          value: "1"
         - name: TLS_KEY_PATH
           value: /etc/tls/tls.key
         - name: TLS_CERT_PATH

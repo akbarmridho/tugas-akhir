@@ -15,12 +15,13 @@ type Config struct {
 	TlsKeyPath     string `envconfig:"TLS_KEY_PATH" required:"true"`
 	JwtSecret      string `envconfig:"JWT_SECRET" required:"true"`
 
-	TestScenario  string    `envconfig:"TEST_SCENARIO"`
-	PodName       string    `envconfig:"POD_NAME" default:"none"`
-	DBVariant     DBVariant `envconfig:"DB_VARIANT" required:"true"`
-	DbMinPoolSize int       `envconfig:"DB_MIN_POOL_SIZE" default:"20"`
+	TestScenario string    `envconfig:"TEST_SCENARIO"`
+	PodName      string    `envconfig:"POD_NAME" default:"none"`
+	DBVariant    DBVariant `envconfig:"DB_VARIANT" required:"true"`
 
 	EnableProfiling bool `envconfig:"ENABLE_PROFILING" default:"false"`
+	EnableDBTracing bool `envconfig:"ENABLE_DB_TRACING" default:"false"`
+	LogPoolStat     bool `envconfig:"LOG_POOL_STAT" default:"false"`
 
 	FlowControlVariant FlowControlVariant
 	SeedDropper        string `envconfig:"SEED_DROPPER" default:"no"`

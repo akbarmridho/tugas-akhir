@@ -19,6 +19,7 @@ bootstrap:
         ssl_cert_file: ${PGSSLCERT}
         ssl_key_file: ${PGSSLKEY}
         citus.node_conninfo: 'sslrootcert=${PGSSLROOTCERT} sslcert=${PGSSLCERT} sslkey=${PGSSLKEY} sslmode=${PGSSLMODE}'
+        shared_preload_libraries: 'citus,pg_stat_statements'
       use_pg_rewind: true
       pg_hba:
       - local all all trust
