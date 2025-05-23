@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/labstack/echo/v4"
 	errors2 "github.com/pkg/errors"
 	baseredis "github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -307,6 +308,12 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 		}, keysToWatch...)
 
 		if err == nil {
+			requestID := ""
+
+			if rawRequestID, ok := ctx.Value(echo.HeaderXRequestID).(string); ok {
+				requestID = rawRequestID
+			}
+
 			// Success - create the releasers
 			onSuccess := func() error {
 				return nil
@@ -327,7 +334,7 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 					pipe.IncrBy(ctx, key, int64(count))
 				}
 
-				_, err := pipe.Exec(ctx)
+				_, err := pipe.Exec(context.Background())
 				if err != nil {
 					return err
 				}
@@ -335,10 +342,7 @@ func (s *EarlyDropper) TryAcquireLock(ctx context.Context, payload entity.PlaceO
 				return nil
 			}
 
-			return &LockReleaser{
-				onSuccess: onSuccess,
-				onFailed:  onFailure,
-			}, nil
+			return NewLockReleaser(requestID, onSuccess, onFailure), nil
 		}
 
 		if errors.Is(err, baseredis.TxFailedErr) {

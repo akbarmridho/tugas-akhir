@@ -10,7 +10,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/fx"
 	"net/http"
-	"time"
 	"tugas-akhir/backend/app/server/handler/health"
 	middleware2 "tugas-akhir/backend/app/server/middleware"
 	"tugas-akhir/backend/app/server/route"
@@ -81,9 +80,9 @@ func NewServer(
 		},
 	}))
 
-	engine.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
-		Timeout: 3 * time.Minute,
-	}))
+	timeoutMiddleware := middleware2.NewTimeoutMiddleware()
+
+	engine.Use(timeoutMiddleware.TimeoutMiddleware)
 
 	engine.Pre(middleware.RemoveTrailingSlash())
 

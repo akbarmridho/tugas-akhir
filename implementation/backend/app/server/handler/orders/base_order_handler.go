@@ -2,6 +2,7 @@ package orders
 
 import (
 	"bytes"
+	"context"
 	"crypto/hmac"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
@@ -84,6 +85,10 @@ func (h *BaseOrderHandler) PlaceOrder(c echo.Context) error {
 	if idempotencyKey != "" {
 		payload.IdempotencyKey = &idempotencyKey
 	}
+
+	requestID := c.Request().Header.Get(echo.HeaderXRequestID)
+
+	ctx = context.WithValue(ctx, echo.HeaderXRequestID, requestID)
 
 	// check for request type
 	var requestType entity4.AreaType
