@@ -32,7 +32,7 @@ type Client struct {
 }
 
 func (client *Client) IsConnected() bool {
-	return !client.connection.IsClosed()
+	return client != nil && client.connection != nil && !client.connection.IsClosed()
 }
 
 func (client *Client) WaitUntilReady(ctx context.Context) {

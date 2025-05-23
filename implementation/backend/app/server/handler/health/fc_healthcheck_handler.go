@@ -75,14 +75,14 @@ func (h *FCHealthcheckHandler) Healthcheck(c echo.Context) error {
 		everyConnected := true
 
 		for _, consumer := range amqp.ConnectedConsumers {
-			if !consumer.Client.IsConnected() {
+			if consumer == nil || !consumer.Client.IsConnected() {
 				everyConnected = false
 				break
 			}
 		}
 
 		for _, publisher := range amqp.ConnectedPublishers {
-			if !publisher.Client.IsConnected() {
+			if publisher == nil || !publisher.Client.IsConnected() {
 				everyConnected = false
 				break
 			}
