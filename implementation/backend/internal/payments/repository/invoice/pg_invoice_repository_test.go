@@ -103,8 +103,9 @@ func TestPGInvoiceRepository_UpdateInvoiceStatus(t *testing.T) {
 			t.Run("success", func(t *testing.T) {
 				// Setup test data
 				payload := entity.UpdateInvoiceStatusDto{
-					ID:     invoiceEntity.ID,
-					Status: entity.InvoiceStatus__Paid,
+					ID:           invoiceEntity.ID,
+					Status:       entity.InvoiceStatus__Paid,
+					TicketAreaID: 1,
 				}
 
 				// Execute the method

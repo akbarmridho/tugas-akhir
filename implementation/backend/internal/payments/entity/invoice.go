@@ -20,6 +20,7 @@ type CreateInvoiceDto struct {
 }
 
 type UpdateInvoiceStatusDto struct {
-	ID     int64
-	Status InvoiceStatus
+	ID           int64
+	TicketAreaID int64
+	Status       InvoiceStatus
 }

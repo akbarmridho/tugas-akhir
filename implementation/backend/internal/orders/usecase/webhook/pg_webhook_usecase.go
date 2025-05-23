@@ -157,7 +157,8 @@ func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payme
 	ctx = context.WithValue(ctx, postgres.PostgresTransactionContextKey, tx)
 
 	updateInvoice := entity.UpdateInvoiceStatusDto{
-		ID: orderEntity.Invoice.ID,
+		ID:           orderEntity.Invoice.ID,
+		TicketAreaID: orderEntity.TicketAreaID,
 	}
 
 	updateOrder := entity2.UpdateOrderStatusDto{
