@@ -1,7 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
-
-SELECT pg_stat_statements_reset();
-
 CREATE TYPE area_type as ENUM ('numbered-seating', 'free-standing');
 CREATE TYPE seat_status as ENUM ('available', 'on-hold', 'sold');
 CREATE TYPE order_status as ENUM ('waiting-for-payment', 'failed', 'success');

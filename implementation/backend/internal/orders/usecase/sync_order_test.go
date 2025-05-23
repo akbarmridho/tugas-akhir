@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 	"testing"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/infrastructure/memcache"
@@ -269,7 +268,7 @@ func TestIntegration_OrderFlow_Success(t *testing.T) {
 
 					// --- Act: Handle Webhook (Success) ---
 					webhookPayloadSuccess := mock_payment.Invoice{
-						ExternalId: strconv.FormatInt(placedOrder.ID, 10),
+						ExternalId: fmt.Sprintf("%d-%d", placedOrder.ID, placedOrder.TicketAreaID),
 						Status:     "paid",
 						Amount:     float32(placedOrder.Invoice.Amount),
 					}
@@ -283,8 +282,9 @@ func TestIntegration_OrderFlow_Success(t *testing.T) {
 
 					// --- Act: Get Order (After Success) ---
 					getOrderPayload := entity3.GetOrderDto{
-						OrderID: placedOrder.ID,
-						UserID:  &userID,
+						OrderID:     placedOrder.ID,
+						TicketAreID: placedOrder.TicketAreaID,
+						UserID:      &userID,
 					}
 					fetchedOrderSuccess, getOrderErrSuccess := getOrderUsecase.GetOrder(ctx, getOrderPayload)
 
@@ -326,8 +326,9 @@ func TestIntegration_OrderFlow_Success(t *testing.T) {
 
 					// --- Act: Get Issued Tickets ---
 					getTicketsPayload := entity4.GetIssuedTicketDto{
-						ID:     placedOrder.ID,
-						UserID: &userID,
+						OrderID:      placedOrder.ID,
+						TicketAreaID: placedOrder.TicketAreaID,
+						UserID:       &userID,
 					}
 					issuedTickets, getTicketsErr := getOrderUsecase.GetIssuedTicket(ctx, getTicketsPayload)
 
@@ -404,7 +405,7 @@ func TestIntegration_OrderFlow_PaymentFailed(t *testing.T) {
 
 			// --- Act: Handle Webhook (Failure) ---
 			webhookPayloadFail := mock_payment.Invoice{
-				ExternalId: strconv.FormatInt(placedOrder.ID, 10),
+				ExternalId: fmt.Sprintf("%d-%d", placedOrder.ID, placedOrder.TicketAreaID),
 				Status:     "expired", // Simulate failed/expired payment
 				Amount:     float32(placedOrder.Invoice.Amount),
 			}
@@ -418,8 +419,9 @@ func TestIntegration_OrderFlow_PaymentFailed(t *testing.T) {
 
 			// --- Act: Get Order (After Failure) ---
 			getOrderPayload := entity3.GetOrderDto{
-				OrderID: placedOrder.ID,
-				UserID:  &userID,
+				OrderID:     placedOrder.ID,
+				TicketAreID: placedOrder.TicketAreaID,
+				UserID:      &userID,
 			}
 			fetchedOrderFail, getOrderErrFail := getOrderUsecase.GetOrder(ctx, getOrderPayload)
 
@@ -458,8 +460,9 @@ func TestIntegration_OrderFlow_PaymentFailed(t *testing.T) {
 
 			// --- Act & Assert: Get Issued Tickets (Should Fail or be Empty) ---
 			getTicketsPayload := entity4.GetIssuedTicketDto{
-				ID:     placedOrder.ID,
-				UserID: &userID,
+				OrderID:      placedOrder.ID,
+				TicketAreaID: placedOrder.TicketAreaID,
+				UserID:       &userID,
 			}
 			issuedTickets, getTicketsErr := getOrderUsecase.GetIssuedTicket(ctx, getTicketsPayload)
 

@@ -79,6 +79,8 @@ helmfile apply -f helmfile-citus.yaml
 ```bash
 kubectl delete -f citus.yaml
 helmfile delete -f helmfile-citus.yaml
+kubectl delete svc cituscluster-0-config cituscluster-1-config cituscluster-2-config
+kubectl delete endpoints cituscluster-0-sync cituscluster-1-sync cituscluster-2-sync
 ```
 
 ### Check

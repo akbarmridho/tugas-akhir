@@ -37,6 +37,8 @@ type PublishIssuedTicketDto struct {
 }
 
 type GetIssuedTicketDto struct {
-	ID     int64   `param:"id"`
-	UserID *string `json:"userId"`
+	CompositePK  string `param:"id"`
+	OrderID      int64
+	TicketAreaID int64
+	UserID       *string `json:"userId"`
 }

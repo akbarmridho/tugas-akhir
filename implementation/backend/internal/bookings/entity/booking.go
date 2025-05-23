@@ -9,6 +9,7 @@ type BookingRequestDto struct {
 }
 
 type UpdateSeatStatusDto struct {
-	SeatIDs []int64
-	Status  entity.SeatStatus
+	SeatIDs      []int64
+	TicketAreaID int64
+	Status       entity.SeatStatus
 }

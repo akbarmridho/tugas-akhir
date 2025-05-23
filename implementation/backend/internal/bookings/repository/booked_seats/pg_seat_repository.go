@@ -95,10 +95,10 @@ func (r *PGBookedSeatRepository) GetIssuedTickets(ctx context.Context, payload e
 	countQuery := `
         SELECT COUNT(*) 
         FROM orders 
-        WHERE id = $1 AND external_user_id = $2
+        WHERE id = $1 AND ticket_area_id = $3 AND external_user_id = $2
     `
 
-	err := r.db.GetExecutor(ctx).QueryRow(ctx, countQuery, payload.ID, payload.UserID).Scan(&count)
+	err := r.db.GetExecutor(ctx).QueryRow(ctx, countQuery, payload.OrderID, payload.UserID, payload.TicketAreaID).Scan(&count)
 
 	if err != nil {
 		return nil, errors2.WithStack(errors2.WithMessage(entity.IssuedTicketFetchError, "cannot get the order count"))
@@ -128,12 +128,12 @@ func (r *PGBookedSeatRepository) GetIssuedTickets(ctx context.Context, payload e
 			ts.updated_at AS "ticket_seat.updated_at"
 		FROM issued_tickets it
 		JOIN ticket_seats ts ON it.ticket_seat_id = ts.id AND it.ticket_area_id = ts.ticket_area_id
-		WHERE it.order_id = $1
+		WHERE it.order_id = $1 and it.ticket_area_id = $2
     `
 
 	result := make([]entity.IssuedTicket, 0)
 
-	err = pgxscan.Select(ctx, r.db.GetExecutor(ctx), &result, query, payload.ID)
+	err = pgxscan.Select(ctx, r.db.GetExecutor(ctx), &result, query, payload.OrderID, payload.TicketAreaID)
 
 	if err != nil {
 		return nil, err

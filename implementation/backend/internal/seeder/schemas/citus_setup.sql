@@ -1,9 +1,19 @@
 -- Drop distributed-distributed FK
 ALTER TABLE order_items DROP CONSTRAINT order_items_ticket_seat_id_fk;
+
+-- marker split
 ALTER TABLE order_items DROP CONSTRAINT order_items_order_id_fk;
+
+-- marker split
 ALTER TABLE invoices DROP CONSTRAINT invoices_order_id_fk;
+
+-- marker split
 ALTER TABLE issued_tickets DROP CONSTRAINT issued_tickets_order_id_fk;
+
+-- marker split
 ALTER TABLE issued_tickets DROP CONSTRAINT issued_tickets_ticket_seat_id_fk;
+
+-- marker split
 ALTER TABLE issued_tickets DROP CONSTRAINT issued_tickets_order_items_id_fk;
 
 -- marker split
@@ -27,3 +37,10 @@ SELECT create_distributed_table('orders', 'ticket_area_id', colocate_with => 'ti
 SELECT create_distributed_table('order_items', 'ticket_area_id', colocate_with => 'ticket_seats');
 SELECT create_distributed_table('invoices', 'ticket_area_id', colocate_with => 'ticket_seats');
 SELECT create_distributed_table('issued_tickets', 'ticket_area_id', colocate_with => 'ticket_seats');
+
+-- marker split
+
+CREATE INDEX IF NOT EXISTS idx_invoices_ticket_area_id_order_id ON invoices(ticket_area_id, order_id);
+
+-- marker split
+CREATE INDEX IF NOT EXISTS idx_order_items_ticket_area_id_order_id ON order_items(ticket_area_id, order_id);

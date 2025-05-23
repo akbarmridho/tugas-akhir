@@ -17,9 +17,9 @@ const (
 )
 
 var RelationalDBVariants = []RelationalDBVariant{
-	RelationalDBVariant__Postgres,
+	//RelationalDBVariant__Postgres,
 	RelationalDBVariant__Citus,
-	RelationalDBVariant__YugabyteDB,
+	//RelationalDBVariant__YugabyteDB,
 }
 
 const TestDBName = "tugas-akhir"

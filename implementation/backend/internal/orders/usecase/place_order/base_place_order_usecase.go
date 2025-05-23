@@ -7,7 +7,6 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	errors2 "github.com/pkg/errors"
 	"net/http"
-	"strconv"
 	"time"
 	"tugas-akhir/backend/infrastructure/postgres"
 	entity2 "tugas-akhir/backend/internal/bookings/entity"
@@ -319,7 +318,7 @@ func (u *BasePlaceOrderUsecase) placeOrder(ctx context.Context, payload entity.P
 	generatedInvoice, err := u.paymentGateway.GenerateInvoice(ctx, mock_payment.CreateInvoiceRequest{
 		Amount:      float32(total),
 		Description: &description,
-		ExternalId:  strconv.FormatInt(orderEntity.ID, 10),
+		ExternalId:  fmt.Sprintf("%d-%d", orderEntity.ID, orderEntity.TicketAreaID),
 	})
 
 	if err != nil {

@@ -6,7 +6,6 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/pkg/errors"
 	"net/http"
-	"strconv"
 	"tugas-akhir/backend/infrastructure/postgres"
 	entity3 "tugas-akhir/backend/internal/bookings/entity"
 	"tugas-akhir/backend/internal/bookings/repository/booked_seats"
@@ -22,6 +21,7 @@ import (
 	myerror "tugas-akhir/backend/pkg/error"
 	"tugas-akhir/backend/pkg/logger"
 	"tugas-akhir/backend/pkg/mock_payment"
+	"tugas-akhir/backend/pkg/utility"
 )
 
 type PGWebhookUsecase struct {
@@ -111,7 +111,7 @@ func (u *PGWebhookUsecase) HandleWebhook(ctx context.Context, payload mock_payme
 }
 
 func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payment.Invoice) *myerror.HttpError {
-	orderID, err := strconv.ParseInt(payload.ExternalId, 10, 64)
+	orderID, ticketAreaID, err := utility.ParseNumberString(payload.ExternalId)
 
 	if err != nil {
 		err := errors.WithStack(errors.WithMessage(entity2.WebhookInternalError, fmt.Sprintf("cannot parse order id %s", payload.ExternalId)))
@@ -124,6 +124,7 @@ func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payme
 
 	orderEntity, err := u.orderRepository.GetOrder(ctx, entity2.GetOrderDto{
 		OrderID:      orderID,
+		TicketAreID:  ticketAreaID,
 		BypassUserID: true,
 	})
 
@@ -162,7 +163,8 @@ func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payme
 	}
 
 	updateOrder := entity2.UpdateOrderStatusDto{
-		OrderID: orderID,
+		OrderID:      orderID,
+		TicketAreaID: orderEntity.TicketAreaID,
 	}
 
 	shouldPublish := false
@@ -230,8 +232,9 @@ func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payme
 		}
 
 		err = u.bookingRepository.UpdateSeatStatus(ctx, entity3.UpdateSeatStatusDto{
-			SeatIDs: seatIDs,
-			Status:  entity4.SeatStatus__Sold,
+			SeatIDs:      seatIDs,
+			TicketAreaID: orderEntity.TicketAreaID,
+			Status:       entity4.SeatStatus__Sold,
 		})
 
 		if err != nil {
@@ -269,8 +272,9 @@ func (u *PGWebhookUsecase) handleWebhook(ctx context.Context, payload mock_payme
 		}
 	} else {
 		err = u.bookingRepository.UpdateSeatStatus(ctx, entity3.UpdateSeatStatusDto{
-			SeatIDs: seatIDs,
-			Status:  entity4.SeatStatus__Available,
+			SeatIDs:      seatIDs,
+			TicketAreaID: orderEntity.TicketAreaID,
+			Status:       entity4.SeatStatus__Available,
 		})
 
 		if err != nil {

@@ -131,10 +131,10 @@ func (r *PGBookingRepository) UpdateSeatStatus(ctx context.Context, payload enti
 	query := `
 	UPDATE ticket_seats
 	SET status = $1, updated_at = now()
-	WHERE id = ANY($2)
+	WHERE id = ANY($2) and ticket_area_id = $3
     `
 
-	_, err := r.db.GetExecutor(ctx).Exec(ctx, query, payload.Status, payload.SeatIDs)
+	_, err := r.db.GetExecutor(ctx).Exec(ctx, query, payload.Status, payload.SeatIDs, payload.TicketAreaID)
 
 	return err
 }

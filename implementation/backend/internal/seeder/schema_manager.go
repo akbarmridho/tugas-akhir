@@ -19,6 +19,9 @@ var CitusSetup string
 //go:embed schemas/pg_prewarm.sql
 var Prewarm string
 
+//go:embed schemas/extension_setup.sql
+var ExtensionSetup string
+
 type SchemaManager struct {
 	db *postgres.Postgres
 }
@@ -31,6 +34,11 @@ func NewSchemaManager(db *postgres.Postgres) *SchemaManager {
 
 func (m *SchemaManager) SchemaUp(ctx context.Context) error {
 	_, err := m.db.Pool.Exec(ctx, SchemaUp)
+	return err
+}
+
+func (m *SchemaManager) ExtensionSetup(ctx context.Context) error {
+	_, err := m.db.Pool.Exec(ctx, ExtensionSetup)
 	return err
 }
 

@@ -53,7 +53,7 @@ spec:
         - name: ENABLE_DB_TRACING
           value: 'false'
         - name: LOG_POOL_STAT
-          value: 'true'
+          value: 'false'
         - name: TLS_KEY_PATH
           value: /etc/tls/tls.key
         - name: TLS_CERT_PATH

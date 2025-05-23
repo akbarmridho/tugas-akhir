@@ -8,7 +8,7 @@ import { logger } from "../utils/logger";
 
 export const getOrder = (
 	ticketService: TicketBackendServiceClient,
-	id: number,
+	id: string,
 ): Order | null => {
 	return group("get order", () => {
 		const orderResponse = ticketService.orderRoutesGetOrder(id, {
@@ -34,7 +34,7 @@ export const getOrder = (
 
 export const getIssuedTickets = (
 	ticketService: TicketBackendServiceClient,
-	id: number,
+	id: string,
 ): IssuedTicket[] | null => {
 	return group("get issued tickets", () => {
 		const orderResponse = ticketService.orderRoutesGetIssuedTickets(id, {

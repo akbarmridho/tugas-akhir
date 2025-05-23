@@ -59,13 +59,16 @@ type PlaceOrderDto struct {
 }
 
 type GetOrderDto struct {
-	OrderID      int64 `param:"id" validate:"required"`
+	CompositePK  string `param:"id" validate:"required"`
+	OrderID      int64
+	TicketAreID  int64
 	UserID       *string
 	BypassUserID bool
 }
 
 type UpdateOrderStatusDto struct {
-	OrderID    int64
-	Status     OrderStatus
-	FailReason *string
+	OrderID      int64
+	TicketAreaID int64
+	Status       OrderStatus
+	FailReason   *string
 }

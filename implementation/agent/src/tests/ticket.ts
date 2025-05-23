@@ -331,7 +331,7 @@ export default function test() {
 		let orderConfirmend = false;
 
 		while (tries < 3) {
-			const newOrder = getOrder(ticketService, (order as Order).id);
+			const newOrder = getOrder(ticketService, `${(order as Order).id}-${(order as Order).ticketAreaId}`);
 
 			if (newOrder === null) {
 				// retry
@@ -394,7 +394,7 @@ export default function test() {
 		let ticketIssued = false;
 
 		while (tries < 3) {
-			const issuedTicketResponse = getIssuedTickets(ticketService, order!.id);
+			const issuedTicketResponse = getIssuedTickets(ticketService, `${order!.id}-${order!.ticketAreaId}`);
 
 			if (issuedTicketResponse === null) {
 				sleep(randomIntBetween(5, 15));

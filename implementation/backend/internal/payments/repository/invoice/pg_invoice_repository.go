@@ -47,7 +47,7 @@ func (r *PGInvoiceRepository) UpdateInvoiceStatus(ctx context.Context, payload e
 	WHERE id = $2 AND ticket_area_id = $3
     `
 
-	_, err := r.db.GetExecutor(ctx).Exec(ctx, query, payload.Status, payload.ID)
+	_, err := r.db.GetExecutor(ctx).Exec(ctx, query, payload.Status, payload.ID, payload.TicketAreaID)
 
 	return err
 }

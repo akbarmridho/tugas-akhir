@@ -133,6 +133,17 @@ func (h *BaseOrderHandler) GetOrder(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, myerror.NewFromFieldError(validationError))
 	}
 
+	OrderID, TicketAreaID, err := utility.ParseNumberString(payload.CompositePK)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, myerror.HttpError{
+			Message: err.Error(),
+		})
+	}
+
+	payload.OrderID = OrderID
+	payload.TicketAreID = TicketAreaID
+
 	userToken := c.Get(entity.JwtContextKey).(*jwt.Token)
 	tokenClaim := userToken.Claims.(*entity.TokenClaim)
 
@@ -171,6 +182,17 @@ func (h *BaseOrderHandler) GetIssuedTickets(c echo.Context) error {
 	if len(validationError) != 0 {
 		return c.JSON(http.StatusBadRequest, myerror.NewFromFieldError(validationError))
 	}
+
+	OrderID, TicketAreaID, err := utility.ParseNumberString(payload.CompositePK)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, myerror.HttpError{
+			Message: err.Error(),
+		})
+	}
+
+	payload.OrderID = OrderID
+	payload.TicketAreaID = TicketAreaID
 
 	userToken := c.Get(entity.JwtContextKey).(*jwt.Token)
 	tokenClaim := userToken.Claims.(*entity.TokenClaim)

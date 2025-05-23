@@ -41,7 +41,7 @@ export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cl
 
 # pooled connection
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local:5432/citus?pool_max_conns=2500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local:5432/citus?pool_max_conns=300&pool_min_conns=1"
 ```
 
 - For YugabyteDB cluster.

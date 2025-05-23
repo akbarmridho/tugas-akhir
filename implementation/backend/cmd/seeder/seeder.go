@@ -160,6 +160,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	err = schemaManager.ExtensionSetup(ctx)
+	if err != nil {
+		l.Error("failed running extension setup", zap.Error(err))
+		os.Exit(1)
+	}
+
 	err = schemaManager.SchemaUp(ctx)
 	if err != nil {
 		l.Error("failed running schema up", zap.Error(err))

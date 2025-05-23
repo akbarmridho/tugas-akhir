@@ -437,7 +437,7 @@ export class TicketBackendServiceClient {
 	}
 
 	orderRoutesGetOrder(
-		id: number,
+		id: string,
 		requestParameters?: Params,
 	): {
 		response: Response;
@@ -468,7 +468,7 @@ export class TicketBackendServiceClient {
 	}
 
 	orderRoutesGetIssuedTickets(
-		id: number,
+		id: string,
 		requestParameters?: Params,
 	): {
 		response: Response;

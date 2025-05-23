@@ -256,12 +256,12 @@ model IssuedTicket {
 
 model GetOrderDto {
     @path
-    id: int64;
+    id: string;
 }
 
 model GetIssuedTicketDto {
     @path
-    id: int64;
+    id: string;
 }
 
 /**

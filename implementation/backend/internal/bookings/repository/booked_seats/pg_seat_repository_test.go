@@ -51,8 +51,9 @@ func TestPGBookedSeatRepository_Integration(t *testing.T) {
 			t.Run("GetIssuedTickets", func(t *testing.T) {
 				// Use the orderID from our seed data
 				getTicketPayload := entity.GetIssuedTicketDto{
-					ID:     seedData.orderID,
-					UserID: &seedData.externalUserID,
+					OrderID:      seedData.orderID,
+					TicketAreaID: seedData.ticketAreaID,
+					UserID:       &seedData.externalUserID,
 				}
 
 				tickets, err := repo.GetIssuedTickets(ctx, getTicketPayload)
@@ -72,8 +73,9 @@ func TestPGBookedSeatRepository_Integration(t *testing.T) {
 				invalidUser := "invalid-user-id"
 
 				getTicketPayload := entity.GetIssuedTicketDto{
-					ID:     seedData.orderID,
-					UserID: &invalidUser,
+					OrderID:      seedData.orderID,
+					TicketAreaID: seedData.ticketAreaID,
+					UserID:       &invalidUser,
 				}
 
 				_, err := repo.GetIssuedTickets(ctx, getTicketPayload)
