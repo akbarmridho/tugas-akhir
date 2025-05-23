@@ -34,6 +34,7 @@ helmfile apply -f helmfile-postgres.yaml
 ```bash
 kubectl delete -f postgres.yaml
 helmfile delete -f helmfile-postgres.yaml
+kubectl delete svc pgcluster-config
 ```
 
 ### Temporary Access

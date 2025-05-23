@@ -75,8 +75,8 @@ releases:
           adminUser: admin
           adminPassword: tugas-akhir
           databases:
-            citus:
-              host: yb-tserver-0.yb-tservers.default.svc.cluster.local,yb-tserver-1.yb-tservers.default.svc.cluster.loca
+            yugabyte:
+              host: yb-tserver-0.yb-tservers.default.svc.cluster.local,yb-tserver-1.yb-tservers.default.svc.cluster.local
               port: 5433 
               dbname: yugabyte 
               user: yugabyte 
@@ -94,5 +94,7 @@ releases:
             log_pooler_errors: 1
             log_stats: 0
             ignore_startup_parameters: search_path,extra_float_digits
+            client_tls_sslmode: disable
+            server_tls_sslmode: disable
       - pgbouncerExporter:
           enabled: true

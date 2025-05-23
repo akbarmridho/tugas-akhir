@@ -174,11 +174,11 @@ export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster
 ```bash
 # direct connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte&pool_max_conns=40&pool_min_conns=1"
+export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?pool_max_conns=40&pool_min_conns=1"
 
 # pooled connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte:yugabyte@pgbouncer.default.svc.cluster.local:5433/yugabyte&pool_max_conns=2500&pool_min_conns=1"
+export DATABASE_URL="postgresql://yugabyte:yugabyte@pgbouncer.default.svc.cluster.local:5432/yugabyte?pool_max_conns=2500&pool_min_conns=1&sslmode=disable"
 ```
 
 ### Seed the Data
