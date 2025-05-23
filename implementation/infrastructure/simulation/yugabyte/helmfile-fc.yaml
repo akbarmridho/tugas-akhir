@@ -66,3 +66,33 @@ releases:
                     values:
                     - "yb-tserver"
                 topologyKey: kubernetes.io/hostname
+  - name: pgbouncer
+    namespace: default
+    chart: oci://ghcr.io/icoretech/charts/pgbouncer
+    version: 2.7.0
+    values:
+      - config:
+          adminUser: admin
+          adminPassword: tugas-akhir
+          databases:
+            citus:
+              host: yb-tserver-0.yb-tservers.default.svc.cluster.local,yb-tserver-1.yb-tservers.default.svc.cluster.loca
+              port: 5433 
+              dbname: yugabyte 
+              user: yugabyte 
+          userlist:
+            yugabyte: yugabyte
+          pgbouncer:
+            auth_type: md5
+            pool_mode: transaction
+            max_client_conn: 10000
+            default_pool_size: 180
+            reserve_pool_size: 20
+            reserve_pool_timeout: 2
+            log_connections: 0
+            log_disconnections: 0
+            log_pooler_errors: 1
+            log_stats: 0
+            ignore_startup_parameters: search_path,extra_float_digits
+      - pgbouncerExporter:
+          enabled: true

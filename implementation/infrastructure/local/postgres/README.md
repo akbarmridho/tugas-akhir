@@ -12,16 +12,28 @@ docker tag tugas-akhir/postgres:latest registry.localhost:5001/tugas-akhir/postg
 docker push registry.localhost:5001/tugas-akhir/postgres:latest
 ```
 
+### Client Secret
+
+```bash
+kubectl create secret generic pgbouncer-backend-ca-secret --from-file=pg-ca.pem=certs/ca.pem
+kubectl create secret generic pgbouncer-backend-client-cert-secret --from-file=pg-client-cert.crt=certs/client.crt
+kubectl create secret generic pgbouncer-backend-client-key-secret --from-file=pg-client-key.key=certs/client.key
+kubectl create secret generic pgbouncer-backend-server-cert-secret --from-file=pg-server-cert.crt=certs/server.crt
+kubectl create secret generic pgbouncer-backend-server-key-secret --from-file=pg-server-key.key=certs/server.key
+```
+
 ### Apply Postgres Kubernetes
 
 ```bash
 kubectl apply -f postgres.yaml
+helmfile apply -f helmfile-postgres.yaml
 ```
 
 ### Delete Postgres Kubernetes
 
 ```bash
 kubectl delete -f postgres.yaml
+helmfile delete -f helmfile-postgres.yaml
 ```
 
 ### Temporary Access
@@ -59,12 +71,14 @@ docker push registry.localhost:5001/tugas-akhir/citus:latest
 
 ```bash
 kubectl apply -f citus.yaml
+helmfile apply -f helmfile-citus.yaml
 ```
 
 ### Delete Citus Kubernetes
 
 ```bash
 kubectl delete -f citus.yaml
+helmfile delete -f helmfile-citus.yaml
 ```
 
 ### Check
