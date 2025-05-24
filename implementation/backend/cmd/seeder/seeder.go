@@ -166,10 +166,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = schemaManager.SchemaUp(ctx)
-	if err != nil {
-		l.Error("failed running schema up", zap.Error(err))
-		os.Exit(1)
+	if c.DBVariant == config.DBVariant__YugabyteDB {
+		err = schemaManager.YugabyteSchemaUp(ctx)
+		if err != nil {
+			l.Error("failed running schema up", zap.Error(err))
+			os.Exit(1)
+		}
+	} else {
+		err = schemaManager.SchemaUp(ctx)
+		if err != nil {
+			l.Error("failed running schema up", zap.Error(err))
+			os.Exit(1)
+		}
 	}
 
 	if c.DBVariant == config.DBVariant__Citusdata {
@@ -216,6 +224,13 @@ func main() {
 	if c.DBVariant != config.DBVariant__YugabyteDB {
 		l.Info("Prewarm is run")
 		err = schemaManager.Prewarm(ctx)
+		if err != nil {
+			l.Error("failed running prewarm", zap.Error(err))
+			os.Exit(1)
+		}
+	} else {
+		l.Info("Prewarm is run")
+		err = schemaManager.YugabytePrewarm(ctx)
 		if err != nil {
 			l.Error("failed running prewarm", zap.Error(err))
 			os.Exit(1)

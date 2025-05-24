@@ -39,7 +39,11 @@ func GetConnAndSchema(t *testing.T, variant test_containers.RelationalDBVariant)
 
 	schemaManager := NewSchemaManager(conn)
 
-	require.NoError(t, schemaManager.SchemaUp(ctx))
+	if variant == test_containers.RelationalDBVariant__YugabyteDB {
+		require.NoError(t, schemaManager.SchemaUp(ctx))
+	} else {
+		require.NoError(t, schemaManager.YugabyteSchemaUp(ctx))
+	}
 
 	if variant == test_containers.RelationalDBVariant__Citus {
 		require.NoError(t, schemaManager.CitusSetup(ctx))

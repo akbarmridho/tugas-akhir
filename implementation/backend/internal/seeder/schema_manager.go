@@ -22,6 +22,12 @@ var Prewarm string
 //go:embed schemas/extension_setup.sql
 var ExtensionSetup string
 
+//go:embed schemas/yugabyte_prewarm.sql
+var YugabytePrewarm string
+
+//go:embed schemas/yugabyte_up.sql
+var YugabyteSchemaUp string
+
 type SchemaManager struct {
 	db *postgres.Postgres
 }
@@ -34,6 +40,11 @@ func NewSchemaManager(db *postgres.Postgres) *SchemaManager {
 
 func (m *SchemaManager) SchemaUp(ctx context.Context) error {
 	_, err := m.db.Pool.Exec(ctx, SchemaUp)
+	return err
+}
+
+func (m *SchemaManager) YugabyteSchemaUp(ctx context.Context) error {
+	_, err := m.db.Pool.Exec(ctx, YugabyteSchemaUp)
 	return err
 }
 
@@ -61,5 +72,10 @@ func (m *SchemaManager) CitusSetup(ctx context.Context) error {
 
 func (m *SchemaManager) Prewarm(ctx context.Context) error {
 	_, err := m.db.Pool.Exec(ctx, Prewarm)
+	return err
+}
+
+func (m *SchemaManager) YugabytePrewarm(ctx context.Context) error {
+	_, err := m.db.Pool.Exec(ctx, YugabytePrewarm)
 	return err
 }
