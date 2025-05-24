@@ -13,7 +13,7 @@ releases:
       - persistence:
           type: pvc
           enabled: true
-          size: 10Gi
+          size: 20Gi
       - adminPassword: tugas-akhir
       - dashboardProviders:
           dashboardproviders.yaml:
