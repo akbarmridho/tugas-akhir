@@ -271,11 +271,11 @@ releases:
           scrape_interval: 15s
         resources:
           limits:
-            cpu: 2
-            memory: 4Gi
-          requests:
             cpu: 2.5
             memory: 4.5Gi
+          requests:
+            cpu: 2
+            memory: 4Gi
         extraArgs: 
           web.enable-admin-api: null
     - alertmanager:
