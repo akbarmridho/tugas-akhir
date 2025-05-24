@@ -31,12 +31,12 @@ Inside the `infrastructure/simulation/payment` folder context, run `helmfile app
 
 ```bash
 kubectl create secret tls service-tls \
-  --cert=../../cert/cert.pem \
-  --key=../../cert/key.pem
+  --cert=../../../cert/cert.pem \
+  --key=../../../cert/key.pem
 
 kubectl create namespace payment
 
 kubectl create secret tls -n payment service-tls \
-  --cert=../../cert/cert.pem \
-  --key=../../cert/key.pem
+  --cert=../../../cert/cert.pem \
+  --key=../../../cert/key.pem
 ```

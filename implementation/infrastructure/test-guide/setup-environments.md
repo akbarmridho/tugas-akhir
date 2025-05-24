@@ -20,11 +20,11 @@ Create two cluster with the following configuration (if possible):
 
 Build and push the following images:
 
-- [ ] Custom K6 Build (`implementation/agent`) under `haiakbar/ta-agent`.
-- [ ] Payment Backend (`implementation/payment`) under `haiakbar/ta-payment`.
-- [ ] Ticket Backend (`implementation/backend`) under `haiakbar/ta-ticket`.
-- [ ] Citus Database (`implementation/infrastructure/local/citus.Dockerfile`) under `haiakbar/ta-citus`.
-- [ ] Postgres Database (`implementation/infrastructure/local/postgres.Dockerfile`) under `haiakbar/ta-postgres`.
+- [x] Custom K6 Build (`implementation/agent`) under `haiakbar/ta-agent`.
+- [x] Payment Backend (`implementation/payment`) under `haiakbar/ta-payment`.
+- [x] Ticket Backend (`implementation/backend`) under `haiakbar/ta-ticket`.
+- [x] Citus Database (`implementation/infrastructure/local/citus.Dockerfile`) under `haiakbar/ta-citus`.
+- [x] Postgres Database (`implementation/infrastructure/local/postgres.Dockerfile`) under `haiakbar/ta-postgres`.
 
 When building the image, follow these steps:
 

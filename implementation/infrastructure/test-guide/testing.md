@@ -13,6 +13,8 @@ For **Flow Control** case, setup the following: `Payment Service`, `RabbitMQ`, a
 Inside the `infrastructure/simulation/payment` folder context, run the following commands:
 
 ```bash
+helmfile apply
+
 # run the reset
 kubectl apply -f payment-reset.yaml -n payment
 
@@ -154,7 +156,7 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster
 
 # pooled connection
 export DB_VARIANT=postgres
-export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local,pgpool-pgbouncer.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&pool_max_conns=2500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local,pgpool-pgbouncer.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&pool_max_conns=1000&pool_min_conns=1"
 ```
 
 - For Citusdata cluster.
@@ -229,6 +231,14 @@ Inside the `infrastructure/simulation/ticket` folder context:
 envsubst < ticket-nofc.yaml | kubectl apply -f -
 # or for async case
 envsubst < ticket-fc.yaml | kubectl apply -f -
+```
+
+For teardown
+
+```bash
+envsubst < ticket-nofc.yaml | kubectl delete -f -
+# or for async case
+envsubst < ticket-fc.yaml | kubectl delete -f -
 ```
 
 ### Setup K6 Test
