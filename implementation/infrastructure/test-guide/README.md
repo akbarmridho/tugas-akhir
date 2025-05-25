@@ -18,9 +18,21 @@ ssh root@138.199.153.132 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no
 
 ### Setup Nodes
 
-- Download binary for helm, helmfile.
-- `kubectl config view --raw > ~/.kube/config`.
-- Helm plugin diff `helm plugin install https://github.com/databus23/helm-diff`.
+**Helm:**
+
+```bash
+wget https://get.helm.sh/helm-v3.18.0-linux-amd64.tar.gz
+tar -zxvf helm-v3.18.0-linux-amd64.tar.gz
+mv linux-amd64/helm /usr/local/bin/helm
+
+helm plugin install https://github.com/databus23/helm-diff
+
+wget https://github.com/helmfile/helmfile/releases/download/v1.1.0/helmfile_1.1.0_linux_amd64.tar.gz
+tar -zxvf helmfile_1.1.0_linux_amd64.tar.gz
+mv helmfile /usr/local/bin/helmfile
+
+kubectl config view --raw > ~/.kube/config
+```
 
 ### Storageclass
 
