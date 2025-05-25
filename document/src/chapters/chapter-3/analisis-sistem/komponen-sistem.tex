@@ -4,9 +4,7 @@ Berdasarkan studi yang sudah dibahas sebelumnya dan berdasarkan fokus yang ingin
 
 \begin{enumerate}
     \item Layanan \textit{backend} utama yang memproses setiap permintaan yang berkaitan dengan pemesanan tiket. Layanan ini dapat dipecah menjadi beberapa layanan bergantung pada desain setiap arsitektur solusi.
-    \item Layanan otentikasi. Layanan ini menggunakan solusi otentikasi yang sudah \textit{established}, seperti Ory Kratos. Otentikasi akan menggunakan JWT token sehingga validasi pengguna tidak harus bergantung pada layanan ini.
+    \item Layanan otentikasi. Otentikasi akan menggunakan JWT token sehingga validasi pengguna tidak harus bergantung pada layanan ini. Layanan pengguna merupakan layanan yang tidak diimplementasikan pada penelitian ini karena bukan merupakan fokus pengoptimalan. Meskipun begitu, pemeriksaaan otentikasi pengguna tetap dilakukan dengan mekanisme JWT. Hanya saja, \textit{payload} JWT selama pengujian didefinisikan sendiri oleh \textit{virtual user}.
     \item Layanan gerbang pembayaran. Implementasi dari layanan ini akan berupa \textit{mock service}. Layanan ini akan disimulasikan sebagai gerbang pembayaran eksternal.
-    \item Terdapat satu basis data utama sebagai sumber kebenaran utama. Basis data relasional yang akan digunakan adalah PostgreSQL.
+    \item Terdapat satu basis data relasional sebagai sumber kebenaran utama.
 \end{enumerate}
-
-Komponen sistem yang lebih spesifik akan bergantung pada desain setiap arsitektur solusi.
