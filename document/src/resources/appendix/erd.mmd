@@ -1,67 +1,121 @@
+---
+config:
+  layout: elk
+  theme: default
+---
 erDiagram
-    Events ||--o{ TicketCategory : "hasMany"
-    Events ||--o{ TicketSale : "hasMany"
     Events {
-        string name
-        string location
-        string description
+        bigint id PK
+        text name
+        text location
+        text description
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    TicketCategory ||--o{ Areas : "hasMany"
-    TicketCategory {
-        string name
+    TicketCategories {
+        bigint id PK
+        text name
+        bigint event_id FK
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    Areas ||--o{ Seats : "hasMany"
-    Areas {
-        string name
-        string type "numbered_seating | free_standing"
+    TicketSales {
+        bigint id PK
+        text name
+        timestamptz sale_begin_at
+        timestamptz sale_end_at
+        bigint event_id FK
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    Seats {
-        string seatNumber
-        string status "available | on_hold | sold"
+    TicketPackages {
+        bigint id PK
+        int price
+        bigint ticket_category_id FK
+        bigint ticket_sale_id FK
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    TicketSale ||--o{ TicketPackage : "hasMany"
-    TicketSale {
-        datetime saleBeginAt
-        datetime saleEndAt
+    TicketAreas {
+        bigint id PK
+        area_type type "('numbered-seating', 'free-standing')"
+        bigint ticket_package_id FK
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    TicketPackage ||--|| TicketCategory : "hasOne"
-    TicketPackage {
-        int ticketStock
-        decimal price
+    TicketSeats {
+        bigint id "PK (part of composite PK: ticket_area_id, id)"
+        text seat_number
+        seat_status status "('available', 'on-hold', 'sold')"
+        bigint ticket_area_id FK "PK (part of composite PK: ticket_area_id, id)"
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    Users ||--o{ Orders : "hasMany"
     Users {
+        text external_user_id PK "Corresponds to Orders.external_user_id"
     }
-
-    Orders ||--|| Invoice : "hasOne"
-    Orders ||--o{ OrderItem : "hasMany"
     Orders {
-        string status "waitingForPayment | failed | success"
+        bigint id "PK (part of composite PK: ticket_area_id, id)"
+        order_status status "('waiting-for-payment', 'failed', 'success')"
+        text fail_reason
+        bigint event_id FK
+        bigint ticket_sale_id FK
+        bigint ticket_area_id FK "PK (part of composite PK: ticket_area_id, id)"
+        text external_user_id FK
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    Invoice {
-        string status "pending | expired | paid"
-        datetime expiredAt
-        decimal amount
+    OrderItems {
+        bigint id "PK (part of composite PK: ticket_area_id, id)"
+        text customer_name
+        text customer_email
+        int price
+        bigint order_id FK
+        bigint ticket_category_id FK
+        bigint ticket_seat_id FK
+        bigint ticket_area_id FK "PK (part of composite PK: ticket_area_id, id)"
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    OrderItem ||--|| TicketPackage : "hasOne"
-    OrderItem ||--|| Seats : "hasOne"
-    OrderItem ||--|| IssuedTicket : "hasOne"
-    OrderItem {
-        string customerName
-        string customerEmail
-        decimal price
+    Invoices {
+        bigint id "PK (part of composite PK: ticket_area_id, id)"
+        invoice_status status "('pending', 'expired', 'failed', 'paid')"
+        int amount
+        text external_id
+        bigint order_id FK
+        bigint ticket_area_id FK "PK (part of composite PK: ticket_area_id, id)"
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    IssuedTicket ||--|| Seats : "hasOne"
-    IssuedTicket {
-        string serialNumber
-        string holderName
+    IssuedTickets {
+        bigint id "PK (part of composite PK: ticket_area_id, id)"
+        text serial_number
+        text holder_name
+        text name
+        text description
+        bigint ticket_seat_id FK
+        bigint order_id FK
+        bigint order_item_id FK
+        bigint ticket_area_id FK "PK (part of composite PK: ticket_area_id, id)"
+        timestamptz created_at
+        timestamptz updated_at
     }
+    Events ||--o{ TicketCategories : "has"
+    Events ||--o{ TicketSales : "has"
+    Events ||--o{ Orders : "associated with"
+    TicketCategories ||--o{ TicketPackages : "defines price for"
+    TicketSales ||--o{ TicketPackages : "makes available in"
+    TicketPackages ||--o{ TicketAreas : "contains"
+    TicketAreas ||--o{ TicketSeats : "has specific"
+    TicketAreas ||--o{ Orders : "are placed for"
+    TicketAreas ||--o{ OrderItems : "contain items for"
+    TicketAreas ||--o{ Invoices : "generate invoices for"
+    TicketAreas ||--o{ IssuedTickets : "are issued for"
+    Users ||--o{ Orders : "places"
+    Orders ||--o{ OrderItems : "consists of"
+    Orders ||--o{ Invoices : "generates"
+    Orders ||--o{ IssuedTickets : "results in"
+    OrderItems }o--|| TicketCategories : "belongs to"
+    OrderItems }o--|| TicketSeats : "is for"
+    IssuedTickets }o--|| OrderItems : "relates to"
+    IssuedTickets }o--|| TicketSeats : "assigned to"
