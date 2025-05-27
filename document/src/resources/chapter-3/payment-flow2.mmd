@@ -1,0 +1,26 @@
+sequenceDiagram
+    actor TicketSystem
+    participant Notifier
+    participant RedisCluster as Redis Cluster (BullMQ)
+
+    Note over RedisCluster: Message for invoice update in BullMQ
+    RedisCluster->>Notifier: Consumes message from queue
+    Notifier->>TicketSystem: Notify invoice update
+    alt Notification Successful
+        TicketSystem-->>Notifier: Success
+        Note over Notifier: Process complete
+    else Notification Failed
+        TicketSystem-->>Notifier: Failure
+        Notifier->>Notifier: Initiate backoff retry strategy
+        loop Retry Loop
+            Note over Notifier: Wait for backoff period
+            Notifier->>TicketSystem: Retry notify invoice update
+            alt Retry Successful
+                TicketSystem-->>Notifier: Success
+                Note over Notifier: Process complete
+            else Retry Failed
+                TicketSystem-->>Notifier: Failure
+                Note over Notifier: Log failure / Max retries reached?
+            end
+        end
+    end

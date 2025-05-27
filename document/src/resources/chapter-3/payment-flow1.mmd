@@ -1,0 +1,29 @@
+sequenceDiagram
+    actor User
+    actor TicketSystem
+    participant PaymentSystem
+    participant RedisCluster
+
+    %% Create Invoice Operation
+    opt Create Invoice
+        TicketSystem->>+PaymentSystem: CreateInvoiceRequest
+        PaymentSystem->>+RedisCluster: Store Invoice
+        RedisCluster-->>-PaymentSystem: Invoice Data
+        PaymentSystem-->>-TicketSystem: Created Invoice
+    end
+
+    %% Get Invoice Operation
+    opt Get Invoice
+        User->>+PaymentSystem: GetInvoiceRequest
+        PaymentSystem->>+RedisCluster: Retrieve Invoice
+        RedisCluster-->>-PaymentSystem: Invoice Data
+        PaymentSystem-->>-User: Invoice
+    end
+
+    %% Pay Invoice Operation
+    opt Pay Invoice
+        User->>+PaymentSystem: PayInvoiceRequest
+        PaymentSystem->>+RedisCluster: Update Invoice Status (Paid)
+        RedisCluster-->>-PaymentSystem: Updated Invoice Data
+        PaymentSystem-->>-User: Updated Invoice (Paid)
+    end
