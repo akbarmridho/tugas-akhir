@@ -1,0 +1,49 @@
+sequenceDiagram
+    participant User
+    participant TicketBackend as Ticket Backend
+    participant PaymentBackend as Payment Backend
+    participant Database as Database
+    participant Redis
+    participant RabbitMQ
+    participant TicketWorker as Ticket Worker
+
+    Note over User, TicketWorker: Ticket Booking Flow with Queue Processing
+    
+    User->>TicketBackend: Request Booking
+    
+    TicketBackend->>Redis: Check idempotency
+    
+    alt Request already completed
+        TicketBackend->>User: Return existing booking result
+    else New request
+        TicketBackend->>Redis: Check uncommitted availability data
+        
+        alt Availability data not ok
+            TicketBackend->>User: Return Failed Booking (Rejected)
+        else Availability data ok
+            TicketBackend->>RabbitMQ: Publish booking request to queue
+            TicketBackend->>RabbitMQ: Wait for reply message in reply queue
+            
+            Note over RabbitMQ, TicketWorker: Worker Processing
+            RabbitMQ->>TicketWorker: Consume booking request
+            
+            TicketWorker->>Database: Begin Transaction
+            TicketWorker->>Database: Lock seat rows and check availability
+            
+            alt Seats unavailable or lock fails
+                TicketWorker->>Database: Rollback Transaction
+                TicketWorker->>Redis: Update Early Dropper area availability status
+                TicketWorker->>RabbitMQ: Push failed result to reply queue
+            else Seats available and locked
+                TicketWorker->>PaymentBackend: Create Invoice
+                PaymentBackend-->>TicketWorker: Invoice Created
+                TicketWorker->>Database: Insert Order Information
+                TicketWorker->>Database: Commit Transaction
+                TicketWorker->>Redis: Update Early Dropper area availability status
+                TicketWorker->>RabbitMQ: Push success result to reply queue
+            end
+            
+            RabbitMQ->>TicketBackend: Receive reply from reply queue
+            TicketBackend->>User: Return booking result
+        end
+    end

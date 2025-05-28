@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant User
+    participant TicketBackend as Ticket Backend
+    participant Database as Database
+    
+    opt Get Order Status
+        User->>TicketBackend: Get Order Status
+        TicketBackend->>Database: Fetch Order Details
+        Database-->>TicketBackend: Order Information
+        TicketBackend->>User: Return Updated Order Status
+    end
+    
+    opt Get Issued Tickets
+        User->>TicketBackend: Get Issued Tickets
+        TicketBackend->>Database: Fetch Published Tickets
+        Database-->>TicketBackend: Ticket Information
+        TicketBackend->>User: Return Issued Tickets
+    end

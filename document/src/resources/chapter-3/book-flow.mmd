@@ -1,0 +1,30 @@
+sequenceDiagram
+    participant User
+    participant TicketBackend as Ticket Backend
+    participant PaymentBackend as Payment Backend
+    participant Database as Database
+    participant Redis
+
+    Note over User, Redis: Ticket Booking Flow
+    
+    User->>TicketBackend: Request Booking
+    
+    TicketBackend->>Redis: Check idempotency
+    
+    alt Request already completed
+        TicketBackend->>User: Return existing booking result
+    else New request
+        TicketBackend->>Database: Begin Transaction
+        TicketBackend->>Database: Lock seat rows dan check availability
+        
+        alt Seats unavailable or lock fails
+            TicketBackend->>Database: Rollback Transaction
+            TicketBackend->>User: Return Failed Booking
+        else Seats available and locked
+            TicketBackend->>PaymentBackend: Create Invoice
+            PaymentBackend-->>TicketBackend: Invoice Created
+            TicketBackend->>Database: Insert Order Information
+            TicketBackend->>Database: Commit Transaction
+            TicketBackend->>User: Return Booking Success
+        end
+    end

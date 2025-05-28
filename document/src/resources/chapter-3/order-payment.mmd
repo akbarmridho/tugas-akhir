@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant User
+    participant TicketBackend as Ticket Backend
+    participant PaymentBackend as Payment Backend
+    participant Redis
+    participant Database as Database
+
+    Note over User, Database: Ticket Payment Flow
+    
+    User->>PaymentBackend: Pay Invoice
+    PaymentBackend->>PaymentBackend: Process Payment
+    PaymentBackend->>User: Payment Success
+    
+    par Async Notification
+        PaymentBackend->>TicketBackend: Notify Payment Status Update
+        alt Payment Status is Paid
+            TicketBackend->>Database: Update Order Status
+            TicketBackend->>Database: Insert Published Ticket
+            TicketBackend->>Redis: Update Area Availability Aggregation
+        else Payment Status is Failed
+            TicketBackend->>Database: Update Order Status
+            TicketBackend->>Redis: Update Area Availability Aggregation
+        end
+    end
+    
+    User->>TicketBackend: Get Order Status
+    TicketBackend->>Database: Fetch Order Details
+    Database-->>TicketBackend: Order Information
+    TicketBackend->>User: Return Updated Order Status

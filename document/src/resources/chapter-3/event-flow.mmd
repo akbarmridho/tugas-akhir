@@ -1,0 +1,32 @@
+sequenceDiagram
+    actor User
+    participant TicketBackend as Ticket Backend
+    participant Database
+    participant Redis
+
+    opt Get Event
+        User->>+TicketBackend: Request Event Details (EventID)
+        TicketBackend->>+Database: Query Event (EventID)
+        Database-->>-TicketBackend: Event Details
+        TicketBackend-->>-User: Return Event Details
+    end
+
+    opt Get Area Availability
+        User->>+TicketBackend: Request Area Availability (AreaID)
+        TicketBackend->>+Redis: Retrieve Area Availability (AreaID)
+        Redis-->>-TicketBackend: Area Availability Status
+        TicketBackend-->>-User: Return Area Availability
+    end
+
+    opt Get Seat Availability
+        User->>+TicketBackend: Request Seat Availability (AreaID)
+        TicketBackend->>TicketBackend: Check In-Memory Cache for Seat (AreaID)
+        alt Seat Found in Internal Cache
+            TicketBackend-->>User: Return Seat Availability (from Cache)
+        else Seat Not Found in Internal Cache
+            TicketBackend->>+Database: Query Seat Status (AreaID)
+            Database-->>-TicketBackend: Seat Status (from DB)
+            TicketBackend->>TicketBackend: Store Seat Status in Internal Cache
+            TicketBackend-->>User: Return Seat Availability (from DB)
+        end
+    end
