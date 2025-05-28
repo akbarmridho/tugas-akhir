@@ -22,6 +22,8 @@ Selain itu, berikut adalah variasi konfigurasi RDBMS yang mungkin terjadi.
 
 Pada konfigurasi kluster PostgreSQL, klien terhubung dengan semua \textit{instance}. Pada konfigurasi CitusData, klien hanya terhubung dengan koordinator dan koordinator yang akan meneruskan permintaan kepada \textit{worker}. Pada konfigurasi YugabyteDB, klien terhubung dengan semua Master yang masing-masing terhubung dengan TServer. Klien sebenarnya dapat terhubung dengan salah satu master saja, tetapi konfigurasi seperti ini membuat koneksi klien ke YugabyteDB menjadi lebih \textit{fault tolerant} dan juga dapat mengurangi beban agar tidak terpusat pada satu \textit{instance} saja.
 
+Konfigurasi kluster PostgreSQL memiliki skalabilitas yang terbatas dengan peningkatan penulisan hanya dapat dicapai dengan \textit{vertical scaling}. \textit{Throughput} penulisan CitusData dan YugabyteDB dapat ditingkatkan dengan menambah jumlah \textit{instance}, meski CitusData akan mengalami \textit{bottleneck} dari sisi koordinator.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-3/ticket-fc.png}
