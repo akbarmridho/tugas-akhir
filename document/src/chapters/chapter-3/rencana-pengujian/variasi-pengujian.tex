@@ -1,0 +1,77 @@
+\subsection{Variasi Pengujian}
+
+Ketika pengguna berhasil memesan tiket, terdapat 5\% kemungkinan bahwa pembayaran pengguna gagal. Hal ini dilakukan untuk menyimulasikan pengguna yang batal membeli tiket atau mengalami kegagalan pembayaran.
+
+Sebuah acara memiliki dua tipe kursi, yaitu \textit{numbered seat} dan \textit{free-steating}. Tiket \textit{numbered seat} memiliki kategori Platinum, Gold, Silver, dan Bronze. Tiket \textit{free-seating} memiliki kategori VIP, Zona A, dan Zona B. Setiap pengguna memiliki preferensi kategori kursi yang ingin dibeli, sebagaimana digambarkan pada distribusi berikut.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Tingkatan} & \textbf{Distribusi} & \textbf{Minat Kategori} \\
+        \hline
+        Seated Low         & 27\%                & Bronze \& Silver        \\
+        \hline
+        Seated Mid         & 26\%                & Silver, Gold, \& Bronze \\
+        \hline
+        Seated High        & 19\%                & Platinum \& Gold        \\
+        \hline
+        Area Mid           & 17\%                & Zona A \& Zona B        \\
+        \hline
+        Area High          & 11\%                & VIP \& Zona A           \\
+        \hline
+    \end{tabular}
+    \caption{Distribusi Kursi}
+\end{table}
+
+Selain itu, setiap pengguna memiliki preferensi hari. Pengguna yang memiliki preferensi spesifik akan mengutamakan hari yang sesuai dengan preferensinya (bisa satu atau dua pilihan hari), dibandingkan dengan kesesuaian preferensi kategori. Pengguna yang tidak memiliki preferensi akan mengutamakan kesesuaian preferensi kategori dibandingkan dengan kesesuaian hari.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Hari} & \textbf{Distribusi} \\
+        \hline
+        Specific      & 52\%                \\
+        \hline
+        Any           & 48\%                \\
+        \hline
+    \end{tabular}
+    \caption{Distribusi Hari}
+\end{table}
+
+Variasi berikutnya adalah variasi dari seberapa \textit{persistent} (ingin) pengguna untuk mendapatkan tiket yang diinginkan. Variasi ini ditentukan dengna berapa kali maksimal pencarian dan pemesanan sebelum pengguna tersebut menyerah.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Persistence} & \textbf{Distribusi} & \textbf{Batas}                    \\
+        \hline
+        Low                  & 19\%                & 9x pencarian \& 3x pemesanan      \\
+        \hline
+        Medium               & 51\%                & 18x pencarian \& 6x     pemesanan \\
+        \hline
+        High                 & 30\%                & 27x pencarian \& 9x pemesanan     \\
+        \hline
+    \end{tabular}
+    \caption{Distribusi \textit{Persistence}}
+\end{table}
+
+Variasi terakhir adalah variasi dari berapa banyak tiket yang dipesan oleh suatu pengguna dalam satu kali pemesanan.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Varian} & \textbf{Distribusi} & \textbf{Kuantitas} \\
+        \hline
+        Solo            & 28\%                & 1                  \\
+        \hline
+        Couple          & 48\%                & 2                  \\
+        \hline
+        Group           & 24\%                & 3-5                \\
+        \hline
+    \end{tabular}
+    \caption{Distribusi Kuantitas}
+\end{table}

@@ -1,0 +1,13 @@
+flowchart TD
+    A[Start] --> B[Login]
+    B --> C[Fetch Event]
+    C -- Found --> D[Select Seats]
+    D -- Selected --> E{Place Order}
+    D -- No Seats --> X2[Failed: No Seats]
+    E -- Success --> F[Process Payment]
+    E -- Retry Error --> D
+    F -- Success --> G{Check Status}
+    G -- Complete --> H[Get Tickets]
+    G -- Expected Fail --> X5[Success: Payment Failed]
+    G -- Waiting --> G
+    H -- Success --> I[Success: Tickets Received]
