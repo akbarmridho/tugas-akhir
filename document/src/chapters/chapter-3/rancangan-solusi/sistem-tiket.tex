@@ -1,0 +1,32 @@
+\subsection{Sistem Tiket}
+
+Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu ticket \textit{backend}, basis data relasional, dan kluster Redis. Komponen basis data relasional dapat dibagi menjadi tiga jenis, yaitu kluster PostgreSQL dengan \textit{read replica}, kluster CitusData, dan kluster YugabyteDB. Komponen ini yang akan menjadi \textit{source of truth} dari sistem ini. Selain itu, kluster Redis digunakan untuk menyimpan data agregat ketersediaan berdasarkan area.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-3/ticket-nofc.png}
+    \caption{Diagram Arsitektur Sistem Tiket Tanpa \textit{Flow Control}}
+    \label{fig:ticket-nofc}
+\end{figure}
+
+\pagebreak
+
+Selain itu, berikut adalah variasi konfigurasi RDBMS yang mungkin terjadi.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{resources/chapter-3/rdbms.png}
+    \caption{Variasi RDBMS}
+    \label{fig:rdbms-variation}
+\end{figure}
+
+Pada konfigurasi kluster PostgreSQL, klien terhubung dengan semua \textit{instance}. Pada konfigurasi CitusData, klien hanya terhubung dengan koordinator dan koordinator yang akan meneruskan permintaan kepada \textit{worker}. Pada konfigurasi YugabyteDB, klien terhubung dengan semua Master yang masing-masing terhubung dengan TServer. Klien sebenarnya dapat terhubung dengan salah satu master saja, tetapi konfigurasi seperti ini membuat koneksi klien ke YugabyteDB menjadi lebih \textit{fault tolerant} dan juga dapat mengurangi beban agar tidak terpusat pada satu \textit{instance} saja.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-3/ticket-fc.png}
+    \caption{Diagram Arsitektur Sistem Tiket dengan \textit{Flow Control}}
+    \label{fig:ticket-fc}
+\end{figure}
+
+Pada sistem tiket dengan \textit{flow control}, terdapat dua komponen baru yaitu RabbitMQ dan \textit{booking processor}. RabbitMQ bertugas untuk menyimpan \textit{queue} permintaan pemesanan tiket dan \textit{booking processor} bertugas untuk memproses pemesanan tiket. Selain itu, kluster Redis memiliki tanggung jawab tambahan untuk menyimpan data yang digunakan untuk \textit{early dropping} permintaan pesanan yang masuk.
