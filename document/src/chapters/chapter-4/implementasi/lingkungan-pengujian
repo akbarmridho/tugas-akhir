@@ -1,0 +1,25 @@
+\subsection{Lingkungan Pengembangan dan Pengujian}
+
+\subsubsection{Lingkungan Pengembangan}
+
+Tugas akhir ini dikembangkan pada perangkat laptop Asus TUF A15 FA506IC dengan spesifikasi sebagai berikut:
+
+AMD Ryzen 7 4800H 8 core 16 thread
+24GB RAM DDR4 3200MHz
+Windows 11 dengan WSL2 Ubuntu 22.04
+1TB + 500GB SSD NVME
+
+\subsubsection{Lingkungan Pengujian Lokal}
+
+Sistem backend: 1 node control plane dan 1 node worker kluster K3s dengan abstraksi K3d. Image k3s: k3s:v1.30.12-rc1-k3s1
+Agen penguji: 1 node control plane kluster K3d dengan abstraksi K3d. Image k3s: k3s:v1.30.12-rc1-k3s1
+
+\subsubsection{Lingkungan Pengujian Penuh}
+
+Platform: Hetzner Cloud
+Lokasi: Eropa (Germany/ Finland)
+Sistem Backend: 1 node control plane dan 1 node worker kluster K3s dengan bantuan Kube Terraform Hetzner.
+Agen penguji: 1 node contorl plane dan 2 node worker kluster K3s dengan batnuan Kube Terraform Hetzner.
+
+Setiap node memiliki spesifikasi sebagai berikut:
+AMD EPYC 7002 16vCPU 32GB RAM 360GB SSD NVME.
