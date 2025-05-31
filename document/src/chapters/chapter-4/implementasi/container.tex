@@ -1,0 +1,22 @@
+\subsection{Docker Image Container dan Helm Chart}
+
+Terdapat berbagai Docker image container dan Helm Chart yang digunakan untuk proses implementasi dan \textit{deployment}, seperti:
+
+\begin{enumerate}
+    \item Custom image layanan pembayaran dengan base image node:20.19.1-bookworm-slim. Container ini menyimpan entrypoint untuk payment server dan payment notifier.
+    \item Custom image layanan tiket dengan base image golang:1.24.0-bullseye. Container ini menyimpan berkas hasil kompilasi untuk server dengan varian \textit{flow control} dan tanpa \textit{flow control}, seeder, serta \textit{order worker} dengan \textit{flow control}.
+    \item Custom image k6 dengan base image grafana/k6:1.0.0. Container ini berisi \textit{custom built} berkas eksekusi K6 dengan tambahan ekstensi grafana/xk6-faker.
+    \item Custom image PostgreSQL untuk setup kluster primary-replica dengan base image postgres:16.8. Image ini diadaptasi dari contoh konfigurasi kluster PostgreSQL dengan Patroni.
+    \item Custom image CitusData dengan base image postgres:16.8. Image ini diadaptasi dari contoh konfigurasi kluster CitusData dengan Patroni.
+    \item Helm chart grafana/grafana versi 8.13.1.
+    \item Helm chart prometheus versi 27.11.0.
+    \item Helm chart grafana/loki versi 6.29.0.
+    \item Helm chart grafana/alloy versi 1.0.2.
+    \item Helm chart jetstack/cert-manager versi 1.17.2.
+    \item Helm chart bitnami/nginx-ingress-controller versi 11.6.16.
+    \item Helm chart bitnami/redis-cluster versi 11.5.3.
+    \item Helm chart bitnami/rabbitmq versi 16.0.1.
+    \item Helm chart yugabytedb/yugabyte versi 2024.2.2.
+    \item Helm chart icoretech/pgbouncer versi 2.7.0.
+    \item Operator grafana/k6-operator versi 3.13.0.
+\end{enumerate}
