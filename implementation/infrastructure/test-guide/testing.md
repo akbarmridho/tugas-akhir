@@ -66,7 +66,9 @@ kubectl delete pvc redis-data-redis-redis-cluster-2
 Inside the `infrastructure/simulation/postgres` folder context, run the following commands:
 
 ```bash
-kubectl apply -f postgres.yaml
+kubectl apply -f postgres-nofc.yaml
+# or
+kubectl apply -f postgres-fc.yaml
 ```
 
 #### Teardown
@@ -74,7 +76,9 @@ kubectl apply -f postgres.yaml
 Insire the `infrastructure/simulation/postgres` folder context, run the following command:
 
 ```bash
-kubectl delete -f postgres.yaml
+kubectl delete -f postgres-nofc.yaml
+# or
+kubectl delete -f postgres-fc.yaml
 ```
 
 ### CitusData

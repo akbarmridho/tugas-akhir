@@ -38,10 +38,10 @@ spec:
         image: haiakbar/ta-postgres:latest
         resources:
           requests:
-            cpu: "3.5"
+            cpu: "3.75"
             memory: "8Gi"
           limits:
-            cpu: "3.5"
+            cpu: "3.75"
             memory: "8Gi"
         readinessProbe:
           httpGet:

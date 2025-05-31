@@ -39,33 +39,11 @@ releases:
               cpu: "1"
               memory: "2Gi"
       - replicas:
-          master: 2
-          tserver: 2
+          master: 3
+          tserver: 3
       - partition:
-          master: 2
-          tserver: 2
-      - master:
-          affinity:
-            podAntiAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                    - "yb-master"
-                topologyKey: kubernetes.io/hostname
-      - tserver:
-          affinity:
-            podAntiAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                    - "yb-tserver"
-                topologyKey: kubernetes.io/hostname
+          master: 3
+          tserver: 3
   - name: pgbouncer
     namespace: default
     chart: oci://ghcr.io/icoretech/charts/pgbouncer

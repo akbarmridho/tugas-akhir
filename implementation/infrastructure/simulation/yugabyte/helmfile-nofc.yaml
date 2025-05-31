@@ -33,17 +33,17 @@ releases:
               memory: "1Gi"
           tserver:
             requests:
-              cpu: "3"
-              memory: "7Gi"
+              cpu: "2"
+              memory: "4Gi"
             limits:
-              cpu: "3"
-              memory: "7Gi"
+              cpu: "2"
+              memory: "4Gi"
       - replicas:
-          master: 2
-          tserver: 2
+          master: 3
+          tserver: 3
       - partition:
-          master: 2
-          tserver: 2
+          master: 3
+          tserver: 3
       - master:
           affinity:
             podAntiAffinity:
