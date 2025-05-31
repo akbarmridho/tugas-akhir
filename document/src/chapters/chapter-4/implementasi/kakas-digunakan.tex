@@ -2,35 +2,45 @@
 
 \subsubsection{Layanan Pembayaran}
 
-Node.JS 20
-TypeScript
-Hono sebagai HTTP Framework
-BullMQ sebagai kakas Message Queue di atas Redis
+Berikut adalah bahasa dan kakas yang digunakan untuk layanan pembayaran:
+
+\begin{enumerate}
+    \item NodeJS versi 20.19.1.
+    \item TypeScript versi 5.8.2.
+    \item Hono versi 4.7.4 untuk HTTP framework.
+    \item BullMQ versi 5.41.8 untuk \textit{wrapper} message queue di atas Redis.
+    \item TypeSpec untuk membuat dokumentasi OpenAPI.
+\end{enumerate}
 
 \subsection{Layanan Tiket}
 
-Golang 1.24.0
-Golang Echo sebagai HTTP Framework
-TestContainers untuk integration testing
-Go Concurrency Limits
-PGX Postgres Driver Library
-BigCache untuk in-memory cache
-UberFX untuk dependency injection
+Berikut adalah bahasa dan kakas yang digunakan untuk layanan tiket:
 
-\subsection{Kakas Deployment dan Pengawasan}
+\begin{enumerate}
+    \item Golang 1.24.0.
+    \item Echo versi 4.13.3 sebagai HTTP framework.
+    \item Echo-Prometheus untuk integrasi Echo dengan Prometheus.
+    \item TestContainers untuk \textit{integration testing}.
+    \item PlatinumMonkey Go Concurrency Limits untuk algoritma \textit{adaptive flow control}. Library ini merupakan adaptasi kakas Netflix Concurrency Limits dalam Golang.
+    \item Jackc PGX versi 5.7.2 sebagai kakas driver PostgreSQL.
+    \item BigCache versi 1.2.1 untuk \textit{in-memory cache}.
+    \item UberFX versi 1.23.0 untuk \textit{dependency injection}.
+    \item TypeSpec untuk membuat dokumentasi OpenAPI.
+\end{enumerate}
 
-Dideploy pada kluster Kubernetes.
-Grafana Loki untuk log collection.
-Grafana Alloy untuk log collector.
-Grafana Dashboard untuk visualisasi.
-Prometheus untuk metrics collection.
+\subsection{Kakas Pengawasan}
 
-Exporter spesifik untuk metrics collection, seperti PostgreSQL prometheus exporter.
+Kakas pengawasan ini hanya digunakan pada \textit{deployment} dengan kluster Kubernetes.
 
-\subsection{Lainnya}
+\begin{enumerate}
+    \item Grafana Loki untuk \textit{log aggregation}.
+    \item Grafana Alloy untuk \textit{log collection}.
+    \item Grafana Dashboard untuk \textit{visualization dashboard}.
+    \item Prometheus untuk \textit{metrics collection}.
+    \item Prometheus exporter spesifik seperti PostgreSQL Prometheus exporter, Pgbouncer prometheus exporter, Node Prometheus exporter, Pod Prometheus Exporter, dan lain-lain.
+\end{enumerate}
 
-Grafana K6 untuk library load testing
-Grafana K6 Operator untuk deployment di Kubernetes.
-TypeSpec untuk membuat dokumentasi OpenAPI
-Integrasi Prometheus untuk metrics collection
+\subsection{Agen Penguji}
+
+Proses pengujian dilakukan dengan kakas Grafana K6 untuk \textit{load testing} dan Grafana K6 Operator untuk melakukan pengujian secara terdistribusi di kluster Kubernetes.
 
