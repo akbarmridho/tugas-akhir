@@ -5,12 +5,17 @@ releases:
     namespace: payment
     version: 12.0.7
     values:
-      - usePassword: false
+      - password: password
       - cluster:
           nodes: 3
           replicas: 0
       - metrics:
           enabled: true
+          extraEnvVars:
+            - name: REDIS_ADDR
+              value: redis://localhost:637
+            - name: REDIS_PASSWORD
+              value: password
       - redis:
           resources:
             requests:
