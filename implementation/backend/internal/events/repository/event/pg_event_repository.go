@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/allegro/bigcache"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
@@ -39,21 +38,24 @@ func eventCacheKey(id int64) string {
 func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, error) {
 	result := make([]entity.Event, 0)
 
-	cache, cacheErr := r.cache.Cache.Get(EventsCacheKey)
+	// Attempt to get from go-cache
+	cachedData, found := r.cache.Cache.Get(EventsCacheKey)
 
-	if cacheErr != nil {
-		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
-			logger.FromCtx(ctx).Error("Cannot get events from cache", zap.Error(cacheErr))
-		}
-	} else {
-		marshallErr := json.Unmarshal(cache, &result)
-
-		if marshallErr == nil {
-			return result, nil
+	if found {
+		rawBytes, ok := cachedData.([]byte) // bigcache Get returns []byte, go-cache Get returns interface{}
+		if !ok {
+			logger.FromCtx(ctx).Error("Cached events data is not []byte", zap.String("key", EventsCacheKey))
+			// Proceed to DB fetch if type is wrong
 		} else {
-			logger.FromCtx(ctx).Error("Cannot unmashall cached events")
+			marshallErr := json.Unmarshal(rawBytes, &result)
+			if marshallErr == nil {
+				return result, nil // Cache hit and unmarshal success
+			} else {
+				logger.FromCtx(ctx).Error("Cannot unmarshal cached events", zap.Error(marshallErr), zap.String("key", EventsCacheKey))
+				// Proceed to DB fetch if unmarshal fails
+			}
 		}
-	}
+	} // If not found or any cache issue (type mismatch, unmarshal error), proceed to DB fetch
 
 	query := `SELECT * FROM events`
 
@@ -74,9 +76,7 @@ func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, erro
 		logger.FromCtx(ctx).Error("Cannot marshall events", zap.Error(err))
 	}
 
-	if setCacheErr := r.cache.Cache.Set(EventsCacheKey, raw); setCacheErr != nil {
-		logger.FromCtx(ctx).Error("Cannot set cache events", zap.Error(setCacheErr))
-	}
+	r.cache.Cache.SetDefault(EventsCacheKey, raw)
 
 	return result, nil
 }
@@ -84,21 +84,25 @@ func (r *PGEventRepository) GetEvents(ctx context.Context) ([]entity.Event, erro
 func (r *PGEventRepository) GetEvent(ctx context.Context, payload entity.GetEventDto) (*entity.Event, error) {
 	var event entity.Event
 
-	cache, cacheErr := r.cache.Cache.Get(eventCacheKey(payload.ID))
+	cacheKey := eventCacheKey(payload.ID)
+	// Attempt to get from go-cache
+	cachedData, found := r.cache.Cache.Get(cacheKey)
 
-	if cacheErr != nil {
-		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
-			logger.FromCtx(ctx).Sugar().Error(fmt.Sprintf("Cannot get event %d from cache", payload.ID), zap.Error(cacheErr))
-		}
-	} else {
-		marshallErr := json.Unmarshal(cache, &event)
-
-		if marshallErr == nil {
-			return &event, nil
+	if found {
+		rawBytes, ok := cachedData.([]byte) // bigcache Get returns []byte, go-cache Get returns interface{}
+		if !ok {
+			logger.FromCtx(ctx).Sugar().Error(fmt.Sprintf("Cached event %d data is not []byte", payload.ID), zap.String("key", cacheKey))
+			// Proceed to DB fetch if type is wrong
 		} else {
-			logger.FromCtx(ctx).Sugar().Error(fmt.Sprintf("Cannot unmashall cached event %d", payload.ID), zap.Error(marshallErr))
+			marshallErr := json.Unmarshal(rawBytes, &event)
+			if marshallErr == nil {
+				return &event, nil // Cache hit and unmarshal success
+			} else {
+				logger.FromCtx(ctx).Sugar().Error(fmt.Sprintf("Cannot unmarshal cached event %d", payload.ID), zap.Error(marshallErr), zap.String("key", cacheKey))
+				// Proceed to DB fetch if unmarshal fails
+			}
 		}
-	}
+	} // If not found or any cache issue, proceed to DB fetch
 
 	query := `
 	WITH event_data AS (
@@ -218,8 +222,12 @@ func (r *PGEventRepository) GetEvent(ctx context.Context, payload entity.GetEven
 		return nil, err
 	}
 
-	if setCacheErr := r.cache.Cache.Set(eventCacheKey(payload.ID), eventJSON); setCacheErr != nil {
-		logger.FromCtx(ctx).Error("Cannot set cache events", zap.Error(setCacheErr))
+	rawBytes, merr := eventJSON.MarshalJSON()
+
+	if merr != nil {
+		logger.FromCtx(ctx).Error("cannot marshal event json", zap.Error(merr))
+	} else {
+		r.cache.Cache.SetDefault(eventCacheKey(payload.ID), rawBytes)
 	}
 
 	if err := json.Unmarshal(eventJSON, &event); err != nil {

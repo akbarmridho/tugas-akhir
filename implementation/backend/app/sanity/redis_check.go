@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/allegro/bigcache"
 	baseredis "github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"strconv"
@@ -74,32 +73,31 @@ func (s *RedisCheck) GetAvailability(ctx context.Context) (*AvailabilityCheck, e
 			return err
 		}
 
-		if setCacheErr := s.cache.Cache.Set(availabilityCacheKey, raw); setCacheErr != nil {
-			logger.FromCtx(ctx).Error("Cannot set cache keys", zap.Error(setCacheErr))
-			return setCacheErr
-		}
+		s.cache.Cache.SetDefault(availabilityCacheKey, raw)
 
 		return nil
 	}
 
-	cache, cacheErr := s.cache.Cache.Get(availabilityCacheKey)
+	cachedData, found := s.cache.Cache.Get(availabilityCacheKey)
 
 	var getKeysError error
 
-	if cacheErr != nil {
-		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
-			logger.FromCtx(ctx).Error("Cannot get keys from cache", zap.Error(cacheErr))
-		} else {
+	if found {
+		rawBytes, typeOk := cachedData.([]byte) // bigcache Get returns []byte, go-cache Get returns interface{}
+		if !typeOk {
+			logger.FromCtx(ctx).Error("Cached data for availability keys is not []byte", zap.String("key", availabilityCacheKey))
+			// Treat as cache miss/corruption if type is wrong, and refetch
 			getKeysError = getKeys()
+		} else {
+			marshallErr := json.Unmarshal(rawBytes, &keys)
+			if marshallErr != nil {
+				logger.FromCtx(ctx).Error("Cannot unmarshal cached availability keys", zap.Error(marshallErr))
+				// Preserve original behavior: if unmarshal fails, propagate the error
+				getKeysError = marshallErr
+			}
 		}
-	} else {
-		marshallErr := json.Unmarshal(cache, &keys)
-
-		if marshallErr != nil {
-			logger.FromCtx(ctx).Error("Cannot unmashall cached keys")
-
-			getKeysError = marshallErr
-		}
+	} else { // Not found in cache (equivalent to bigcache.ErrEntryNotFound)
+		getKeysError = getKeys()
 	}
 
 	if getKeysError != nil {
@@ -240,37 +238,45 @@ func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityC
 			return err
 		}
 
-		if setCacheErr := s.cache.Cache.Set(dropperCacheKey, raw); setCacheErr != nil {
-			logger.FromCtx(ctx).Error("Cannot set cache keys", zap.Error(setCacheErr))
-			return setCacheErr
-		}
+		s.cache.Cache.SetDefault(dropperCacheKey, raw)
 
 		return nil
 	}
 
-	cache, cacheErr := s.cache.Cache.Get(dropperCacheKey)
+	cachedData, found := s.cache.Cache.Get(dropperCacheKey)
 
 	var getKeysError error
 
-	if cacheErr != nil {
-		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
-			logger.FromCtx(ctx).Error("Cannot get keys from cache", zap.Error(cacheErr))
+	if found {
+		rawBytes, typeOk := cachedData.([]byte) // bigcache Get returns []byte, go-cache Get returns interface{}
+		if !typeOk {
+			l.Error("Cached data for dropper keys is not []byte", zap.String("key", dropperCacheKey))
+			// Treat as cache miss/corruption if type is wrong, and refetch
+			getKeysError = getKeys()
 		} else {
-			getKeysError = getKeys()
-		}
-	} else {
-		marshallErr := json.Unmarshal(cache, &keys)
+			marshallErr := json.Unmarshal(rawBytes, &keys)
+			if marshallErr != nil {
+				l.Error("Cannot unmarshal cached dropper keys", zap.Error(marshallErr))
+				// Original logic: Do not set getKeysError = marshallErr here directly.
+				// The len(keys) == 0 check below is the primary trigger for getKeys()
+				// if unmarshalling fails and results in empty keys.
+			}
 
-		if marshallErr != nil {
-			l.Error("Cannot unmashall cached keys")
-
-			getKeysError = marshallErr
+			// This check mirrors the original logic: if after attempting to load from cache,
+			// 'keys' is empty, then refetch. This covers:
+			// 1. Successful unmarshal of an empty list from cache.
+			// 2. Failed unmarshal where 'keys' remains (or becomes) empty.
+			if len(keys) == 0 {
+				if marshallErr != nil { // Add context if unmarshal error led to empty keys
+					l.Warn("Unmarshaling cached dropper keys failed and resulted in empty keys, refetching.", zap.Error(marshallErr), zap.String("key", dropperCacheKey))
+				} else {
+					l.Warn("Cached dropper keys are an empty list, refetching.", zap.String("key", dropperCacheKey))
+				}
+				getKeysError = getKeys()
+			}
 		}
-
-		if len(keys) == 0 {
-			l.Warn("got empty keys length from cache")
-			getKeysError = getKeys()
-		}
+	} else { // Not found in cache (equivalent to bigcache.ErrEntryNotFound)
+		getKeysError = getKeys()
 	}
 
 	if getKeysError != nil {
@@ -302,7 +308,7 @@ func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityC
 			if key == "early-dropper:refresher-node" {
 				continue
 			}
-			
+
 			cmds[key] = pipe.Get(ctx, key)
 		}
 

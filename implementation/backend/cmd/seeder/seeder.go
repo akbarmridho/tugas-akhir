@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "github.com/KimMachineGun/automemlimit"
 	baseredis "github.com/redis/go-redis/v9"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"

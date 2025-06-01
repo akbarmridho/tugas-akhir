@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/allegro/bigcache"
 	baseredis "github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"strconv"
@@ -93,32 +92,31 @@ func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, paylo
 			return err
 		}
 
-		if setCacheErr := r.cache.Cache.Set(cacheKey(pattern), raw); setCacheErr != nil {
-			logger.FromCtx(ctx).Error("Cannot set cache keys", zap.Error(setCacheErr))
-			return setCacheErr
-		}
+		r.cache.Cache.SetDefault(cacheKey(pattern), raw)
 
 		return nil
 	}
 
-	cache, cacheErr := r.cache.Cache.Get(cacheKey(pattern))
+	cachedData, found := r.cache.Cache.Get(cacheKey(pattern))
 
 	var getKeysError error
 
-	if cacheErr != nil {
-		if !errors.Is(cacheErr, bigcache.ErrEntryNotFound) {
-			logger.FromCtx(ctx).Error("Cannot get keys from cache", zap.Error(cacheErr))
-		} else {
+	if found {
+		rawBytes, typeOk := cachedData.([]byte) // bigcache Get returns []byte, go-cache Get returns interface{}
+		if !typeOk {
+			logger.FromCtx(ctx).Error("Cached data for availability keys is not []byte")
+			// Treat as cache miss/corruption if type is wrong, and refetch
 			getKeysError = getKeys()
+		} else {
+			marshallErr := json.Unmarshal(rawBytes, &keys)
+			if marshallErr != nil {
+				logger.FromCtx(ctx).Error("Cannot unmarshal cached availability keys", zap.Error(marshallErr))
+				// Preserve original behavior: if unmarshal fails, propagate the error
+				getKeysError = marshallErr
+			}
 		}
-	} else {
-		marshallErr := json.Unmarshal(cache, &keys)
-
-		if marshallErr != nil {
-			logger.FromCtx(ctx).Error("Cannot unmashall cached keys")
-
-			getKeysError = marshallErr
-		}
+	} else { // Not found in cache (equivalent to bigcache.ErrEntryNotFound)
+		getKeysError = getKeys()
 	}
 
 	if getKeysError != nil {

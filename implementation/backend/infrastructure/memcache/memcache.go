@@ -1,30 +1,17 @@
 package memcache
 
 import (
-	"github.com/allegro/bigcache"
+	gocache "github.com/patrickmn/go-cache"
 	"go.uber.org/fx"
 	"time"
 )
 
 type Memcache struct {
-	Cache *bigcache.BigCache
+	Cache *gocache.Cache
 }
 
 func NewMemcache() (*Memcache, error) {
-	config := bigcache.Config{
-		Shards:             1024,
-		HardMaxCacheSize:   256,
-		LifeWindow:         5 * time.Minute,
-		CleanWindow:        5 * time.Minute,
-		MaxEntriesInWindow: 1000 * 10 * 60,
-		MaxEntrySize:       10000, // 10kb
-	}
-
-	cache, err := bigcache.NewBigCache(config)
-
-	if err != nil {
-		return nil, err
-	}
+	cache := gocache.New(15*time.Minute, 10*time.Minute)
 
 	return &Memcache{
 		Cache: cache,

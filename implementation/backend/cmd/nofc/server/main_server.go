@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "github.com/KimMachineGun/automemlimit"
 	"os"
 	"os/signal"
 	"sync"

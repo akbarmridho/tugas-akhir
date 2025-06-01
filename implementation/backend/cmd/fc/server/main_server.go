@@ -21,6 +21,7 @@ import (
 	"tugas-akhir/backend/pkg/logger"
 	myvalidator "tugas-akhir/backend/pkg/validator"
 
+	_ "github.com/KimMachineGun/automemlimit"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
