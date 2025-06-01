@@ -13,6 +13,9 @@ go tool trace trace.out
 curl -o block.out -k https://ticket.tugas-akhir.local/debug/pprof/block?seconds=30
 
 go tool pprof -web nofc_server block.out
+
+curl -o heap.out -k https://ticket.tugas-akhir.local/debug/pprof/heap?seconds=30
+go tool pprof -web nofc_server heap.out
 ```
 
 ## Postgres Debug

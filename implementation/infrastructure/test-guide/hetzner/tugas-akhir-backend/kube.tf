@@ -178,7 +178,7 @@ module "kube-hetzner" {
   # enable_wireguard = true
 
   # * LB location and type, the latter will depend on how much load you want it to handle, see https://www.hetzner.com/cloud/load-balancer
-  load_balancer_type     = "lb11"
+  load_balancer_type     = "lb31"
   load_balancer_location = "fsn1"
 
   # Disable IPv6 for the load balancer, the default is false.

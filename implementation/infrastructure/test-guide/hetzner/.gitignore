@@ -1,1 +1,5 @@
 .terraform
+k3s_kubeconfig.yaml
+k3s_kustomization_backup.yaml
+.terraform.lock.hcl
+terraform.tfstate

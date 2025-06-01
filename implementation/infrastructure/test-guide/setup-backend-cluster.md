@@ -40,3 +40,15 @@ kubectl create secret tls -n payment service-tls \
   --cert=../../../cert/cert.pem \
   --key=../../../cert/key.pem
 ```
+
+## Additional
+
+Inside `intrastructure/local/postgres` folder context.
+
+```bash
+kubectl create secret generic pgbouncer-backend-ca-secret --from-file=pg-ca.pem=certs/ca.pem
+kubectl create secret generic pgbouncer-backend-client-cert-secret --from-file=pg-client-cert.crt=certs/client.crt
+kubectl create secret generic pgbouncer-backend-client-key-secret --from-file=pg-client-key.key=certs/client.key
+kubectl create secret generic pgbouncer-backend-server-cert-secret --from-file=pg-server-cert.crt=certs/server.crt
+kubectl create secret generic pgbouncer-backend-server-key-secret --from-file=pg-server-key.key=certs/server.key
+```
