@@ -5,6 +5,9 @@ releases:
     namespace: payment
     version: 11.5.3
     values:
+      - global:
+          redis:
+            password: password
       - password: password
       - cluster:
           nodes: 3

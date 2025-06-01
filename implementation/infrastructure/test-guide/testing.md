@@ -168,7 +168,7 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster
 
 # pooled connection
 export DB_VARIANT=postgres
-export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local,pgpool-pgbouncer.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&pool_max_conns=1000&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local,pgpool-pgbouncer.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&pool_max_conns=500&pool_min_conns=1"
 ```
 
 - For Citusdata cluster.
@@ -180,7 +180,7 @@ export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cl
 
 # pooled connection
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local:5432/citus?pool_max_conns=2500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local:5432/citus?pool_max_conns=500&pool_min_conns=1"
 ```
 
 - For YugabyteDB cluster.
@@ -192,7 +192,7 @@ export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.
 
 # pooled connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte:yugabyte@pgbouncer.default.svc.cluster.local:5432/yugabyte?pool_max_conns=2500&pool_min_conns=1&sslmode=disable"
+export DATABASE_URL="postgresql://yugabyte:yugabyte@pgbouncer.default.svc.cluster.local:5432/yugabyte?pool_max_conns=500&pool_min_conns=1&sslmode=disable"
 ```
 
 ### Seed the Data
