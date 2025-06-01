@@ -124,6 +124,11 @@ releases:
             limits:
               cpu: 2
               memory: 3.5Gi
+          persistence:
+            enableStatefulSetAutoDeletePVC: true
+            enabled: true
+            size: 10Gi
+            storageClass: 'local-path'
       - backend:
           replicas: 0
       - read:
