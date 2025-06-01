@@ -47,8 +47,8 @@ Total RAM request: 17.75 GB RAM.
 | YugabyteDB Node 2        | -              | -           | 2.5/5Gi        | -           | -        | 2/4.5Gi     |
 | YugabyteDB Node 3        | -              | -           | 2.5/5Gi        | -           | -        | 2/4.5Gi     |
 | Redis Cluster (total)    | 3/4.5Gi        | 3/4.5Gi     | 3/4.5Gi        | 3/6Gi       | 3/6Gi    | 3/6Gi       |
-| RabbitMQ                 | -              | -           | -              | 1.5/3Gi     | 1.5/3Gi  | 1.5/3Gi     |
-| Ticket Backend (total)   | 10.5/24Gi      | 10.5/24Gi   | 10.5/24Gi      | 8.5/17Gi    | 8.5/17Gi | 8.5/17Gi    |
+| RabbitMQ                 | -              | -           | -              | 1/2Gi       | 1/2Gi    | 1/2Gi       |
+| Ticket Backend (total)   | 10.5/24Gi      | 10.5/24Gi   | 10.5/24Gi      | 9/18Gi      | 9/18Gi   | 9/18Gi      |
 | Ticket Worker (total)    | -              | -           | -              | 2/4Gi       | 2/4Gi    | 2/4Gi       |
 
 For YugaByteDB, 0.5 CPU and 1Gi RAM will be allocated for master and the rest will be allocated to tserver.

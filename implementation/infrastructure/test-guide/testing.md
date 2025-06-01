@@ -69,6 +69,8 @@ Inside the `infrastructure/simulation/postgres` folder context, run the followin
 kubectl apply -f postgres-nofc.yaml
 # or
 kubectl apply -f postgres-fc.yaml
+
+helmfile -f helmfile-postgres.yaml apply
 ```
 
 #### Teardown
@@ -79,6 +81,8 @@ Insire the `infrastructure/simulation/postgres` folder context, run the followin
 kubectl delete -f postgres-nofc.yaml
 # or
 kubectl delete -f postgres-fc.yaml
+
+helmfile -f helmfile-postgres.yaml destroy
 ```
 
 ### CitusData
@@ -91,6 +95,8 @@ Inside the `infrastructure/simulation/postgres` folder context, run the followin
 kubectl apply -f citus-nofc.yaml
 # or
 kubectl apply -f citus-fc.yaml
+
+helmfile -f helmfile-citus.yaml apply
 ```
 
 #### Teardown
@@ -101,6 +107,8 @@ Inside the `infrastructure/simulation/postgres` folder context, run the followin
 kubectl delete -f citus-nofc.yaml
 # or
 kubectl delete -f citus-fc.yaml
+
+helmfile -f helmfile-citus.yaml destroy
 ```
 
 ### YugaByteDB

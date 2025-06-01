@@ -7,11 +7,11 @@ releases:
     values:
       - resources:
           requests:
-            cpu: "1.5"
-            memory: "3Gi"
+            cpu: "1"
+            memory: "2Gi"
           limits:
-            cpu: "1.5"
-            memory: "3Gi"
+            cpu: "1"
+            memory: "2Gi"
       - metrics:
           enabled: true
       - auth:
