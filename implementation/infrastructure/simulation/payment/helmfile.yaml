@@ -13,7 +13,7 @@ releases:
           enabled: true
           extraEnvVars:
             - name: REDIS_ADDR
-              value: redis://localhost:637
+              value: redis://localhost:6379
             - name: REDIS_PASSWORD
               value: password
       - redis:
