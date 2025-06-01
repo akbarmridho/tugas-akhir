@@ -5,10 +5,7 @@ releases:
     namespace: payment
     version: 12.0.7
     values:
-      - global:
-          redis:
-            password: password
-      - password: password
+      - usePassword: false
       - cluster:
           nodes: 3
           replicas: 0
