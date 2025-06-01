@@ -5,15 +5,17 @@ releases:
     namespace: default
     version: 12.0.7
     values:
-      - global:
-          redis:
-            password: password
       - password: password
       - cluster:
           nodes: 3
           replicas: 0
       - metrics:
           enabled: true
+          extraEnvVars:
+            - name: REDIS_ADDR
+              value: redis://localhost:6379
+            - name: REDIS_PASSWORD
+              value: password
       - redis:
           resources:
             requests:
