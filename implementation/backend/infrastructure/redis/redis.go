@@ -24,7 +24,9 @@ func NewRedis(config *config.Config) (*Redis, error) {
 	hosts := strings.Split(config.RedisHosts, ",")
 
 	opts := baseredis.ClusterOptions{
-		Addrs: hosts,
+		Addrs:        hosts,
+		PoolSize:     100,
+		MinIdleConns: 20,
 	}
 
 	if config.RedisPassword != "" {

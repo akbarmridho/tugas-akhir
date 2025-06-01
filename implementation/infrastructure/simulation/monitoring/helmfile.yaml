@@ -77,11 +77,11 @@ releases:
               url: https://raw.githubusercontent.com/akbarmridho/tugas-akhir/refs/heads/main/implementation/infrastructure/local/monitoring/dashboards/pgbouncer.json
       - resources:
           requests:
-            cpu: 0.5
-            memory: 0.75Gi
+            cpu: 0.25
+            memory: 512Mi
           limits:
-            cpu: 1
-            memory: 1.5Gi
+            cpu: 0.5
+            memory: 768Mi
           
   - name: loki
     chart: grafana/loki
@@ -114,16 +114,18 @@ releases:
           enabled: true
       - chunksCache:
           enabled: false      
+      - resultsCache:
+          enabled: false
       - deploymentMode: SingleBinary
       - singleBinary:
           replicas: 1
           resources:
             requests:
-              cpu: 1.5
-              memory: 3Gi
+              cpu: 0.5
+              memory: 1.5Gi
             limits:
-              cpu: 2
-              memory: 3.5Gi
+              cpu: 0.75
+              memory: 2Gi
           persistence:
             enableStatefulSetAutoDeletePVC: true
             enabled: true
@@ -162,10 +164,10 @@ releases:
           resources:
             requests:
               cpu: 0.5
-              memory: 1Gi
+              memory: 256Mi
             limits:
               cpu: 0.75
-              memory: 1.25Gi
+              memory: 512Mi
           configMap:
             content: |-
               loki.write "default" {
@@ -275,11 +277,11 @@ releases:
         global:
           scrape_interval: 15s
         resources:
-          limits:
-            cpu: 2.5
-            memory: 4.5Gi
           requests:
-            cpu: 2
+            cpu: 1
+            memory: 4Gi
+          limits:
+            cpu: 1
             memory: 4Gi
         extraArgs: 
           web.enable-admin-api: null

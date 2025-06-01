@@ -15,7 +15,7 @@ releases:
           resources:
             requests:
               cpu: 0.5
-              memory: 1Gi
+              memory: 768Mi
             limits:
-              cpu: 0.75
-              memory: 1.25Gi
+              cpu: 0.5
+              memory: 768Mi

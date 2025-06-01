@@ -135,6 +135,27 @@ const generateScenario = (): Scenario => {
 			iterations: 1000000,
 			maxDuration: "15m",
 		};
+	} else if (VARIANT === "stress-3") {
+		return {
+			executor: "shared-iterations",
+			vus: 8000,
+			iterations: 200000,
+			maxDuration: "15m",
+		};
+	} else if (VARIANT === "stress-4") {
+		return {
+			executor: "shared-iterations",
+			vus: 4000,
+			iterations: 200000,
+			maxDuration: "15m",
+		};
+	} else if (VARIANT === "stress-5") {
+		return {
+			executor: "shared-iterations",
+			vus: 2000,
+			iterations: 200000,
+			maxDuration: "15m",
+		};
 	} else if (VARIANT === "stress-test") {
 		return {
 			executor: "shared-iterations",

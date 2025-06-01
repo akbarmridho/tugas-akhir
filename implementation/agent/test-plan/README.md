@@ -65,9 +65,6 @@ Variation: configure concurrent VUs.
 
 | Test # | Scenario Used | Total Iter | Constant UVs | Max Duration |
 | ------ | ------------- | ---------- | ------------ | ------------ |
-| 1      | `sf-4`        | 500.000    | 20.000       | 15 minutes   |
-| 2      | `sf-2`        | 500.000    | 20.000       | 15 minutes   |
-| 3      | `sf-1`        | 500.000    | 20.000       | 15 minutes   |
-| 4      | `sf-4`        | 1.000.000  | 40.000       | 15 minutes   |
-| 5      | `sf-2`        | 1.000.000  | 40.000       | 15 minutes   |
-| 6      | `sf-1`        | 1.000.000  | 40.000       | 15 minutes   |
+| 1      | `sf-2`        | 200.000    | 2.000        | 15 minutes   |
+| 2      | `sf-2`        | 200.000    | 4.000        | 15 minutes   |
+| 3      | `sf-2`        | 200.000    | 8.000        | 15 minutes   |

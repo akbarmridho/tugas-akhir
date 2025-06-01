@@ -3,8 +3,9 @@
 Variant: {TEST_VARIANT}
 Scenario: {SCENARIO}
 Flow Control: {FC}
-Start Time: YYYY-MM-DD HH:MM (WIB)
-End Time: YYYY-MM-DD HH:MM (WIB)
+Database: {postgres/citus/yugabyte}
+Start Time: 2025-06-01 xx:xx (WIB)
+End Time: 2025-06-01 xx:xx (WIB)
 
 ## Obversations
 

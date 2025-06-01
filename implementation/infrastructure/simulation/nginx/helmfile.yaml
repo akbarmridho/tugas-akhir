@@ -28,10 +28,10 @@ releases:
     values:
       - resources:
           requests:
-            cpu: 2.5
+            cpu: 2
             memory: 2Gi
           limits:
-            cpu: 3.5
+            cpu: 3
             memory: 2.5Gi
       - metrics:
           enabled: true

@@ -262,12 +262,12 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=<host-ip>
+export HOST_FORWARD=128.140.27.210
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**
 
-Available `VARIANT` values: `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2`, and `stress-test`. This differentiate the k6 agent request pattern and behaviour.
+Available `VARIANT` values: `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2`, `stress-3`, `stress-4`, `stress-5`, and `stress-test`. This differentiate the k6 agent request pattern and behaviour.
 
 Ensure to build the test script from the `implementation/agent` folder context, then running `npm run build`.
 
@@ -275,7 +275,9 @@ Inside the `infrastructure/simulation/agent` folder context:
 
 ```bash
 # run the test
-cp ../../../agent/dist/tests/ticket.js ./ticket.js && kubectl create configmap ticket-code --from-file=ticket.js && envsubst < k6.yaml | kubectl apply -f -
+kubectl create configmap ticket-code --from-file=ticket.js
+
+envsubst < k6.yaml | kubectl apply -f -
 ```
 
 Writing the test time (with the format) -> how to write run id?
@@ -292,5 +294,5 @@ Write down the test data with the following format:
 
 - Wait for the test to finish.
 - Check for the Grafana dashboard in Backend cluster and K6 agent cluster.
-- Teardown the k6 run by running the following command inside the `infrastructure/simulation/agent` folder context: `kubectl delete configmap ticket-code && envsubst < k6.yaml | kubectl delete -f -`
+- Teardown the k6 run by running the following command inside the `infrastructure/simulation/agent` folder context: `envsubst < k6.yaml | kubectl delete -f -`
 - Teardown the ticket service by running the following command inside the `infrastructure/simulation/ticket` folder context: `envsubst < ticket-nofc.yaml | kubectl delete -f -` or `envsubst < ticket-fc.yaml | kubectl delete -f -`

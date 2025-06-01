@@ -456,7 +456,7 @@ module "kube-hetzner" {
   #   This is not a problem if you explicitly define which storageclass to use in your PVCs.
   #   Workaround if you don't want two default storage classes: leave this to false and add the local-path-provisioner helm chart
   #   as an extra (https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner#adding-extras).
-  # enable_local_storage = false
+  enable_local_storage = true
 
   # If you want to allow non-control-plane workloads to run on the control-plane nodes, set this to "true". The default is "false".
   # True by default for single node clusters, and when enable_klipper_metal_lb is true. In those cases, the value below will be ignored.

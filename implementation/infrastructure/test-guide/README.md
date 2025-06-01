@@ -53,3 +53,10 @@ kubectl get nodes
 
 kubectl taint nodes <control-plane-node-name> node-role.kubernetes.io/control-plane-
 ```
+
+### ENVSUBT
+
+```bash
+wget https://download.opensuse.org/repositories/openSUSE:/Factory/standard/x86_64/gettext-runtime-0.22.5-8.2.x86_64.rpm
+transactional-update pkg install gettext-runtime-0.22.5-8.2.x86_64.rpm
+```

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: ticket-nofc
 spec:
-  replicas: 3
+  replicas: 6
   selector:
     matchLabels:
       app: ticket-nofc
@@ -31,11 +31,11 @@ spec:
           failureThreshold: 3
         resources:
           requests:
-            cpu: "3.5"
-            memory: "8Gi"
+            cpu: "2"
+            memory: "4Gi"
           limits:
-            cpu: "3.5"
-            memory: "8Gi"
+            cpu: "2"
+            memory: "4Gi"
         ports:
         - containerPort: 3000
           protocol: TCP
@@ -118,10 +118,10 @@ spec:
         command: ["./sanity"]
         resources:
           requests:
-            cpu: "0.5"
+            cpu: "0.25"
             memory: "0.5Gi"
           limits:
-            cpu: "0.5"
+            cpu: "0.25"
             memory: "0.5Gi"
         ports:
         - containerPort: 3000

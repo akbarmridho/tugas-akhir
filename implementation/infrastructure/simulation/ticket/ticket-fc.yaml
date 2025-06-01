@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: ticket-fc-server
 spec:
-  replicas: 3
+  replicas: 5
   selector:
     matchLabels:
       app: ticket-fc-server
@@ -31,11 +31,11 @@ spec:
           failureThreshold: 3
         resources:
           requests:
-            cpu: "3"
-            memory: "6Gi"
+            cpu: "2"
+            memory: "4Gi"
           limits:
-            cpu: "3"
-            memory: "6Gi"
+            cpu: "2"
+            memory: "4Gi"
         ports:
         - containerPort: 3000
           protocol: TCP
@@ -193,10 +193,10 @@ spec:
         command: ["./sanity"]
         resources:
           requests:
-            cpu: "0.5"
+            cpu: "0.25"
             memory: "0.5Gi"
           limits:
-            cpu: "0.5"
+            cpu: "0.25"
             memory: "0.5Gi"
         ports:
         - containerPort: 3000
