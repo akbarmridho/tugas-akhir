@@ -262,7 +262,7 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=128.140.27.210
+export HOST_FORWARD=<load balancer ip>
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**

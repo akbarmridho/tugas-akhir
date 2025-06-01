@@ -12,7 +12,7 @@ End Time: 2025-06-01 19:51 (WIB)
 Cek hasil fix memory leak. Sudah oke dan stabil. Bisa naik ke 8000 concurrent user.
 
 Backup:
-Backend on ubuntu 22.04 20250601T130003Z-76031d3d1e540a51.
+Backend on ubuntu 22.04 20250601T132032Z-0a0552ce13f29dc1.
 Agent on ubuntu 24.00 20250601T131524Z-35dc577c6ea6897f.
 
 ## Query Stats
