@@ -3,7 +3,7 @@ kind: TestRun
 metadata:
   name: k6-run-${RUN_ID}
 spec:
-  parallelism: 3
+  parallelism: 10
   script:
     configMap:
       name: ticket-code
@@ -13,11 +13,11 @@ spec:
     image: haiakbar/ta-agent:latest
     resources:
       limits:
-        cpu: "13"
-        memory: "26Gi"
+        cpu: "4"
+        memory: "8Gi"
       requests:
-        cpu: "13"
-        memory: "26Gi"
+        cpu: "4"
+        memory: "8Gi"
     env:
       - name: K6_PROMETHEUS_RW_SERVER_URL
         value: "http://prometheus-server.monitoring.svc.cluster.local/api/v1/write"
