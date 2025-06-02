@@ -1,0 +1,29 @@
+\subsection{Implementasi Payment Service}
+
+Layanan ini dibuat dengan bahasa pemrograman TypeScript yang dijalankan pada NodeJS versi 20. Runtime layanan ini dibagi menjadi dua, yakni HTTP Server dan Notifier. Selain itu, BullMQ dan Redis digunakan untuk menyimpan data dan melakukan \textit{queue-ing} notifikasi webhook kepada sistem tiket.
+
+Layanan ini merupakan \textit{mock service} sebuah gerbang pembayaran, sehingga hanya fungsionalitas dasar saja yang diimplementasikan, seperti membuat tagihan, membayar tagihan, dan melihat tagihan. Oleh karena itu, pada layanan ini digunakan Redis sebagai basis data untuk menyimpan data tagihan karena implementasi dan konfigurasi yang lebih mudah.
+
+Agar sistem menyerupai gerbang pembayaran, layanan ini juga menggunakan HMAC dengan \textit{shared secret} pada \textit{payload} webhook yang dikirimkan pada sistem tiket. Kemudian, sistem tiket akan memverifikasi nilai yang diterima dan membandingkannya dengan \textit{payload} yang diterima.
+
+Pemisahan server dan notifier ini dilakukan untuk memisahkan beban dan mengimplementasikan mekanisme \textit{retry} ketika webhook gagal. Selain itu, penggunaan notifier memungkinkan \textit{expiration} tagihan yang melewati batas kadaluarsa, sehingga sistem dapat melepaskan status booking pada tiket yang tidak jadi terjual.
+
+Hanya ada satu entitas pada sistem ini, yaitu Invoice. Entitas ini terdiri atas nilai tagihan, deskripsi, ID eksternal, timestamp, tanggal kadaluarsa, tangal dibayar, dan status. Di samping itu, terdapat endpoint healthcheck yang memeriksa koneksi sistem dengan kluster Redis. Integrasi Hono dengan Prometheus juga dilakukan untuk proses monitoring berbagai metrik HTTP Server dan jumlah Queue pada notifier.
+
+Berikut adalah endpoint yang ada pada layanan tiket (selain endpoint health check dan metrics):
+
+\begin{enumerate}
+      \item GET /invoices/{id} - Get Invoice.
+
+            Endpoint ini menerima ID pada route parameter dan mengembalikan tagihan dengan ID tersebut.
+
+      \item POST /invoices - Create Invoice.
+
+            Endpoint ini menerima jumlah tagihan, deskripsi, dan ID eksternal, lalu membuat tagihan berdasarkan data tersebut. Expiration tagihan adalah 15 menit sejak tagihan tersebut dibuat. Endpoint ini dipanggil oleh layanan tiket.
+
+      \item POST /invoices/{id}/payment - Pay Invoice.
+
+            Endpoint ini menerima data apakah tagihan ini berhasil atau gagal. Ini dilakukan untuk menyimulasikan pembayaran yang berhasil dan gagal. Endpoint ini dipanggil oleh pengguna.
+\end{enumerate}
+
+Webhook akan dipanggil saat pembayaran berhasil, gagal, dan kadaluarsa. Layanan ini akan memanggil endpoint yang sudah ditentukan sebelumnya untuk memberi notifikasi webhook. Payload pembayaran berisi data tagihan paling terbaru.
