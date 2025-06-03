@@ -16,7 +16,7 @@ Inside the `infrastructure/simulation/payment` folder context, run the following
 helmfile apply
 
 # run the reset
-kubectl apply -f payment-reset.yaml -n payment
+kubectl delete -f payment.yaml -n payment && kubectl apply -f payment-reset.yaml -n payment
 
 # wait for finish
 kubectl delete -f payment-reset.yaml -n payment
@@ -70,7 +70,7 @@ kubectl apply -f postgres-nofc.yaml
 # or
 kubectl apply -f postgres-fc.yaml
 
-helmfile -f helmfile-postgres.yaml apply
+helmfile -f helmfile-pg-pgcat.yaml apply
 ```
 
 #### Teardown
@@ -168,7 +168,7 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster
 
 # pooled connection
 export DB_VARIANT=postgres
-export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local,pgpool-pgbouncer.default.svc.cluster.local:5432/postgres?target_session_attrs=read-write&pool_max_conns=500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/postgres?pool_max_conns=500&pool_min_conns=1"
 ```
 
 - For Citusdata cluster.

@@ -1,0 +1,38 @@
+repositories:
+  - name: xxl-job-admin  
+    url: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin
+
+
+releases:
+  - name: pgcat
+    namespace: default
+    chart: xxl-job-admin/pgcat
+    version: 0.3.2
+    values:
+      - replicaCount: 1
+        image:
+          repository: haiakbar/ta-pgcat
+          tag: latest
+          pullPolicy: Always
+        configuration:
+          general:
+            enable_prometheus_exporter: true
+            admin_username: postgres
+            admin_password: zalando
+            server_tls: true
+            tls_certificate: /etc/ssl/pg-server-cert.crt
+            tls_private_key: /etc/ssl/private/pg-server-key.key
+          pools:
+            [{
+              name: "postgres", 
+              pool_mode: "transaction",
+              load_balancing_mode: "loc",
+              users: [{username: "postgres", password: "zalando", server_username: "postgres", server_password: "zalando", pool_size: 180, statement_timeout: 0}],
+              shards: [{
+                database: "postgres",
+                servers: [
+                  {host: "pgcluster.default.svc.cluster.local", port: 5432, role: "primary"},
+                  {host: "pgcluster-repl.default.svc.cluster.local", port: 5432, role: "replica"}
+                ],
+              }]
+            }]

@@ -1,4 +1,4 @@
-# Run Notes - d2t1
+# Run Notes - d2t2
 
 Variant: stress-3
 Scenario: sf-2

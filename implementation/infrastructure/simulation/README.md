@@ -22,7 +22,7 @@ Total RAM request: 83 out of 96 GB.
 
 | Service Name    | Request Allocation | Limit Allocation | Other    |
 | --------------- | ------------------ | ---------------- | -------- |
-| Prometheus      | 2/4G               | 2.5/4.5G         | PVC 50Gi |
+| Prometheus      | 1/4G               | 1/4G             | PVC 50Gi |
 | Alloy           | 0.5/1Gi            | 0.75/1.25Gi      | -        |
 | Grafana         | 0.5/0.75Gi         | 1/1.5Gi          | PVC 10Gi |
 | Loki            | 1.5/3Gi            | 2/3.5Gi          | -        |

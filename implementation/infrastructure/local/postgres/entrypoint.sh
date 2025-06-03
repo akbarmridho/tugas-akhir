@@ -23,8 +23,8 @@ bootstrap:
       pg_hba:
       - local all all trust
       - host all all 127.0.0.1/32 trust
-      - hostssl all all all md5 clientcert=${PGSSLMODE}
       - hostssl replication ${PATRONI_REPLICATION_USERNAME} all md5 clientcert=${PGSSLMODE}
+      - hostssl all all all md5
   initdb:
   - auth-host: md5
   - auth-local: trust
