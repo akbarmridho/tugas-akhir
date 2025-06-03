@@ -18,6 +18,14 @@ ssh root@138.199.153.132 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no
 
 ### Setup Nodes
 
+**Cluster:**
+
+```bash
+terraform init --upgrade
+terraform validate
+terraform apply -auto-approve
+```
+
 **Helm:**
 
 ```bash
@@ -37,7 +45,7 @@ kubectl config view --raw > ~/.kube/config
 ### Storageclass
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+# kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 
 kubectl get storageclass
 

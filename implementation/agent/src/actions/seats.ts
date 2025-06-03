@@ -138,46 +138,46 @@ const getSeats = (
 			})
 			.sort((a, b) => a.parsedNumber - b.parsedNumber);
 
-		const options = availableSeats
-			.reduce(
-				(prev, curr) => {
-					if (prev.length === 0) {
-						prev.push([curr]);
-						return prev;
-					}
+		// const options = availableSeats
+		// 	.reduce(
+		// 		(prev, curr) => {
+		// 			if (prev.length === 0) {
+		// 				prev.push([curr]);
+		// 				return prev;
+		// 			}
 
-					const last = prev[prev.length - 1];
-					const lastSeat = last[last.length - 1];
+		// 			const last = prev[prev.length - 1];
+		// 			const lastSeat = last[last.length - 1];
 
-					// not consecutive
-					if (Math.abs(lastSeat.parsedNumber - curr.parsedNumber) > 1) {
-						prev.push([curr]);
-					} else {
-						last.push(curr);
-					}
+		// 			// not consecutive
+		// 			if (Math.abs(lastSeat.parsedNumber - curr.parsedNumber) > 1) {
+		// 				prev.push([curr]);
+		// 			} else {
+		// 				last.push(curr);
+		// 			}
 
-					return prev;
-				},
-				[] as (TicketSeat & { parsedNumber: number })[][],
-			)
-			// user want consecutive
-			.filter((option) => option.length >= state.ticketCount);
+		// 			return prev;
+		// 		},
+		// 		[] as (TicketSeat & { parsedNumber: number })[][],
+		// 	)
+		// 	// user want consecutive
+		// 	.filter((option) => option.length >= state.ticketCount);
 
-		if (options.length === 0) {
-			return null;
-		}
+		// if (options.length === 0) {
+		// 	return null;
+		// }
 
-		const selectedOption = randomItem(options);
+		// const selectedOption = randomItem(options);
 
 		// options 8
 		// want 3
 		// idx can be from 0 to 5
 		const startIdx = randomIntBetween(
 			0,
-			selectedOption.length - state.ticketCount,
+			availableSeats.length - state.ticketCount,
 		);
 
-		const selectedSeats = selectedOption.slice(
+		const selectedSeats = availableSeats.slice(
 			startIdx,
 			startIdx + state.ticketCount,
 		);

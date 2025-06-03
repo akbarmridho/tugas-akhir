@@ -4,6 +4,7 @@ metadata:
   name: k6-run-${RUN_ID}
 spec:
   parallelism: 9
+  cleanup: post
   script:
     configMap:
       name: ticket-code

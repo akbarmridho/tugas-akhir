@@ -262,7 +262,7 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=<load balancer ip>
+export HOST_FORWARD=142.132.243.240
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**
@@ -278,6 +278,9 @@ Inside the `infrastructure/simulation/agent` folder context:
 kubectl create configmap ticket-code --from-file=ticket.js
 
 envsubst < k6.yaml | kubectl apply -f -
+
+# to delete
+envsubst < k6.yaml | kubectl delete -f -
 ```
 
 Writing the test time (with the format) -> how to write run id?
