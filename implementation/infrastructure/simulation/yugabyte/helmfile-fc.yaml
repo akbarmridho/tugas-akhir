@@ -73,6 +73,13 @@ releases:
     chart: xxl-job-admin/pgcat
     version: 0.3.2
     values:
+      - resources:
+          limits: 
+            cpu: 2
+            memory: 1Gi
+          requests: 
+            cpu: 2
+            memory: 1Gi
       - replicaCount: 1
         image:
           repository: haiakbar/ta-pgcat

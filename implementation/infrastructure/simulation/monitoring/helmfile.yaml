@@ -278,10 +278,10 @@ releases:
           scrape_interval: 15s
         resources:
           requests:
-            cpu: 1
-            memory: 4Gi
+            cpu: 0.5
+            memory: 2Gi
           limits:
-            cpu: 1
+            cpu: 0.75
             memory: 4Gi
         extraArgs: 
           web.enable-admin-api: null
@@ -300,6 +300,27 @@ releases:
               action: keep
             - source_labels: [__meta_kubernetes_service_port_name]
               regex: patroni-http
+              action: keep
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: kubernetes_namespace
+            - source_labels: [__meta_kubernetes_service_name]
+              target_label: kubernetes_service_name
+            - source_labels: [__meta_kubernetes_service_label_role]
+              target_label: patroni_role
+              action: replace
+              regex: (.+)
+        - job_name: 'pgcat'
+          kubernetes_sd_configs:
+            - role: service
+              namespaces:
+                names:
+                  - default
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_service_name]
+              regex: pgcat
+              action: keep
+            - source_labels: [__meta_kubernetes_service_port_number]
+              regex: 9930
               action: keep
             - source_labels: [__meta_kubernetes_namespace]
               target_label: kubernetes_namespace
