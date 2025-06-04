@@ -277,6 +277,9 @@ Inside the `infrastructure/simulation/agent` folder context:
 # run the test
 kubectl create configmap ticket-code --from-file=ticket.js
 
+# delete
+kubectl delete configmap ticket-code
+
 envsubst < k6.yaml | kubectl apply -f -
 
 # to delete

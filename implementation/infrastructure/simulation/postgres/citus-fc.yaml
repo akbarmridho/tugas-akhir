@@ -24,7 +24,7 @@ spec:
       serviceAccountName: cituscluster
       containers:
       - name: *cluster_name
-        image: registry.localhost:5001/tugas-akhir/citus:latest
+        image: haiakbar/ta-citus:latest
         resources:
           requests:
             cpu: "2"
@@ -164,7 +164,7 @@ spec:
       serviceAccountName: cituscluster
       containers:
       - name: *cluster_name
-        image: registry.localhost:5001/tugas-akhir/citus:latest
+        image: haiakbar/ta-citus:latest
         resources:
           requests:
             cpu: "2"
@@ -305,7 +305,7 @@ spec:
       serviceAccountName: cituscluster
       containers:
       - name: *cluster_name
-        image: registry.localhost:5001/tugas-akhir/citus:latest
+        image: haiakbar/ta-citus:latest
         resources:
           requests:
             cpu: "2"
