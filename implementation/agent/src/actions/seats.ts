@@ -11,7 +11,7 @@ import {
 	TicketSeat,
 } from "../client/ticket/ticketBackendService";
 import { ProfileState } from "../utils/profile";
-import { group, check } from "k6";
+import { group, check, sleep } from "k6";
 
 interface AreaSale {
 	area: AreaAvailability;
@@ -250,12 +250,14 @@ const getAreaPreferSameCategory = (
 			const areaAvailability = saleAreaAvailability[saleIdx];
 
 			if (areaAvailability === null || areaAvailability.length === 0) {
+				sleep(randomIntBetween(2, 6));
 				continue;
 			}
 
 			const areas = areaAvailability[catIdx];
 
 			if (areas.length === 0) {
+				sleep(randomIntBetween(2, 6));
 				continue;
 			}
 
@@ -284,6 +286,7 @@ const getSeatCaseArea = (
 
 		if (!area) {
 			state.currentBrowseAttempt++;
+			sleep(randomIntBetween(2, 6));
 			continue;
 		}
 
@@ -302,6 +305,7 @@ const getSeatCaseNumbered = (
 
 		if (!areaSale) {
 			state.currentBrowseAttempt++;
+			sleep(randomIntBetween(2, 6));
 			continue;
 		}
 
@@ -310,6 +314,7 @@ const getSeatCaseNumbered = (
 			const seats = getSeats(ticketService, state, areaSale.area);
 
 			if (!seats) {
+				sleep(randomIntBetween(2, 6));
 				continue;
 			}
 

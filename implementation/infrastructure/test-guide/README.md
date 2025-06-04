@@ -73,3 +73,48 @@ transactional-update pkg install gettext-runtime-0.22.5-8.2.x86_64.rpm
 
 - Update IP Adress in hostfile
 - Set KUBECONFIG sesuai di notes.
+
+### TOTAL REQUESTED
+
+```bash
+kubectl get pods --all-namespaces -o go-template='{{range .items}}{{range .spec.containers}}{{.resources.requests.cpu}} {{.resources.requests.memory}}{{"\n"}}{{end}}{{end}}' | \
+awk '
+function parse_cpu(cpu) {
+    if (cpu ~ /m$/) {
+        return substr(cpu, 1, length(cpu)-1)
+    } else if (cpu ~ /^[0-9]+$/) {
+        return cpu * 1000
+    }
+    return 0
+}
+
+function parse_memory(mem) {
+    if (mem ~ /Ki$/) {
+        return substr(mem, 1, length(mem)-2) / 1024
+    } else if (mem ~ /Mi$/) {
+        return substr(mem, 1, length(mem)-2)
+    } else if (mem ~ /Gi$/) {
+        return substr(mem, 1, length(mem)-2) * 1024
+    } else if (mem ~ /Ti$/) {
+        return substr(mem, 1, length(mem)-2) * 1024 * 1024
+    } else if (mem ~ /Pi$/) {
+        return substr(mem, 1, length(mem)-2) * 1024 * 1024 * 1024
+    } else if (mem ~ /Ei$/) {
+        return substr(mem, 1, length(mem)-2) * 1024 * 1024 * 1024 * 1024
+    } else if (mem ~ /^[0-9]+$/) { # Assuming bytes if no unit
+        return mem / 1024 / 1024
+    }
+    return 0
+}
+
+{
+    total_cpu += parse_cpu($1)
+    total_memory += parse_memory($2)
+}
+
+END {
+    print "Total CPU Requested (millicores): " total_cpu
+    print "Total Memory Requested (MiB): " total_memory
+}
+'
+```

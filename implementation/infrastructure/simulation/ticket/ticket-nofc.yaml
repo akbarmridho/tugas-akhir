@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: ticket-nofc
 spec:
-  replicas: 5
+  replicas: 4
   selector:
     matchLabels:
       app: ticket-nofc

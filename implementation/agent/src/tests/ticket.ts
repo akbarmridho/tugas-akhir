@@ -133,14 +133,14 @@ const generateScenario = (): Scenario => {
 		return {
 			executor: "shared-iterations",
 			vus: 10000,
-			iterations: 350_000,
+			iterations: 350000,
 			maxDuration: "15m",
 		};
 	} else if (VARIANT === "stress-3") {
 		return {
 			executor: "shared-iterations",
 			vus: 8000,
-			iterations: 350_000,
+			iterations: 350000,
 			maxDuration: "15m",
 		};
 	} else if (VARIANT === "stress-4") {
