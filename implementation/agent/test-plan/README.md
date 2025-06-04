@@ -44,18 +44,11 @@ Variation: configure arrival rate and data scale.
 
 | Test # | Scenario Used | Total Iter | Peak VUs | Duration   |
 | ------ | ------------- | ---------- | -------- | ---------- |
-| 1      | `s10-2`       | 50.000     | 25.000   | 10 minutes |
-| 2      | `s10-1`       | 50.000     | 25.000   | 10 minutes |
-| 3      | `s10-2`       | 100.000    | 50.000   | 10 minutes |
-| 4      | `s10-1`       | 100.000    | 50.000   | 10 minutes |
-| 5      | `s5-2`        | 50.000     | 25.000   | 10 minutes |
-| 6      | `s5-1`        | 50.000     | 25.000   | 10 minutes |
-| 7      | `s5-2`        | 100.000    | 50.000   | 10 minutes |
-| 8      | `s5-1`        | 100.000    | 50.000   | 10 minutes |
+| 1      | `s10-2`       | 40.000     | 15.000   | 10 minutes |
 
-### Race to 500k/ Stress Testing
+### Race to 350k/ Stress Testing
 
-Test for each system with constant UVs to see which one can serve 500k iterations faster. The number of iterations is large enough so that the test duration is long enough to act as stress testing at the same time.
+Test for each system with constant UVs to see which one can serve 350k iterations faster. The number of iterations is large enough so that the test duration is long enough to act as stress testing at the same time.
 
 Category: shared iteration tests (run until x iterations), stress testing.
 Type: configure concurrent VUs.
@@ -65,6 +58,5 @@ Variation: configure concurrent VUs.
 
 | Test # | Scenario Used | Total Iter | Constant UVs | Max Duration |
 | ------ | ------------- | ---------- | ------------ | ------------ |
-| 1      | `sf-2`        | 200.000    | 2.000        | 15 minutes   |
-| 2      | `sf-2`        | 200.000    | 4.000        | 15 minutes   |
-| 3      | `sf-2`        | 200.000    | 8.000        | 15 minutes   |
+| 1      | `sf-4`        | 350.000    | 8.000        | 15 minutes   |
+| 3      | `sf-4`        | 350.000    | 10.000       | 15 minutes   |

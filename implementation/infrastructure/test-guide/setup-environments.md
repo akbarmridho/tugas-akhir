@@ -25,6 +25,7 @@ Build and push the following images:
 - [x] Ticket Backend (`implementation/backend`) under `haiakbar/ta-ticket`.
 - [x] Citus Database (`implementation/infrastructure/local/citus.Dockerfile`) under `haiakbar/ta-citus`.
 - [x] Postgres Database (`implementation/infrastructure/local/postgres.Dockerfile`) under `haiakbar/ta-postgres`.
+- [x] PGCat (`implementation/infrastructure/local/pgcat.Dockerfile`) under `haiakbar/ta-pgcat`.
 
 When building the image, follow these steps:
 

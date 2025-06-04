@@ -152,7 +152,7 @@ Refer to [this docs](./test-plan/README.md) for test plan.
 Required envs:
 
 - `RUN_ID` any randomly generated unique string.
-- `VARIANT` with the following values: `debug`, `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2` and `stress-test`. This differentiate the k6 agent request pattern and behaviour.
+- `VARIANT` with the following values: `debug`, `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2`. This differentiate the k6 agent request pattern and behaviour.
 
 ### Running Locally
 

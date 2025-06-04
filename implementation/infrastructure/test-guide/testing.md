@@ -70,7 +70,7 @@ kubectl apply -f postgres-nofc.yaml
 # or
 kubectl apply -f postgres-fc.yaml
 
-helmfile -f helmfile-pg-pgcat.yaml apply
+helmfile -f helmfile-postgres.yaml apply
 ```
 
 #### Teardown
@@ -180,7 +180,7 @@ export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cl
 
 # pooled connection
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@pgbouncer.default.svc.cluster.local:5432/citus?pool_max_conns=500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/citus?pool_max_conns=500&pool_min_conns=1"
 ```
 
 - For YugabyteDB cluster.
@@ -192,7 +192,7 @@ export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.
 
 # pooled connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte:yugabyte@pgbouncer.default.svc.cluster.local:5432/yugabyte?pool_max_conns=500&pool_min_conns=1&sslmode=disable"
+export DATABASE_URL="postgresql://yugabyte:yugabyte@pgcat.default.svc.cluster.local:6432/yugabyte?pool_max_conns=500&pool_min_conns=1&sslmode=disable"
 ```
 
 ### Seed the Data
@@ -267,7 +267,7 @@ export HOST_FORWARD=142.132.243.240
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**
 
-Available `VARIANT` values: `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2`, `stress-3`, `stress-4`, `stress-5`, and `stress-test`. This differentiate the k6 agent request pattern and behaviour.
+Available `VARIANT` values: `smoke`, `smokey`, `sim-1`, `sim-2`, `sim-test`, `stress-1`, `stress-2`, `stress-3`, `stress-4`, `stress-5`. This differentiate the k6 agent request pattern and behaviour.
 
 Ensure to build the test script from the `implementation/agent` folder context, then running `npm run build`.
 

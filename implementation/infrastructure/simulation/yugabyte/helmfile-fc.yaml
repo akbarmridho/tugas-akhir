@@ -1,6 +1,8 @@
 repositories:
   - name: yugabytedb
     url: https://charts.yugabyte.com
+  - name: xxl-job-admin  
+    url: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin
 
 releases:
   - name: yugabytedb
@@ -66,33 +68,33 @@ releases:
                     values:
                     - "yb-tserver"
                 topologyKey: kubernetes.io/hostname
-  - name: pgbouncer
+  - name: pgcat
     namespace: default
-    chart: oci://ghcr.io/icoretech/charts/pgbouncer
-    version: 2.7.0
+    chart: xxl-job-admin/pgcat
+    version: 0.3.2
     values:
-      - config:
-          adminUser: admin
-          adminPassword: tugas-akhir
-          databases:
-            yugabyte:
-              host: yb-tserver-0.yb-tservers.default.svc.cluster.local,yb-tserver-1.yb-tservers.default.svc.cluster.local
-              port: 5433 
-              dbname: yugabyte 
-              user: yugabyte 
-          userlist:
-            yugabyte: yugabyte
-          pgbouncer:
-            auth_type: md5
-            pool_mode: transaction
-            max_client_conn: 10000
-            default_pool_size: 180
-            reserve_pool_size: 20
-            reserve_pool_timeout: 2
-            log_connections: 0
-            log_disconnections: 0
-            log_pooler_errors: 1
-            log_stats: 0
-            ignore_startup_parameters: search_path,extra_float_digits
-      - pgbouncerExporter:
-          enabled: true
+      - replicaCount: 1
+        image:
+          repository: haiakbar/ta-pgcat
+          tag: latest
+          pullPolicy: Always
+        configuration:
+          general:
+            enable_prometheus_exporter: true
+            admin_username: postgres
+            admin_password: zalando
+          pools:
+            [{
+              name: "yugabyte", 
+              pool_mode: "transaction",
+              load_balancing_mode: "loc",
+              users: [{username: "yugabyte", password: "yugabyte", server_username: "yugabyte", server_password: "", pool_size: 180, statement_timeout: 0}],
+              shards: [{
+                database: "yugabyte",
+                servers: [
+                  {host: "yb-tserver-0.yb-tservers.default.svc.cluster.local", port: 5433, role: "primary"},
+                  {host: "yb-tserver-1.yb-tservers.default.svc.cluster.local", port: 5433, role: "primary"},
+                  {host: "yb-tserver-2.yb-tservers.default.svc.cluster.local", port: 5433, role: "primary"},
+                ],
+              }]
+            }]

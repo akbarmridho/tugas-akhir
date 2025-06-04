@@ -12,16 +12,6 @@ docker tag tugas-akhir/postgres:latest registry.localhost:5001/tugas-akhir/postg
 docker push registry.localhost:5001/tugas-akhir/postgres:latest
 ```
 
-### Client Secret
-
-```bash
-kubectl create secret generic pgbouncer-backend-ca-secret --from-file=pg-ca.pem=certs/ca.pem
-kubectl create secret generic pgbouncer-backend-client-cert-secret --from-file=pg-client-cert.crt=certs/client.crt
-kubectl create secret generic pgbouncer-backend-client-key-secret --from-file=pg-client-key.key=certs/client.key
-kubectl create secret generic pgbouncer-backend-server-cert-secret --from-file=pg-server-cert.crt=certs/server.crt
-kubectl create secret generic pgbouncer-backend-server-key-secret --from-file=pg-server-key.key=certs/server.key
-```
-
 ### Apply Postgres Kubernetes
 
 ```bash

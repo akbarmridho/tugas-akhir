@@ -19,6 +19,7 @@ bootstrap:
         ssl_cert_file: ${PGSSLCERT}
         ssl_key_file: ${PGSSLKEY}
         shared_preload_libraries: 'pg_stat_statements'
+        synchronous_commit: 'on'
       use_pg_rewind: true
       pg_hba:
       - local all all trust
@@ -34,6 +35,7 @@ bootstrap:
 restapi:
   connect_address: '${PATRONI_KUBERNETES_POD_IP}:8008'
 postgresql:
+  synchronous_mode: true
   basebackup:
     checkpoint: fast
   connect_address: '${PATRONI_KUBERNETES_POD_IP}:5432'

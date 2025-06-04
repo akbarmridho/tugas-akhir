@@ -1,6 +1,7 @@
 import { Options, Scenario } from "k6/options";
 import { forgeJwt } from "../utils/jwt";
 import {
+	Event,
 	Order,
 	TicketBackendServiceClient,
 } from "../client/ticket/ticketBackendService";
@@ -43,28 +44,28 @@ const generateScenario = (): Scenario => {
 	} else if (VARIANT === "sim-1") {
 		return {
 			executor: "ramping-arrival-rate",
-			preAllocatedVUs: 25000,
+			preAllocatedVUs: 12000,
 			stages: [
-				{ target: 3964, duration: "30s" },
-				{ target: 11850, duration: "30s" },
-				{ target: 11500, duration: "30s" },
-				{ target: 8329, duration: "30s" },
-				{ target: 5280, duration: "30s" },
-				{ target: 3244, duration: "30s" },
-				{ target: 2100, duration: "30s" },
-				{ target: 1300, duration: "30s" },
-				{ target: 825, duration: "30s" },
-				{ target: 515, duration: "30s" },
-				{ target: 354, duration: "30s" },
-				{ target: 235, duration: "30s" },
-				{ target: 146, duration: "30s" },
-				{ target: 115, duration: "30s" },
-				{ target: 74, duration: "30s" },
+				{ target: 2976, duration: "30s" },
+				{ target: 9653, duration: "30s" },
+				{ target: 9293, duration: "30s" },
+				{ target: 6662, duration: "30s" },
+				{ target: 4149, duration: "30s" },
+				{ target: 2618, duration: "30s" },
+				{ target: 1690, duration: "30s" },
+				{ target: 1020, duration: "30s" },
+				{ target: 624, duration: "30s" },
+				{ target: 423, duration: "30s" },
+				{ target: 308, duration: "30s" },
+				{ target: 196, duration: "30s" },
+				{ target: 129, duration: "30s" },
+				{ target: 67, duration: "30s" },
 				{ target: 55, duration: "30s" },
-				{ target: 35, duration: "30s" },
-				{ target: 18, duration: "30s" },
-				{ target: 13, duration: "30s" },
-				{ target: 9, duration: "30s" },
+				{ target: 41, duration: "30s" },
+				{ target: 30, duration: "30s" },
+				{ target: 17, duration: "30s" },
+				{ target: 14, duration: "30s" },
+				{ target: 7, duration: "30s" },
 			],
 		};
 	} else if (VARIANT === "sim-2") {
@@ -124,22 +125,22 @@ const generateScenario = (): Scenario => {
 	} else if (VARIANT === "stress-1") {
 		return {
 			executor: "shared-iterations",
-			vus: 20000,
-			iterations: 500000,
+			vus: 12000,
+			iterations: 350_000,
 			maxDuration: "15m",
 		};
 	} else if (VARIANT === "stress-2") {
 		return {
 			executor: "shared-iterations",
-			vus: 40000,
-			iterations: 1000000,
+			vus: 10000,
+			iterations: 350_000,
 			maxDuration: "15m",
 		};
 	} else if (VARIANT === "stress-3") {
 		return {
 			executor: "shared-iterations",
 			vus: 8000,
-			iterations: 200000,
+			iterations: 350_000,
 			maxDuration: "15m",
 		};
 	} else if (VARIANT === "stress-4") {
@@ -154,13 +155,6 @@ const generateScenario = (): Scenario => {
 			executor: "shared-iterations",
 			vus: 2000,
 			iterations: 200000,
-			maxDuration: "15m",
-		};
-	} else if (VARIANT === "stress-test") {
-		return {
-			executor: "shared-iterations",
-			vus: 4000,
-			iterations: 12000,
 			maxDuration: "15m",
 		};
 	}
@@ -236,7 +230,18 @@ export default function test() {
 			},
 		});
 
-		const event = getEvent(ticketService);
+		let event: Event | null = null;
+
+		for (let i = 0; i < 3; i++) {
+			const gotEvent = getEvent(ticketService);
+
+			if (gotEvent) {
+				event = gotEvent;
+				break;
+			}
+
+			sleep(randomIntBetween(4, 8));
+		}
 
 		if (!event) {
 			// error
@@ -292,7 +297,7 @@ export default function test() {
 				return;
 			} else if (orderResponse.state === "Retry") {
 				state.currentOrderAttempt++;
-				sleep(randomIntBetween(1, 5));
+				sleep(randomIntBetween(3, 8));
 				continue;
 			}
 
@@ -323,14 +328,14 @@ export default function test() {
 
 		tags.profile_payment_success = shouldSuccess;
 
-		sleep(randomIntBetween(1, 3));
+		sleep(randomIntBetween(4, 8));
 
 		while (tries < 3) {
 			const invoice = payOrder(paymentService, order as Order, shouldSuccess);
 
 			if (invoice === null) {
 				tries++;
-				sleep(randomIntBetween(1, 3));
+				sleep(randomIntBetween(2, 6));
 				continue;
 			}
 
@@ -352,7 +357,10 @@ export default function test() {
 		let orderConfirmend = false;
 
 		while (tries < 3) {
-			const newOrder = getOrder(ticketService, `${(order as Order).id}-${(order as Order).ticketAreaId}`);
+			const newOrder = getOrder(
+				ticketService,
+				`${(order as Order).id}-${(order as Order).ticketAreaId}`,
+			);
 
 			if (newOrder === null) {
 				// retry
@@ -415,7 +423,10 @@ export default function test() {
 		let ticketIssued = false;
 
 		while (tries < 3) {
-			const issuedTicketResponse = getIssuedTickets(ticketService, `${order!.id}-${order!.ticketAreaId}`);
+			const issuedTicketResponse = getIssuedTickets(
+				ticketService,
+				`${order!.id}-${order!.ticketAreaId}`,
+			);
 
 			if (issuedTicketResponse === null) {
 				sleep(randomIntBetween(5, 15));

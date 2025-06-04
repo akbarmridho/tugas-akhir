@@ -1,92 +1,37 @@
+repositories:
+  - name: xxl-job-admin  
+    url: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin
+
+
 releases:
-  - name: pgbouncer
+  - name: pgcat
     namespace: default
-    chart: oci://ghcr.io/icoretech/charts/pgbouncer
-    version: 2.7.0
+    chart: xxl-job-admin/pgcat
+    version: 0.3.2
     values:
-      - config:
-          adminUser: admin
-          adminPassword: tugas-akhir
-          databases:
-            citus:
-              host: cituscluster-0.default.svc.cluster.local
-              port: 5432 
-              dbname: citus 
-              user: postgres 
-              password: zalando 
-          userlist:
-            postgres: zalando
-          pgbouncer:
-            auth_type: md5
-            pool_mode: transaction
-            max_client_conn: 10000
-            default_pool_size: 180
-            reserve_pool_size: 20
-            reserve_pool_timeout: 2
-            log_connections: 0
-            log_disconnections: 0
-            log_pooler_errors: 1
-            log_stats: 0
-            ignore_startup_parameters: search_path,extra_float_digits
-            client_tls_sslmode: prefer
-            client_tls_ca_file: /etc/ssl/pg-ca.pem 
-            client_tls_cert_file: /etc/ssl/pg-server-cert.crt 
-            client_tls_key_file: /etc/ssl/private/pg-server-key.key 
-            server_tls_sslmode: verify-ca
-            server_tls_ca_file: /etc/ssl/pg-ca.pem 
-            server_tls_cert_file: /etc/ssl/pg-client-cert.crt 
-            server_tls_key_file: /etc/ssl/private/pg-client-key.key 
-      - extraVolumes:
-          - name: backend-ca-volume
-            secret:
-              secretName: pgbouncer-backend-ca-secret
-              items:
-                - key: pg-ca.pem
-                  path: pg-ca.pem
-          - name: backend-client-cert-volume
-            secret:
-              secretName: pgbouncer-backend-client-cert-secret
-              items:
-                - key: pg-client-cert.crt
-                  path: pg-client-cert.crt
-          - name: backend-client-key-volume
-            secret:
-              secretName: pgbouncer-backend-client-key-secret
-              items:
-                - key: pg-client-key.key
-                  path: pg-client-key.key
-          - name: backend-server-cert-volume
-            secret:
-              secretName: pgbouncer-backend-server-cert-secret
-              items:
-                - key: pg-server-cert.crt
-                  path: pg-server-cert.crt
-          - name: backend-server-key-volume
-            secret:
-              secretName: pgbouncer-backend-server-key-secret
-              items:
-                - key: pg-server-key.key
-                  path: pg-server-key.key
-      - extraVolumeMounts:
-          - name: backend-ca-volume
-            mountPath: /etc/ssl/pg-ca.pem
-            subPath: pg-ca.pem
-            readOnly: true
-          - name: backend-client-cert-volume
-            mountPath: /etc/ssl/pg-client-cert.crt
-            subPath: pg-client-cert.crt
-            readOnly: true
-          - name: backend-client-key-volume
-            mountPath: /etc/ssl/private/pg-client-key.key
-            subPath: pg-client-key.key
-            readOnly: true
-          - name: backend-server-cert-volume
-            mountPath: /etc/ssl/pg-server-cert.crt
-            subPath: pg-server-cert.crt
-            readOnly: true
-          - name: backend-server-key-volume
-            mountPath: /etc/ssl/private/pg-server-key.key
-            subPath: pg-server-key.key
-            readOnly: true
-      - pgbouncerExporter:
-          enabled: true
+      - replicaCount: 1
+        image:
+          repository: haiakbar/ta-pgcat
+          tag: latest
+          pullPolicy: Always
+        configuration:
+          general:
+            enable_prometheus_exporter: true
+            admin_username: postgres
+            admin_password: zalando
+            server_tls: true
+            tls_certificate: /etc/ssl/pg-server-cert.crt
+            tls_private_key: /etc/ssl/private/pg-server-key.key
+          pools:
+            [{
+              name: "citus", 
+              pool_mode: "transaction",
+              load_balancing_mode: "loc",
+              users: [{username: "postgres", password: "zalando", server_username: "postgres", server_password: "zalando", pool_size: 180, statement_timeout: 0}],
+              shards: [{
+                database: "citus",
+                servers: [
+                  {host: "cituscluster-0.default.svc.cluster.local", port: 5432, role: "primary"},
+                ],
+              }]
+            }]
