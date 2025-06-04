@@ -3,15 +3,16 @@ package redis
 import (
 	"context"
 	"errors"
-	errors2 "github.com/pkg/errors"
-	baseredis "github.com/redis/go-redis/v9"
-	"go.uber.org/fx"
-	"go.uber.org/zap"
 	"net"
 	"strings"
 	"time"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/pkg/logger"
+
+	errors2 "github.com/pkg/errors"
+	baseredis "github.com/redis/go-redis/v9"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 var RedisUnhealthy = errors.New("redis cluster unhealthy")
@@ -25,8 +26,13 @@ func NewRedis(config *config.Config) (*Redis, error) {
 
 	opts := baseredis.ClusterOptions{
 		Addrs:        hosts,
-		PoolSize:     100,
+		PoolSize:     500,
 		MinIdleConns: 20,
+
+		DialTimeout:  10 * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		PoolTimeout:  6 * time.Second,
 	}
 
 	if config.RedisPassword != "" {
