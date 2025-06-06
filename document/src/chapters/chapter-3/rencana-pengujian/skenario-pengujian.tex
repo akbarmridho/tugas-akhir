@@ -1,0 +1,19 @@
+\subsection{Skenario Pengujian}
+
+Terdapat dua jenis skenario pengujian yang akan diuji pada penelitian ini, yaitu \textit{load test} dan \textit{scaled-down simulation test}. Keduanya memiliki pendekatan dan tujuan yang berbeda.
+
+\subsubsection{Load Test}
+
+Skenario ini berfokus pada jumlah concurrent virtual user. Pada skenario ini, sistem akan dibebankan sejumlah concurrent virtual user dalam waktu hingga 15 menit. Kemudian, analisis dilakukan untuk diketauhi kinerjanya. Meskipun begitu, skenario ini tidak menunjukkan keadaan contention sebagiamana terjadi pada kehidupan nyata.
+
+\subsubsection{Scaled-Down Simulation Test}
+
+Skenario ini menguji beberapa hal, seperti \textit{spike testing} dan perilaku sistem pada saat terjadi contention. Tes ini terinspirasi dari rasio antara pengguna dengan tiket yang dijual. Rasio ini sangat tinggi karena ada banyak pengguna yang menginginkan satu tiket.
+
+Skenario ini berfokus pada jumlah arrival rate alih-alih concurrent virtual user. Skenario ini dibuat dengan cara berikut:
+
+\begin{enumerate}
+    \item Estimasikan jumlah pengguna dan jumlah tiket yang dijual. Misalkan terdapat 40 ribu pengguna (iterasi alur pengguna) dan 16 ribu tiket yang dijual.
+    \item Distribusikan arrival pengguna berdasarkan distribusi tertentu. Penelitian ini menggunakan distribusi lognormal untuk menyimulasikan spike. Total area di bawah kurva akan sama dengan jumlah pengguna. Buat range/ histogram.
+    \item Hasil grafik distribusi digunakan untuk menentukan jumlah arrival pengguna pada waktu tertentu.
+\end{enumerate}
