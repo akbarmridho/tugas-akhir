@@ -1,0 +1,11 @@
+\subsection{Kubernetes Lokal}
+
+Pengembangan dan pengujian pada kluster kubernetes lokal dilakukan dengan K3d yang mengabstraksikan instance K3s pada Docker. Kakas ini memungkinkan dijalankannya beberapa kluster K3s baik itu satu atau lebih node pada komputer lokal. Satu control plane dan satu agent digunakan untuk kluster backend. Satu control plane lagi digunakan untuk kluster agen penguji.
+
+Pendekatan ini memiliki berbagai keuntungan, yaitu:
+
+\begin{enumerate}
+    \item Meminimalkan perbedaan konfigurasi kluster Kubernetes di lokal dan di lingkungan pengujian yang sesungguhnya.
+    \item Kebanyakan konfigurasi dapat dibuat pada kluster lokal, sehingga meminimalkan biaya yang harus dikeluarkan untuk pengembangan dan pengujian.
+    \item Validasi kebenaran aplikasi, konfigurasi deployment, dan konfigurasi monitoring dengan end-to-end testing. Smoke test juga dilakukan dengan 200 VU selama 10 menit pada kluster lokal.
+\end{enumerate}

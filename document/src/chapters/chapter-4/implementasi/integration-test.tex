@@ -1,0 +1,12 @@
+\subsection{Unit Test dan Integration Test}
+
+Integration test dilakukan selama proses implementasi untuk menguji dan melakukan validasi terhadap fungsionalitas tertentu, termasuk interaksinya dengan dependency instance seperti PostgreSQL atau pun Redis. Tidak semua layer abstraksi di bawahnya dites dengan scope testing yang lebih kecil, seperti unit testing. Sebagai contoh, unit testing kode repository yang berisi kueri pada basis data akan tidak berguna apabila pengujian dilakukan pada mock database alih-alih instance basis data sesungguhnya dengan skema dan data tertentu.
+
+Meskipun begitu, terdapat unit test untuk komponen-komponen yang tidak membutuhkan dependency terhadap instance lain, seperti unit testing untuk algoritma early dropper, ID generator, dan lain-lain.
+
+Total code coverage dari integration testing ini adalah 40\%. Angka ini terlihat kecil, tetapi berada pada angka yang dapat diterima karena hal-hal berikut.
+
+\begin{enumerate}
+    \item Angka 40\% juga menghitung kode HTTP server yang tidak diuji pada integration testing. Aplikasi secara keseluruhan akan diuji pada kluster lokal Kubernetes.
+    \item Sisa kode yang tidak termasuk code coverage merupakan error handling yang dapat dikatakan tidak realistis untuk terjadi di production, sehingga skenario tersebut tidak diuji sama sekali.
+\end{enumerate}
