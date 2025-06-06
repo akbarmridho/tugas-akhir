@@ -48,7 +48,7 @@ Layanan pembayaran secara umum terdiri atas deployment payment, service payment,
     \label{fig:deployment-ticket-nofc}
 \end{figure}
 
-Layanan tiket tanpa \textit{flow control} terdiri atas deployment ticket server, kluster redis, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgbouncer.
+Layanan tiket tanpa \textit{flow control} terdiri atas deployment ticket server, kluster redis, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgcat.
 
 \pagebreak
 
@@ -61,7 +61,7 @@ Layanan tiket tanpa \textit{flow control} terdiri atas deployment ticket server,
     \label{fig:deployment-ticket-fc}
 \end{figure}
 
-Layanan tiket dengan \textit{flow control} terdiri atas deployment ticket server, ticket-worker, kluster redis, rabbitmq, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgbouncer.
+Layanan tiket dengan \textit{flow control} terdiri atas deployment ticket server, ticket-worker, kluster redis, rabbitmq, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgcat.
 
 \pagebreak
 
@@ -74,7 +74,7 @@ Layanan tiket dengan \textit{flow control} terdiri atas deployment ticket server
     \label{fig:deployment-postgres}
 \end{figure}
 
-Kluster PostgreSQL terdiri atas stateful set PostgreSQL yang akan terdiri atas satu primary dan satu replica. Selain itu, terdapat dua layanan pgbouncer. Satu untuk primary dan satu lagi untuk replica. Pemisahan ini dilakukan agar sistem tiket dapat terhubung dengan basis data melalui pgbouncer dengan multihost connection string sebagaimana didukung pada libpq. Keunggulan dari pendekatan ini adalah dengan tidak diperlukannya implementasi tambahan dari sisi sistem tiket.
+Kluster PostgreSQL terdiri atas stateful set PostgreSQL yang akan terdiri atas satu primary dan satu replica. Selain itu, terdapat Pgcat yang bertindak sebagai pooler dan load balancer di level query. Pgcat akan membaca kueri dan meneruskan query kepada primary atau replica berdasarkan jenis kueri dan beban setiap instance.
 
 \pagebreak
 
@@ -87,7 +87,7 @@ Kluster PostgreSQL terdiri atas stateful set PostgreSQL yang akan terdiri atas s
     \label{fig:deployment-citusdata}
 \end{figure}
 
-Kluster CitusData terdiri atas tiga stateful set CitusCluster. Cluster pertama merupakan koordinator dan sisanya merupakan worker. Terdapat Pgbouncer yang terhubung dengan koordinator. Sistem tiket terhubung langsung dengan Pgbouncer. Koneksi dengan worker dilakukan melalui koordinator.
+Kluster CitusData terdiri atas tiga stateful set CitusCluster. Cluster pertama merupakan koordinator dan sisanya merupakan worker. Terdapat Pgcat yang terhubung dengan koordinator. Sistem tiket terhubung langsung dengan Pgcat. Koneksi dengan worker dilakukan melalui koordinator.
 
 \pagebreak
 
@@ -100,7 +100,7 @@ Kluster CitusData terdiri atas tiga stateful set CitusCluster. Cluster pertama m
     \label{fig:deployment-yugabyte}
 \end{figure}
 
-Kluster YugabyteDB terdiri atas stateful set yugabyte master, stateful set yugabyte tablet server, dan pgbouncer. Pgbouncer terhubung dengan semua instance yugabyte master. Sistem tiket terhubung langsung dengan Pgbouncer. Koneksi dengan yugabyte master di-\textit{load balance} oleh Pgbouncer.
+Kluster YugabyteDB terdiri atas stateful set yugabyte master, stateful set yugabyte tablet server, dan Pgcat. Pgcat terhubung dengan semua instance yugabyte master. Sistem tiket terhubung langsung dengan Pgcat. Koneksi dengan yugabyte master di-\textit{load balance} oleh Pgcat.
 
 \pagebreak
 

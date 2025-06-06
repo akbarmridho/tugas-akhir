@@ -24,6 +24,8 @@ Pada konfigurasi kluster PostgreSQL, klien terhubung dengan semua \textit{instan
 
 Konfigurasi kluster PostgreSQL memiliki skalabilitas yang terbatas dengan peningkatan penulisan hanya dapat dicapai dengan \textit{vertical scaling}. \textit{Throughput} penulisan CitusData dan YugabyteDB dapat ditingkatkan dengan menambah jumlah \textit{instance}, meski CitusData akan mengalami \textit{bottleneck} dari sisi koordinator.
 
+Connection pooler PGCat akan digunakan agar direct connection basis data yang terbatas dapat digunakan ulang dan dipakai oleh client yang lebih banyak. Selain itu, pada konfigurasi kluster PostgreSQL pooler ini berguna sebagai load balancer \textit{read query} antara primary dan replica.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-3/ticket-fc.png}
