@@ -1,0 +1,63 @@
+\subsection{Dasbor Monitoring}
+
+Terdapat berbagai dasbor Grafana yang disiapkan untuk melakukan proses monitoring pada kluster backend dan kluster agent penguji. Sebagian besar dasbor ini merupakan dasbor built-in yang diambil dari Grafana Dashboard gallery atau kakas yang berkaitan. Berikut adalah beberapa di antaranya:
+
+\subsubsection{Kubernetes Dashboard}
+
+Dasbor yang berisi metrik node Kubernetes secara keseluruhan dalam satu kluster.
+
+\subsubsection{YugabyteDB}
+
+Dasbor yang berisi metrik yang berkaitan instance YugabyteDB, termasuk metrik yang berkaitan dengan eksekusi kueri.
+
+\subsubsection{Nginx}
+
+Dasbor yang berisi metrik yang berkaitan dengan Nginx.
+
+\subsubsection{Patroni}
+
+Patroni merupakan manager kluster PostgreSQL. Dasbor ini berisi status kluster PostgreSQL secara keseluruhan.
+
+\subsubsection{Redis Cluster}
+
+Dasbor ini berisi metrik yang berkaitan dengan kluster Redis secara keseluruhan (bukan per instance).
+
+\subsubsection{Redis Instance}
+
+Dasbor ini berisi metrik yang berkaitan dengan instance Redis, seperti jumlah operasi per detik dan lain-lain.
+
+\subsubsection{Ticket Backend}
+
+Dasbor ini berisi metrik HTTP untuk sistem tiket, seperti latensi, jumlah request, error rate, dan lain-lain.
+
+\subsubsection{Ticket Queue}
+
+Dasbor ini berisi metrik queue untuk implementasi flow control.
+
+\subsubsection{Payment Backend}
+
+Dasbor ini berisi metrik HTTP untuk sistem pembayaran, seperti latensi, jumlah request, error rate, dan lain-lain.
+
+\subsubsection{Sanity Check}
+
+Dasbor ini berisi perbandingan perbedaan data ketersediaan pada basis data relasional dengan data pada Redis. Dasbor ini digunakan untuk memverifikasi validitas sistem, terutama saat berada pada beban tinggi atau saat terjadi banyak kegagalan.
+
+\subsubsection{PostgreSQL}
+
+Dasbor ini berisi metrik yang berkaitan dengan PostgreSQL, seperti banyaknya kueri yang dijalankan, jumlah koneksi aktif, dan lain-lain.
+
+\subsubsection{RabbitMQ}
+
+Dasbor ini berisi metrik yang berkaitan dengan RabbitMQ, seperti banyaknya queue, jumlah pesan masuk, dan lain-lain.
+
+\subsubsection{Kubernetess Pod}
+
+Dasbor ini berisi metrik yang berkaitan dengan Pod Pada kubernetes. Metrik pada dasbor ini berisi grafik penggunaan CPU, Memory, Disk, dan lain-lain.
+
+\subsubsection{PGCat}
+
+Dasbor ini berisi metrik yang berkaitan dengan pooler PGCat.
+
+\subsubsection{K6}
+
+Dasbor ini berisi metrik yang berkaitan dengan proses keberjalanan eksekusi pengujian, seperti jumlah virtual user, latensi, error rate, dan tambahan end state dari setiap iterasi.
