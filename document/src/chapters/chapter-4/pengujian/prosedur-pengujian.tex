@@ -1,0 +1,21 @@
+\subsection{Prosedur Pengujian}
+
+Berikut adalah prosedur yang dijalankan untuk melakukan pengujian.
+
+\begin{enumerate}
+    \item Kluster kubernetes dijalankan untuk kluster backend dan kluster penguji.
+    \item Deploy layanan esensial kluster backend seperti sistem monitoring (Grafana, Prometheus, Loki, dan lain-lain), sistem pembayaran, kluster Redis, dan Nginx.
+    \item Deploy layanan esensial kluter penguji seperti sistem monitoring (Grafana dan Prometheus), Nginx, dan K6 Operator.
+\end{enumerate}
+
+Setelah kluster disiapkan, prosedur berikut dilakukan untuk melakukan pengujian.
+
+\begin{enumerate}
+    \item Reset data dan deploy ulang layanan pembayaran. Hal ini dilakukan agar layanan pembayaran tidak mengalami penurunan kinerja dan menghilangkan data dari pengujian sebelumnya.
+    \item Reset instance ticket backend.
+    \item Deploy ulang instance basis data sepeti PostgreSQL, CitusData, YugabyteDB, kluster Redis, dan RabbitMQ. Hal ini hanya dilakukan apabila diperlukan.
+    \item Jalankan seeder berdasarkan skenario pengujian dan variasi sistem. Tahap ini juga melakukan reset pada basis data yang ada.
+    \item Deploy instance ticket backend.
+    \item Pastikan keseluruhan sistem sudah berjalan dengan baik.
+    \item Deploy skenario pengujian pada kluster penguji berdasarkan skenario yang sudah ditetapkan.
+\end{enumerate}

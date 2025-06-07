@@ -1,0 +1,90 @@
+\subsection{Variasi Data Penjualan Tiket}
+
+Penelitian ini menggunakan Stadion Utama Gelora Bung Karno (GBK) sebagai dasar lokasi, dengan asumsi kapasitas total sekitar 80.000 penonton per hari. Kapasitas ini dibagi menjadi dua jenis: area berdiri/ festival dan area tribun/ duduk. Setiap jenis ini nantinya dipecah menjadi beberapa kategori tiket dengan harga yang bervariasi.
+
+Selain itu, skenario ini juga mempertimbangkan bahwa sebuah acara dapat berlangsung selama beberapa hari. Pada implementasinya, kasus uji dirancang untuk dapat menangani penjualan tiket hingga untuk empat hari.
+
+Meskipun beberapa kategori tiket berada dalam satu blok yang sama (seperti Lower - Silver North dengan total 5.000 kursi), pada basis data, area ini dipecah menjadi beberapa area yang lebih kecil dengan kapasitas sekitar 1000 hingga 2000 kursi per area.
+
+Tujuan utamanya adalah untuk pengoptimalan dan kemudahan sharding, terutama dari sisi basis data. Hal ini bermanfaat pada varian CitusData dan YugabyteDB. Pendekatan ini tidak akan berpengaruh pada pengalaman pengguna karena pembeli tiket cenderung mencari dan membeli beberapa kursi yang letaknya berdetakan dalam satu area yang sama.
+
+Harga dan kategori tiket dirancang untuk merefleksikan konser pada umumnya. Berikut adalah kategori tiket yang dibuat beserta banyaknya kursi per area:
+
+\begingroup
+\footnotesize
+\begin{longtable}{|l|l|r|r|r|r|}
+    \caption{Spesifikasi Kategori, Area, dan Kapasitas Tiket per Hari} \label{tab:ticket_spec} \\
+    \hline
+    \textbf{Nama Kategori} & \textbf{Tipe} & \textbf{Harga} & \textbf{Area} & \textbf{Kursi/Area} & \textbf{Total} \\
+    \hline
+    \endfirsthead
+
+    \multicolumn{6}{c}%
+    {{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}} \\
+    \hline
+    \textbf{Nama Kategori} & \textbf{Tipe} & \textbf{Harga} & \textbf{Area} & \textbf{Kursi/Area} & \textbf{Total} \\
+    \hline
+    \endhead
+
+    \hline \multicolumn{6}{r}{\textit{Dilanjutkan ke halaman berikutnya}} \\
+    \endfoot
+
+    \hline
+    \endlastfoot
+
+    % --- Seated Categories ---
+    Lower - Platinum East 1 & Seated & 3.000.000 & 1 & 2.000 & 2.000 \\
+    \hline
+    Lower - Platinum East 2 & Seated & 3.000.000 & 1 & 2.000 & 2.000 \\
+    \hline
+    Lower - Platinum West 1 & Seated & 3.000.000 & 1 & 2.000 & 2.000 \\
+    \hline
+    Lower - Platinum West 2 & Seated & 3.000.000 & 1 & 2.000 & 2.000 \\
+    \hline
+    Lower - Gold East 1 & Seated & 2.500.000 & 1 & 1.750 & 1.750 \\
+    \hline
+    Lower - Gold East 2 & Seated & 2.500.000 & 1 & 1.750 & 1.750 \\
+    \hline
+    Lower - Gold West 1 & Seated & 2.500.000 & 1 & 1.750 & 1.750 \\
+    \hline
+    Lower - Gold West 2 & Seated & 2.500.000 & 1 & 1.750 & 1.750 \\
+    \hline
+    Lower - Silver North & Seated & 2.000.000 & 5 & 1.000 & 5.000 \\
+    \hline
+    Lower - Silver South & Seated & 2.000.000 & 5 & 1.000 & 5.000 \\
+    \hline
+    Upper - Bronze West & Seated & 1.750.000 & 10 & 1.050 & 10.500 \\
+    \hline
+    Upper - Bronze East & Seated & 1.750.000 & 10 & 1.050 & 10.500 \\
+    \hline
+    Upper - Bronze North & Seated & 1.500.000 & 7 & 1.000 & 7.000 \\
+    \hline
+    Upper - Bronze South & Seated & 1.500.000 & 7 & 1.000 & 7.000 \\
+    \hline
+    \multicolumn{5}{|l|}{\textbf{Subtotal Kursi Seated}} & \textbf{60.000} \\
+    \hline \hline
+
+    % --- Free Standing Categories ---
+    VIP & Free-Standing & 4.000.000 & 1 & 4.000 & 4.000 \\
+    \hline
+    Zone A & Free-Standing & 3.250.000 & 1 & 8.000 & 8.000 \\
+    \hline
+    Zone B & Free-Standing & 2.500.000 & 1 & 8.000 & 8.000 \\
+    \hline
+    \multicolumn{5}{|l|}{\textbf{Subtotal Kapasitas Free-Standing}} & \textbf{20.000} \\
+    \hline \hline
+
+    % --- Grand Total ---
+    \multicolumn{5}{|l|}{\textbf{Grand Total Kapasitas per Hari}} & \textbf{80.000} \\
+
+\end{longtable}
+\endgroup
+
+Spesifikasi di atas merupakan distribusi penjualan tiket per hari. Selain itu, terdapat kasus ketika banyaknya tiket yang dijual juga di-\textit{scaled down}. Apabila penjualan tiket per hari diturunkan dengan skala 10, maka jumlah tiket yang dijual per area dibagi dengan angka 10. Hal ini dilakukan untuk menjaga banyaknya kategori yang dijual dan menjaga distribusi area kursi tetap sama. Opsi untuk mengurangi kategori/ area juga dapat dilakukan, tetapi pendedkatan tersebut mengurangi kompleksitas penjualan sehingga tidak cukup representatif.
+
+Terdapat dua skenario yang akan digunakan selama pengujian, yaitu:
+
+\begin{enumerate}
+    \item Skenario sf-4, yaitu skenario skala penuh (80.000 tiket per hari) yang diselenggarakan selama 4 hari. Total kursi yang dijual adalah 320.000.
+    \item Skenario s10-2. Skenario skala satu berbanding sepuluh (8.000 tiket per hari) yang diselenggarakan selama 2 hari. Total data kursi yang dijual adalah sekitar 16.000.
+\end{enumerate}

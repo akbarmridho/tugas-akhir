@@ -1,0 +1,8 @@
+\subsection{Batasan Pengujian}
+
+Berikut adalah batasan yang ditetapkan dalam melakukan pengujian sistem tiket.
+
+\begin{enumerate}
+  \item Pengujian dilakukan dengan jumlah alokasi resource pada kluster kubernetes yang sama. Hal ini dilakukan agar jumlah tes yang dilakukan dapat berkurang. Selain itu, terdapat batasan jumlah server yang dapat disewa untuk akun baru Hetzner, sehingga jumlah sumber daya tidak dapat ditambah lagi.
+  \item Pengujian dilakukan dengan asumsi kluster berjalan dengan baik dalam artian tidak ada pod atau service yang gagal karena tidak dapat dialokasikan oleh kluster atau pun hal serupa.
+\end{enumerate}
