@@ -1,0 +1,22 @@
+\subsection{Lingkungan Pengujian}
+
+Lingkungan pengujian penuh dilakukan pada platform Hetzner Cloud dengan lokasi datacenter Jerman. Setiap node dipastikan berada pada satu datacenter untuk meminimalkan latensi.
+
+Setiap node kubernetes merupakan \textit{shared virtual machine}. Sistem \textit{dedicated} tidak digunakan karena biaya yang harus dikeluarkan jauh lebih mahal serta akun Hetzner membatasi sewa \textit{dedicated} CPU maksimal sebanyak 8 core. Setiap node kubernetes memiliki spesifikasi sebagai berikut:
+
+\begin{enumerate}
+    \item CPU Seri AMD EPYC 7002 dengan 16vCPU.
+    \item RAM: 32GB.
+    \item Storage: 360GB SSD NVME.
+\end{enumerate}
+
+Jumlah node yang digunakan adalah 5 node. Jumlah ini merupakan batas maksimal yang diperbolehkan oleh Hetzner untuk akun baru. Jumlah sumber daya yang digunakan pada skala ini dinilai cukup untuk menggambarkan beban di dunia nyata yang di-\textit{scale down}. Selain itu, penggunaan sumber daya yang lebih besar dari ini akan membutuhkan biaya yang sangat besar, sehingga tidak dinilai \textit{feasible} dari sisi biaya.
+
+Terdapat dua kluster kubernetes berbeda yang digunakan:
+
+\begin{enumerate}
+    \item Sistem backend dengan 1 node control plane, 1 node worker, dan Hetzner Load Balancer tipe LB31.
+    \item Agen penguji dengan 1 node control plane, 2 node worker, dan Hetzner Load Balancer tipe LB11.
+\end{enumerate}
+
+Setiap kluster Kubernetes pada Hetzner dikonfigurasikan dengan bantuan kakas kube-hetzner/terraform-hcloud-kube-hetzner. Kakas ini melanjalankan K3s dengan basis image sistem operasi OpenSUSE MicroOS.
