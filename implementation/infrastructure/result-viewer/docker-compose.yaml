@@ -1,0 +1,55 @@
+services:
+  grafana_backend:
+    image: grafana/grafana:12.0.1
+    ports:
+      - "3010:3000"
+    volumes:
+      - ./backend:/etc/grafana/provisioning/
+      - ./backend_dashboards:/var/lib/grafana/dashboards
+      - grafana-storage:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: tugas-akhir
+
+  prom_backend_result_pg_nofc:
+    image: prom/prometheus:v3.4.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./backend_result/20250604T145502Z-71615c05e1097ec7/:/prometheus_backup
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus_backup"
+      - "--storage.tsdb.retention.time=0"
+      - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"
+      - "--web.enable-admin-api"
+      - "--enable-feature=native-histograms"
+
+  grafana_agent:
+    image: grafana/grafana:12.0.1
+    ports:
+      - "3011:3000"
+    volumes:
+      - ./agent:/etc/grafana/provisioning/
+      - ./agent_dashboards:/var/lib/grafana/dashboards
+      - grafana-storage:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: tugas-akhir
+
+  prom_agent_result_pg_nofc:
+    image: prom/prometheus:v3.4.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./agent_result/20250604T145822Z-4f14c654373dedb8/:/prometheus_backup
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus_backup"
+      - "--storage.tsdb.retention.time=0"
+      - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"
+      - "--web.enable-admin-api"
+      - "--enable-feature=native-histograms"
+
+volumes:
+  grafana-storage: {}
