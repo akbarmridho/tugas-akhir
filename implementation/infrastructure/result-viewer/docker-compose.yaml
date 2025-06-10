@@ -15,10 +15,10 @@ services:
     image: prom/prometheus:v3.4.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./backend_result/20250604T145502Z-71615c05e1097ec7/:/prometheus_backup
+      - ./backend_result/20250604T145502Z-71615c05e1097ec7:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus_backup"
+      - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.time=0"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
@@ -41,10 +41,10 @@ services:
     image: prom/prometheus:v3.4.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./agent_result/20250604T145822Z-4f14c654373dedb8/:/prometheus_backup
+      - ./agent_result/20250604T145822Z-4f14c654373dedb8:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus_backup"
+      - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.time=0"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
