@@ -27,10 +27,10 @@ spec:
         image: haiakbar/ta-citus:latest
         resources:
           requests:
-            cpu: "4.5"
+            cpu: "3.5"
             memory: "6Gi"
           limits:
-            cpu: "4.5"
+            cpu: "3.5"
             memory: "6Gi"
         readinessProbe:
           httpGet:

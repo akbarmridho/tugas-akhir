@@ -109,6 +109,9 @@ kubectl delete -f citus-nofc.yaml
 kubectl delete -f citus-fc.yaml
 
 helmfile -f helmfile-citus.yaml destroy
+
+kubectl delete svc cituscluster-0-config cituscluster-1-config cituscluster-2-config
+kubectl delete endpoints cituscluster-0-sync cituscluster-1-sync cituscluster-2-sync
 ```
 
 ### YugaByteDB
@@ -262,7 +265,7 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=128.140.27.210
+export HOST_FORWARD=142.132.241.77
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**
