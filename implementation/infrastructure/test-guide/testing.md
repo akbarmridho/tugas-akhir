@@ -171,7 +171,7 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster
 
 # pooled connection
 export DB_VARIANT=postgres
-export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/postgres?pool_max_conns=500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/postgres?pool_max_conns=250&pool_min_conns=1"
 ```
 
 - For Citusdata cluster.
@@ -183,7 +183,7 @@ export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cl
 
 # pooled connection
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/citus?pool_max_conns=500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/citus?pool_max_conns=250&pool_min_conns=1"
 ```
 
 - For YugabyteDB cluster.
@@ -191,11 +191,13 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.loc
 ```bash
 # direct connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?pool_max_conns=30&pool_min_conns=1"
+export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?pool_max_conns=225&pool_min_conns=1&target_session_attrs=any&sslmode=disable"
 
 # pooled connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte:yugabyte@pgcat.default.svc.cluster.local:6432/yugabyte?pool_max_conns=200&pool_min_conns=1&sslmode=disable"
+export DATABASE_URL="postgresql://yugabyte:yugabyte@pgcat.default.svc.cluster.local:6432/yugabyte?pool_max_conns=100&pool_min_conns=1&sslmode=disable"
+
+psql "postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433/yugabyte?sslmode=disable"
 ```
 
 ### Seed the Data
@@ -265,7 +267,7 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=142.132.241.77
+export HOST_FORWARD=138.199.132.209
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**

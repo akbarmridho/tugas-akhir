@@ -14,39 +14,36 @@ releases:
           enabled: false  
       - gflags:
           master:
-            memory_limit_hard_bytes: "1020054733"
+            memory_limit_hard_bytes: "2020054733"
           tserver:
-            memory_limit_hard_bytes: "5080218932"
+            memory_limit_hard_bytes: "13080218932"
             ysql_output_buffer_size: "4194304"
       - storage:
           ephemeral: true
           master:
-            count: 2
+            count: 3
             size: 5Gi
             storageClass: standard
           tserver:
-            count: 2
+            count: 3
             size: 5Gi
             storageClass: standard
       - resource:
           master:
             requests:
-              cpu: "1"
-              memory: 2Gi
+              cpu: "0.5"
+              memory: 1Gi
             limits:
-              cpu: 1"
-              memory: 2Gi
+              cpu: "0.5"
+              memory: 1Gi
           tserver:
             requests:
-              cpu: "6"
-              memory: 12Gi
+              cpu: "6.5"
+              memory: 13Gi
             limits:
-              cpu: "6"
-              memory: 12Gi
+              cpu: "6.5"
+              memory: 13Gi
       - replicas:
-          master: 3
-          tserver: 3
-      - partition:
           master: 3
           tserver: 3
       - master:
@@ -98,7 +95,7 @@ releases:
               name: "yugabyte", 
               pool_mode: "transaction",
               load_balancing_mode: "loc",
-              users: [{username: "yugabyte", password: "yugabyte", server_username: "yugabyte", server_password: "", pool_size: 50, statement_timeout: 0}],
+              users: [{username: "yugabyte", password: "yugabyte", server_username: "yugabyte", server_password: "", pool_size: 200, statement_timeout: 0}],
               shards: [{
                 database: "yugabyte",
                 servers: [
