@@ -13,7 +13,10 @@ releases:
       - yugabytedUi:
           enabled: false  
       - gflags:
+          master:
+            memory_limit_hard_bytes: "1020054733"
           tserver:
+            memory_limit_hard_bytes: "5080218932"
             ysql_output_buffer_size: "4194304"
       - storage:
           ephemeral: true
@@ -28,18 +31,18 @@ releases:
       - resource:
           master:
             requests:
-              cpu: "0.5"
-              memory: "1Gi"
+              cpu: "1"
+              memory: 2Gi
             limits:
-              cpu: "0.5"
-              memory: "1Gi"
+              cpu: 1"
+              memory: 2Gi
           tserver:
             requests:
-              cpu: "2"
-              memory: "4Gi"
+              cpu: "6"
+              memory: 12Gi
             limits:
-              cpu: "2"
-              memory: "4Gi"
+              cpu: "6"
+              memory: 12Gi
       - replicas:
           master: 3
           tserver: 3
@@ -95,13 +98,13 @@ releases:
               name: "yugabyte", 
               pool_mode: "transaction",
               load_balancing_mode: "loc",
-              users: [{username: "yugabyte", password: "yugabyte", server_username: "yugabyte", server_password: "", pool_size: 180, statement_timeout: 0}],
+              users: [{username: "yugabyte", password: "yugabyte", server_username: "yugabyte", server_password: "", pool_size: 50, statement_timeout: 0}],
               shards: [{
                 database: "yugabyte",
                 servers: [
                   {host: "yb-tserver-0.yb-tservers.default.svc.cluster.local", port: 5433, role: "primary"},
-                  {host: "yb-tserver-1.yb-tservers.default.svc.cluster.local", port: 5433, role: "primary"},
-                  {host: "yb-tserver-2.yb-tservers.default.svc.cluster.local", port: 5433, role: "primary"},
+                  {host: "yb-tserver-1.yb-tservers.default.svc.cluster.local", port: 5433, role: "replica"},
+                  {host: "yb-tserver-2.yb-tservers.default.svc.cluster.local", port: 5433, role: "replica"},
                 ],
               }]
             }]

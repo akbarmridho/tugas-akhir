@@ -131,9 +131,9 @@ helmfile apply -f helmfile-fc.yaml
 Inside the `infrastructure/simulation/yugabyte` folder context, run the following command:
 
 ```bash
-helmfile delete -f helmfile-nofc.yaml
+helmfile destroy -f helmfile-nofc.yaml
 # or
-helmfile delete -f helmfile-fc.yaml
+helmfile destroy -f helmfile-fc.yaml
 
 kubectl delete pvc --namespace default -l app=yb-master
 kubectl delete pvc --namespace default -l app=yb-tserver
@@ -191,11 +191,11 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.loc
 ```bash
 # direct connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?pool_max_conns=40&pool_min_conns=1"
+export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?pool_max_conns=30&pool_min_conns=1"
 
 # pooled connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte:yugabyte@pgcat.default.svc.cluster.local:6432/yugabyte?pool_max_conns=500&pool_min_conns=1&sslmode=disable"
+export DATABASE_URL="postgresql://yugabyte:yugabyte@pgcat.default.svc.cluster.local:6432/yugabyte?pool_max_conns=200&pool_min_conns=1&sslmode=disable"
 ```
 
 ### Seed the Data
