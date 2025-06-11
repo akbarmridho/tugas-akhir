@@ -1,0 +1,622 @@
+                                                                       query                                                                        | calls  |  total_exec_time   |   mean_exec_time   
+----------------------------------------------------------------------------------------------------------------------------------------------------+--------+--------------------+--------------------
+ WITH order_base AS (                                                                                                                              +| 454146 | 1684739.9428060167 | 3.7096879479418043
+                    SELECT                                                                                                                         +|        |                    | 
+                           o.id, o.status, o.fail_reason, o.event_id, o.ticket_sale_id,                                                            +|        |                    | 
+                           o.ticket_area_id, o.external_user_id, o.created_at, o.updated_at                                                        +|        |                    | 
+                    FROM orders o                                                                                                                  +|        |                    | 
+                    WHERE o.id = $1                                                                                                                +|        |                    | 
+                          AND o.ticket_area_id = $4                                                                                                +|        |                    | 
+                          AND (o.external_user_id = $2 OR $3::boolean)                                                                             +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 invoice_details AS (                                                                                                              +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           i.id, i.status, i.amount, i.external_id, i.order_id, i.ticket_area_id AS invoice_ticket_area_id,                        +|        |                    | 
+                           i.created_at, i.updated_at                                                                                              +|        |                    | 
+                    FROM invoices i                                                                                                                +|        |                    | 
+                    JOIN order_base ob ON i.order_id = ob.id AND i.ticket_area_id = ob.ticket_area_id                                              +|        |                    | 
+                    WHERE i.ticket_area_id = $4                                                                                                    +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 event_details AS (                                                                                                                +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           e.id, e.name, e.location, e.description, e.created_at, e.updated_at                                                     +|        |                    | 
+                    FROM events e                                                                                                                  +|        |                    | 
+                    JOIN order_base ob ON e.id = ob.event_id                                                                                       +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 ticket_sale_details AS (                                                                                                          +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           ts.id, ts.name, ts.sale_begin_at, ts.sale_end_at, ts.event_id,                                                          +|        |                    | 
+                           ts.created_at, ts.updated_at                                                                                            +|        |                    | 
+                    FROM ticket_sales ts                                                                                                           +|        |                    | 
+                    JOIN order_base ob ON ts.id = ob.ticket_sale_id                                                                                +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 order_items_enriched AS (                                                                                                         +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           oi.id AS item_id, oi.customer_name, oi.customer_email, oi.price, oi.order_id AS item_order_id,                          +|        |                    | 
+                           oi.ticket_category_id, oi.ticket_seat_id,                                                                               +|        |                    | 
+                           oi.ticket_area_id AS item_ticket_area_id,                                                                               +|        |                    | 
+                           oi.created_at AS item_created_at, oi.updated_at AS item_updated_at,                                                     +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           tc.id AS category_id, tc.name AS category_name, tc.event_id AS category_event_id,                                       +|        |                    | 
+                           tc.created_at AS category_created_at, tc.updated_at AS category_updated_at,                                             +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           ts_seat.id AS seat_id, ts_seat.seat_number, ts_seat.status AS seat_status,                                              +|        |                    | 
+                           ts_seat.ticket_area_id AS seat_ticket_area_id,                                                                          +|        |                    | 
+                           ts_seat.created_at AS seat_created_at, ts_seat.updated_at AS seat_updated_at,                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           ta.id AS area_id, ta.type AS area_type, ta.ticket_package_id AS area_ticket_package_id,                                 +|        |                    | 
+                           ta.created_at AS area_created_at, ta.updated_at AS area_updated_at                                                      +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                    FROM order_items oi                                                                                                            +|        |                    | 
+                    JOIN order_base ob ON oi.order_id = ob.id AND oi.ticket_area_id = ob.ticket_area_id                                            +|        |                    | 
+                    LEFT JOIN ticket_categories tc ON oi.ticket_category_id = tc.id                                                                +|        |                    | 
+                    LEFT JOIN ticket_seats ts_seat ON oi.ticket_seat_id = ts_seat.id AND oi.ticket_area_id = ts_seat.ticket_area_id                +|        |                    | 
+                    LEFT JOIN ticket_areas ta ON ts_seat.ticket_area_id = ta.id                                                                    +|        |                    | 
+                    WHERE oi.ticket_area_id = $4                                                                                                   +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 aggregated_order_items AS (                                                                                                       +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           item_order_id,                                                                                                          +|        |                    | 
+                           jsonb_agg(                                                                                                              +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $5, item_id,                                                                                              +|        |                    | 
+                                         $6, customer_name,                                                                                        +|        |                    | 
+                                         $7, customer_email,                                                                                       +|        |                    | 
+                                         $8, price,                                                                                                +|        |                    | 
+                                         $9, item_order_id,                                                                                        +|        |                    | 
+                                         $10, ticket_category_id,                                                                                  +|        |                    | 
+                                         $11, seat_id,                                                                                             +|        |                    | 
+                                         $12, item_ticket_area_id,                                                                                 +|        |                    | 
+                                         $13, item_created_at,                                                                                     +|        |                    | 
+                                         $14, item_updated_at,                                                                                     +|        |                    | 
+                                         $15, CASE WHEN seat_id IS NOT NULL THEN jsonb_build_object(                                               +|        |                    | 
+                                            $16, seat_id,                                                                                          +|        |                    | 
+                                            $17, seat_number,                                                                                      +|        |                    | 
+                                            $18, seat_status,                                                                                      +|        |                    | 
+                                            $19, seat_ticket_area_id,                                                                              +|        |                    | 
+                                            $20, seat_created_at,                                                                                  +|        |                    | 
+                                            $21, seat_updated_at,                                                                                  +|        |                    | 
+                                            $22, CASE WHEN area_id IS NOT NULL THEN jsonb_build_object(                                            +|        |                    | 
+                                                   $23, area_id,                                                                                   +|        |                    | 
+                                                   $24, area_type,                                                                                 +|        |                    | 
+                                                   $25, area_ticket_package_id,                                                                    +|        |                    | 
+                                                   $26, area_created_at,                                                                           +|        |                    | 
+                                                   $27, area_updated_at                                                                            +|        |                    | 
+                                            ) ELSE $28 END                                                                                         +|        |                    | 
+                                         ) ELSE $29 END,                                                                                           +|        |                    | 
+                                         $30, CASE WHEN category_id IS NOT NULL THEN jsonb_build_object(                                           +|        |                    | 
+                                            $31, category_id,                                                                                      +|        |                    | 
+                                            $32, category_name,                                                                                    +|        |                    | 
+                                            $33, category_event_id,                                                                                +|        |                    | 
+                                            $34, category_created_at,                                                                              +|        |                    | 
+                                            $35, category_updated_at                                                                               +|        |                    | 
+                                         ) ELSE $36 END                                                                                            +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ORDER BY item_id                                                                                                        +|        |                    | 
+                           ) AS items_json                                                                                                         +|        |                    | 
+                    FROM order_items_enriched                                                                                                      +|        |                    | 
+                    GROUP BY item_order_id                                                                                                         +|        |                    | 
+                 )                                                                                                                                 +|        |                    | 
+                 SELECT                                                                                                                            +|        |                    | 
+                    jsonb_build_object(                                                                                                            +|        |                    | 
+                           $37, o.id,                                                                                                              +|        |                    | 
+                           $38, o.status,                                                                                                          +|        |                    | 
+                           $39, o.fail_reason,                                                                                                     +|        |                    | 
+                           $40, o.event_id,                                                                                                        +|        |                    | 
+                           $41, o.ticket_sale_id,                                                                                                  +|        |                    | 
+                           $42, o.ticket_area_id,                                                                                                  +|        |                    | 
+                           $43, o.external_user_id,                                                                                                +|        |                    | 
+                           $44, o.created_at,                                                                                                      +|        |                    | 
+                           $45, o.updated_at,                                                                                                      +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $46, CASE WHEN i.id IS NOT NULL THEN                                                                                    +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $47, i.id,                                                                                                +|        |                    | 
+                                         $48, i.status,                                                                                            +|        |                    | 
+                                         $49, i.amount,                                                                                            +|        |                    | 
+                                         $50, i.external_id,                                                                                       +|        |                    | 
+                                         $51, i.order_id,                                                                                          +|        |                    | 
+                                         $52, i.invoice_ticket_area_id,                                                                            +|        |                    | 
+                                         $53, i.created_at,                                                                                        +|        |                    | 
+                                         $54, i.updated_at                                                                                         +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $55 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $56, CASE WHEN e.id IS NOT NULL THEN                                                                                    +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $57, e.id,                                                                                                +|        |                    | 
+                                         $58, e.name,                                                                                              +|        |                    | 
+                                         $59, e.location,                                                                                          +|        |                    | 
+                                         $60, e.description,                                                                                       +|        |                    | 
+                                         $61, e.created_at,                                                                                        +|        |                    | 
+                                         $62, e.updated_at                                                                                         +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $63 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $64, CASE WHEN tsale.id IS NOT NULL THEN                                                                                +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $65, tsale.id,                                                                                            +|        |                    | 
+                                         $66, tsale.name,                                                                                          +|        |                    | 
+                                         $67, tsale.sale_begin_at,                                                                                 +|        |                    | 
+                                         $68, tsale.sale_end_at,                                                                                   +|        |                    | 
+                                         $69, tsale.event_id,                                                                                      +|        |                    | 
+                                         $70, tsale.created_at,                                                                                    +|        |                    | 
+                                         $71, tsale.updated_at                                                                                     +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $72 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $73, COALESCE(aoi.items_json, $74::jsonb)                                                                               +|        |                    | 
+                    ) as order_json                                                                                                                +|        |                    | 
+                 FROM order_base o                                                                                                                 +|        |                    | 
+                 LEFT JOIN invoice_details i ON o.id = i.order_id AND o.ticket_area_id = i.invoice_ticket_area_id                                  +|        |                    | 
+                 LEFT JOIN event_details e ON o.event_id = e.id                                                                                    +|        |                    | 
+                 LEFT JOIN ticket_sale_details tsale ON o.ticket_sale_id = tsale.id                                                                +|        |                    | 
+                 LEFT JOIN aggregated_order_items aoi ON o.id = aoi.item_order_id                                                                   |        |                    | 
+ WITH order_base AS (                                                                                                                              +| 309667 |  1073064.835703989 |  3.465221788902251
+                    SELECT                                                                                                                         +|        |                    | 
+                           o.id, o.status, o.fail_reason, o.event_id, o.ticket_sale_id,                                                            +|        |                    | 
+                           o.ticket_area_id, o.external_user_id, o.created_at, o.updated_at                                                        +|        |                    | 
+                    FROM orders o                                                                                                                  +|        |                    | 
+                    WHERE o.id = $1                                                                                                                +|        |                    | 
+                          AND o.ticket_area_id = $4                                                                                                +|        |                    | 
+                          AND (o.external_user_id = $2 OR $3::boolean)                                                                             +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 invoice_details AS (                                                                                                              +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           i.id, i.status, i.amount, i.external_id, i.order_id, i.ticket_area_id AS invoice_ticket_area_id,                        +|        |                    | 
+                           i.created_at, i.updated_at                                                                                              +|        |                    | 
+                    FROM invoices i                                                                                                                +|        |                    | 
+                    JOIN order_base ob ON i.order_id = ob.id AND i.ticket_area_id = ob.ticket_area_id                                              +|        |                    | 
+                    WHERE i.ticket_area_id = $4                                                                                                    +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 event_details AS (                                                                                                                +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           e.id, e.name, e.location, e.description, e.created_at, e.updated_at                                                     +|        |                    | 
+                    FROM events e                                                                                                                  +|        |                    | 
+                    JOIN order_base ob ON e.id = ob.event_id                                                                                       +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 ticket_sale_details AS (                                                                                                          +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           ts.id, ts.name, ts.sale_begin_at, ts.sale_end_at, ts.event_id,                                                          +|        |                    | 
+                           ts.created_at, ts.updated_at                                                                                            +|        |                    | 
+                    FROM ticket_sales ts                                                                                                           +|        |                    | 
+                    JOIN order_base ob ON ts.id = ob.ticket_sale_id                                                                                +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 order_items_enriched AS (                                                                                                         +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           oi.id AS item_id, oi.customer_name, oi.customer_email, oi.price, oi.order_id AS item_order_id,                          +|        |                    | 
+                           oi.ticket_category_id, oi.ticket_seat_id,                                                                               +|        |                    | 
+                           oi.ticket_area_id AS item_ticket_area_id,                                                                               +|        |                    | 
+                           oi.created_at AS item_created_at, oi.updated_at AS item_updated_at,                                                     +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           tc.id AS category_id, tc.name AS category_name, tc.event_id AS category_event_id,                                       +|        |                    | 
+                           tc.created_at AS category_created_at, tc.updated_at AS category_updated_at,                                             +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           ts_seat.id AS seat_id, ts_seat.seat_number, ts_seat.status AS seat_status,                                              +|        |                    | 
+                           ts_seat.ticket_area_id AS seat_ticket_area_id,                                                                          +|        |                    | 
+                           ts_seat.created_at AS seat_created_at, ts_seat.updated_at AS seat_updated_at,                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           ta.id AS area_id, ta.type AS area_type, ta.ticket_package_id AS area_ticket_package_id,                                 +|        |                    | 
+                           ta.created_at AS area_created_at, ta.updated_at AS area_updated_at                                                      +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                    FROM order_items oi                                                                                                            +|        |                    | 
+                    JOIN order_base ob ON oi.order_id = ob.id AND oi.ticket_area_id = ob.ticket_area_id                                            +|        |                    | 
+                    LEFT JOIN ticket_categories tc ON oi.ticket_category_id = tc.id                                                                +|        |                    | 
+                    LEFT JOIN ticket_seats ts_seat ON oi.ticket_seat_id = ts_seat.id AND oi.ticket_area_id = ts_seat.ticket_area_id                +|        |                    | 
+                    LEFT JOIN ticket_areas ta ON ts_seat.ticket_area_id = ta.id                                                                    +|        |                    | 
+                    WHERE oi.ticket_area_id = $4                                                                                                   +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 aggregated_order_items AS (                                                                                                       +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           item_order_id,                                                                                                          +|        |                    | 
+                           jsonb_agg(                                                                                                              +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $5, item_id,                                                                                              +|        |                    | 
+                                         $6, customer_name,                                                                                        +|        |                    | 
+                                         $7, customer_email,                                                                                       +|        |                    | 
+                                         $8, price,                                                                                                +|        |                    | 
+                                         $9, item_order_id,                                                                                        +|        |                    | 
+                                         $10, ticket_category_id,                                                                                  +|        |                    | 
+                                         $11, seat_id,                                                                                             +|        |                    | 
+                                         $12, item_ticket_area_id,                                                                                 +|        |                    | 
+                                         $13, item_created_at,                                                                                     +|        |                    | 
+                                         $14, item_updated_at,                                                                                     +|        |                    | 
+                                         $15, CASE WHEN seat_id IS NOT NULL THEN jsonb_build_object(                                               +|        |                    | 
+                                            $16, seat_id,                                                                                          +|        |                    | 
+                                            $17, seat_number,                                                                                      +|        |                    | 
+                                            $18, seat_status,                                                                                      +|        |                    | 
+                                            $19, seat_ticket_area_id,                                                                              +|        |                    | 
+                                            $20, seat_created_at,                                                                                  +|        |                    | 
+                                            $21, seat_updated_at,                                                                                  +|        |                    | 
+                                            $22, CASE WHEN area_id IS NOT NULL THEN jsonb_build_object(                                            +|        |                    | 
+                                                   $23, area_id,                                                                                   +|        |                    | 
+                                                   $24, area_type,                                                                                 +|        |                    | 
+                                                   $25, area_ticket_package_id,                                                                    +|        |                    | 
+                                                   $26, area_created_at,                                                                           +|        |                    | 
+                                                   $27, area_updated_at                                                                            +|        |                    | 
+                                            ) ELSE $28 END                                                                                         +|        |                    | 
+                                         ) ELSE $29 END,                                                                                           +|        |                    | 
+                                         $30, CASE WHEN category_id IS NOT NULL THEN jsonb_build_object(                                           +|        |                    | 
+                                            $31, category_id,                                                                                      +|        |                    | 
+                                            $32, category_name,                                                                                    +|        |                    | 
+                                            $33, category_event_id,                                                                                +|        |                    | 
+                                            $34, category_created_at,                                                                              +|        |                    | 
+                                            $35, category_updated_at                                                                               +|        |                    | 
+                                         ) ELSE $36 END                                                                                            +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ORDER BY item_id                                                                                                        +|        |                    | 
+                           ) AS items_json                                                                                                         +|        |                    | 
+                    FROM order_items_enriched                                                                                                      +|        |                    | 
+                    GROUP BY item_order_id                                                                                                         +|        |                    | 
+                 )                                                                                                                                 +|        |                    | 
+                 SELECT                                                                                                                            +|        |                    | 
+                    jsonb_build_object(                                                                                                            +|        |                    | 
+                           $37, o.id,                                                                                                              +|        |                    | 
+                           $38, o.status,                                                                                                          +|        |                    | 
+                           $39, o.fail_reason,                                                                                                     +|        |                    | 
+                           $40, o.event_id,                                                                                                        +|        |                    | 
+                           $41, o.ticket_sale_id,                                                                                                  +|        |                    | 
+                           $42, o.ticket_area_id,                                                                                                  +|        |                    | 
+                           $43, o.external_user_id,                                                                                                +|        |                    | 
+                           $44, o.created_at,                                                                                                      +|        |                    | 
+                           $45, o.updated_at,                                                                                                      +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $46, CASE WHEN i.id IS NOT NULL THEN                                                                                    +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $47, i.id,                                                                                                +|        |                    | 
+                                         $48, i.status,                                                                                            +|        |                    | 
+                                         $49, i.amount,                                                                                            +|        |                    | 
+                                         $50, i.external_id,                                                                                       +|        |                    | 
+                                         $51, i.order_id,                                                                                          +|        |                    | 
+                                         $52, i.invoice_ticket_area_id,                                                                            +|        |                    | 
+                                         $53, i.created_at,                                                                                        +|        |                    | 
+                                         $54, i.updated_at                                                                                         +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $55 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $56, CASE WHEN e.id IS NOT NULL THEN                                                                                    +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $57, e.id,                                                                                                +|        |                    | 
+                                         $58, e.name,                                                                                              +|        |                    | 
+                                         $59, e.location,                                                                                          +|        |                    | 
+                                         $60, e.description,                                                                                       +|        |                    | 
+                                         $61, e.created_at,                                                                                        +|        |                    | 
+                                         $62, e.updated_at                                                                                         +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $63 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $64, CASE WHEN tsale.id IS NOT NULL THEN                                                                                +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $65, tsale.id,                                                                                            +|        |                    | 
+                                         $66, tsale.name,                                                                                          +|        |                    | 
+                                         $67, tsale.sale_begin_at,                                                                                 +|        |                    | 
+                                         $68, tsale.sale_end_at,                                                                                   +|        |                    | 
+                                         $69, tsale.event_id,                                                                                      +|        |                    | 
+                                         $70, tsale.created_at,                                                                                    +|        |                    | 
+                                         $71, tsale.updated_at                                                                                     +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $72 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $73, COALESCE(aoi.items_json, $74::jsonb)                                                                               +|        |                    | 
+                    ) as order_json                                                                                                                +|        |                    | 
+                 FROM order_base o                                                                                                                 +|        |                    | 
+                 LEFT JOIN invoice_details i ON o.id = i.order_id AND o.ticket_area_id = i.invoice_ticket_area_id                                  +|        |                    | 
+                 LEFT JOIN event_details e ON o.event_id = e.id                                                                                    +|        |                    | 
+                 LEFT JOIN ticket_sale_details tsale ON o.ticket_sale_id = tsale.id                                                                +|        |                    | 
+                 LEFT JOIN aggregated_order_items aoi ON o.id = aoi.item_order_id                                                                   |        |                    | 
+ SELECT *                                                                                                                                          +| 103818 |  1020099.349169988 |   9.82584281309594
+         FROM ticket_seats                                                                                                                         +|        |                    | 
+         WHERE ticket_area_id = $1                                                                                                                 +|        |                    | 
+         ORDER BY seat_number                                                                                                                       |        |                    | 
+ SELECT *                                                                                                                                          +| 119482 |  972219.3090030119 |  8.136952084857883
+         FROM ticket_seats                                                                                                                         +|        |                    | 
+         WHERE ticket_area_id = $1                                                                                                                 +|        |                    | 
+         ORDER BY seat_number                                                                                                                       |        |                    | 
+ SELECT *                                                                                                                                          +|  25651 |  640066.7137649962 |   24.9528951606175
+         FROM ticket_seats                                                                                                                         +|        |                    | 
+         WHERE ticket_area_id = $1                                                                                                                 +|        |                    | 
+         ORDER BY seat_number                                                                                                                       |        |                    | 
+ SELECT *                                                                                                                                          +|  12915 |  356150.4515350011 | 27.576496440960057
+         FROM ticket_seats                                                                                                                         +|        |                    | 
+         WHERE ticket_area_id = $1                                                                                                                 +|        |                    | 
+         ORDER BY seat_number                                                                                                                       |        |                    | 
+ SELECT                                                                                                                                            +| 133862 | 207204.92684400128 | 1.5478995296947557
+                         it.id,                                                                                                                    +|        |                    | 
+                         it.serial_number,                                                                                                         +|        |                    | 
+                         it.holder_name,                                                                                                           +|        |                    | 
+                         it.name,                                                                                                                  +|        |                    | 
+                         it.description,                                                                                                           +|        |                    | 
+                         it.ticket_seat_id,                                                                                                        +|        |                    | 
+                         it.order_id,                                                                                                              +|        |                    | 
+                         it.order_item_id,                                                                                                         +|        |                    | 
+                         it.created_at,                                                                                                            +|        |                    | 
+                         it.updated_at,                                                                                                            +|        |                    | 
+                         ts.id AS "ticket_seat.id",                                                                                                +|        |                    | 
+                         ts.seat_number AS "ticket_seat.seat_number",                                                                              +|        |                    | 
+                         ts.status AS "ticket_seat.status",                                                                                        +|        |                    | 
+                         ts.ticket_area_id AS "ticket_seat.ticket_area_id",                                                                        +|        |                    | 
+                         ts.created_at AS "ticket_seat.created_at",                                                                                +|        |                    | 
+                         ts.updated_at AS "ticket_seat.updated_at"                                                                                 +|        |                    | 
+                 FROM issued_tickets it                                                                                                            +|        |                    | 
+                 JOIN ticket_seats ts ON it.ticket_seat_id = ts.id AND it.ticket_area_id = ts.ticket_area_id                                       +|        |                    | 
+                 WHERE it.order_id = $1 and it.ticket_area_id = $2                                                                                  |        |                    | 
+ SELECT                                                                                                                                            +| 129401 | 198310.39584499836 | 1.5325259916461307
+                         it.id,                                                                                                                    +|        |                    | 
+                         it.serial_number,                                                                                                         +|        |                    | 
+                         it.holder_name,                                                                                                           +|        |                    | 
+                         it.name,                                                                                                                  +|        |                    | 
+                         it.description,                                                                                                           +|        |                    | 
+                         it.ticket_seat_id,                                                                                                        +|        |                    | 
+                         it.order_id,                                                                                                              +|        |                    | 
+                         it.order_item_id,                                                                                                         +|        |                    | 
+                         it.created_at,                                                                                                            +|        |                    | 
+                         it.updated_at,                                                                                                            +|        |                    | 
+                         ts.id AS "ticket_seat.id",                                                                                                +|        |                    | 
+                         ts.seat_number AS "ticket_seat.seat_number",                                                                              +|        |                    | 
+                         ts.status AS "ticket_seat.status",                                                                                        +|        |                    | 
+                         ts.ticket_area_id AS "ticket_seat.ticket_area_id",                                                                        +|        |                    | 
+                         ts.created_at AS "ticket_seat.created_at",                                                                                +|        |                    | 
+                         ts.updated_at AS "ticket_seat.updated_at"                                                                                 +|        |                    | 
+                 FROM issued_tickets it                                                                                                            +|        |                    | 
+                 JOIN ticket_seats ts ON it.ticket_seat_id = ts.id AND it.ticket_area_id = ts.ticket_area_id                                       +|        |                    | 
+                 WHERE it.order_id = $1 and it.ticket_area_id = $2                                                                                  |        |                    | 
+ WITH order_base AS (                                                                                                                              +|  82885 |       80310.376004 |  0.968937395234367
+                    SELECT                                                                                                                         +|        |                    | 
+                           o.id, o.status, o.fail_reason, o.event_id, o.ticket_sale_id,                                                            +|        |                    | 
+                           o.ticket_area_id, o.external_user_id, o.created_at, o.updated_at                                                        +|        |                    | 
+                    FROM orders o                                                                                                                  +|        |                    | 
+                    WHERE o.id = $1                                                                                                                +|        |                    | 
+                          AND o.ticket_area_id = $4                                                                                                +|        |                    | 
+                          AND (o.external_user_id = $2 OR $3::boolean)                                                                             +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 invoice_details AS (                                                                                                              +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           i.id, i.status, i.amount, i.external_id, i.order_id, i.ticket_area_id AS invoice_ticket_area_id,                        +|        |                    | 
+                           i.created_at, i.updated_at                                                                                              +|        |                    | 
+                    FROM invoices i                                                                                                                +|        |                    | 
+                    JOIN order_base ob ON i.order_id = ob.id AND i.ticket_area_id = ob.ticket_area_id                                              +|        |                    | 
+                    WHERE i.ticket_area_id = $4                                                                                                    +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 event_details AS (                                                                                                                +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           e.id, e.name, e.location, e.description, e.created_at, e.updated_at                                                     +|        |                    | 
+                    FROM events e                                                                                                                  +|        |                    | 
+                    JOIN order_base ob ON e.id = ob.event_id                                                                                       +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 ticket_sale_details AS (                                                                                                          +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           ts.id, ts.name, ts.sale_begin_at, ts.sale_end_at, ts.event_id,                                                          +|        |                    | 
+                           ts.created_at, ts.updated_at                                                                                            +|        |                    | 
+                    FROM ticket_sales ts                                                                                                           +|        |                    | 
+                    JOIN order_base ob ON ts.id = ob.ticket_sale_id                                                                                +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 order_items_enriched AS (                                                                                                         +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           oi.id AS item_id, oi.customer_name, oi.customer_email, oi.price, oi.order_id AS item_order_id,                          +|        |                    | 
+                           oi.ticket_category_id, oi.ticket_seat_id,                                                                               +|        |                    | 
+                           oi.ticket_area_id AS item_ticket_area_id,                                                                               +|        |                    | 
+                           oi.created_at AS item_created_at, oi.updated_at AS item_updated_at,                                                     +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           tc.id AS category_id, tc.name AS category_name, tc.event_id AS category_event_id,                                       +|        |                    | 
+                           tc.created_at AS category_created_at, tc.updated_at AS category_updated_at,                                             +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           ts_seat.id AS seat_id, ts_seat.seat_number, ts_seat.status AS seat_status,                                              +|        |                    | 
+                           ts_seat.ticket_area_id AS seat_ticket_area_id,                                                                          +|        |                    | 
+                           ts_seat.created_at AS seat_created_at, ts_seat.updated_at AS seat_updated_at,                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           ta.id AS area_id, ta.type AS area_type, ta.ticket_package_id AS area_ticket_package_id,                                 +|        |                    | 
+                           ta.created_at AS area_created_at, ta.updated_at AS area_updated_at                                                      +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                    FROM order_items oi                                                                                                            +|        |                    | 
+                    JOIN order_base ob ON oi.order_id = ob.id AND oi.ticket_area_id = ob.ticket_area_id                                            +|        |                    | 
+                    LEFT JOIN ticket_categories tc ON oi.ticket_category_id = tc.id                                                                +|        |                    | 
+                    LEFT JOIN ticket_seats ts_seat ON oi.ticket_seat_id = ts_seat.id AND oi.ticket_area_id = ts_seat.ticket_area_id                +|        |                    | 
+                    LEFT JOIN ticket_areas ta ON ts_seat.ticket_area_id = ta.id                                                                    +|        |                    | 
+                    WHERE oi.ticket_area_id = $4                                                                                                   +|        |                    | 
+                 ),                                                                                                                                +|        |                    | 
+                 aggregated_order_items AS (                                                                                                       +|        |                    | 
+                    SELECT                                                                                                                         +|        |                    | 
+                           item_order_id,                                                                                                          +|        |                    | 
+                           jsonb_agg(                                                                                                              +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $5, item_id,                                                                                              +|        |                    | 
+                                         $6, customer_name,                                                                                        +|        |                    | 
+                                         $7, customer_email,                                                                                       +|        |                    | 
+                                         $8, price,                                                                                                +|        |                    | 
+                                         $9, item_order_id,                                                                                        +|        |                    | 
+                                         $10, ticket_category_id,                                                                                  +|        |                    | 
+                                         $11, seat_id,                                                                                             +|        |                    | 
+                                         $12, item_ticket_area_id,                                                                                 +|        |                    | 
+                                         $13, item_created_at,                                                                                     +|        |                    | 
+                                         $14, item_updated_at,                                                                                     +|        |                    | 
+                                         $15, CASE WHEN seat_id IS NOT NULL THEN jsonb_build_object(                                               +|        |                    | 
+                                            $16, seat_id,                                                                                          +|        |                    | 
+                                            $17, seat_number,                                                                                      +|        |                    | 
+                                            $18, seat_status,                                                                                      +|        |                    | 
+                                            $19, seat_ticket_area_id,                                                                              +|        |                    | 
+                                            $20, seat_created_at,                                                                                  +|        |                    | 
+                                            $21, seat_updated_at,                                                                                  +|        |                    | 
+                                            $22, CASE WHEN area_id IS NOT NULL THEN jsonb_build_object(                                            +|        |                    | 
+                                                   $23, area_id,                                                                                   +|        |                    | 
+                                                   $24, area_type,                                                                                 +|        |                    | 
+                                                   $25, area_ticket_package_id,                                                                    +|        |                    | 
+                                                   $26, area_created_at,                                                                           +|        |                    | 
+                                                   $27, area_updated_at                                                                            +|        |                    | 
+                                            ) ELSE $28 END                                                                                         +|        |                    | 
+                                         ) ELSE $29 END,                                                                                           +|        |                    | 
+                                         $30, CASE WHEN category_id IS NOT NULL THEN jsonb_build_object(                                           +|        |                    | 
+                                            $31, category_id,                                                                                      +|        |                    | 
+                                            $32, category_name,                                                                                    +|        |                    | 
+                                            $33, category_event_id,                                                                                +|        |                    | 
+                                            $34, category_created_at,                                                                              +|        |                    | 
+                                            $35, category_updated_at                                                                               +|        |                    | 
+                                         ) ELSE $36 END                                                                                            +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ORDER BY item_id                                                                                                        +|        |                    | 
+                           ) AS items_json                                                                                                         +|        |                    | 
+                    FROM order_items_enriched                                                                                                      +|        |                    | 
+                    GROUP BY item_order_id                                                                                                         +|        |                    | 
+                 )                                                                                                                                 +|        |                    | 
+                 SELECT                                                                                                                            +|        |                    | 
+                    jsonb_build_object(                                                                                                            +|        |                    | 
+                           $37, o.id,                                                                                                              +|        |                    | 
+                           $38, o.status,                                                                                                          +|        |                    | 
+                           $39, o.fail_reason,                                                                                                     +|        |                    | 
+                           $40, o.event_id,                                                                                                        +|        |                    | 
+                           $41, o.ticket_sale_id,                                                                                                  +|        |                    | 
+                           $42, o.ticket_area_id,                                                                                                  +|        |                    | 
+                           $43, o.external_user_id,                                                                                                +|        |                    | 
+                           $44, o.created_at,                                                                                                      +|        |                    | 
+                           $45, o.updated_at,                                                                                                      +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $46, CASE WHEN i.id IS NOT NULL THEN                                                                                    +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $47, i.id,                                                                                                +|        |                    | 
+                                         $48, i.status,                                                                                            +|        |                    | 
+                                         $49, i.amount,                                                                                            +|        |                    | 
+                                         $50, i.external_id,                                                                                       +|        |                    | 
+                                         $51, i.order_id,                                                                                          +|        |                    | 
+                                         $52, i.invoice_ticket_area_id,                                                                            +|        |                    | 
+                                         $53, i.created_at,                                                                                        +|        |                    | 
+                                         $54, i.updated_at                                                                                         +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $55 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $56, CASE WHEN e.id IS NOT NULL THEN                                                                                    +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $57, e.id,                                                                                                +|        |                    | 
+                                         $58, e.name,                                                                                              +|        |                    | 
+                                         $59, e.location,                                                                                          +|        |                    | 
+                                         $60, e.description,                                                                                       +|        |                    | 
+                                         $61, e.created_at,                                                                                        +|        |                    | 
+                                         $62, e.updated_at                                                                                         +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $63 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $64, CASE WHEN tsale.id IS NOT NULL THEN                                                                                +|        |                    | 
+                                  jsonb_build_object(                                                                                              +|        |                    | 
+                                         $65, tsale.id,                                                                                            +|        |                    | 
+                                         $66, tsale.name,                                                                                          +|        |                    | 
+                                         $67, tsale.sale_begin_at,                                                                                 +|        |                    | 
+                                         $68, tsale.sale_end_at,                                                                                   +|        |                    | 
+                                         $69, tsale.event_id,                                                                                      +|        |                    | 
+                                         $70, tsale.created_at,                                                                                    +|        |                    | 
+                                         $71, tsale.updated_at                                                                                     +|        |                    | 
+                                  )                                                                                                                +|        |                    | 
+                           ELSE $72 END,                                                                                                           +|        |                    | 
+                                                                                                                                                   +|        |                    | 
+                           $73, COALESCE(aoi.items_json, $74::jsonb)                                                                               +|        |                    | 
+                    ) as order_json                                                                                                                +|        |                    | 
+                 FROM order_base o                                                                                                                 +|        |                    | 
+                 LEFT JOIN invoice_details i ON o.id = i.order_id AND o.ticket_area_id = i.invoice_ticket_area_id                                  +|        |                    | 
+                 LEFT JOIN event_details e ON o.event_id = e.id                                                                                    +|        |                    | 
+                 LEFT JOIN ticket_sale_details tsale ON o.ticket_sale_id = tsale.id                                                                +|        |                    | 
+                 LEFT JOIN aggregated_order_items aoi ON o.id = aoi.item_order_id                                                                   |        |                    | 
+ WITH event_data AS (                                                                                                                              +|   6866 |  37443.79665899988 |  5.453509562918749
+                 SELECT                                                                                                                            +|        |                    | 
+                         e.id, e.name, e.location, e.description, e.created_at, e.updated_at                                                       +|        |                    | 
+                 FROM events e                                                                                                                     +|        |                    | 
+                 WHERE e.id = $1                                                                                                                   +|        |                    | 
+         ),                                                                                                                                        +|        |                    | 
+         ticket_sales_data AS (                                                                                                                    +|        |                    | 
+                 SELECT                                                                                                                            +|        |                    | 
+                         ts.id, ts.name, ts.sale_begin_at, ts.sale_end_at, ts.event_id,                                                            +|        |                    | 
+                         ts.created_at, ts.updated_at                                                                                              +|        |                    | 
+                 FROM ticket_sales ts                                                                                                              +|        |                    | 
+                 WHERE ts.event_id = $1                                                                                                            +|        |                    | 
+         ),                                                                                                                                        +|        |                    | 
+         ticket_packages_data AS (                                                                                                                 +|        |                    | 
+                 SELECT                                                                                                                            +|        |                    | 
+                         tp.id, tp.price, tp.ticket_category_id, tp.ticket_sale_id,                                                                +|        |                    | 
+                         tp.created_at, tp.updated_at                                                                                              +|        |                    | 
+                 FROM ticket_packages tp                                                                                                           +|        |                    | 
+                 JOIN ticket_sales ts ON tp.ticket_sale_id = ts.id                                                                                 +|        |                    | 
+                 WHERE ts.event_id = $1                                                                                                            +|        |                    | 
+         ),                                                                                                                                        +|        |                    | 
+         ticket_categories_data AS (                                                                                                               +|        |                    | 
+                 SELECT                                                                                                                            +|        |                    | 
+                         tc.id, tc.name, tc.event_id, tc.created_at, tc.updated_at                                                                 +|        |                    | 
+                 FROM ticket_categories tc                                                                                                         +|        |                    | 
+                 WHERE tc.event_id = $1                                                                                                            +|        |                    | 
+         ),                                                                                                                                        +|        |                    | 
+         ticket_areas_data AS (                                                                                                                    +|        |                    | 
+                 SELECT                                                                                                                            +|        |                    | 
+                         ta.id, ta.type, ta.ticket_package_id, ta.created_at, ta.updated_at                                                        +|        |                    | 
+                 FROM ticket_areas ta                                                                                                              +|        |                    | 
+                 JOIN ticket_packages tp ON ta.ticket_package_id = tp.id                                                                           +|        |                    | 
+                 JOIN ticket_sales ts ON tp.ticket_sale_id = ts.id                                                                                 +|        |                    | 
+                 WHERE ts.event_id = $1                                                                                                            +|        |                    | 
+         )                                                                                                                                         +|        |                    | 
+         SELECT                                                                                                                                    +|        |                    | 
+                 json_build_object(                                                                                                                +|        |                    | 
+                         $2, e.id,                                                                                                                 +|        |                    | 
+                         $3, e.name,                                                                                                               +|        |                    | 
+                         $4, e.location,                                                                                                           +|        |                    | 
+                         $5, e.description,                                                                                                        +|        |                    | 
+                         $6, e.created_at,                                                                                                         +|        |                    | 
+                         $7, e.updated_at,                                                                                                         +|        |                    | 
+                         $8, COALESCE(                                                                                                             +|        |                    | 
+                                 (                                                                                                                 +|        |                    | 
+                                         SELECT json_agg(                                                                                          +|        |                    | 
+                                                 json_build_object(                                                                                +|        |                    | 
+                                                         $9, ts.id,                                                                                +|        |                    | 
+                                                         $10, ts.name,                                                                             +|        |                    | 
+                                                         $11, ts.sale_begin_at,                                                                    +|        |                    | 
+                                                         $12, ts.sale_end_at,                                                                      +|        |                    | 
+                                                         $13, ts.event_id,                                                                         +|        |                    | 
+                                                         $14, ts.created_at,                                                                       +|        |                    | 
+                                                         $15, ts.updated_at,                                                                       +|        |                    | 
+                                                         $16, COALESCE(                                                                            +|        |                    | 
+                                                                 (                                                                                 +|        |                    | 
+                                                                         SELECT json_agg(                                                          +|        |                    | 
+                                                                                 json_build_object(                                                +|        |                    | 
+                                                                                         $17, tp.id,                                               +|        |                    | 
+                                                                                         $18, tp.price,                                            +|        |                    | 
+                                                                                         $19, tp.ticket_category_id,                               +|        |                    | 
+                                                                                         $20, tp.ticket_sale_id,                                   +|        |                    | 
+                                                                                         $21, tp.created_at,                                       +|        |                    | 
+                                                                                         $22, tp.updated_at,                                       +|        |                    | 
+                                                                                         $23, (                                                    +|        |                    | 
+                                                                                                 SELECT json_build_object(                         +|        |                    | 
+                                                                                                         $24, tc.id,                               +|        |                    | 
+                                                                                                         $25, tc.name,                             +|        |                    | 
+                                                                                                         $26, tc.event_id,                         +|        |                    | 
+                                                                                                         $27, tc.created_at,                       +|        |                    | 
+                                                                                                         $28, tc.updated_at                        +|        |                    | 
+                                                                                                 )                                                 +|        |                    | 
+                                                                                                 FROM ticket_categories_data tc                    +|        |                    | 
+                                                                                                 WHERE tc.id = tp.ticket_category_id               +|        |                    | 
+                                                                                         ),                                                        +|        |                    | 
+                                                                                         $29, COALESCE(                                            +|        |                    | 
+                                                                                                 (                                                 +|        |                    | 
+                                                                                                         SELECT json_agg(                          +|        |                    | 
+                                                                                                                 json_build_object(                +|        |                    | 
+                                                                                                                         $30, ta.id,               +|        |                    | 
+                                                                                                                         $31, ta.type,             +|        |                    | 
+                                                                                                                         $32, ta.ticket_package_id,+|        |                    | 
+                                                                                                                         $33, ta.created_at,       +|        |                    | 
+                                                                                                                         $34, ta.updated_at        +|        |                    | 
+                                                                                                                 )                                 +|        |                    | 
+                                                                                                         )                                         +|        |                    | 
+                                                                                                         FROM ticket_areas_data ta                 +|        |                    | 
+                                                                                                         WHERE ta.ticket_package_id = tp.id        +|        |                    | 
+                                                                                                 ),                                                +|        |                    | 
+                                                                                                 $35::json                                         +|        |                    | 
+                                                                                         )                                                         +|        |                    | 
+                                                                                 )                                                                 +|        |                    | 
+                                                                         )                                                                         +|        |                    | 
+                                                                         FROM ticket_packages_data tp                                              +|        |                    | 
+                                                                         WHERE tp.ticket_sale_id = ts.id                                           +|        |                    | 
+                                                                 ),                                                                                +|        |                    | 
+                                                                 $36::json                                                                         +|        |                    | 
+                                                         )                                                                                         +|        |                    | 
+                                                 )                                                                                                 +|        |                    | 
+                                         )                                                                                                         +|        |                    | 
+                                         FROM ticket_sales_data ts                                                                                 +|        |                    | 
+                                 ),                                                                                                                +|        |                    | 
+                                 $37::json                                                                                                         +|        |                    | 
+                         )                                                                                                                         +|        |                    | 
+                 ) as event_json                                                                                                                   +|        |                    | 
+         FROM event_data e                                                                                                                          |        |                    | 
+(10 rows)
+

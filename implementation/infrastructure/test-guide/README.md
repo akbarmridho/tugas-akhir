@@ -118,3 +118,19 @@ END {
 }
 '
 ```
+
+### Backup Stats
+
+```bash
+# Postgres Primary
+kubectl exec pgcluster-0 -- psql -U postgres -d postgres -c "SELECT query, calls, total_exec_time, mean_exec_time FROM pg_stat_statements ORDER BY total_exec_time DESC LIMIT 10;" > pg_output_primary.txt
+
+# Postgres Replica
+kubectl exec pgcluster-1 -- psql -U postgres -d postgres -c "SELECT query, calls, total_exec_time, mean_exec_time FROM pg_stat_statements ORDER BY total_exec_time DESC LIMIT 10;" > pg_output_replica.txt
+
+# Citus
+kubectl exec cituscluster-0 -- psql -U postgres -d citus -c "SELECT query, calls, total_exec_time, mean_exec_time FROM pg_stat_statements ORDER BY total_exec_time DESC LIMIT 10;" > citus_output.txt
+
+# Yugabyte
+kubectl exec yb-master-0 -- psql "postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?sslmode=disable" -c "SELECT query, calls, total_time, mean_time FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;" > yugabyte_output.txt
+```

@@ -13,6 +13,8 @@ For **Flow Control** case, setup the following: `Payment Service`, `RabbitMQ`, a
 Inside the `infrastructure/simulation/payment` folder context, run the following commands:
 
 ```bash
+kubectl delete -f payment.yaml -n payment && helmfile destroy && helmfile apply && kubectl apply -f payment.yaml -n payment
+
 helmfile apply
 
 # run the reset
@@ -50,9 +52,9 @@ helmfile apply -f helmfile-fc.yaml
 Insire the `infrastructure/simulation/redis` folder context, run the following command:
 
 ```bash
-helmfile delete -f helmfile-nofc.yaml
+helmfile destroy -f helmfile-nofc.yaml
 # or
-helmfile delete -f helmfile-fc.yaml
+helmfile destroy -f helmfile-fc.yaml
 
 kubectl delete pvc redis-data-redis-redis-cluster-0
 kubectl delete pvc redis-data-redis-redis-cluster-1
@@ -154,7 +156,7 @@ helmfile apply
 Inside the `infrastructure/simulation/rabbitmq` folder context, run the following command:
 
 ```bash
-helmfile delete
+helmfile destroy
 kubectl delete pvc data-rabbitmq-0
 ```
 
@@ -267,7 +269,7 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=138.199.132.209
+export HOST_FORWARD=49.12.17.161
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**
