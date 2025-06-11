@@ -3,7 +3,7 @@ kind: TestRun
 metadata:
   name: k6-run-${RUN_ID}
 spec:
-  parallelism: 10
+  parallelism: 14
   cleanup: post
   script:
     configMap:
