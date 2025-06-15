@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: ticket-fc-server
 spec:
-  replicas: 4
+  replicas: 8
   selector:
     matchLabels:
       app: ticket-fc-server
@@ -31,11 +31,11 @@ spec:
           failureThreshold: 3
         resources:
           requests:
-            cpu: "2"
-            memory: "4Gi"
+            cpu: "1"
+            memory: "2Gi"
           limits:
-            cpu: "2"
-            memory: "4Gi"
+            cpu: "1"
+            memory: "2Gi"
         ports:
         - containerPort: 3000
           protocol: TCP
