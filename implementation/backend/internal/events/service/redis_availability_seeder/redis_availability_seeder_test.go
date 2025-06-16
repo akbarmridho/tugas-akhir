@@ -2,9 +2,11 @@ package redis_availability_seeder
 
 import (
 	"context"
+	"strconv"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
 	"tugas-akhir/backend/infrastructure/config"
 	"tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/events/repository/availability"
@@ -26,7 +28,10 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 				PodName: "test-pod-1",
 			}
 
-			t.Run("Seeder loads availability data into Redis", func(t *testing.T) {
+			// Clean up redis before each test run to ensure isolation
+			redisClient.Client.FlushDB(ctx)
+
+			t.Run("Seeder loads availability data into Redis using Hashes", func(t *testing.T) {
 				// Create the seeder
 				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
 
@@ -35,116 +40,122 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 				require.NoError(t, err)
 
 				// Verify data was loaded into Redis correctly
-				// First, get all the availability data from database to validate against
 				data, iter, err := redisSeeder.iterAvailability()
 				require.NoError(t, err)
 				defer iter.Close(ctx)
 
-				// Extract all expected values
-				expectedValues := make(map[string]int32)
+				// Structure to hold expected values: map[hashKey]map[field]value
+				expectedValues := make(map[string]map[string]string)
 				for iter.Next(ctx) {
-					availabilityEntity := data[iter.ValueIndex()]
-					expectedValues[availability.GetTotalSeatsKey(availabilityEntity)] = availabilityEntity.TotalSeats
-					expectedValues[availability.GetAvailableSeats(availabilityEntity)] = availabilityEntity.AvailableSeats
+					item := data[iter.ValueIndex()]
+					key := availability.CacheKey(item.TicketSaleID)
+
+					if _, ok := expectedValues[key]; !ok {
+						expectedValues[key] = make(map[string]string)
+					}
+					expectedValues[key][availability.GetTotalSeatsField(item)] = strconv.Itoa(int(item.TotalSeats))
+					expectedValues[key][availability.GetAvailableSeatsField(item)] = strconv.Itoa(int(item.AvailableSeats))
 				}
 				require.NoError(t, iter.Error())
 
-				// Verify each key in Redis
-				for key, expectedValue := range expectedValues {
-					actualValue, err := redisClient.Client.Get(ctx, key).Int()
-					require.NoError(t, err)
-					assert.Equal(t, int(expectedValue), actualValue, "Redis value for %s should match expected", key)
+				// Verify each hash in Redis
+				for key, fields := range expectedValues {
+					for field, expectedValue := range fields {
+						actualValue, err := redisClient.Client.HGet(ctx, key, field).Result()
+						require.NoError(t, err, "failed to HGet key %s, field %s", key, field)
+						assert.Equal(t, expectedValue, actualValue, "Redis value for key %s, field %s should match", key, field)
+					}
 				}
 			})
 
-			t.Run("ApplyAvailability decrements available seats", func(t *testing.T) {
-				// Create the seeder
+			t.Run("ApplyAvailability decrements available seats in hash", func(t *testing.T) {
 				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
+				// Ensure data is seeded first
+				require.NoError(t, redisSeeder.Run(ctx))
 
-				// Get a sample of data to test with
 				data, iter, err := redisSeeder.iterAvailability()
 				require.NoError(t, err)
 				defer iter.Close(ctx)
 
-				require.True(t, iter.Next(ctx))
+				require.True(t, iter.Next(ctx), "iterator should have at least one item")
 				testItem := data[iter.ValueIndex()]
 
-				// Get initial value
-				key := availability.GetAvailableSeats(testItem)
-				initialValue, err := redisClient.Client.Get(ctx, key).Int()
+				key := availability.CacheKey(testItem.TicketSaleID)
+				field := availability.GetAvailableSeatsField(testItem)
+
+				initialValueStr, err := redisClient.Client.HGet(ctx, key, field).Result()
+				require.NoError(t, err)
+				initialValue, err := strconv.Atoi(initialValueStr)
 				require.NoError(t, err)
 
-				// Apply availability (decrease count)
 				err = redisSeeder.ApplyAvailability(ctx, []entity.AreaAvailability{testItem})
 				require.NoError(t, err)
 
-				// Verify the count decreased by 1
-				newValue, err := redisClient.Client.Get(ctx, key).Int()
+				newValueStr, err := redisClient.Client.HGet(ctx, key, field).Result()
 				require.NoError(t, err)
+				newValue, err := strconv.Atoi(newValueStr)
+				require.NoError(t, err)
+
 				assert.Equal(t, initialValue-1, newValue, "Available seats should decrease by 1")
 			})
 
-			t.Run("RevertAvailability increments available seats", func(t *testing.T) {
-				// Create the seeder
+			t.Run("RevertAvailability increments available seats in hash", func(t *testing.T) {
 				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
+				// Ensure data is seeded first
+				require.NoError(t, redisSeeder.Run(ctx))
 
-				// Get a sample of data to test with
 				data, iter, err := redisSeeder.iterAvailability()
 				require.NoError(t, err)
 				defer iter.Close(ctx)
 
-				require.True(t, iter.Next(ctx))
+				require.True(t, iter.Next(ctx), "iterator should have at least one item")
 				testItem := data[iter.ValueIndex()]
 
-				// Get initial value
-				key := availability.GetAvailableSeats(testItem)
-				initialValue, err := redisClient.Client.Get(ctx, key).Int()
+				key := availability.CacheKey(testItem.TicketSaleID)
+				field := availability.GetAvailableSeatsField(testItem)
+
+				initialValueStr, err := redisClient.Client.HGet(ctx, key, field).Result()
+				require.NoError(t, err)
+				initialValue, err := strconv.Atoi(initialValueStr)
 				require.NoError(t, err)
 
-				// Revert availability (increase count)
 				err = redisSeeder.RevertAvailability(ctx, []entity.AreaAvailability{testItem})
 				require.NoError(t, err)
 
-				// Verify the count increased by 1
-				newValue, err := redisClient.Client.Get(ctx, key).Int()
+				newValueStr, err := redisClient.Client.HGet(ctx, key, field).Result()
 				require.NoError(t, err)
+				newValue, err := strconv.Atoi(newValueStr)
+				require.NoError(t, err)
+
 				assert.Equal(t, initialValue+1, newValue, "Available seats should increase by 1")
 			})
 
 			t.Run("Lock mechanism allows only one instance to refresh data", func(t *testing.T) {
-				// Create two seeders with different pod names
 				seeder1 := NewRedisAvailabilitySeeder(cfg, redisClient, db)
-
-				cfg2 := &config.Config{
-					PodName: "test-pod-2",
-				}
+				cfg2 := &config.Config{PodName: "test-pod-2"}
 				seeder2 := NewRedisAvailabilitySeeder(cfg2, redisClient, db)
 
-				// First seeder should acquire the lock
 				acquired1, err := seeder1.tryAcquireSeeder()
 				require.NoError(t, err)
 				assert.True(t, acquired1, "First seeder should acquire the lock")
 
-				// Second seeder should not acquire the lock
 				acquired2, err := seeder2.tryAcquireSeeder()
 				require.NoError(t, err)
 				assert.False(t, acquired2, "Second seeder should not acquire the lock")
 
-				// Wait for lock to expire (mock by deleting the key)
 				err = redisClient.Client.Del(ctx, seederRedisKey).Err()
 				require.NoError(t, err)
 
-				// Now second seeder should acquire the lock
 				acquired2, err = seeder2.tryAcquireSeeder()
 				require.NoError(t, err)
 				assert.True(t, acquired2, "Second seeder should acquire the lock after expiration")
 			})
 
-			t.Run("Seeder handles multiple areas in batch", func(t *testing.T) {
-				// Create seeder
+			t.Run("Seeder handles multiple areas in batch with hashes", func(t *testing.T) {
 				redisSeeder := NewRedisAvailabilitySeeder(cfg, redisClient, db)
+				// Ensure data is seeded first
+				require.NoError(t, redisSeeder.Run(ctx))
 
-				// Get multiple items to test batch operations
 				data, iter, err := redisSeeder.iterAvailability()
 				require.NoError(t, err)
 				defer iter.Close(ctx)
@@ -156,37 +167,43 @@ func TestRedisAvailabilitySeeder(t *testing.T) {
 				require.NoError(t, iter.Error())
 				require.GreaterOrEqual(t, len(testItems), 2, "Need at least 2 items for batch test")
 
-				// Track initial values
-				initialValues := make(map[string]int)
+				type itemState struct {
+					key   string
+					field string
+					value int
+				}
+				initialStates := make(map[string]itemState)
+
 				for _, item := range testItems {
-					key := availability.GetAvailableSeats(item)
-					val, err := redisClient.Client.Get(ctx, key).Int()
+					key := availability.CacheKey(item.TicketSaleID)
+					field := availability.GetAvailableSeatsField(item)
+					valStr, err := redisClient.Client.HGet(ctx, key, field).Result()
 					require.NoError(t, err)
-					initialValues[key] = val
+					val, err := strconv.Atoi(valStr)
+					require.NoError(t, err)
+					initialStates[key+field] = itemState{key: key, field: field, value: val}
 				}
 
-				// Apply availability changes in batch
 				err = redisSeeder.ApplyAvailability(ctx, testItems)
 				require.NoError(t, err)
 
-				// Verify all values decreased by 1
-				for _, item := range testItems {
-					key := availability.GetAvailableSeats(item)
-					newVal, err := redisClient.Client.Get(ctx, key).Int()
+				for _, state := range initialStates {
+					newValStr, err := redisClient.Client.HGet(ctx, state.key, state.field).Result()
 					require.NoError(t, err)
-					assert.Equal(t, initialValues[key]-1, newVal, "Available seats should decrease by 1 for key %s", key)
+					newVal, err := strconv.Atoi(newValStr)
+					require.NoError(t, err)
+					assert.Equal(t, state.value-1, newVal, "Available seats should decrease by 1 for key %s, field %s", state.key, state.field)
 				}
 
-				// Revert availability changes in batch
 				err = redisSeeder.RevertAvailability(ctx, testItems)
 				require.NoError(t, err)
 
-				// Verify all values returned to initial values
-				for _, item := range testItems {
-					key := availability.GetAvailableSeats(item)
-					newVal, err := redisClient.Client.Get(ctx, key).Int()
+				for _, state := range initialStates {
+					newValStr, err := redisClient.Client.HGet(ctx, state.key, state.field).Result()
 					require.NoError(t, err)
-					assert.Equal(t, initialValues[key], newVal, "Available seats should return to initial value for key %s", key)
+					newVal, err := strconv.Atoi(newValStr)
+					require.NoError(t, err)
+					assert.Equal(t, state.value, newVal, "Available seats should return to initial value for key %s, field %s", state.key, state.field)
 				}
 			})
 		})

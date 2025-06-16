@@ -23,172 +23,72 @@ type RedisCheck struct {
 	cache *memcache.Memcache
 }
 
-const availabilityCacheKey = "availability-keys"
 const dropperCacheKey = "dropper-keys"
 
-func (s *RedisCheck) GetAvailability(ctx context.Context) (*AvailabilityCheck, error) {
+// GetAvailability performs a sanity check on seat availability for a given list of ticket sale IDs.
+// It fetches data directly from Redis Hashes for high performance.
+func (s *RedisCheck) GetAvailability(ctx context.Context, ticketSaleIDs []int64) (*AvailabilityCheck, error) {
 	l := logger.FromCtx(ctx)
+	result := &AvailabilityCheck{}
 
-	pattern := fmt.Sprintf("%s:*:*:*:*", availability.AvailabilityPrefix)
-
-	keys := make([]string, 0)
-
-	getKeys := func() error {
-		var mu sync.Mutex
-
-		// ForEachMaster will loop over every master node in the cluster.
-		err := s.redis.Client.ForEachMaster(ctx, func(ctx context.Context, client *baseredis.Client) error {
-			var cursor uint64 = 0
-			var localKeys []string
-			for {
-				// Scan on the current node.
-				ckeys, nextCursor, err := client.Scan(ctx, cursor, pattern, 100).Result()
-				if err != nil {
-					return err
-				}
-
-				localKeys = append(localKeys, ckeys...)
-
-				if nextCursor == 0 {
-					break
-				}
-				cursor = nextCursor
-			}
-
-			mu.Lock()
-			keys = append(keys, localKeys...)
-			mu.Unlock()
-
-			return nil
-		})
-
-		if err != nil {
-			return err
-		}
-
-		raw, err := json.Marshal(keys)
-
-		if err != nil {
-			logger.FromCtx(ctx).Error("Cannot marshall keys", zap.Error(err))
-			return err
-		}
-
-		s.cache.Cache.SetDefault(availabilityCacheKey, raw)
-
-		return nil
+	if len(ticketSaleIDs) == 0 {
+		return result, nil // Return empty result if no IDs are provided.
 	}
 
-	cachedData, found := s.cache.Cache.Get(availabilityCacheKey)
-
-	var getKeysError error
-
-	if found {
-		rawBytes, typeOk := cachedData.([]byte) // bigcache Get returns []byte, go-cache Get returns interface{}
-		if !typeOk {
-			logger.FromCtx(ctx).Error("Cached data for availability keys is not []byte", zap.String("key", availabilityCacheKey))
-			// Treat as cache miss/corruption if type is wrong, and refetch
-			getKeysError = getKeys()
-		} else {
-			marshallErr := json.Unmarshal(rawBytes, &keys)
-			if marshallErr != nil {
-				logger.FromCtx(ctx).Error("Cannot unmarshal cached availability keys", zap.Error(marshallErr))
-				// Preserve original behavior: if unmarshal fails, propagate the error
-				getKeysError = marshallErr
-			}
-		}
-	} else { // Not found in cache (equivalent to bigcache.ErrEntryNotFound)
-		getKeysError = getKeys()
-	}
-
-	if getKeysError != nil {
-		return nil, getKeysError
-	}
-
-	// Group keys by their area identifiers
-	areaMap := make(map[string][]string)
-	for _, key := range keys {
-		parts := strings.Split(key, ":")
-		if len(parts) != 5 {
-			l.Sugar().Warnf("parts count not 5 for key %s", key)
-			continue
-		}
-
-		// Create area identifier (saleID:packageID:areaID)
-		areaIdentifier := fmt.Sprintf("%s:%s:%s", parts[1], parts[2], parts[3])
-		areaMap[areaIdentifier] = append(areaMap[areaIdentifier], key)
-	}
-
-	// Get all values at once if there are keys
-	if len(keys) == 0 {
-		return nil, entity.AreaAvailabilityNotFoundError
-	}
-
-	keyToValue := make(map[string]string)
-
+	// Use a pipeline to fetch all HGetAll results in a single round-trip.
 	pipe := s.redis.Client.Pipeline()
+	cmds := make(map[int64]*baseredis.MapStringStringCmd, len(ticketSaleIDs))
 
-	cmds := make(map[string]*baseredis.StringCmd)
-
-	for _, key := range keys {
-		cmds[key] = pipe.Get(ctx, key)
+	for _, id := range ticketSaleIDs {
+		key := availability.CacheKey(id)
+		cmds[id] = pipe.HGetAll(ctx, key)
 	}
 
 	_, err := pipe.Exec(ctx)
-
+	// We can ignore a general `redis.Nil` error from Exec, as it might just mean some keys didn't exist.
+	// We'll check the error for each individual command below.
 	if err != nil && !errors.Is(err, baseredis.Nil) {
+		l.Error("failed to execute availability pipeline", zap.Error(err))
 		return nil, err
 	}
 
-	for key, cmd := range cmds {
-		val, resultErr := cmd.Result()
-		if resultErr != nil {
-			l.Sugar().Warnf("failed to get key %s: %v", key, err)
-			continue
-		}
-		keyToValue[key] = val
-	}
-
-	// Build the result
-	result := AvailabilityCheck{
-		Count:       0,
-		Available:   0,
-		Unavailable: 0,
-	}
-
-	for areaIdentifier, _ := range areaMap {
-		parts := strings.Split(areaIdentifier, ":")
-		if len(parts) != 3 {
-			l.Sugar().Warnf("parts count not 3 for key %s", areaIdentifier)
-			continue
-		}
-
-		saleID, _ := strconv.ParseInt(parts[0], 10, 64)
-		packageID, _ := strconv.ParseInt(parts[1], 10, 64)
-		areaID, _ := strconv.ParseInt(parts[2], 10, 64)
-
-		// Construct keys for total and available
-		totalKey := fmt.Sprintf("%s:%d:%d:%d:total", availability.AvailabilityPrefix, saleID, packageID, areaID)
-		availableKey := fmt.Sprintf("%s:%d:%d:%d:available", availability.AvailabilityPrefix, saleID, packageID, areaID)
-
-		// Get values
-		if totalStr, ok := keyToValue[totalKey]; ok {
-			totalSeats, err := strconv.ParseInt(totalStr, 10, 32)
-			if err == nil {
-				result.Count += int(totalSeats)
+	// Process the results from the pipeline.
+	for _, cmd := range cmds {
+		fields, err := cmd.Result()
+		if err != nil {
+			// If a specific hash doesn't exist, it's not an error for a sanity check, just skip it.
+			if errors.Is(err, baseredis.Nil) {
+				continue
 			}
+			l.Warn("failed to get command result from availability pipeline", zap.Error(err))
+			continue // Continue checking other results
 		}
 
-		if availableStr, ok := keyToValue[availableKey]; ok {
-			availableSeats, err := strconv.ParseInt(availableStr, 10, 32)
-			if err == nil {
-				result.Available += int(availableSeats)
+		for field, value := range fields {
+			parts := strings.Split(field, ":")
+			if len(parts) != 3 {
+				continue // Ignore malformed fields
+			}
+
+			// The last part determines if it's total or available seats.
+			fieldType := parts[2]
+			seatCount, convErr := strconv.ParseInt(value, 10, 32)
+			if convErr != nil {
+				l.Warn("could not parse seat count", zap.String("field", field), zap.String("value", value), zap.Error(convErr))
+				continue
+			}
+
+			switch fieldType {
+			case "total":
+				result.Count += int(seatCount)
+			case "available":
+				result.Available += int(seatCount)
 			}
 		}
 	}
 
 	result.Unavailable = result.Count - result.Available
-
-	return &result, nil
+	return result, nil
 }
 
 func (s *RedisCheck) GetDropperAvailability(ctx context.Context) (*AvailabilityCheck, error) {

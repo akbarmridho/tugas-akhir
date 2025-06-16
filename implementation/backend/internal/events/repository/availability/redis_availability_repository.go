@@ -2,15 +2,11 @@ package availability
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	baseredis "github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 	"strconv"
 	"strings"
-	"sync"
-	"tugas-akhir/backend/infrastructure/memcache"
 	"tugas-akhir/backend/infrastructure/redis"
 	"tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/pkg/logger"
@@ -18,195 +14,100 @@ import (
 
 const AvailabilityPrefix = "redis-availability"
 
-func cacheKey(pattern string) string {
-	return fmt.Sprintf("%s:key:%s", AvailabilityPrefix, pattern)
+func CacheKey(ticketSaleID int64) string {
+	return fmt.Sprintf("%s:sale:%d", AvailabilityPrefix, ticketSaleID)
 }
 
-func GetTotalSeatsKey(data entity.AreaAvailability) string {
-	return fmt.Sprintf("%s:%d:%d:%d:total", AvailabilityPrefix, data.TicketSaleID, data.TicketPackageID, data.TicketAreaID)
+func GetTotalSeatsField(data entity.AreaAvailability) string {
+	return fmt.Sprintf("%d:%d:total", data.TicketPackageID, data.TicketAreaID)
 }
 
-func GetAvailableSeats(data entity.AreaAvailability) string {
-	return fmt.Sprintf("%s:%d:%d:%d:available", AvailabilityPrefix, data.TicketSaleID, data.TicketPackageID, data.TicketAreaID)
+func GetAvailableSeatsField(data entity.AreaAvailability) string {
+	return fmt.Sprintf("%d:%d:available", data.TicketPackageID, data.TicketAreaID)
 }
 
 type RedisAvailabilityRepository struct {
 	redis *redis.Redis
-	cache *memcache.Memcache
 }
 
 func NewRedisAvailabilityRepository(
 	redis *redis.Redis,
-	cache *memcache.Memcache,
 ) *RedisAvailabilityRepository {
 	return &RedisAvailabilityRepository{
 		redis: redis,
-		cache: cache,
 	}
 }
 
 func (r *RedisAvailabilityRepository) GetAvailability(ctx context.Context, payload entity.GetAvailabilityDto) ([]entity.AreaAvailability, error) {
 	l := logger.FromCtx(ctx)
+	key := CacheKey(payload.TicketSaleID)
 
-	pattern := fmt.Sprintf("%s:%d:*:*:*", AvailabilityPrefix, payload.TicketSaleID)
-
-	keys := make([]string, 0)
-
-	getKeys := func() error {
-		var mu sync.Mutex
-
-		// ForEachMaster will loop over every master node in the cluster.
-		err := r.redis.Client.ForEachMaster(ctx, func(ctx context.Context, client *baseredis.Client) error {
-			var cursor uint64 = 0
-			var localKeys []string
-			for {
-				// Scan on the current node.
-				ckeys, nextCursor, err := client.Scan(ctx, cursor, pattern, 100).Result()
-				if err != nil {
-					return err
-				}
-
-				localKeys = append(localKeys, ckeys...)
-
-				if nextCursor == 0 {
-					break
-				}
-				cursor = nextCursor
-			}
-
-			mu.Lock()
-			keys = append(keys, localKeys...)
-			mu.Unlock()
-
-			return nil
-		})
-
-		if err != nil {
-			return err
+	// Fetch all fields and values from the hash in one operation.
+	fields, err := r.redis.Client.HGetAll(ctx, key).Result()
+	if err != nil {
+		// This handles cases where the command fails for reasons other than the key not existing.
+		if errors.Is(err, baseredis.Nil) {
+			return nil, entity.AreaAvailabilityNotFoundError
 		}
-
-		raw, err := json.Marshal(keys)
-
-		if err != nil {
-			logger.FromCtx(ctx).Error("Cannot marshall keys", zap.Error(err))
-			return err
-		}
-
-		r.cache.Cache.SetDefault(cacheKey(pattern), raw)
-
-		return nil
-	}
-
-	cachedData, found := r.cache.Cache.Get(cacheKey(pattern))
-
-	var getKeysError error
-
-	if found {
-		rawBytes, typeOk := cachedData.([]byte) // bigcache Get returns []byte, go-cache Get returns interface{}
-		if !typeOk {
-			logger.FromCtx(ctx).Error("Cached data for availability keys is not []byte")
-			// Treat as cache miss/corruption if type is wrong, and refetch
-			getKeysError = getKeys()
-		} else {
-			marshallErr := json.Unmarshal(rawBytes, &keys)
-			if marshallErr != nil {
-				logger.FromCtx(ctx).Error("Cannot unmarshal cached availability keys", zap.Error(marshallErr))
-				// Preserve original behavior: if unmarshal fails, propagate the error
-				getKeysError = marshallErr
-			}
-		}
-	} else { // Not found in cache (equivalent to bigcache.ErrEntryNotFound)
-		getKeysError = getKeys()
-	}
-
-	if getKeysError != nil {
-		return nil, getKeysError
-	}
-
-	// Group keys by their area identifiers
-	areaMap := make(map[string][]string)
-	for _, key := range keys {
-		parts := strings.Split(key, ":")
-		if len(parts) != 5 {
-			l.Sugar().Warnf("parts count not 5 for key %s", key)
-			continue
-		}
-
-		// Create area identifier (saleID:packageID:areaID)
-		areaIdentifier := fmt.Sprintf("%s:%s:%s", parts[1], parts[2], parts[3])
-		areaMap[areaIdentifier] = append(areaMap[areaIdentifier], key)
-	}
-
-	// Get all values at once if there are keys
-	if len(keys) == 0 {
-		return nil, entity.AreaAvailabilityNotFoundError
-	}
-
-	keyToValue := make(map[string]string)
-
-	pipe := r.redis.Client.Pipeline()
-
-	cmds := make(map[string]*baseredis.StringCmd)
-
-	for _, key := range keys {
-		cmds[key] = pipe.Get(ctx, key)
-	}
-
-	_, err := pipe.Exec(ctx)
-
-	if err != nil && !errors.Is(err, baseredis.Nil) {
+		l.Sugar().Errorf("failed to execute HGetAll for key %s: %v", key, err)
 		return nil, err
 	}
 
-	for key, cmd := range cmds {
-		val, resultErr := cmd.Result()
-		if resultErr != nil {
-			l.Sugar().Warnf("failed to get key %s: %v", key, err)
-			continue
-		}
-		keyToValue[key] = val
+	if len(fields) == 0 {
+		return nil, entity.AreaAvailabilityNotFoundError
 	}
 
-	// Build the result
-	result := make([]entity.AreaAvailability, 0, len(areaMap))
+	// Use a map to aggregate total and available seats for each unique area.
+	// The key is "packageID:areaID".
+	areaMap := make(map[string]*entity.AreaAvailability)
 
-	for areaIdentifier, _ := range areaMap {
-		parts := strings.Split(areaIdentifier, ":")
+	for field, value := range fields {
+		parts := strings.Split(field, ":")
 		if len(parts) != 3 {
-			l.Sugar().Warnf("parts count not 3 for key %s", areaIdentifier)
+			l.Sugar().Warnf("invalid field format in hash %s: %s", key, field)
 			continue
 		}
 
-		saleID, _ := strconv.ParseInt(parts[0], 10, 64)
-		packageID, _ := strconv.ParseInt(parts[1], 10, 64)
-		areaID, _ := strconv.ParseInt(parts[2], 10, 64)
+		packageID, pErr := strconv.ParseInt(parts[0], 10, 64)
+		areaID, aErr := strconv.ParseInt(parts[1], 10, 64)
+		fieldType := parts[2]
 
-		area := entity.AreaAvailability{
-			TicketSaleID:    saleID,
-			TicketPackageID: packageID,
-			TicketAreaID:    areaID,
+		if pErr != nil || aErr != nil {
+			l.Sugar().Warnf("could not parse packageID or areaID from field: %s", field)
+			continue
 		}
 
-		// Construct keys for total and available
-		totalKey := fmt.Sprintf("%s:%d:%d:%d:total", AvailabilityPrefix, saleID, packageID, areaID)
-		availableKey := fmt.Sprintf("%s:%d:%d:%d:available", AvailabilityPrefix, saleID, packageID, areaID)
+		areaIdentifier := fmt.Sprintf("%d:%d", packageID, areaID)
 
-		// Get values
-		if totalStr, ok := keyToValue[totalKey]; ok {
-			totalSeats, err := strconv.ParseInt(totalStr, 10, 32)
-			if err == nil {
-				area.TotalSeats = int32(totalSeats)
+		// If we haven't seen this area yet, create a new struct for it.
+		if _, ok := areaMap[areaIdentifier]; !ok {
+			areaMap[areaIdentifier] = &entity.AreaAvailability{
+				TicketSaleID:    payload.TicketSaleID,
+				TicketPackageID: packageID,
+				TicketAreaID:    areaID,
 			}
 		}
 
-		if availableStr, ok := keyToValue[availableKey]; ok {
-			availableSeats, err := strconv.ParseInt(availableStr, 10, 32)
-			if err == nil {
-				area.AvailableSeats = int32(availableSeats)
-			}
+		// Parse the seat count value.
+		seatCount, err := strconv.ParseInt(value, 10, 32)
+		if err != nil {
+			l.Sugar().Warnf("could not parse seat count '%s' for field: %s", value, field)
+			continue
 		}
 
-		result = append(result, area)
+		// Assign the seat count to the correct field in the struct.
+		switch fieldType {
+		case "total":
+			areaMap[areaIdentifier].TotalSeats = int32(seatCount)
+		case "available":
+			areaMap[areaIdentifier].AvailableSeats = int32(seatCount)
+		}
+	}
+
+	// Convert the map of pointers to a slice of structs.
+	result := make([]entity.AreaAvailability, 0, len(areaMap))
+	for _, area := range areaMap {
+		result = append(result, *area)
 	}
 
 	return result, nil

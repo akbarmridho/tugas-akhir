@@ -12,6 +12,21 @@ type PGCheck struct {
 	db *postgres.Postgres
 }
 
+func (s *PGCheck) GetTicketSales(ctx context.Context) ([]int64, error) {
+	var ids []int64
+
+	err := pgxscan.Select(ctx, s.db.GetExecutor(ctx), &ids, `
+		SELECT id
+		FROM ticket_sales
+	`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ids, nil
+}
+
 func (s *PGCheck) GetAvailability(ctx context.Context) (*AvailabilityCheck, error) {
 	raw := make([]DBAvailabilityRow, 0)
 
