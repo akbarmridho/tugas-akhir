@@ -14,12 +14,12 @@ import (
 	"tugas-akhir/backend/pkg/logger"
 )
 
-const PollInterval = 1 * time.Second
+const PollInterval = 5 * time.Second
 const ProcessorNamespace = string(config.FlowControlVariant__DropperAsync)
 const ProcessorSubsystem = "order_processor"
 const LimiterName = "order_processor_limiter"
-const StrategyLimit = 1000
-const ConcurrencyLimit = 1000
+const StrategyLimit = 15000
+const ConcurrencyLimit = 15000
 
 type Processor struct {
 	config           *config.Config

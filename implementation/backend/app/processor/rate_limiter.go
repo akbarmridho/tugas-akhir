@@ -57,29 +57,33 @@ func NewLimiter(ctx context.Context) (core.Limiter, *go_metrics_prometheus.Prome
 	// Setup concurrency limits
 	limitStrategy := strategy.NewSimpleStrategyWithMetricRegistry(StrategyLimit, limiterMetricsRegistry)
 
-	gradient2Limit, err := limit.NewGradient2Limit(
-		LimiterName,
-		100,
-		ConcurrencyLimit,
-		100,
-		func(limit int) int { return 100 },
-		0.5,
-		600,
-		&limitLogger,
-		limiterMetricsRegistry,
-	)
+	fixedLimit := limit.NewFixedLimit(LimiterName, 5000, limiterMetricsRegistry)
 
-	if err != nil {
-		return nil, nil, err
-	}
+	//gradient2Limit, err := limit.NewGradient2Limit(
+	//	LimiterName,
+	//	1000,
+	//	ConcurrencyLimit,
+	//	500,
+	//	func(limit int) int {
+	//		return int(math.Max(4, float64(limit)/4))
+	//	},
+	//	0.2,
+	//	1200,
+	//	&limitLogger,
+	//	limiterMetricsRegistry,
+	//)
+	//
+	//if err != nil {
+	//	return nil, nil, err
+	//}
 
-	tracedLimit := limit.NewTracedLimit(gradient2Limit, &limitLogger)
+	tracedLimit := limit.NewTracedLimit(fixedLimit, &limitLogger)
 
 	defaultLimiter, err := limiter2.NewDefaultLimiter(
 		tracedLimit,
-		int64(1e9), // 1s
-		int64(1e9), // 1s
-		int64(1e5), // 0.1ms
+		int64(100*time.Millisecond),
+		int64(500*time.Millisecond),
+		int64(100*time.Microsecond),
 		100,
 		limitStrategy,
 		&limitLogger,
@@ -92,7 +96,8 @@ func NewLimiter(ctx context.Context) (core.Limiter, *go_metrics_prometheus.Prome
 
 	limiter := limiter2.NewQueueBlockingLimiterFromConfig(defaultLimiter, limiter2.QueueLimiterConfig{
 		Ordering:          limiter2.OrderingFIFO,
-		MaxBacklogTimeout: 2 * time.Minute,
+		MaxBacklogTimeout: 15 * time.Minute,
+		MaxBacklogSize:    10000,
 		MetricRegistry:    limiterMetricsRegistry,
 	})
 

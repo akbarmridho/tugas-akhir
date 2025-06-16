@@ -102,8 +102,6 @@ func (u *BasePlaceOrderUsecase) placeOrder(ctx context.Context, payload entity.P
 
 	tx, err := u.db.Pool.Begin(ctx)
 
-	defer tx.Rollback(ctx)
-
 	if err != nil {
 		return nil, &myerror.HttpError{
 			Code:         http.StatusInternalServerError,
@@ -111,6 +109,8 @@ func (u *BasePlaceOrderUsecase) placeOrder(ctx context.Context, payload entity.P
 			ErrorContext: err,
 		}
 	}
+
+	defer tx.Rollback(ctx)
 
 	ctx = context.WithValue(ctx, postgres.PostgresTransactionContextKey, tx)
 

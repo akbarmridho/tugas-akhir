@@ -1,13 +1,13 @@
 repositories:
-  - name: xxl-job-admin  
-    url: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin
+  - name: pgcat 
+    url: https://postgresml.github.io/pgcat/
 
 
 releases:
   - name: pgcat
     namespace: default
-    chart: xxl-job-admin/pgcat
-    version: 0.3.2
+    chart: pgcat/pgcat
+    version: 0.2.5
     values:
       - resources:
           limits: 

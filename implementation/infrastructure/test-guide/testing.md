@@ -149,6 +149,8 @@ Inside the `infrastructure/simulation/rabbitmq` folder context, run the followin
 
 ```bash
 helmfile apply
+
+helmfile destroy && helmfile apply
 ```
 
 #### Teardown
@@ -269,7 +271,7 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=49.12.17.161
+export HOST_FORWARD=138.199.133.213
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**

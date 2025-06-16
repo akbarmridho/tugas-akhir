@@ -24,6 +24,8 @@ ssh root@138.199.153.132 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no
 terraform init --upgrade
 terraform validate
 terraform apply -auto-approve
+
+terraform init --upgrade && terraform apply -auto-approve
 ```
 
 **Helm:**
