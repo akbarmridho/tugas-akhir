@@ -4152,6 +4152,5 @@
     },
     "timezone": "browser",
     "title": "kube-state-metrics-v2",
-    "uid": "garysdevil-kube-state-metrics-v2",
     "version": 12
 }

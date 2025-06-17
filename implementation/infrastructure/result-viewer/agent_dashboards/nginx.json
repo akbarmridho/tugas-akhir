@@ -2020,7 +2020,6 @@
     },
     "timezone": "browser",
     "title": "NGINX Ingress controller",
-    "uid": "nginx",
     "version": 1,
     "weekStart": ""
 }

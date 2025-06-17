@@ -6,16 +6,16 @@ services:
     volumes:
       - ./backend:/etc/grafana/provisioning/
       - ./backend_dashboards:/var/lib/grafana/dashboards
-      - grafana-storage:/var/lib/grafana
+      - grafana-storage-backend:/var/lib/grafana
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: tugas-akhir
 
-  prom_backend_result_pg_nofc:
+  prom_backend:
     image: prom/prometheus:v3.4.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./backend_result/20250604T145502Z-71615c05e1097ec7:/prometheus
+      - ./backend_result:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -32,16 +32,16 @@ services:
     volumes:
       - ./agent:/etc/grafana/provisioning/
       - ./agent_dashboards:/var/lib/grafana/dashboards
-      - grafana-storage:/var/lib/grafana
+      - grafana-storage-agent:/var/lib/grafana
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: tugas-akhir
 
-  prom_agent_result_pg_nofc:
+  prom_agent:
     image: prom/prometheus:v3.4.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./agent_result/20250604T145822Z-4f14c654373dedb8:/prometheus
+      - ./agent_result:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -52,4 +52,5 @@ services:
       - "--enable-feature=native-histograms"
 
 volumes:
-  grafana-storage: {}
+  grafana-storage-agent: {}
+  grafana-storage-backend: {}

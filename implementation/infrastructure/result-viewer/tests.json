@@ -1,0 +1,200 @@
+[
+  {
+    "variant": "stress-0",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "citusdata",
+    "start_time_str": "2025-06-12 09:11 (WIB)",
+    "end_time_str": "2025-06-12 09:29 (WIB)",
+    "source_file": "f2t3_nofc_citus.md",
+    "from": 1749694260000,
+    "to": 1749695340000
+  },
+  {
+    "variant": "sim-1",
+    "scenario": "s10-2",
+    "flow_control": "nofc",
+    "database": "citusdata",
+    "start_time_str": "2025-06-12 09:35 (WIB)",
+    "end_time_str": "2025-06-12 09:48 (WIB)",
+    "source_file": "f2t4_nofc_citus.md",
+    "from": 1749695700000,
+    "to": 1749696480000
+  },
+  {
+    "variant": "stress-1",
+    "scenario": "sf-4",
+    "flow_control": "fc",
+    "database": "postgres",
+    "start_time_str": "2025-06-16 23:02 (WIB)",
+    "end_time_str": "2025-06-16 23:19 (WIB)",
+    "source_file": "f5t2_fc_pg.md",
+    "from": 1750089720000,
+    "to": 1750090740000
+  },
+  {
+    "variant": "stress-0",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "postgres",
+    "start_time_str": "2025-06-11 21:16 (WIB)",
+    "end_time_str": "2025-06-11 21:28 (WIB)",
+    "source_file": "f1t2_nofc_pg.md",
+    "from": 1749651360000,
+    "to": 1749652080000
+  },
+  {
+    "variant": "stress-2",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "yugabyte",
+    "start_time_str": "2025-06-12 09:57 (WIB)",
+    "end_time_str": "2025-06-12 10:15 (WIB)",
+    "source_file": "f3t1_nofc_yugabyte.md",
+    "from": 1749697020000,
+    "to": 1749698100000
+  },
+  {
+    "variant": "stress-1",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "yugabyte",
+    "start_time_str": "2025-06-12 10:49 (WIB)",
+    "end_time_str": "2025-06-12 11:06 (WIB)",
+    "source_file": "f3t2_nofc_yugabyte.md",
+    "from": 1749700140000,
+    "to": 1749701160000
+  },
+  {
+    "variant": "stress-1",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "citusdata",
+    "start_time_str": "2025-06-12 08:51 (WIB)",
+    "end_time_str": "2025-06-12 09:09 (WIB)",
+    "source_file": "f2t2_nofc_citus.md",
+    "from": 1749693060000,
+    "to": 1749694140000
+  },
+  {
+    "variant": "stress-0",
+    "scenario": "sf-4",
+    "flow_control": "fc",
+    "database": "postgres",
+    "start_time_str": "2025-06-16 21:37 (WIB)",
+    "end_time_str": "2025-06-16 21:54 (WIB)",
+    "source_file": "f4t3_fc_pg.md",
+    "from": 1750084620000,
+    "to": 1750085640000
+  },
+  {
+    "variant": "sim-1",
+    "scenario": "s10-2",
+    "flow_control": "fc",
+    "database": "postgres",
+    "start_time_str": "2025-06-16 23:38 (WIB)",
+    "end_time_str": "2025-06-16 23:50 (WIB)",
+    "source_file": "f5t4_fc_pg.md",
+    "from": 1750091880000,
+    "to": 1750092600000
+  },
+  {
+    "variant": "stress-2",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "postgres",
+    "start_time_str": "2025-06-11 20:17 (WIB)",
+    "end_time_str": "2025-06-11 20:35 (WIB)",
+    "source_file": "f1t1_nofc_pg.md",
+    "from": 1749647820000,
+    "to": 1749648900000
+  },
+  {
+    "variant": "sim-1",
+    "scenario": "s10-2",
+    "flow_control": "nofc",
+    "database": "yugabyte",
+    "start_time_str": "2025-06-12 11:30 (WIB)",
+    "end_time_str": "2025-06-12 11:43 (WIB)",
+    "source_file": "f3t3_nofc_yugabyte.md",
+    "from": 1749702600000,
+    "to": 1749703380000
+  },
+  {
+    "variant": "stress-1",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "postgres",
+    "start_time_str": "2025-06-11 21:55 (WIB)",
+    "end_time_str": "2025-06-11 22:08 (WIB)",
+    "source_file": "f1t4_nofc_pg.md",
+    "from": 1749653700000,
+    "to": 1749654480000
+  },
+  {
+    "variant": "stress-2",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "citusdata",
+    "start_time_str": "2025-06-12 08:31 (WIB)",
+    "end_time_str": "2025-06-12 08:49 (WIB)",
+    "source_file": "f2t1_nofc_citus.md",
+    "from": 1749691860000,
+    "to": 1749692940000
+  },
+  {
+    "variant": "stress-2",
+    "scenario": "sf-4",
+    "flow_control": "fc",
+    "database": "postgres",
+    "start_time_str": "2025-06-16 19:46 (WIB)",
+    "end_time_str": "2025-06-16 20:03 (WIB)",
+    "source_file": "f4t1_fc_pg.md",
+    "from": 1750077960000,
+    "to": 1750078980000
+  },
+  {
+    "variant": "stress-0",
+    "scenario": "sf-4",
+    "flow_control": "fc",
+    "database": "postgres",
+    "start_time_str": "2025-06-16 23:21 (WIB)",
+    "end_time_str": "2025-06-16 23:34 (WIB)",
+    "source_file": "f5t3_fc_pg.md",
+    "from": 1750090860000,
+    "to": 1750091640000
+  },
+  {
+    "variant": "stress-1",
+    "scenario": "sf-4",
+    "flow_control": "fc",
+    "database": "postgres",
+    "start_time_str": "2025-06-16 20:50 (WIB)",
+    "end_time_str": "2025-06-16 21:08 (WIB)",
+    "source_file": "f4t2_fc_pg.md",
+    "from": 1750081800000,
+    "to": 1750082880000
+  },
+  {
+    "variant": "stress-1",
+    "scenario": "sf-4",
+    "flow_control": "nofc",
+    "database": "postgres",
+    "start_time_str": "2025-06-11 21:35 (WIB)",
+    "end_time_str": "2025-06-11 21:52 (WIB)",
+    "source_file": "f1t3_nofc_pg.md",
+    "from": 1749652500000,
+    "to": 1749653520000
+  },
+  {
+    "variant": "stress-2",
+    "scenario": "sf-4",
+    "flow_control": "fc",
+    "database": "postgres",
+    "start_time_str": "2025-06-16 21:58 (WIB)",
+    "end_time_str": "2025-06-16 22:16 (WIB)",
+    "source_file": "f5t1_fc_pg.md",
+    "from": 1750085880000,
+    "to": 1750086960000
+  }
+]
