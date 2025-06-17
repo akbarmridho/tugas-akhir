@@ -1,6 +1,6 @@
 \subsection{\textit{Backend for a Ticketing System}}
 
-Tesis ini membahas desain \textit{backend} untuk sistem tiket. Tesis ini berfokus pada desain modul, fungsionalitas, serta relasi yang diperlukan untuk menjalankan sistem ini. Penelitian ini berbeda dengan penelitian sebelumnya yang fokus membahas desain dari sisi arsitektur. Tesis ini tidak membahas arsitektur secara detil dan hanya membagi fungsionalitas menjadi beberapa modul. Oleh karena itu, arsitektur yang digunakan pada penelitian ini adalah arsitektur \textit{modular monolith}. Selain itu, penelitian ini memakai prinsip REST API dalam mendesain implementasi API \parencite{backendForTicketing}.
+Tesis ini membahas desain sistem tiket. Tesis ini berfokus pada desain modul, fungsionalitas, serta relasi yang diperlukan untuk menjalankan sistem ini. Penelitian ini berbeda dengan penelitian sebelumnya yang fokus membahas desain dari sisi arsitektur \parencite{backendForTicketing}. Tesis ini tidak membahas arsitektur secara detil dan hanya membagi fungsionalitas menjadi beberapa modul. Oleh karena itu, arsitektur yang digunakan pada penelitian ini adalah arsitektur \textit{modular monolith}.
 
 Terdapat empat entitas yang digambarkan pada sistem ini, yaitu:
 
@@ -10,6 +10,8 @@ Terdapat empat entitas yang digambarkan pada sistem ini, yaitu:
     \item Validator yang bertugas untuk memberi izin dan mencegah terjadinya pelanggaran yang berkaitan dengan validitas dan integritas tiket.
     \item Admin yang bertugas atas registrasi organisasi dan mengatur sertifikat penjual tiket.
 \end{enumerate}
+
+\pagebreak
 
 Figur \ref{fig:event-rm} dan \ref{fig:ticket-storage} menggambarkan diagram relasi entitas untuk \textit{events} dan entitas yang berkaitan pada proses pembuatan dan penyimpanan tiket.
 
@@ -27,4 +29,4 @@ Figur \ref{fig:event-rm} dan \ref{fig:ticket-storage} menggambarkan diagram rela
     \label{fig:ticket-storage}
 \end{figure}
 
-Sebagaimana dijelaskan sebelumnya, tesis ini hanya membahas sistem dari aspek desain fitur dan entitas. Arsitektur sistem tidak dibahas secara detil, sehingga kemungkinan besar arsitektur yang diimplementasikan adalah arsitektur \textit{monolith}. Selain itu, aspek skalabilitas dan toleransi kegagalan tidak dibahas pada tesis ini.
+Tesis ini hanya membahas sistem dari aspek desain fitur dan entitas. Arsitektur sistem tidak dibahas secara detil. Selain itu, aspek skalabilitas dan toleransi kegagalan tidak dibahas pada tesis ini.

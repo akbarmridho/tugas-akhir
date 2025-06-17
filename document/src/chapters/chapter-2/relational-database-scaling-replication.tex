@@ -8,7 +8,7 @@ Replikasi berarti menyimpan salinan data yang sama pada beberapa mesin yang berb
     \item Untuk meningkatkan jumlah mesin yang bisa melayani permintaan baca.
 \end{enumerate}
 
-Salah satu pendekatan yang umum diimplementasikan pada basis data relasional seperti PostgreSQL adalah replikasi berbasiskan pemimpin (\textit{leader}) dan pengikut (\textit{follower}). Satu \textit{node} ditugaskan sebagai pemimpin yang melayani permintaan baca dan tulis, lalu setiap perubahan yang terjadi akan direplikasi oleh replika (pengikut). Dengan pola seperti ini, umumnya operasi tulis hanya dapat ditangani oleh pemimpin dan operasi baca dapat ditangani oleh semua \textit{node}.
+Salah satu pendekatan yang umum diimplementasikan pada basis data relasional seperti PostgreSQL adalah replikasi berbasiskan pemimpin dan pengikut. Satu \textit{node} ditugaskan sebagai pemimpin yang melayani permintaan baca dan tulis, lalu setiap perubahan yang terjadi akan direplikasi oleh replika (pengikut). Dengan pola seperti ini, umumnya operasi tulis hanya dapat ditangani oleh pemimpin dan operasi baca dapat ditangani oleh semua \textit{node}.
 
 \begin{figure}[htbp]
     \centering
@@ -17,4 +17,4 @@ Salah satu pendekatan yang umum diimplementasikan pada basis data relasional sep
     \label{fig:leader-based-replication}
 \end{figure}
 
-Selain itu, tipe replikasi juga terbagi menjadi dua, yaitu replikasi sinkron dan replikasi asinkron. Pada replikasi sinkron, data yang akan ditulis harus sudah ditulis oleh semua (atau mayoritas) replika sebelum dapat dianggap sukses. Pada replikasi asinkron, data akan diterima dan ditulis terlebih dahulu pada pemimpin, lalu perubahannya dipropagasikan kepada replika. Setiap pendekatan ini memiliki \textit{tradeoff} tersendiri. Replikasi sinkron menjamin mayoritas \textit{node} memiliki data terbaru, tetapi latensi pada proses penulisan akan meningkat, sedangkan pada replikasi asinkron latensi penulisan jauh lebih kecil, tetapi data pada replika menjadi \textit{eventually consistent}. Kedua tipe replikasi ini didukung oleh PostgreSQL.
+Selain itu, tipe replikasi juga terbagi menjadi dua, yaitu replikasi sinkron dan replikasi asinkron. Pada replikasi sinkron, data yang akan ditulis harus sudah ditulis oleh semua (atau mayoritas) replika sebelum dapat dianggap sukses. Pada replikasi asinkron, data akan diterima dan ditulis terlebih dahulu pada pemimpin, lalu perubahannya dipropagasikan kepada replika. Replikasi sinkron menjamin mayoritas \textit{node} memiliki data terbaru, tetapi latensi pada proses penulisan akan meningkat. Sedangkan, pada replikasi asinkron latensi penulisan jauh lebih kecil, tetapi data pada replika menjadi \textit{eventually consistent}. Kedua tipe replikasi ini didukung oleh PostgreSQL.

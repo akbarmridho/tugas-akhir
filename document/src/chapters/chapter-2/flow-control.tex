@@ -6,16 +6,16 @@ Dalam konteks perangkat lunak, \textit{backpressure} dapat didefinisikan sebagai
 
 \begin{enumerate}
     \item Mengurangi kecepatan produsen mengirimkan pesan.
-    \item Menggunakan \textit{buffer} untuk sementara mengakumulasikan pesan.
-    \item Membuang (\textit{drop}) sebagian pesan yang diterima.
+    \item Menggunakan penyangga untuk sementara mengakumulasikan pesan.
+    \item Membuang/ menolak sebagian pesan yang diterima.
 \end{enumerate}
 
-Pola penyeimbangan beban berbasiskan antrean (\textit{Queue-based load leveling}) merupakan pola desain yang menyelesaikan masalah \textit{backpressure} dengan menggunakan antrean yang bertindak sebagai \textit{buffer} antara pesan dengan sebuah layanan, sehingga beban dapat dikontrol dan layanan tetap berjalan dengan stabil \parencite{queueLoadLeveling}.
+Pola penyeimbangan beban berbasiskan antrean merupakan pola desain yang menyelesaikan masalah \textit{backpressure} dengan menggunakan antrean yang bertindak sebagai penyangga antara pesan dengan sebuah layanan, sehingga beban dapat dikontrol dan layanan tetap berjalan dengan stabil \parencite{queueLoadLeveling}.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-2/queue-based-load-leveling-pattern.png}
-    \caption{Contoh Pola Penyeimbangan Beban Berbasiskan Antrean \parencite{queueLoadLeveling}}
+    \includegraphics[width=0.6\textwidth]{resources/chapter-2/queue-based-load-leveling-pattern.png}
+    \caption{Pola Penyeimbangan Beban Berbasiskan Antrean \parencite{queueLoadLeveling}}
     \label{fig:queue-based-load-leveling-pattern}
 \end{figure}
 
