@@ -19,8 +19,8 @@ releases:
       - redis:
           resources:
             requests:
-              cpu: 0.75
+              cpu: 1
               memory: 2Gi
             limits:
-              cpu: 0.75
+              cpu: 1
               memory: 2Gi

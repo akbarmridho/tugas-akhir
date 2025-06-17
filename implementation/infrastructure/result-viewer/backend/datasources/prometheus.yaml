@@ -1,0 +1,7 @@
+apiVersion: 1
+
+datasources:
+  - name: Backend Backup
+    type: prometheus
+    url: http://prom_backend:9090
+    access: proxy

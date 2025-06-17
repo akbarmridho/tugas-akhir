@@ -38,11 +38,11 @@ spec:
         image: haiakbar/ta-postgres:latest
         resources:
           requests:
-            cpu: "3"
-            memory: "7Gi"
+            cpu: "6"
+            memory: "12Gi"
           limits:
-            cpu: "3"
-            memory: "7Gi"
+            cpu: "6"
+            memory: "12Gi"
         readinessProbe:
           httpGet:
             scheme: HTTP

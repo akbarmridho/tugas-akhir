@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Kube State Metrics",
+        "url": "http://localhost:3011/d/02ffc3d3-531b-4f30-9125-da8347ed51e1/kube-state-metrics-v2"
+    },
+    {
+        "name": "Kubernetes",
+        "url": "http://localhost:3011/d/b87c6287-f1af-4ba6-a0ef-ecfed0a48164/kubernetes"
+    },
+    {
+        "name": "Kubernetes Pod Overview",
+        "url": "http://localhost:3011/d/08452018-fd6e-4b67-a797-a9f0c2ca2c27/kubernetes-pod-overview"
+    },
+    {
+        "name": "NGINX Ingress Controller",
+        "url": "http://localhost:3011/d/eef28524-6370-4ca7-9c4b-b21da2e9b6b4/nginx-ingress-controller"
+    },
+    {
+        "name": "Pod Detail",
+        "url": "http://localhost:3011/d/4f69a348-5243-4226-938b-af3c11f91695/pod-detail"
+    },
+    {
+        "name": "Pod Overview",
+        "url": "http://localhost:3011/d/c5833b2a-64b5-4763-89e6-7a114443963a/pod-overview"
+    },
+    {
+        "name": "Test Dashboard",
+        "url": "http://localhost:3011/d/134e92eb-de35-4881-a979-35384a4c033c/test-dashboard"
+    }
+]

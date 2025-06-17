@@ -1,0 +1,7 @@
+apiVersion: 1
+
+datasources:
+  - name: Data_NOFC_PG
+    type: prometheus
+    url: http://prom_agent:9090
+    access: proxy

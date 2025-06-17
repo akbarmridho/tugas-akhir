@@ -122,6 +122,13 @@ const generateScenario = (): Scenario => {
 				{ target: 2, duration: "30s" },
 			],
 		};
+	} else if (VARIANT === "stress-0") {
+		return {
+			executor: "shared-iterations",
+			vus: 15000,
+			iterations: 350_000,
+			maxDuration: "10m",
+		};
 	} else if (VARIANT === "stress-1") {
 		return {
 			executor: "shared-iterations",

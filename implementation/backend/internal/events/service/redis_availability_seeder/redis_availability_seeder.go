@@ -70,11 +70,9 @@ func (s *RedisAvailabilitySeeder) iterAvailability() ([]entity2.AreaAvailability
 
 func (s *RedisAvailabilitySeeder) tryAcquireSeeder() (bool, error) {
 	result, err := s.redis.GetOrSetWithEx(s.ctx, seederRedisKey, s.config.PodName, 3*time.Hour)
-
 	if err != nil {
 		return false, err
 	}
-
 	return result == s.config.PodName, nil
 }
 
@@ -114,58 +112,68 @@ func (s *RedisAvailabilitySeeder) refreshData(returnOnError bool) error {
 
 	defer iter.Close(s.ctx)
 
-	totalSet := 0
-
-	toSet := make(map[string]int32)
-	batchSize := 200
+	// toSet now maps a hash key (for a ticket sale) to its fields and values.
+	// map[hashKey] -> map[field]value
+	toSet := make(map[string]map[string]interface{})
+	batchSize := 200 // Number of fields to process before sending a batch
+	totalFieldsSet := 0
 
 	sendBatch := func() error {
 		pipe := s.redis.Client.Pipeline()
-		for k, v := range toSet {
-			totalSet++
-			pipe.Set(s.ctx, k, v, 0)
+		for key, fields := range toSet {
+			// Use HSet to set multiple fields in the hash for the given key.
+			pipe.HSet(s.ctx, key, fields)
+			totalFieldsSet += len(fields)
 		}
 
 		if _, err := pipe.Exec(s.ctx); err != nil {
-			l.Sugar().Error(err)
+			l.Sugar().Error("error executing pipeline for HSet", zap.Error(err))
 			if returnOnError {
 				return err
 			}
 		}
 
-		toSet = make(map[string]int32)
+		// Clear the map for the next batch.
+		toSet = make(map[string]map[string]interface{})
 		return nil
 	}
 
 	for iter.Next(s.ctx) {
 		availability := data[iter.ValueIndex()]
+		key := availability2.CacheKey(availability.TicketSaleID)
 
-		toSet[availability2.GetTotalSeatsKey(availability)] = availability.TotalSeats
-		toSet[availability2.GetAvailableSeats(availability)] = availability.AvailableSeats
+		// Initialize the inner map if it doesn't exist for the current key.
+		if _, ok := toSet[key]; !ok {
+			toSet[key] = make(map[string]interface{})
+		}
 
-		if len(toSet) >= batchSize {
-			err = sendBatch()
-			if returnOnError && err != nil {
+		// Add the total and available seats as fields to the hash.
+		toSet[key][availability2.GetTotalSeatsField(availability)] = availability.TotalSeats
+		toSet[key][availability2.GetAvailableSeatsField(availability)] = availability.AvailableSeats
+
+		// Check if the number of fields in the current hash key batch is large enough to send.
+		if len(toSet[key]) >= batchSize {
+			if err = sendBatch(); returnOnError && err != nil {
 				return err
 			}
 		}
 	}
 
 	if err := iter.Error(); err != nil {
-		l.Sugar().Error(err)
+		l.Sugar().Error("error during cursor iteration", zap.Error(err))
 		if returnOnError {
 			return err
 		}
 	}
 
+	// Send any remaining data that didn't fill a full batch.
 	if len(toSet) > 0 {
-		err = sendBatch()
-		if returnOnError && err != nil {
+		if err = sendBatch(); returnOnError && err != nil {
 			return err
 		}
 	}
 
-	l.Info("completed seeder availability data", zap.Int("sendCount", totalSet))
+	l.Info("completed seeder availability data with hashes", zap.Int("totalFieldsSet", totalFieldsSet))
 	return nil
 }
 
@@ -186,11 +194,13 @@ func (s *RedisAvailabilitySeeder) ApplyAvailability(ctx context.Context, items [
 	pipe := s.redis.Client.TxPipeline()
 
 	for _, item := range items {
-		pipe.Decr(ctx, availability2.GetAvailableSeats(item))
+		key := availability2.CacheKey(item.TicketSaleID)
+		field := availability2.GetAvailableSeatsField(item)
+		// Use HIncrBy to decrement the value of a field within the hash.
+		pipe.HIncrBy(ctx, key, field, -1)
 	}
 
 	_, err := pipe.Exec(ctx)
-
 	return err
 }
 
@@ -198,10 +208,12 @@ func (s *RedisAvailabilitySeeder) RevertAvailability(ctx context.Context, items 
 	pipe := s.redis.Client.TxPipeline()
 
 	for _, item := range items {
-		pipe.Incr(ctx, availability2.GetAvailableSeats(item))
+		key := availability2.CacheKey(item.TicketSaleID)
+		field := availability2.GetAvailableSeatsField(item)
+		// Use HIncrBy to increment the value of a field within the hash.
+		pipe.HIncrBy(ctx, key, field, 1)
 	}
 
 	_, err := pipe.Exec(ctx)
-
 	return err
 }

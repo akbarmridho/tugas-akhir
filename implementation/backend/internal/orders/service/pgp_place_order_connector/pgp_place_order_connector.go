@@ -145,9 +145,9 @@ func (c *FCPlaceOrderConnector) consumeReply() error {
 						//ch, exists := c.ListenerChan[payload.IdempotencyKey]
 						rawCh, exists := c.ListenerChan.Load(payload.IdempotencyKey)
 
-						ch := rawCh.(chan entity.PlaceOrderReplyMessage)
-
 						if exists {
+							ch := rawCh.(chan entity.PlaceOrderReplyMessage)
+
 							ch <- payload
 
 							if ackErr := rawMsg.Ack(false); ackErr != nil {

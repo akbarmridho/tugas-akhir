@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"testing"
 	"tugas-akhir/backend/infrastructure/config"
-	"tugas-akhir/backend/infrastructure/memcache"
 	"tugas-akhir/backend/internal/events/entity"
 	"tugas-akhir/backend/internal/events/repository/availability"
 	"tugas-akhir/backend/internal/events/service/redis_availability_seeder"
@@ -56,10 +55,7 @@ func TestRedisAvailabilityRepository_GetAvailability(t *testing.T) {
 			err := redisSeeder.Run(ctx)
 			require.NoError(t, err)
 
-			cache, cerr := memcache.NewMemcache()
-			require.NoError(t, cerr)
-
-			repo := availability.NewRedisAvailabilityRepository(redisClient, cache)
+			repo := availability.NewRedisAvailabilityRepository(redisClient)
 
 			// Query the necessary IDs from the database
 			var (

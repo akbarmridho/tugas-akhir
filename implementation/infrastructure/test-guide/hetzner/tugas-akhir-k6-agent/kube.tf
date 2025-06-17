@@ -152,7 +152,7 @@ module "kube-hetzner" {
       location    = "fsn1",
       labels      = [],
       taints      = [],
-      count       = 2
+      count       = 1
 
       # Fine-grained control over placement groups (nodes in the same group are spread over different physical servers, 10 nodes per placement group max):
       # placement_group = "default"

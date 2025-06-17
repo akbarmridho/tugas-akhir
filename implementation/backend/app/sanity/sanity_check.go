@@ -93,7 +93,14 @@ func (s *SanityCheck) Collect(ctx context.Context) {
 	}()
 
 	go func() {
-		result, err := s.redisCheck.GetAvailability(ctx)
+		ids, err := s.pgCheck.GetTicketSales(ctx)
+
+		if err != nil {
+			l.Sugar().Error("cannot fetch ticket sales id", zap.Error(err))
+			return
+		}
+
+		result, err := s.redisCheck.GetAvailability(ctx, ids)
 
 		defer wg.Done()
 
