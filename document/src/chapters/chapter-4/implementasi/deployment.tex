@@ -39,29 +39,29 @@ Layanan pembayaran secara umum terdiri atas deployment payment, service payment,
 
 \pagebreak
 
-\subsubsection{Layanan Tiket varian tanpa \textit{Flow Control}}
+\subsubsection{Layanan Tiket varian tanpa Pengendalian Aliran}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/ticket-nofc.png}
-    \caption{Deployment Layanan Ticket tanpa \textit{Flow Control}}
+    \caption{Deployment Layanan Ticket tanpa Pengendalian Aliran}
     \label{fig:deployment-ticket-nofc}
 \end{figure}
 
-Layanan tiket tanpa \textit{flow control} terdiri atas deployment ticket server, kluster redis, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgcat.
+Layanan tiket tanpa pengendalian aliran terdiri atas deployment ticket server, kluster redis, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgcat.
 
 \pagebreak
 
-\subsubsection{Layanan Tiket varian dengan \textit{Flow Control}}
+\subsubsection{Layanan Tiket varian dengan Pengendalian Aliran}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/ticket-fc.png}
-    \caption{Deployment Layanan Ticket dengan \textit{Flow Control}}
+    \caption{Deployment Layanan Ticket dengan Pengendalian Aliran}
     \label{fig:deployment-ticket-fc}
 \end{figure}
 
-Layanan tiket dengan \textit{flow control} terdiri atas deployment ticket server, ticket-worker, kluster redis, rabbitmq, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgcat.
+Layanan tiket dengan pengendalian aliran terdiri atas deployment ticket server, ticket-worker, kluster redis, rabbitmq, dan sanity check. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui Pgcat.
 
 \pagebreak
 
