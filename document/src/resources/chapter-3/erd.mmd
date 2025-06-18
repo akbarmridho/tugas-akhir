@@ -4,7 +4,7 @@ config:
   theme: default
 ---
 erDiagram
-    Events {
+    Event {
         bigint id PK
         text name
         text location
@@ -12,14 +12,14 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    TicketCategories {
+    TicketCategory {
         bigint id PK
         text name
         bigint event_id FK
         timestamptz created_at
         timestamptz updated_at
     }
-    TicketSales {
+    TicketSale {
         bigint id PK
         text name
         timestamptz sale_begin_at
@@ -28,7 +28,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    TicketPackages {
+    TicketPackage {
         bigint id PK
         int price
         bigint ticket_category_id FK
@@ -36,14 +36,14 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    TicketAreas {
+    TicketArea {
         bigint id PK
         area_type type "('numbered-seating', 'free-standing')"
         bigint ticket_package_id FK
         timestamptz created_at
         timestamptz updated_at
     }
-    TicketSeats {
+    TicketSeat {
         bigint id "PK (part of composite PK: ticket_area_id, id)"
         text seat_number
         seat_status status "('available', 'on-hold', 'sold')"
@@ -51,10 +51,10 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    Users {
-        text external_user_id PK "Corresponds to Orders.external_user_id"
+    User {
+        text external_user_id PK "Corresponds to Order.external_user_id"
     }
-    Orders {
+    Order {
         bigint id "PK (part of composite PK: ticket_area_id, id)"
         order_status status "('waiting-for-payment', 'failed', 'success')"
         text fail_reason
@@ -65,7 +65,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    OrderItems {
+    OrderItem {
         bigint id "PK (part of composite PK: ticket_area_id, id)"
         text customer_name
         text customer_email
@@ -77,7 +77,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    Invoices {
+    Invoice {
         bigint id "PK (part of composite PK: ticket_area_id, id)"
         invoice_status status "('pending', 'expired', 'failed', 'paid')"
         int amount
@@ -87,7 +87,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    IssuedTickets {
+    IssuedTicket {
         bigint id "PK (part of composite PK: ticket_area_id, id)"
         text serial_number
         text holder_name
@@ -100,22 +100,22 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    Events ||--o{ TicketCategories : "has"
-    Events ||--o{ TicketSales : "has"
-    Events ||--o{ Orders : "associated with"
-    TicketCategories ||--o{ TicketPackages : "defines price for"
-    TicketSales ||--o{ TicketPackages : "makes available in"
-    TicketPackages ||--o{ TicketAreas : "contains"
-    TicketAreas ||--o{ TicketSeats : "has specific"
-    TicketAreas ||--o{ Orders : "are placed for"
-    TicketAreas ||--o{ OrderItems : "contain items for"
-    TicketAreas ||--o{ Invoices : "generate invoices for"
-    TicketAreas ||--o{ IssuedTickets : "are issued for"
-    Users ||--o{ Orders : "places"
-    Orders ||--o{ OrderItems : "consists of"
-    Orders ||--o{ Invoices : "generates"
-    Orders ||--o{ IssuedTickets : "results in"
-    OrderItems }o--|| TicketCategories : "belongs to"
-    OrderItems }o--|| TicketSeats : "is for"
-    IssuedTickets }o--|| OrderItems : "relates to"
-    IssuedTickets }o--|| TicketSeats : "assigned to"
+    Event ||--o{ TicketCategory : "has"
+    Event ||--o{ TicketSale : "has"
+    Event ||--o{ Order : "associated with"
+    TicketCategory ||--o{ TicketPackage : "defines price for"
+    TicketSale ||--o{ TicketPackage : "makes available in"
+    TicketPackage ||--o{ TicketArea : "contains"
+    TicketArea ||--o{ TicketSeat : "has specific"
+    TicketArea ||--o{ Order : "are placed for"
+    TicketArea ||--o{ OrderItem : "contain items for"
+    TicketArea ||--o{ Invoice : "generate Invoice for"
+    TicketArea ||--o{ IssuedTicket : "are issued for"
+    User ||--o{ Order : "places"
+    Order ||--o{ OrderItem : "consists of"
+    Order ||--o{ Invoice : "generates"
+    Order ||--o{ IssuedTicket : "results in"
+    OrderItem }o--|| TicketCategory : "belongs to"
+    OrderItem }o--|| TicketSeat : "is for"
+    IssuedTicket }o--|| OrderItem : "relates to"
+    IssuedTicket }o--|| TicketSeat : "assigned to"

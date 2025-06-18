@@ -1,0 +1,98 @@
+\subsection{Layanan Pengguna}
+
+Layanan ini merupakan layanan yang berkaitan dengan otentikasi pengguna, seperti registrasi dan login pengguna. Layanan ini menyimpan data pengguna sistem tiket yang merupakan pemesan.
+
+\subsubsection{Kebutuhan Fungsional dan Non-Fungsional}
+
+Berikut adalah kebutuhan fungsional layanan pengguna:
+
+\begingroup
+\footnotesize
+\begin{longtable}{|l|p{0.4\textwidth}|p{0.4\textwidth}|}
+    \caption{Kebutuhan Fungsional Layanan Pembayaran}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \\
+    \hline
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \endfirsthead
+
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\
+    \hline
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \endhead
+
+    \hline
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \\
+    \endfoot
+
+    \hline
+    \endlastfoot
+
+    \hline
+    UF-01       & Sistem dapat melayani registrasi pengguna.                                                                                                                                                                                      &                                                                                                                                                                                                                                                                                                                                                       \\
+    \hline
+    UF-02       & Sistem menyediakan mekanisme \textit{login} bagi pengguna.                                                                                                                                                                      &                                                                                                                                                                                                                                                                                                                                                       \\
+    \hline
+    UF-03       & Sistem menyediakan \textit{endpoint} untuk memperoleh informasi pengguna yang terotentikasi.                                                                                                                  & \textit{Endpoint} yang dapat digunakan oleh layanan lain seperti layanan tiket.  \\
+\end{longtable}
+\endgroup
+
+Berikut adalah kebutuhan non-fungsional layanan pengguna:
+
+\begingroup
+\footnotesize
+\begin{longtable}{|l|p{0.4\textwidth}|p{0.4\textwidth}|}
+    \caption{Kebutuhan Non-Fungsional Layanan Pengguna}                                                                                                                                                                            \\
+    \hline
+    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                                                                                                                    \\
+    \endfirsthead
+
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                  \\
+    \hline
+    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                                                                                                                    \\
+    \endhead
+
+    \hline
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                           \\
+    \endfoot
+
+    \hline
+    \endlastfoot
+
+    \hline
+    UN-01       & Otentisitas Pengguna                 & Layanan lain dapat memverifikasi otentikasi token pengguna tanpa harus memanggil layanan pengguna, seperti dengan penggunaan token JWT dengan kunci rahasia tertentu. \\
+\end{longtable}
+\endgroup
+
+\subsubsection{Entitas Layanan}
+
+Entitas yang berkaitan dengan layanan ini adalah entitas pengguna (User). Entitas tersebut memiliki properti sebagian berikut:
+
+\begingroup
+\footnotesize
+\begin{longtable}{|l|p{0.2\textwidth}|p{0.4\textwidth}|}
+    \caption{Skema Entitas Invoice}                                                                                                                              \\
+    \hline
+    \textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi}                                                                                              \\
+    \endfirsthead
+
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                      \\
+    \hline
+    \textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi}                                                                                              \\
+    \endhead
+
+    \hline
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                \\
+    \endfoot
+
+    \hline
+    \endlastfoot
+
+    \hline
+    id          & \texttt{string}                                & ID unik untuk setiap pengguna.                                                                   \\
+    \hline
+    name      & \texttt{string}                       & Nama pengguna.                                                                           \\
+    \hline
+    email & \texttt{string}                  & Alamat surel pengguna.                                                                         \\
+    \hline
+    password  & \texttt{string}                                & Hash kata sandi pengguna                                       \\
+\end{longtable}
+\endgroup

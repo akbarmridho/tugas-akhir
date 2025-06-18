@@ -1,0 +1,33 @@
+---
+config:
+  layout: elk
+  theme: default
+---
+erDiagram
+    Event
+    TicketCategory
+    TicketSale
+    TicketPackage
+    TicketArea
+    TicketSeat
+    User
+    Order
+    OrderItem
+    Invoice
+    IssuedTicket
+
+    Event ||--o{ TicketCategory : "memiliki"
+    Event ||--o{ TicketSale : "memiliki"
+    Event ||--o{ Order : "terkait dengan"
+    TicketCategory ||--o{ TicketPackage : "menentukan harga untuk"
+    TicketSale ||--o{ TicketPackage : "menyediakan dalam"
+    TicketPackage ||--o{ TicketArea : "berisi"
+    TicketArea ||--o{ TicketSeat : "memiliki"
+    User ||--o{ Order : "melakukan"
+    Order ||--o{ OrderItem : "terdiri dari"
+    Order ||--o{ Invoices : "menghasilkan"
+    Order ||--o{ IssuedTicket : "menghasilkan"
+    OrderItem }o--|| TicketCategory : "termasuk dalam"
+    OrderItem }o--|| TicketSeat : "untuk"
+    IssuedTicket }o--|| OrderItem : "berkaitan dengan"
+    IssuedTicket }o--|| TicketSeat : "dialokasikan untuk"
