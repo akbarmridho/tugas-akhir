@@ -1,0 +1,11 @@
+\section{Rancangan Layanan Pendukung}
+
+Sistem ini bergantung pada dua layanan pendukung, yaitu layanan pengguna dan pembayaran. Kedua layanan ini tidak boleh menjadi sumber \textit{bottleneck} agar hasil pengujian bisa lebih relevan.
+
+\subsection{Layanan Pengguna}
+
+Layanan ini tidak diimplementasikan dalam artian sebagai sebuah sistem yang menerima registrasi pengguna dan melayani \textit{login} pengguna. Proses registrasi dan \textit{login} dilakukan oleh pengguna virtual dengan membuat sendiri token JWT yang dikirim ke server. Proses ini dilakukan agar tahap ini menjadi lebih cepat dari sisi latensi dan kebutuhan sumber daya. Apabila proses registrasi dan \textit{login} tetap dilakukan dari sisi server, maka layanan pengguna harus mampu melayani beban yang sama dengan sejumlah pengguna yang sedang diuji. Pendekatan ini tentu membutuhkan sumber daya komputasi yang cukup besar, tetapi tidak menambahkan nilai pada fokus yang ingin diuji pada penelitian ini. Meskipun begitu, otentikasi tetap akan menggunakan token JWT sehingga validasi pengguna tidak membutuhkan layanan pengguna.
+
+\subsection{Layanan Pembayaran}
+
+Layanan ini merupakan layanan yang menyimulasikan gerbang pembayaran. Rancangan layanan ini bukan merupakan fokus dari penelitian ini, sehingga detail rancangan dibahas pada lampiran \ref{apx:payment-service}.
