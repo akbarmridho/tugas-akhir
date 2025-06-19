@@ -40,6 +40,8 @@ Berikut adalah kebutuhan fungsional layanan tiket:
 \end{longtable}
 \endgroup
 
+Daftar acara dan ketersediaan awal tiket merupakan data yang diisi dari awal, sehingga kebutuhan fungsional untuk manajemen acara dan tiket tidak diperlukan.
+
 Berikut adalah kebutuhan non-fungsional layanan tiket:
 
 \begingroup
@@ -72,7 +74,7 @@ Berikut adalah kebutuhan non-fungsional layanan tiket:
 
 \subsubsection{Entitas Layanan}
 
-Berikut adalah gambaran diagram relasi entitas pada layanan tiket:
+Skema lengkap setiap entitas dibahas pada bagian lampiran \ref{apx:ticket-schema}. Berikut adalah gambaran diagram relasi entitas pada layanan tiket:
 
 \begin{figure}[htbp]
     \centering
@@ -81,7 +83,7 @@ Berikut adalah gambaran diagram relasi entitas pada layanan tiket:
     \label{fig:erd-ticket-service}
 \end{figure}
 
-Skema lengkap setiap entitas dibahas pada bagian lampiran \ref{apx:ticket-schema}. Entitas layanan tiket dapat dibagi menjadi dua grup, yaitu:
+Entitas layanan tiket dapat dibagi menjadi dua grup, yaitu:
 
 \begin{enumerate}
     \item Entitas yang berkaitan dengan tiket dan acara, yaitu: Event, TicketSale, TicketCategory, TicketPackage, TicketArea dan TicketSeat.
