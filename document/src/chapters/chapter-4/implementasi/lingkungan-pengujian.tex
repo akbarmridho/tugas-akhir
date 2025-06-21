@@ -1,25 +1,3 @@
 \subsection{Lingkungan Pengembangan}
 
-\subsubsection{Lingkungan Pengembangan}
-
-Tugas akhir ini dikembangkan pada perangkat laptop Asus TUF A15 FA506IC dengan spesifikasi sebagai berikut:
-
-\begin{enumerate}
-    \item Processor: AMD Ryzen 7 4800H 8 core 16 thread.
-    \item RAM: 24GB DDR4 3200MHz.
-    \item Windows 11 dengan WSL2 Ubuntu 22.04.
-    \item Penyimpanan: 500GB + 1TB SSD NVME.
-\end{enumerate}
-
-\subsubsection{Lingkungan Pengujian Lokal}
-
-Lingkungan pengujian lokal memiliki dua pengujian:
-
-\begin{enumerate}
-    \item \textit{Integration test} dilakukan pada Ubuntu 22.04 WSL2 dengan Docker Engine untuk orkestrasi dependensi.
-    \item \textit{End-to-end testing} dilakukan pada dua kluster kubernetes lokal dengan bantuan K3d (sebuah abstraksi untuk menjalankan K3s sebagai Docker container). Versi image k3s yang digunakan adalah v1.30.12-rc1-k3s1.
-          \begin{enumerate}
-              \item Sistem backend dengan 1 node control plane dan 1 node worker.
-              \item Agen penguji dengan 1 node control plane dan tanpa node worker.
-          \end{enumerate}
-\end{enumerate}
+Tugas akhir ini dikembangkan pada perangkat laptop dengan sistem operasi Windows yang didukung dengan WSL2 Ubuntu 22.04 dan Docker. Selain itu, kluster kubernetes lokal K3d yang merupakan abstraksi untuk menjalakan K3s sebagai kontainer Docker juga digunakan. Terdapat dua kluster kubernetes yang dibuat, yaitu kluster sistem tiket (1 \textit{control plane} dan 1 pekerja) dan kluster penguji (1 \textit{control plane}).

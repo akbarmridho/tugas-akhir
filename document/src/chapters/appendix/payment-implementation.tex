@@ -1,0 +1,14 @@
+\chapter{Implementasi Layanan Pembayaran - Tambahan}
+\label{apx:payment-implementation}
+
+Layanan ini dibuat dengan bahasa pemrograman TypeScript yang dijalankan pada NodeJS versi 20. \textit{Runtime} layanan ini dibagi menjadi dua, yakni HTTP Server dan Notifier. Selain itu, BullMQ dan Redis digunakan untuk menyimpan data dan melakukan proses antrean notifikasi webhook kepada sistem tiket.
+
+Layanan ini merupakan \textit{mock service} sebuah gerbang pembayaran, sehingga hanya fungsionalitas dasar saja yang diimplementasikan, seperti membuat tagihan, membayar tagihan, dan melihat tagihan. Oleh karena itu, pada layanan ini digunakan Redis sebagai basis data untuk menyimpan data tagihan karena implementasi dan konfigurasi yang lebih mudah.
+
+Agar sistem menyerupai gerbang pembayaran, layanan ini juga menggunakan HMAC dengan rahasia bersama pada isi data webhook yang dikirimkan pada sistem tiket. Kemudian, sistem tiket akan memverifikasi nilai yang diterima dan membandingkannya dengan isi data yang diterima.
+
+Pemisahan server dan Notifier ini dilakukan untuk memisahkan beban dan mengimplementasikan mekanisme perulangan ketika webhook gagal. Selain itu, penggunaan Notifier memungkinkan pengedaluwarsaan tagihan yang melewati batas kedaluwarsa, sehingga sistem dapat melepaskan status pemesanan pada tiket yang tidak jadi terjual.
+
+Terdapat \textit{endpoint} \textit{healthcheck} yang memeriksa koneksi sistem dengan kluster Redis. Integrasi Hono dengan Prometheus juga dilakukan untuk proses monitoring berbagai metrik HTTP Server dan jumlah antrean pada Notifier.
+
+\textit{Webhook} akan dipanggil saat pembayaran berhasil, gagal, dan kedaluwarsa. Layanan ini akan memanggil \textit{endpoint} yang sudah ditentukan sebelumnya untuk memberi notifikasi \textit{webhook} yang berisi data tagihan paling terbaru.

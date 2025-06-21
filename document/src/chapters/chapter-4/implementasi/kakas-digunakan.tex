@@ -1,53 +1,12 @@
 \subsection{Kakas yang Digunakan}
 
-\subsubsection{Layanan Pembayaran}
-
-Berikut adalah bahasa dan kakas yang digunakan untuk layanan pembayaran:
+Secara umum, berikut adalah kakas yang digunakan untuk setiap komponen sistem:
 
 \begin{enumerate}
-    \item NodeJS versi 20.19.1.
-    \item TypeScript versi 5.8.2.
-    \item Hono versi 4.7.4 untuk HTTP framework.
-    \item BullMQ versi 5.41.8 untuk \textit{wrapper} message queue di atas Redis.
+    \item \textbf{Layanan Pembayaran:} NodeJS dan TypeScript.
+    \item \textbf{Layanan Tiket:} Golang.
+    \item \textbf{Pengujian: } K6 Operator.
+    \item \textbf{Pengawasan: } Grafana Loki, Grafana Dashboard, dan Prometheus.
 \end{enumerate}
 
-\subsubsection{Layanan Tiket}
-
-Berikut adalah bahasa dan kakas yang digunakan untuk layanan tiket:
-
-\begin{enumerate}
-    \item Golang 1.24.0.
-    \item Echo versi 4.13.3 sebagai HTTP framework.
-    \item Echo-Prometheus untuk integrasi Echo dengan Prometheus.
-    \item TestContainers untuk \textit{integration testing}.
-    \item PlatinumMonkey Go Concurrency Limits untuk algoritma \textit{adaptive flow control}. Library ini merupakan adaptasi kakas Netflix Concurrency Limits dalam Golang.
-    \item Jackc PGX versi 5.7.2 sebagai kakas driver PostgreSQL.
-    \item BigCache versi 1.2.1 untuk \textit{in-memory cache}.
-    \item UberFX versi 1.23.0 untuk \textit{dependency injection}.
-    \item TypeSpec untuk membuat dokumentasi OpenAPI.
-\end{enumerate}
-
-\subsubsection{Kakas Pengawasan}
-
-Kakas pengawasan ini hanya digunakan pada \textit{deployment} dengan kluster Kubernetes.
-
-\begin{enumerate}
-    \item Grafana Loki untuk \textit{log aggregation}.
-    \item Grafana Alloy untuk \textit{log collection}.
-    \item Grafana Dashboard untuk \textit{visualization dashboard}.
-    \item Prometheus untuk \textit{metrics collection}.
-    \item Prometheus exporter spesifik seperti PostgreSQL Prometheus exporter, Node Prometheus exporter, Pod Prometheus Exporter, dan lain-lain.
-\end{enumerate}
-
-\subsubsection{Agen Penguji}
-
-Proses pengujian dilakukan dengan kakas Grafana K6 untuk \textit{load testing} dan Grafana K6 Operator untuk melakukan pengujian secara terdistribusi di kluster Kubernetes.
-
-\subsubsection{Lainnya}
-
-\begin{enumerate}
-    \item Kubectl untuk CLI API pada kluster Kubernetes.
-    \item Kubectx untuk \textit{switch} ke berbagai konfigurasi kluster Kubernetes.
-    \item Helm Package Manager untuk \textit{deployment} Kubernetes Helm Chart.
-    \item Helmfile untuk konfigurasi Helm Chart secara deklaratif.
-\end{enumerate}
+Daftar lengkap kakas yang digunakan dijabarkan pada bagian lampiran \ref{apx:tools-used}.

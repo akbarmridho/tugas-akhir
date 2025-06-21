@@ -1,0 +1,84 @@
+\chapter{Kakas Implementasi}
+\label{apx:tools-used}
+
+Tabel berikut hanya melampirkan kakas yang relevan, sehingga tidak semua kakas yang digunakan masuk ke daftar.
+
+\begingroup
+\footnotesize
+% The table now has 3 columns: Kakas, Versi, Deskripsi
+\begin{longtable}{|l|l|p{0.5\textwidth}|}
+    \caption{Daftar Kakas Implementasi Sistem Tiket}
+    \label{tab:kakas-implementasi-grouped} \\
+    \hline
+    % Header for the first page
+    \textbf{Kakas (Alat)} & \textbf{Versi} & \textbf{Deskripsi} \\
+    \hline
+    \endfirsthead
+
+    % Header for continuation pages
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}} \\
+    \hline
+    \textbf{Kakas (Alat)} & \textbf{Versi} & \textbf{Deskripsi} \\
+    \hline
+    \endhead
+
+    % Footer for pages with continuation
+    \hline
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}} \\
+    \endfoot
+
+    % Final footer of the table
+    \hline
+    \endlastfoot
+
+    % Category: Layanan Pembayaran
+    \hline
+    \multicolumn{3}{|l|}{\textbf{Layanan Pembayaran}} \\
+    \hline
+    NodeJS & 20.19.1 & \textit{Runtime} JavaScript. \\
+    TypeScript & 5.8.2 & Bahasa pemrograman. \\
+    Hono & 4.7.4 & Kerangka kerja HTTP. \\
+    BullMQ & 5.41.8 & \textit{Wrapper} untuk MQ di atas Redis. \\
+    \hline
+
+    % Category: Layanan Tiket
+    \multicolumn{3}{|l|}{\textbf{Layanan Tiket}} \\
+    \hline
+    Golang & 1.24.0 & Bahasa pemrograman. \\
+    Echo & 4.13.3 & Kerangka kerja HTTP. \\
+    Echo-Prometheus & 0.17.4 & Untuk integrasi Echo dengan Prometheus. \\
+    TestContainers & 0.36.0 & Untuk pengujian terintegrasi. \\
+    Go Concurrency Limits & 0.8.0 & Algoritma pengendalian aliran (adaptasi dari Netflix untuk kakas yang sama). \\
+    Jackc PGX & 5.7.2 & Kakas \textit{driver} untuk PostgreSQL. \\
+    go-cache & 2.1.0 & Untuk tembolok di memori. \\
+    UberFX & 1.23.0 & Untuk \textit{dependency injection}. \\
+    TypeSpec & 0.67.2 & Untuk membuat dokumentasi OpenAPI. \\
+    \hline
+
+    % Category: Kakas Pengawasan
+    \multicolumn{3}{|l|}{\textbf{Kakas Pengawasan}} \\
+    \hline
+    Grafana Loki & - & Untuk agregasi \textit{log}. \\
+    Grafana Alloy & - & Untuk koleksi \textit{log}. \\
+    Grafana Dashboard & - & Untuk dasbor visualisasi. \\
+    Prometheus & - & Untuk koleksi metrik. \\
+    Prometheus exporter & - & \textit{Exporter} spesifik (contoh: PostgreSQL, Node, Pod). \\
+    \hline
+
+    % Category: Agen Penguji
+    \multicolumn{3}{|l|}{\textbf{Agen Penguji}} \\
+    \hline
+    Grafana K6 & - & Untuk pengujian beban. \\
+    Grafana K6 Operator & - & Pengujian terdistribusi di kluster Kubernetes. \\
+    \hline
+
+    % Category: Lainnya
+    \multicolumn{3}{|l|}{\textbf{Lainnya}} \\
+    \hline
+    Kubectl & - & CLI API untuk kluster Kubernetes. \\
+    Kubectx & - & Beralih antar konfigurasi kluster Kubernetes. \\
+    Helm Package Manager & - & Untuk \textit{deployment} Kubernetes Helm Chart. \\
+    Helmfile & - & Konfigurasi Helm Chart secara deklaratif. \\
+
+\end{longtable}
+\endgroup

@@ -4,8 +4,7 @@ Berikut adalah batasan yang ditetapkan dalam melakukan implementasi sistem ini.
 
 \begin{enumerate}
   \item Semua batasan masalah dan konfigurasi yang telah dibahas pada bagian \ref{sec:batasan-masalah}.
-  \item Layanan otentikasi/ pengguna tidak diimplementasikan sebagaimana dibatas pada bagian rancangan solusi.
-  \item Layanan pembayaran merupakan \textit{mock service} yang bertujuan untuk menyimulasikan sistem eksternal yang berfungsi sebagai gerbang pembayaran.
-  \item Setiap layanan yang diimplementasikan hanya berupa REST API Endpoint yang akan dipanggil secara langsung oleh \textit{virtual user}. Antarmuka sistem tidak diimplementasikan karena dinilai tidak relevan dengan fokus pengujian.
-  \item Terdapat dasbor Grafana dan Prometheus server untuk menampilkan metrik dan status setiap sistem.
+  \item Layanan pengguna tidak diimplementasikan sebagaimana dibahas pada bagian rancangan solusi.
+  \item Setiap layanan yang diimplementasikan hanya berupa REST API Endpoint yang akan dipanggil secara langsung oleh pengguna virtual. Antarmuka sistem tidak diimplementasikan karena dinilai tidak relevan dengan fokus pengujian.
+  \item Sistem dikembangkan dengan orientasi \textit{deployment} menggunakan kluster Kubernetes.
 \end{enumerate}
