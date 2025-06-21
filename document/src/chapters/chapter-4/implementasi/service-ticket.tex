@@ -1,96 +1,103 @@
-\subsection{Implementasi Ticket Service}
+\subsection{Implementasi Sistem Tiket}
 
-Program ini dibuat dengan bahasa pemrograman Golang. Runtime layanan ini dibagi menjadi 6 bagian, yaitu:
+\subsubsection{Arsitektur Sistem}
 
-\begin{enumerate}
-      \item Server No Flow Control
+Penulisan kode layanan ini terinspirasi dari pendekatan \textit{clean architecture} yang memisahkan kode menjadi bagian Infrastructure, Repository, Entity, Service, dan Usecase. Pada layanan ini, grup Repository, Entity, Service, dan Usecase dipisahkan berdasarkan modul, seperti modul Bookings, Events, Orders, dan Payments. Arsitektur ini dipilih karena merupakan pendekatan yang sudah cukup familiar digunakan. Selain itu, pendekatan ini memungkinkan pemecahan bagian kode berdasarkan tanggung jawab dan \textit{concern} tertentu.
 
-            Runtime ini berisi kode eksekusi layanan tiket tanpa varian flow control.
+Kode Infrastructure berisi modul yang berkaitan dengan driver PostgreSQL, Redis, RabbitMQ, \textit{in-memory cache}, dan konfigurasi aplikasi. Kode Repository berisi kode yang memuat kueri untuk operasi tertentu. Kode Service berisi grup fungsionalitas tambahan seperti integrasi dengan layanan pembayaran. Kode Usecase merupakan kode yang mengandung logika proses bisnis dan umumnya memanggil Repository serta memulai transaksi basis data bila diperlukan.
 
-      \item Server with Flow Control
+Sebagian besar kode dipisah menjadi Interface dan Implementasi. Hal ini dilakukan agar kode implementasi bisa diubah sesuai kebutuhan. Pendekatan ini memungkinkan implementasi kode pemrosesan pesanan dibuat berbeda, tetapi tetap memiliki antarmuka yang sama.
 
-            Runtime ini berisi kode eksekusi layanan tiket dengan varian flow control.
+Selain itu, terdapat berkas App yang berisi kode spesifik masing-masing aplikasi, seperti Server, Worker, dan Sanity Check. Kode Server berisi Handler, Route, dan definisi server HTTP. Kode Worker berisi integrasi algoritma pengendalian aliran, \textit{handler} pemrosesan pemesanan, dan lain-lain.
 
-      \item Worker Flow Control
-
-            Runtime ini berisi kode eksekusi worker pemesanan tiket pada layanan tiket dengan flow control.
-
-      \item Sanity Check
-
-            Runtime ini melakukan kueri terhadap data ketersediaan dan \textit{early dropper} pada basis data dan pada Redis. Hal ini digunakan untuk melakukan validasi terhadap sinkronisasi data antara Redis dengan basis data. Pemeriksaan ini dilakukan setiap 2 menit.
-
-      \item Seeder
-
-            Runtime ini dijalankan saat sebelum pengujian dimulai. Runtime ini menjalankan hal-hal yang berkaitan dengan setup basis data dan Redis, seperti membuat skema, seeding data, prewarm basis data, trigger seeding availability pada Redis, dan lain-lain.
-
-\end{enumerate}
-
-Setiap runtime (selain seeder) memiliki integrasi dengan Prometheus untuk proses pengumpulan metrik, bergantung pada jenis runtimenya. Runtime server berisi metrik yang berkaitan dengan HTTP server. Runtime worker berkaitan dengan metrik flow control dan ukuran queue yang sedang diproses. Runtime sanity check berisi hasil kueri agregat, sesuai dengan yang dibahas pada bagian sebelumnya.
-
-\subsubsection{Arsitektur}
-
-Arsitektur layanan ini terinspirasi dari pendekatan clean architecture yang memisahkan bagian kode menjadi infrastructure, repository, entity, service, dan usecase. Pada layanan ini, grup repository, entity, service, dan usecase dipisahkan berdasarkan modul, seperti bookings, events, orders, dan payments.
-
-Kode infrastructure berisi modul yang berkaitan dengan driver PostgreSQL, Redis, RabbitMQ, in-memory cache, dan config. Kode repository berisi kode yang memuat kueri untuk operasi tertentu. Kode service berisi grup fungsionalitas tambahan seperti integrasi dengan payment service. Kode usecase merupakan kode yang mengandung business logic dan umumnya memanggil repository serta memulai transaksi basis data bila dipelrukan.
-
-Kebanyakan kode dipisah menjadi interface dan implementasi. Hal ini dilakukan agar kode implementasi bisa diubah sesuai kebutuhan. Pendekatan ini memungkinkan implementasi kode pemrosesan pesanan dibuat berbeda, tetapi tetap memiliki interface yang sama.
-
-Selain itu, terdapat folder app yang berisi kode spesifik masing-masing aplikasi, seperti server, worker, dan sanity check. Kode server berisi handler, route, dan definisi HTTP server. Kode worker berisi integrasi algoritma flow control, rate limiter, dan lain-lain.
-
-Setiap runtime memiliki basis kode yang sama agar kode yang sama dapat digunakan berulang-ulang dan proses pengembangan menjadi lebih mudah.
+Setiap \textit{runtime} memiliki basis kode yang sama agar kode yang sama dapat digunakan berulang-ulang dan proses pengembangan menjadi lebih mudah.
 
 \subsubsection{Endpoint}
 
-Terdapat berbagai endpoint selain health check dan metrics yang tersedia pada sistem tiket. Setiap endpoint berikut membutuhkan otentikasi JWT yang diverifikasi melalui header Authorization.
+Terdapat berbagai \textit{endpoint} selain health check dan metrics yang tersedia pada sistem tiket. Setiap \textit{endpoint} berikut membutuhkan otentikasi JWT yang diverifikasi melalui HTTP header Authorization.
 
-Berikut adalah endpoint yang tersedia pada sistem tiket:
+Berikut adalah \textit{endpoint} yang tersedia pada sistem tiket:
+
+\pagebreak
+
+\begin{table}[h!]
+\centering
+\caption{Daftar \textit{Endpoint} Layanan Tiket}
+\begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|}
+\hline
+\textbf{Endpoint} & \textbf{Keterangan} \\
+\hline
+GetEvents \newline GET /events & Mengembalikan daftar acara yang tersedia. \\
+\hline
+GetEventByID \newline GET /events/:id & Mengembalikan informasi detail terkait suatu acara, seperti kategori tiket, penjualan tiket, dan lain-lain. \\
+\hline
+GetEventAvailability \newline GET /events/availability/:ticketSaleID & Mengembalikan agregasi ketersediaan tiket yang dibagi berdasarkan area untuk penjualan tiket tertentu. \\
+\hline
+GetSeats \newline GET /events/seats/:ticketAreaID & Mengembalikan daftar ketersediaan kursi dalam suatu area. \\
+\hline
+Create Order \newline POST /orders & Menangani permintaan pemesanan tiket. Ketika permintaan pesanan tidak dapat diproses karena konflik, \textit{endpoint} ini akan mengembalikan status 409 dan pengguna akan direkomendasikan untuk memesan kursi lain. Selain itu, \textit{endpoint} ini akan mengembalikan status 423 apabila sistem tidak dapat melakukan penguncian dan pengguna disarankan untuk mengirim ulang permintaan. \\
+\hline
+Get Order \newline GET /orders/:id & Mengembalikan detail order berdasarkan ID. \\
+\hline
+Get Issued Tickets \newline GET /orders/:id/tickets & Mengembalikan tiket yang sudah diterbitkan untuk suatu pesanan yang sudah berhasil. \\
+\hline
+Notify Webhook \newline POST /webhook & Menangani notifikasi dari layanan pembayaran terkait dengan perubahan status tagihan. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Pengoptimalan Skema Basis Data Terdistribusi}
+
+Kueri yang digunakan untuk setiap varian basis data secara umum sama. Meskipun begitu, terdapat variasi pada skema basis data. Hal ini diperlukan agar varian basis data CitusData dan YugabyeDB dapat berjalan dengan optimal.
+
+Pengoptimalan skema untuk CitusData meliputi pembuatan \textit{reference table}, yakni tabel yang direplikasi pada setiap instans PostgreSQL. Hal ini dilakukan agar basis data tidak perlu melakukan \textit{cross-shard join}, sehingga meminimalkan latensi. Tabel yang dibuat menjadi \textit{reference table} adalah tabel Events, TicketCategories, TicketSales, TicketPackages, dan TicketAreas.
+
+Selain itu, terdapat \textit{distributed table}. Tabel ini merupakan pemartisian sebuah tabel berdasarkan baris. Untuk melakukan pemartisian diperlukan sebuah kolom yang menjadi \textit{shard key}. Implementasi tugas akhir ini melakukan distribusi pada tabel TicketSeats, Orders, OrderItems, Invoices, dan IssuedTickets berdasarkan kolom ticket\_area\_id. Setiap tabel ini memiliki kolom ticket\_area\_id. Baris data pada entitas tersebut yang memiliki \textit{shard key} yang sama akan berada pada partisi yang sama, sehingga operasi yang berkaitan pada satu order dilakukan pada satu partisi.
+
+Pengoptimalan skema pada YugabyeDB sedikit berbeda dengan CitusData. Pada YugabyeDB, tidak ada \textit{reference table} karena data memang sudah tereplikasi. Selain itu, tabel TicketSeats, Orders, OrderItems, Invoices, dan IssuedTickets tetap didistribusikan berdasarkan satu kunci hash yang sama yaitu kolom ticket\_area\_id, meski dengan sintaks inisiasi yang sedikit berbda.
+
+\subsubsection{Pengendalian Aliran}
+
+Sebagaimana dibahas pada bagian rancangan, terdapat dua strategi yang ditetapkan untuk meringankan beban pemrosesan pesanan, yaitu:
 
 \begin{enumerate}
-      \item GET /events - GetEvents
-
-            Endpoint ini mengembalikan daftar event yang tersedia.
-
-      \item GET /events/:id - GetEventByID
-
-            Endpoint ini mengembalikan informasi detail terkait suatu event, seperti kategori tiket, penjualan tiket, dan lain-lain.
-
-      \item GET /events/availability/:ticketSaleID - GetEventAvailability
-
-            Endpoint ini mengembalikan agregasi ketersediaan tiket yang dibagi berdasarkan area.
-
-      \item GET /events/seats/:ticketAreaID - GetSeats
-
-            Endpoint ini mengembalikan daftar ketersediaan kursi dalam suatu area.
-
-      \item POST /orders - Create Order
-
-            Endpoint ini menangani permintaan pemesanan tiket. Ketika permintaan pesanan tidak dapat diproses karena konflik, endpoint ini akan mengembalikan status 409 dan pengguna akan direkomendasikan untuk memesan kursi lain.
-
-      \item GET /orders/:id - Get Order
-
-            Endpoint ini mengembalikan detail order berdasarkan ID.
-
-      \item GET /orders/:id/tickets - Get Issued Tickets
-
-            Endpoint ini mengembalikan tiket yang sudah diterbitkan untuk suatu pesanan yang sudah berhasil.
-
-      \item POST /webhook - Notify Webhook
-
-            Endpoint ini menangani notifikasi dari layanan pembayaran terkait dengen perubahan status tagihan.
+      \item Penolakan permintaan lebih awal dengan memprediksi kursi sudah akan terjual ketika terdapat pesanan untuk kursi yang sama sedang diproses lebih awal.
+      \item Penggunaan penyangga/ antrean untuk menangani lonjakan permintaan pesanan dan menjaga stabilitas pemrosesan.
 \end{enumerate}
 
-\subsubsection{Pengoptimalan Skema Basis Data}
+Alur implementasi pengendalian aliran sesuai dengan bahasan pada rancangan implementasi. Meskipun begitu, terdapat beberapa detail implementasi yang perlu dielaborasi.
 
-Kueri yang digunakan untuk setiap varian basis data secara umum sama. Meskipun begitu, terdapat variasi pada pengaturan skema. Hal ini diperlukan agar varian basis data CitusData dan YugabyeDB dapat berjalan dengan optimal.
+Implementasi pengendalian aliran untuk strategi antrean dapat dibagi menjadi beberapa komponen penting, yaitu: \textit{event consumer}, \textit{rate limiter}, dan pemroses pesanan. \textit{Event consumer} bertugas untuk mendengarkan pesan masuk dari RabbitMQ. \textit{Rate limiter} merupakan komponen yang mengatur banyaknya \textit{worker} yang berjalan pada satu waktu.
 
-Pengoptimalan skema untuk CitusData meliputi pembuatan reference table, yakni tabel yang direplikasi pada setiap instance PostgreSQL. Hal ini dilakukan agar basis data tidak perlu melakukan cross-shard join, sehingga meminimalkan latensi. Tabel yang dibuat menjadi reference table adalah tabel Events, TicketCategories, TicketSales, TicketPackages, dan TicketAreas.
+Algoritma \textit{rate limiter} yang digunakan dalam tugas akhir ini merupakan algoritma yang sederhana, yaitu membatasi jumlah konkurensi dengan nilai tertentu. Pada kasus ini, batas tersebut adalah 5000 konkurensi. Algoritma memberi jaminan bahwa jumlah pesanan yang diproses konsisten tidak melebihi batas tertentu.
 
-Selain itu, terdapat distributed table. Tabel ini merupakan sharding sebuah tabel berdasarkan baris. Untuk melakukan sharding diperlukan sebuah kolom yang menjadi shard key. Implementasi tugas akhir ini melakukan distribusi pada tabel TicketSeats, Orders, OrderItems, Invoices, dan IssuedTickets berdasarkan kolom ticket\_area\_id. Setiap tabel ini memiliki kolom ticket\_area\_id. Baris data pada entitas tersebut yang memiliki shard key yang sama akan berada pada shard yang sama, sehingga operasi yang berkaitan pada satu order dilakukan pada satu shard.
+Terdapat algoritma yang lebih cangggih dan mampu mengatur batas konkurensi secara dinamis, seperti Gradient2. Algoritma ini mengatur batas konkurensi berdasarkan gradien perubahan RTT dan \textit{long term exponentially smoothed average RTT}. Penggunaan algoritma ini dapat meminimalkan dampak pencilan untuk trafik yang bersifat bursty \parencite{platinummonkey_go_concurrency_limits}. Meskipun begitu, algoritma sebelumnya digunakan karena kemudahan implementasi dan proses \textit{tuning} selama pengujian.
 
-Pengoptimalan skema pada YugabyeDB sedikit berbeda dengan CitusData. Pada YugabyeDB, tidak ada reference table karena data memang sudah tereplikasi. Selain itu, tabel TicketSeats, Orders, OrderItems, Invoices, dan IssuedTickets tetap didistribusikan berdasarkan satu hash key yang sama yaitu kolom ticket\_area\_id, meski dengan sintaks inisiasi yang sedikit berbda.
+\subsubsection{\textit{Runtime} Aplikasi}
 
-\subsubsection{Flow Control}
+Sistem tiket dapat dibagi menjadi enam program yang berbeda, yaitu:
 
-Implementasi flow control dapat dibagi menjadi beberapa komponen penting, yaitu: event consumer, rate limiter, dan worker. Worker/ goroutine yang memproses pesanan bertugas untuk memproses pesanan yang masuk. Event consumer bertugas untuk listen event dari RabbitMQ. Rate limiter merupakan komponen yang mengatur banyaknya goroutine/ worker yang berjalan pada satu waktu. Jumlah limit ini dinamis dan bergantung pada kinerja sistem pada saat sistem sedang berjalan.
+\begin{enumerate}
+      \item Server tanpa Pengendalian Aliran
 
-Algoritma yang digunakan untuk rate limiter adalah Gradient2. Algoritma ini mengatur limit concurrency berdasarkan gradien perubahan RTT dan \textit{long term exponentially smoothed average RTT}. Penggunaan algoritma ini dapat meminimalkan dampak outlier untuk trafik yang bersifat bursty \parencite{platinummonkey_go_concurrency_limits}.
+            Program ini berisi kode eksekusi layanan tiket tanpa pengendalian aliran.
+
+      \item Server dengan Pengendalian Aliran
+
+            Program ini berisi kode eksekusi layanan tiket dengan pengendalian aliran.
+
+      \item Worker (Pemroses Pesanan)
+
+            Program ini berisi kode eksekusi worker pemesanan tiket pada variasi layanan tiket dengan pengendalian aliran.
+
+      \item Sanity Check
+
+            Program ini melakukan kueri terhadap data ketersediaan dan \textit{early dropper} pada basis data dan pada Redis. Hal ini digunakan untuk melakukan validasi terhadap sinkronisasi data antara Redis dengan basis data. Pemeriksaan ini dilakukan setiap 2 menit.
+
+      \item Seeder
+
+            Program ini dijalankan saat sebelum pengujian dimulai. Program ini menjalankan hal-hal yang berkaitan dengan pengaturan basis data dan Redis, seperti membuat skema, penyemaian data, \textit{prewarm} basis data, penyemaian data ketersediaan pada Redis, dan lain-lain.
+
+\end{enumerate}
+
+Setiap program (selain Seeder) memiliki integrasi dengan Prometheus untuk proses pengumpulan metrik, bergantung pada jenis programnya. Program server berisi metrik yang berkaitan dengan HTTP server. Program Worker berkaitan dengan metrik pengendalian aliran dan ukuran antrean yang sedang diproses. Runtime Sanity Check berisi hasil kueri agregat.

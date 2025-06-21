@@ -8,16 +8,16 @@ Berikut adalah daftar \textit{endpoint} yang tersedia pada Payment Service untuk
 
 \begin{table}[h!]
 \centering
-\caption{Daftar \textit{Endpoint} Payment Service}
-\begin{tabular}{|l|l|p{0.4\textwidth}|}
+\caption{Daftar \textit{Endpoint} Layanan Pembayaran}
+\begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|}
 \hline
-\textbf{Endpoint} & \textbf{Fungsi} & \textbf{Keterangan} \\
+\textbf{Endpoint} & \textbf{Keterangan} \\
 \hline
-GET /invoices/{id} & Get Invoice & Mengembalikan data tagihan berdasarkan ID yang diberikan pada parameter. \\
+Get Invoice \newline GET /invoices/{id} & Mengembalikan data tagihan berdasarkan ID yang diberikan pada parameter. \\
 \hline
-POST /invoices & Create Invoice & Menerima jumlah tagihan, deskripsi, dan ID eksternal dari layanan tiket untuk membuat tagihan baru. Tagihan akan kedaluwarsa dalam 15 menit. \\
+Create Invoice \newline POST /invoices & Menerima jumlah tagihan, deskripsi, dan ID eksternal dari layanan tiket untuk membuat tagihan baru. Tagihan akan kedaluwarsa dalam 15 menit. \\
 \hline
-POST /invoices/{id}/payment & Pay Invoice & Menyimulasikan proses pembayaran yang dilakukan pengguna. Endpoint ini menerima data untuk menandai apakah pembayaran berhasil atau gagal. \\
+Pay Invoice \newline POST /invoices/{id}/payment & Menyimulasikan proses pembayaran yang dilakukan pengguna. Endpoint ini menerima data untuk menandai apakah pembayaran berhasil atau gagal. \\
 \hline
 \end{tabular}
 \end{table}
