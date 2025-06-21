@@ -1,8 +1,8 @@
-\subsection{Distribusi Pengguna}
+\subsection{Distribusi Profil Pengguna}
 
 Ketika pengguna berhasil memesan tiket, terdapat 5\% kemungkinan bahwa pembayaran pengguna gagal. Hal ini dilakukan untuk menyimulasikan pengguna yang batal membeli tiket atau mengalami kegagalan pembayaran.
 
-Sebuah acara memiliki dua tipe kursi, yaitu \textit{numbered seat} dan \textit{free-steating}. Tiket \textit{numbered seat} memiliki kategori Platinum, Gold, Silver, dan Bronze. Tiket \textit{free-seating} memiliki kategori VIP, Zona A, dan Zona B. Setiap pengguna memiliki preferensi kategori kursi yang ingin dibeli, sebagaimana digambarkan pada distribusi berikut.
+Sebuah acara memiliki dua tipe kursi, yaitu kursi bernomor (\textit{numbered seat}) dan festival (\textit{free-standing}). Tiket kursi bernomor memiliki kategori Platinum, Gold, Silver, dan Bronze. Tiket festival memiliki kategori VIP, Zona A, dan Zona B. Setiap pengguna memiliki preferensi kategori kursi yang ingin dibeli, sebagaimana digambarkan pada distribusi berikut.
 
 \begin{table}[h]
     \centering
@@ -21,10 +21,10 @@ Sebuah acara memiliki dua tipe kursi, yaitu \textit{numbered seat} dan \textit{f
         Area High          & 11\%                & VIP \& Zona A           \\
         \hline
     \end{tabular}
-    \caption{Distribusi Kursi}
+    \caption{Distribusi Kategori}
 \end{table}
 
-Selain itu, setiap pengguna memiliki preferensi hari. Pengguna yang memiliki preferensi spesifik akan mengutamakan hari yang sesuai dengan preferensinya (bisa satu atau dua pilihan hari), dibandingkan dengan kesesuaian preferensi kategori. Pengguna yang tidak memiliki preferensi akan mengutamakan kesesuaian preferensi kategori dibandingkan dengan kesesuaian hari.
+Tingkatan merupakan nama profil dengan minat kategori tertentu secara terurut. Selain itu, setiap pengguna memiliki preferensi hari. Pengguna yang memiliki preferensi spesifik akan mengutamakan hari yang sesuai dengan preferensinya (bisa satu atau dua pilihan hari), dibandingkan dengan kesesuaian preferensi kategori. Pengguna yang tidak memiliki preferensi akan mengutamakan kesesuaian preferensi kategori dibandingkan dengan kesesuaian hari.
 
 \begin{table}[h]
     \centering
@@ -40,7 +40,7 @@ Selain itu, setiap pengguna memiliki preferensi hari. Pengguna yang memiliki pre
     \caption{Distribusi Hari}
 \end{table}
 
-Variasi berikutnya adalah variasi dari seberapa \textit{persistent} (ingin) pengguna untuk mendapatkan tiket yang diinginkan. Variasi ini ditentukan dengna berapa kali maksimal pencarian dan pemesanan sebelum pengguna tersebut menyerah.
+Variasi berikutnya adalah variasi dari seberapa persisten pengguna untuk mendapatkan tiket yang diinginkan. Variasi ini ditentukan dengan berapa kali maksimal pencarian dan pemesanan sebelum pengguna tersebut menyerah.
 
 \begin{table}[h]
     \centering
@@ -58,7 +58,9 @@ Variasi berikutnya adalah variasi dari seberapa \textit{persistent} (ingin) peng
     \caption{Distribusi Persistensi}
 \end{table}
 
-Variasi terakhir adalah variasi dari berapa banyak tiket yang dipesan oleh suatu pengguna dalam satu kali pemesanan.
+\pagebreak
+
+Variasi terakhir adalah variasi dari berapa banyak tiket yang dipesan oleh suatu pengguna dalam satu kali pemesanan. Hal ini untuk menyimulasikan pengguna yang datang sendiri, bersama pasangan, dan datang dalam satu grup.
 
 \begin{table}[h]
     \centering

@@ -1,19 +1,19 @@
 \subsection{Skenario Pengujian}
 
-Terdapat dua jenis skenario pengujian yang akan diuji pada penelitian ini, yaitu \textit{load test} dan \textit{scaled-down simulation test}. Keduanya memiliki pendekatan dan tujuan yang berbeda.
+Terdapat dua jenis skenario pengujian yang akan diuji pada penelitian ini, yaitu skenario beban berkelanjutan (\textit{load test}) dan skenario perebutan tiket. Keduanya memiliki pendekatan dan tujuan yang berbeda.
 
-\subsubsection{Load Test}
+\subsubsection{Skenario Beban Berkelanjutan}
 
-Skenario ini berfokus pada jumlah concurrent virtual user. Pada skenario ini, sistem akan dibebankan sejumlah concurrent virtual user dalam waktu hingga 15 menit. Kemudian, analisis dilakukan untuk diketauhi kinerjanya. Meskipun begitu, skenario ini tidak menunjukkan keadaan contention sebagiamana terjadi pada kehidupan nyata.
+Skenario ini berfokus pada jumlah pengguna virtual dalam satu waktu (\textit{concurrent virtual user}). Pada skenario ini, sistem akan dibebankan sejumlah pengguna virtual dengan durasi tertentu. Meskipun begitu, skenario ini tidak menunjukkan keadaan perebutan tiket sebagiamana terjadi pada kehidupan nyata.
 
-\subsubsection{Scaled-Down Simulation Test}
+\subsubsection{Skenario Perebutan Tiket}
 
-Skenario ini menguji beberapa hal, seperti \textit{spike testing} dan perilaku sistem pada saat terjadi contention. Tes ini terinspirasi dari rasio antara pengguna dengan tiket yang dijual. Rasio ini sangat tinggi karena ada banyak pengguna yang menginginkan satu tiket.
+Skenario ini menguji beberapa hal, seperti pengujian lonjakan dan perilaku sistem pada saat terjadi perebutan tiket. Tes ini terinspirasi dari rasio antara pengguna dengan tiket yang dijual. Rasio ini sangat tinggi karena ada banyak pengguna yang menginginkan satu tiket.
 
-Skenario ini berfokus pada jumlah arrival rate alih-alih concurrent virtual user. Skenario ini dibuat dengan cara berikut:
+Skenario ini berfokus pada jumlah kedatangan (\textit{arrival rate}) alih-alih jumlah pengguna virtual dalam satu waktu. Skenario ini dibuat dengan cara berikut:
 
 \begin{enumerate}
-    \item Estimasikan jumlah pengguna dan jumlah tiket yang dijual. Misalkan terdapat 40 ribu pengguna (iterasi alur pengguna) dan 16 ribu tiket yang dijual.
-    \item Distribusikan arrival pengguna berdasarkan distribusi tertentu. Penelitian ini menggunakan distribusi lognormal untuk menyimulasikan spike. Total area di bawah kurva akan sama dengan jumlah pengguna. Buat range/ histogram.
-    \item Hasil grafik distribusi digunakan untuk menentukan jumlah arrival pengguna pada waktu tertentu.
+    \item Estimasikan jumlah pengguna dan jumlah tiket yang dijual. Misalkan terdapat 40 ribu iterasi pengguna dan 16 ribu tiket yang dijual.
+    \item Distribusikan kedatangan pengguna berdasarkan distribusi tertentu. Penelitian ini menggunakan distribusi lognormal untuk menyimulasikan lonjakan. Total area di bawah kurva akan sama dengan jumlah pengguna. Lebar kurva merupakan durasi pengujian dengan tinggi kurva merupakan jumlah kedatangan pengguna pada waktu tertentu. Untuk mempermudah implementasi, kedatangan pengguna dibagi secara periodik, misalkan setiap 30 detik.
+    \item Hasil grafik distribusi digunakan untuk menentukan banyaknya kedatangan pengguna pada waktu tertentu.
 \end{enumerate}
