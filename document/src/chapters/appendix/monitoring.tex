@@ -1,0 +1,22 @@
+\chapter{Dashbor Pengawasan}
+\label{apx:monitoring-dashboard}
+
+Berikut adalah dasbor Grafana yang disiapkan untuk memudahkan proses pengawasan dan analisis pengujian:
+
+\begin{enumerate}
+    \item \textbf{Kubernetes Dashboard:} Menyajikan metrik agregat dari seluruh node dalam satu kluster Kubernetes, seperti penggunaan CPU, memori, dan media penyimpanan secara keseluruhan untuk memantau kesehatan infrastruktur.
+    \item \textbf{YugabyteDB:} Menampilkan metrik kinerja dan kesehatan dari instans basis data terdistribusi YugabyteDB, termasuk detail eksekusi kueri untuk analisis dan pengoptimalan.
+    \item \textbf{Nginx:} Berisi metrik vital dari Nginx, seperti jumlah koneksi aktif, \textit{request per second} (RPS), dan tingkat kegagalan.
+    \item \textbf{Patroni:} Menyajikan status kluster PostgreSQL yang dikelola oleh Patroni, memantau kondisi leader, replikasi, dan proses \textit{failover} untuk memastikan ketersediaan tinggi.
+    \item \textbf{Redis Cluster:} Memberikan pandangan tingkat tinggi terhadap kluster Redis secara keseluruhan.
+    \item \textbf{Redis Instance:} Berisi metrik spesifik untuk setiap instans Redis, seperti jumlah operasi per detik, klien yang terhubung, dan \textit{cache hit ratio}..
+    \item \textbf{Ticket Backend:} Menampilkan metrik HTTP dari layanan tiket, mencakup latensi respons, jumlah \textit{request}, dan tingkat kegagalan untuk memantau kinerja layanan.
+    \item \textbf{Ticket Queue:} Menyajikan metrik dari sistem antrean yang digunakan untuk pengendalian aliran, seperti jumlah pesan yang masuk, panjang antrean, dan status konsumen.
+    \item \textbf{Payment Backend:} Menampilkan metrik HTTP dari layanan pembayaran, termasuk latensi, volume transaksi, dan tingkat kegagalan.
+    \item \textbf{Sanity Check:} Digunakan untuk verifikasi integritas data dengan membandingkan data ketersediaan antara basis data relasional dan Redis, terutama penting saat beban tinggi.
+    \item \textbf{PostgreSQL:} Berisi metrik operasional dari basis data PostgreSQL, seperti jumlah kueri, koneksi aktif, \textit{cache hit rate}, dan status replikasi untuk pemantauan kesehatan basis data.
+    \item \textbf{RabbitMQ:} Menampilkan metrik dari \textit{message broker} RabbitMQ, termasuk jumlah antrean, laju pesan masuk dan keluar, serta jumlah pesan yang siap dan belum diakui (\textit{unacked}).
+    \item \textbf{Kubernetes Pod:} Menyajikan metrik sumber daya untuk setiap Pod Kubernetes, seperti penggunaan CPU, memori, dan I/O media penyimpanan.
+    \item \textbf{PGCat:} Berisi metrik kinerja dari \textit{connection pooler} PGCat, memantau koneksi klien yang aktif dan yang sedang menunggu untuk optimasi akses basis data.
+    \item \textbf{K6:} Menampilkan hasil dari pengujian beban yang dieksekusi oleh k6, menyajikan metrik seperti jumlah virtual user (VUs), latensi permintaan, dan tingkat kegagalan selama pengujian berlangsung.
+\end{enumerate}

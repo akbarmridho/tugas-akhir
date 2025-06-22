@@ -1,22 +1,65 @@
-\subsection{Docker Image Container dan Helm Chart}
+\subsection{Container dan Helm Chart}
 
-Terdapat berbagai Docker image container dan Helm Chart yang digunakan untuk proses implementasi dan \textit{deployment}, seperti:
+Terdapat berbagai Docker Image Container dan Helm Chart yang digunakan untuk \textit{deployment}, sebagaimana dimuat pada daftar berikut:
 
-\begin{enumerate}
-    \item Custom image layanan pembayaran dengan base image node:20.19.1-bookworm-slim. Container ini menyimpan entrypoint untuk payment server dan payment notifier.
-    \item Custom image layanan tiket dengan base image golang:1.24.0-bullseye. Container ini menyimpan berkas hasil kompilasi untuk server dengan varian pengendalian aliran dan tanpa pengendalian aliran, seeder, serta \textit{order worker} dengan pengendalian aliran.
-    \item Custom image k6 dengan base image grafana/k6:1.0.0. Container ini berisi \textit{custom built} berkas eksekusi K6 dengan tambahan ekstensi grafana/xk6-faker.
-    \item Custom image PostgreSQL untuk setup kluster primary-replica dengan base image postgres:16.8. Image ini diadaptasi dari contoh konfigurasi kluster PostgreSQL dengan Patroni.
-    \item Custom image CitusData dengan base image postgres:16.8. Image ini diadaptasi dari contoh konfigurasi kluster CitusData dengan Patroni.
-    \item Helm chart grafana/grafana versi 8.13.1.
-    \item Helm chart prometheus versi 27.11.0.
-    \item Helm chart grafana/loki versi 6.29.0.
-    \item Helm chart grafana/alloy versi 1.0.2.
-    \item Helm chart jetstack/cert-manager versi 1.17.2.
-    \item Helm chart bitnami/nginx-ingress-controller versi 11.6.16.
-    \item Helm chart bitnami/redis-cluster versi 11.5.3.
-    \item Helm chart bitnami/rabbitmq versi 16.0.1.
-    \item Helm chart yugabytedb/yugabyte versi 2024.2.2.
-    \item Helm chart xxl-job-admin/pgcat versi 0.3.2.
-    \item Operator grafana/k6-operator versi 3.13.0.
-\end{enumerate}
+\begingroup
+\footnotesize
+% The table now has 3 columns: Kakas, Versi, Deskripsi
+\begin{longtable}{|p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|}
+    \caption{Daftar Docker Image Container dan Helm Chart}
+    \label{tab:kakas-implementasi-deployment} \\
+    \hline
+    % Header for the first page
+    \textbf{Kakas} & \textbf{Versi/ Base} & \textbf{Deskripsi} \\
+    \hline
+    \endfirsthead
+
+    % Header for continuation pages
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}} \\
+    \hline
+    \textbf{Kakas} & \textbf{Versi/ Base} & \textbf{Deskripsi} \\
+    \hline
+    \endhead
+
+    % Footer for pages with continuation
+    \hline
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}} \\
+    \endfoot
+
+    % Final footer of the table
+    \hline
+    \endlastfoot
+
+    % Category: Custom Docker Images
+    \hline
+    \multicolumn{3}{|l|}{\textbf{Custom Docker Image}} \\
+    \hline
+    Layanan Pembayaran & node:20.19.1-bookworm-slim & \textit yang menyimpan entrypoint untuk payment server dan payment notifier. \\
+    Layanan Tiket & golang:1.24.0-bullseye & \textit{Custom image} yang menyimpan berkas hasil kompilasi untuk server, seeder, dan \textit{order worker}. \\
+    K6 & grafana/k6:1.0.0 & \textit{Custom image} K6 dengan tambahan ekstensi grafana/xk6-faker. \\
+    PostgreSQL Cluster & postgres:16.8 & \textit{Custom image} untuk kluster primary-replica PostgreSQL dengan Patroni. \\
+    CitusData Cluster & postgres:16.8 & \textit{Custom image} untuk kluster CitusData dengan Patroni. \\
+    \hline
+
+    % Category: Helm Charts
+    \multicolumn{3}{|l|}{\textbf{Helm Chart}} \\
+    \hline
+    grafana/grafana & 8.13.1 & Helm chart untuk Grafana. \\
+    prometheus & 27.11.0 & Helm chart untuk Prometheus. \\
+    grafana/loki & 6.29.0 & Helm chart untuk Loki. \\
+    grafana/alloy & 1.0.2 & Helm chart untuk Alloy. \\
+    jetstack/cert-manager & 1.17.2 & Helm chart untuk cert-manager. \\
+    bitnami/nginx-ingress-controller & 11.6.16 & Helm chart untuk NGINX Ingress Controller. \\
+    bitnami/redis-cluster & 11.5.3 & Helm chart untuk kluster Redis. \\
+    bitnami/rabbitmq & 16.0.1 & Helm chart untuk RabbitMQ. \\
+    yugabytedb/yugabyte & 2024.2.2 & Helm chart untuk YugabyteDB. \\
+    xxl-job-admin/pgcat & 0.3.2 & Helm chart untuk PgCat. \\
+    \hline
+    
+    % Category: Kubernetes Operator
+    \multicolumn{3}{|l|}{\textbf{Kubernetes Operator}} \\
+    \hline
+    grafana/k6-operator & 3.13.0 & Operator untuk menjalankan pengujian K6 secara terdistribusi. \\
+
+\end{longtable}
+\endgroup
