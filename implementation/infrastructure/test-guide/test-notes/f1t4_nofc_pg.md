@@ -1,6 +1,6 @@
-# Run Notes - f1t3
+# Run Notes - f1t4
 
-Variant: stress-1
+Variant: sim-1
 Scenario: sf-4
 Flow Control: nofc
 Database: postgres
