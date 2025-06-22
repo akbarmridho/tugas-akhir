@@ -1,0 +1,43 @@
+\chapter{Catatan Implementasi dan Pelaksanaan Pengujian}
+\label{apx:text-run-notes}
+
+\section{Jumlah Pengujian}
+
+Jumlah pengujian sebenarnya jauh lebih banyak dibandingkan dengan catatan pelaksanaan pengujian yang dipresentasikan. Pengujian ini dilakukan selama proses \textit{tuning} alokasi sumber daya, pengujian aplikasi dengan beban tinggi, \textit{debugging}, dan lain-lain. Selain itu, terdapat hasil pengujian yang sudah berhasil, tetapi diulang karena terdapat perubahan alokasi sumber daya. Sebagian pengujian ini didokumentasikan dan data hasil pengujian dicadangkan, tetapi tidak dijabarkan pada laporan tugas akhir ini.
+
+\section{Perubahan Alokasi \textit{Node} Kluster}
+
+Pada awalnya, alokasi \textit{node} untuk kluster tiket adalah 2 buah \textit{server} sedangkan alokasi \textit{node} untuk kluster penguji adalah 3 \textit{server}. Pengujian sudah berhasil hingga varian CitusData tanpa pengendalian aliran. Alokasi sumber daya sistem tiket dengan 2 buah server memang cukup membatasi, tetapi varian yang menjadi tolok ukur berhasil menangani beban dengan alokasi sumber daya yang ada. Meksipun begitu, varian basis data YugabyteDB secara konsisten kesulitan atau pun gagal menangani beban yang diberikan. Usaha terakhir yang diambil adalah dengan memindahkan alokasi \textit{server} dari kluster penguji ke kluster tiket. 
+
+Setelah itu, varian basis data YugabyteDB diberi lebih banyak sumber daya, tetapi tetap secara konsisten tidak dapat menangani beban yang diberikan setelah berbagai \textit{tuning}. Karena hal ini, basis data PostgreSQL dan CitusData pada beberapa waktu terlihat \textit{underutilized} atau diberi terlalu banyak sumber daya yang diberikan. Di sisi lain, memberikan sumber daya lebih dari yang dibutuhkan memungkinkan setiap basis data untuk bekerja secara optimal. Dari hasil tersebut, dapat diketahui berapa sumber daya yang dibutuhkan untuk setiap varian basis data untuk menangani beban tertentu. Oleh karena itu, seluruh pengujian diulang dari awal.
+
+\pagebreak
+
+\section{\textit{Tuning} PostgreSQL}
+
+Terdapat masalah selama implementasi terutama pada varian PostgreSQL, yaitu \textit{driver} PGX tidak mendukung penyeimbangan beban kueri antara \textit{primary} dan replika. Logika ini harus diimplementasikan pada level aplikasi atau pada level \textit{pooler}. Implementasi awal adalah dengan menggunakan PGBouncer untuk \textit{connection pooler}. Meskipun begitu, PGBouncer tidak mendukung penyeimbangan beban seperti ini. Implementasi penyeimbangan beban pada level kueri tidak dipilih karena akan membuat perbedaan kueri untuk setiap varian. Oleh karena itu, solusi yang dipilih adalah dengan menggunakan \textit{pooler} lain yang mendukung penyeimbangan beban. Pilihan yang tersedia adalah PGPool-II dan PGCat. PGPool-II tidak dipilih karena kakas ini menawarkan fitur manajemen kluster PostgreSQL sebagaimana dilakukan oleh Patroni. Pada akhirnya, PGCat dipilih sebagai \textit{pooler} yang memiliki kemampuan untuk penyeimbangan beban pada level kueri.
+
+Masalah berikutnya muncul ketika pengujian dijalankan. PGCat memang berhasil menyeimbangkan beban, tetapi tingkat kegagalan pada sistem jauh meningkat. Kegagalan ini didominasi dengan \textit{error not found}, sehingga dapat diasumsikan bahwa permintaan dari pengguna terlalu cepat dan replika masih belum menetapkan data yang sudah di-\textit{commit}. Hal ini menimbulkan masalah lagi. Terdapat dua alternatif, yaitu menggunakan pola \textit{read your own write} atau membuat kluster PostgreSQL \textit{commit} secara sinkron. Skema \textit{read your own write} tidak dapat digunakan karena proses pembacaan terjadi pada permintaan yang berbeda. Permintaan baca ini juga dikirim dari layanan pembayaran yang mengirimkan notifikasi \textit{webhook}. Selain itu, pendekatan ini akan membuat beban pada \textit{primary} menjadi lebih berat. Oleh karena itu, solusi yang dipilih adalah dengan membuat kluster PostgreSQL \textit{commit} secara sinkron dengan pertukaran latensi penulisan menjadi lebih tinggi.
+
+\pagebreak
+
+\section{\textit{Tuning} YugabyteDB}
+
+YugabyteDB merupakan varian basis data yang tidak mampu memenuhi beban yang diberikan. Selama eksperimen, telah dilakukan berbagai \textit{tuning} pengaturan YugabyteDB untuk memastikan bahwa kegagalan tersebut bukan karena kesalahan konfigurasi. Berikut adalah daftar percobaan yang telah dilakukan untuk mengetahui konfigurasi terbaik YugabyteDB:
+
+\begin{enumerate}
+    \item Melakukan koneksi langsung kepada YB-TServer (\textit{direct connection}) alih-alih menggunakan \textit{pooler}. Hasil dari percobaan ini adalah sistem memiliki kinerja yang jauh lebih buruk dibandingkan dengan sebelumnya.
+    \item Menambah atau pun mengurangi jumlah koneksi baik dari sisi klien ke \textit{pooler} atau pun dari \textit{pooler} ke basis data. Hasil dari percobaan ini adalah sistem memiliki kinerja yang jauh lebih buruk dibandingkan dengan sebelumnya.
+\end{enumerate}
+
+Setelah berbagai pengujian, terdapat sebuah nilai jumlah koneksi dari sisi klien ke \textit{pooler} dan jumlah koneksi dari sisi \textit{pooler} ke basis data yang kinerjanya dapat diterima. Pengaturan ini pada akhirnya yang digunakan selama pengujian.
+
+\section{Pengoptimalan Operasi Baca Pada varian dengan Pengendalian Aliran}
+
+Selama pengujian pada varian dengan pengendalian aliran, terdapat masalah pada kinerja Redis. Masalah ini tidak muncul pada saat pengujian varian tanpa pengendalian aliran. Setelah ditelusuri lebih lanjut, pola akses yang digunakan untuk menyimpan dan mengambil data hasil agregat ketersediaan tiket tidak efisien. Masalah ini baru muncul ketika jumlah data yang disimpan pada Redis bertambah hingga ratusan ribu kunci. Oleh karena itu, terdapat perbedaan implementasi penanganan agregat ketersediaan pada varian dengan pengendalian aliran dan tanpa pengendalian aliran. Varian pengendalian aliran memiliki kueri dan struktur data yang jauh lebih optimal dibandingkan dengan sebelumnya.
+
+Permasalahan berikutnya adalah apakah pengujian sebelumnya harus diulang atau tidak. Selama pengujian sebelumnya, kinerja baca agregat ketersediaan dapat diterima dan cukup baik sehingga pada akhirnya pengujian tidak diulang. Hanya saja, hasil pengujian untuk operasi baca ketersediaan pada varian tanpa pengendalian aliran tidak digunakan untuk analisis kinerja.
+
+\section{Pengujian Varian Pengendalian Aliran tanpa CitusData dan YugabyteDB}
+
+Pengujian varian pengendalian aliran dengan CitusData dan YugabyteDB pada awalnya memang direncanakan. Hanya saja, selama pengujian berjalan kinerja kedua varian tersebut tidak cukup baik sehingga analisis menjadi sulit. Selain itu, tidak banyak sisa waktu yang ada untuk melakukan eksperimen dengan kedua varian tersebut, sehingga pengujiannya dihilangkan. Meskipun begitu, pengujian varian pengendalian aliran dengan PostgreSQL dinilai cukup karena terdapat hasil pengujian varian tanpa pengendalian aliran dengan PostgreSQL. Perbandingan kinerja keduanya cukup untuk membandingkan efektivitas solusi tersebut.
