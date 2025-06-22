@@ -1,1 +1,73 @@
 \section{Analisis Hasil Pengujian}
+
+\subsection{Siklus Penjualan Tiket}
+
+\subsubsection{Skenario Beban Berkelanjutan}
+
+grafik k6, request yg banyak apa, dll.
+
+\subsubsection{Skenario Perebutan Tiket}
+
+Grafik k6, request yg banyak apa, dll.
+
+\subsection{Kinerja Selama Pengujian}
+
+Jelaskan overallnya aja gimana (utilization blablabla). kasih tabel i guess terus lempar ke lampiran \ref{apx:test-run-performance}
+
+\subsection{Kinerja Basis Data Terdistribusi}
+
+Bandingkan kinerja setiap basis data. highlight how optimized postgres
+
+postgres, citus, yugabyte.
+
+tabel kueri juga -> jelasin efisiensi kueri tiap varian.
+
+mention juga bahwa selama pengujian ternyata emang banyak banget kueri baca dan bebannya ga bisa dibiarin.
+
+jelaskan citus yugabyte struggle juga buat handle kueri baca.
+
+\subsubsection{Mengapa CitusData tidak perform}
+
+beban pada koordinator. mostly read.
+
+ambil hasil referensi TPC-C dan github issue.
+
+jelaskan bagian citusdata yg bakal lebih optimal kalau pake stored procedure.
+
+\subsubsection{Mengapa YugabyteDB tidak perform}
+
+limit koneksi, butuh sumberdaya yang lebih besar. tidak cocok untuk high concurrent transaction. banyak terjadi kegagalan transaksi jadinya diretry.
+
+ambil hasil referensi pengujian juga (pokoknya artikel yg bandingin raw performance)
+
+\subsection{Pengoptimalan Kueri Baca}
+
+buktikan kalau kueri ini banyak banget dipanggil -> pakai grafik/ data dari grafana.  
+
+refer ke redis. pakai data pengujian fc postgres (jgn nofc). 
+
+apakah hasilnya oke?
+
+\subsection{Integritas Tiket selama Perebutan Tiket}
+
+Apakah terjadi perbedaan data ketersediaan, dropper availability?
+
+Apakah terjadi double booking?
+
+\subsection{Penggunaan Pengendalian Aliran}
+
+Jelasin berapa banyak request yg ditolak (respons 409). Gbs response based on code? atau apa gitu bandingin latensinya fak.
+
+Dampaknya gimana (blm tau).
+
+\subsection{Keterbatasan Pengujian}
+
+List keterbatasan apa aja yang ada selama pengujian/ analisis yang mengakibatkan hasil kinerja bisa jauh berbeda.
+
+jumlah virtual user yang dikit.
+
+harusnya ngikutin distribusi sesuai gambar drpd load test
+
+pakai resource lebih banyak agar lebih fair ke yugabytedb.
+
+pisah penanganan kueri baca tulis agar resource usage utk tiap operasi bisa dibedain -> dampaknya lebih bisa diukur. kalau skrg banyak noise.

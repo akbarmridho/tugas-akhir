@@ -41,3 +41,10 @@ Permasalahan berikutnya adalah apakah pengujian sebelumnya harus diulang atau ti
 \section{Pengujian Varian Pengendalian Aliran tanpa CitusData dan YugabyteDB}
 
 Pengujian varian pengendalian aliran dengan CitusData dan YugabyteDB pada awalnya memang direncanakan. Hanya saja, selama pengujian berjalan kinerja kedua varian tersebut tidak cukup baik sehingga analisis menjadi sulit. Selain itu, tidak banyak sisa waktu yang ada untuk melakukan eksperimen dengan kedua varian tersebut, sehingga pengujiannya dihilangkan. Meskipun begitu, pengujian varian pengendalian aliran dengan PostgreSQL dinilai cukup karena terdapat hasil pengujian varian tanpa pengendalian aliran dengan PostgreSQL. Perbandingan kinerja keduanya cukup untuk membandingkan efektivitas solusi tersebut.
+
+\section{Algoritma Gradient2 untuk Pengendalian Aliran}
+
+Pada awalnya, algoritma Gradient2 digunakan untuk mengatur batas konkurensi pemrosesan pemesanan secara dinamis. Setelah beberapa pengujian, algoritma ini membutuhkan \textit{tuning} agar dapat berjalan dengan baik. Meskipun begitu, pada varian ini latensi sistem cukup bervariasi terutama karena penggunaan RabbitMQ. Pada akhirnya, algoritma ini membuat konkurensi pemrosesan menjadi jauh di bawah kapasitas sesungguhnya. Hal ini berdampak dengan latensi pemrosesan yang meningkat, sehingga tingkat kegagalan semakin tinggi.
+
+Pada akhirnya, algoritma yang membatasi besar konkurensi dengan nilai tertentu dipilih karena mekanismenya sederhana dan lebih mudah untuk diuji. Nilai batas konkurensi yang dipilih merupakan \textit{arbitary number} yang dinilai wajar untuk sebuah basis data relasional.
+ 
