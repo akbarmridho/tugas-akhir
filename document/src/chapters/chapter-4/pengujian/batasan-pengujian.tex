@@ -1,8 +1,9 @@
-\subsection{Batasan Pengujian}
+\subsection{Batasan dan Asumsi Pengujian}
 
-Berikut adalah batasan yang ditetapkan dalam melakukan pengujian sistem tiket.
+Berikut adalah batasan dan asumsi yang ditetapkan dalam pengujian sistem tiket:
 
 \begin{enumerate}
-  \item Pengujian dilakukan dengan jumlah alokasi resource pada kluster kubernetes yang sama. Hal ini dilakukan agar jumlah tes yang dilakukan dapat berkurang. Selain itu, terdapat batasan jumlah server yang dapat disewa untuk akun baru Hetzner, sehingga jumlah sumber daya tidak dapat ditambah lagi.
-  \item Pengujian dilakukan dengan asumsi kluster berjalan dengan baik dalam artian tidak ada pod atau service yang gagal karena tidak dapat dialokasikan oleh kluster atau pun hal serupa.
+  \item Total alokasi sumber daya pada kluster kubernetes sama. Pengujian dengan ukuran kluster yang berbeda-beda akan membutuhkan jumlah pengujian yang lebih banyak. Selain itu, terdapat batasan jumlah \textit{server} yang dapat disewa dengan akun baru Hetzner, sehingga jumlah alokasi sumber daya tidak dapat ditambah lagi.
+  \item Beberapa \textit{deployment} menggunakan \textit{ephemeral volume} alih-alih Persistent Volume Claim (PVC). Layanan yang menggunakan PVC pun menggunakan jenis PVC \textit{local path} (disimpan pada media penyimpanan kluster) alih-alih PVC terpisah yang didukung oleh Hetzner. Pendekatan ini dipilih untuk meminimalkan latensi media penyimpanan dan mempermudah proses pengujian karena persistensi data bukan hal utama yang menjadi perhatian.
+  \item Pengujian dilakukan dengan asumsi kluster berjalan dengan baik dalam artian tidak ada \textit{pod} atau layanan yang gagal karena tidak dapat dialokasikan oleh kluster, layanan \textit{out of memory} (OOM), atau pun karena hal lainnya.
 \end{enumerate}
