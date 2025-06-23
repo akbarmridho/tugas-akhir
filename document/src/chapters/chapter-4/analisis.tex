@@ -2,13 +2,58 @@
 
 \subsection{Siklus Penjualan Tiket}
 
+Kedua skenario pengujian ini memiliki siklus permintaan yang berbeda. Siklus dalam hal ini berarti fase ketika sistem memiliki pola permintaan yang berbeda. Contoh pada skenario beban berkelanjutan diambil dari pengujian f1t2, sedangkan contoh pada skenario perebutan tiket diambil dari pengujian f1t4. Siklus/pola ini juga terjadi pada skenario serupa ketika proses penjualan berjalan dengan lancar.
+
 \subsubsection{Skenario Beban Berkelanjutan}
 
-grafik k6, request yg banyak apa, dll.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-stress-traffic.png}
+    \caption{Pola Permintaan pada Beban Berkelanjutan}
+    \label{fig:pattern-stress-traffic}
+\end{figure}
+
+Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Setelah tiket habis terjual, jumlah permintaan ketersediaan tiket jauh meningkat karena penguji mencoba mencari tiket dari berbagai area dengan lebih banyak.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-stress-order.png}
+    \caption{Status Respons pada Beban Berkelanjutan}
+    \label{fig:pattern-stress-order}
+\end{figure}
+
+
+Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) selama pemrosesan pesanan sebanyak 3-10\% dari respons secara keseluruhan.
+
+\pagebreak
 
 \subsubsection{Skenario Perebutan Tiket}
 
-Grafik k6, request yg banyak apa, dll.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-traffic.png}
+    \caption{Pola Permintaan pada Perebutan Tiket}
+    \label{fig:pattern-sim-traffic}
+\end{figure}
+
+Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan permintaan pemesanan tiket. Hal ini wajar karena terdapat lebih banyak peminat dibandingkan dengan tiket yang tersedia. Berdasarkan grafik di atas, tiket habis terjual dalam kurang lebih 2 menit penjualan.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-order.png}
+    \caption{Status Respons pada Perebutan Tiket}
+    \label{fig:pattern-sim-order}
+\end{figure}
+
+Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang sangat banyak bahkan sejak proses penjualan dimulai. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana digambarkan pada keadaan akhir penguji pada gambar berikut.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-k6.png}
+    \caption{Keadaan Akhir Penguji pada Perebutan Tiket}
+    \label{fig:pattern-sim-k6}
+\end{figure}
+
 
 \subsection{Kinerja Selama Pengujian}
 
