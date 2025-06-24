@@ -62,38 +62,67 @@ Secara garis besar, varian PostgreSQL mampu menangani beban yang diberikan denga
 \begin{table}[h]
     \centering
     \caption{Gambaran Kinerja Permosesan Pesanan}
+    \label{table:kinerja-pemrosesan-pesanan}
     \begin{tabular}{|l|l|l|l|}
         \hline
-        \textbf{Metrik} & \textbf{PostgreSQL} & \textbf{CitusData} & \textbf{YugabyteDB} \\
+        \textbf{Metrik}              & \textbf{PostgreSQL} & \textbf{CitusData} & \textbf{YugabyteDB} \\
         \hline
-        \textit{Throughput} Maksimum & 466 rps & 410 rps & 216 rps \\
+        \textit{Throughput} Maksimum & 466 rps             & 410 rps            & 216 rps             \\
         \hline
-        Penggunaan CPU (Puncak) & 8 vCPU & 10 vCPU & 19 vCPU \\
+        Penggunaan CPU (Puncak)      & 8 vCPU              & 10 vCPU            & 19 vCPU             \\
         \hline
-        Penggunaan Memori (Puncak) & 3.4 GB & 5 GB & 36 GB \\
+        Penggunaan Memori (Puncak)   & 3.4 GB              & 5 GB               & 36 GB               \\
         \hline
-        Latensi Pemrosesan (P50) & 192-382 ms & 496-650 ms & 854-10000 ms \\
+        Latensi Pemrosesan (P50)     & 192-382 ms          & 496-650 ms         & 854-10000 ms        \\
         \hline
     \end{tabular}
 \end{table}
 
-Latensi dan \textit{throughput} pemrosesan diukur dari sisi Ticket Server, bukan dari level basis data. Latensi pemrosesan yang diambil merupakan latensi terbaik saat beban sudah cukup tinggi dan laju pemrosesan mulai stabil. Penggunaan CPU dan penggunaan memori merupakan agregat puncak jumlah penggunaan sumber daya setiap instans basis data yang berkaitan. Apabila terdapat dua nilai maksimal \textit{throughput} yang mendekati, nilai yang dipilih adalah nilai yang memiliki rasio sukses (respons 200) paling tinggi.
+Latensi dan \textit{throughput} pemrosesan diukur dari sisi Ticket Server, bukan dari level basis data. Latensi pemrosesan yang diambil merupakan latensi terbaik saat beban sudah cukup tinggi dan laju pemrosesan mulai stabil. Penggunaan CPU dan penggunaan memori merupakan agregat puncak jumlah penggunaan sumber daya setiap instans basis data yang berkaitan. Apabila terdapat dua nilai maksimal \textit{throughput} yang mendekati, nilai yang dipilih adalah nilai yang memiliki rasio sukses (kode respons 200) paling tinggi.
 
 Berdasarkan tabel di atas, PostgreSQL unggul dari segala aspek, mulai dari laju pemrosesan, penggunaan sumber daya, serta latensi. CitusData memiliki laju pemrosesan yang mendekati PostgreSQL dengan latensi 2x lebih lambat dan penggunaan sumber daya yang sedikit lebih tinggi. Di sisi lain, YugabyteDB memiliki laju pemrosesan kurang dari setengah PostgreSQL dengan latensi setidaknya 4x lebih lambat, penggunaan CPU 2.4x lebih banyak, dan penggunaan memori 10x lebih banyak.
 
 \subsection{Kinerja Basis Data Terdistribusi}
 
+Sebagaimana digambarkan pada tabel \ref{table:kinerja-pemrosesan-pesanan}, kinerja PostgreSQL lebih baik dibandingkan CitusData dan YugabyteDB. Mari telusuri lebih dalam kinerja setiap basis data, terutama pada skenario lain.
 
+\subsubsection{Rata-Rata Waktu Eksekusi Kueri}
 
-Bandingkan kinerja setiap basis data. highlight how optimized postgres
+Berikut adalah data rata-rata waktu eksekusi kueri yang diambil dari tabel pg\_stat\_statements sesaat setelah pengujian dilaksanakan. Data PostgreSQL diambil dari pengujian f1t2, CitusData diambil dari pengujian f2t3, dan YugabyteDB diambil dari f3t1. Beban antara PostgreSQL dan CitusData sama karena pengujian dijalankan pada skenario stress-0, sedangkan beban pada YugabyteDB lebih ringan karena dijalankan pada skenario stress-2. Data PostgreSQL merupakan gabungan antara statistik pada instans \textit{primary} dan replika. Data mentah merupakan data 10 kueri dengan total eksekusi paling banyak. Kueri yang kosong berarti total eksekusinya tidak cukup signifikan, sehingga dapat diasumsikan latensinya cukup rendah untuk diabaikan dibandingkan dengan yang lain.
 
-postgres, citus, yugabyte.
+\begin{table}[h]
+    \centering
+    \caption{Latensi Eksekusi Kueri pada Basis Data dalam Milisekon}
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Kueri}        & \textbf{PostgreSQL} & \textbf{CitusData} & \textbf{YugabyteDB} \\
+        \hline
+        LockFreeStandingSeats & 8.5                 & 9.8                & 1855                \\
+        \hline
+        LockNumberedSeats     & -                   & 8.25               & 43                  \\
+        \hline
+        InsertOrder           & 0.2                 & 4.4                & 77                  \\
+        \hline
+        UpdateOrder           & -                   & 3.9                & 33                  \\
+        \hline
+        InsertOrderItem       & 0.24                & -                  & 40                  \\
+        \hline
+        InsertIssuedTiket     & 0.28                & -                  & 74                  \\
+        \hline
+        InsertInvoice         & 0.12                & 4.16               & 31                  \\
+        \hline
+        UpdateInvoice         & 0.12                & 7.7                & -                   \\
+        \hline
+        UpdateSeatStatus      & 0.06                & 4.34               & 47                  \\
+        \hline
+        GetAllSeats           & 10                  & 16                 & -                   \\
+        \hline
+        GetOrderDetail        & 3.5                 & 6.7                & 163                 \\
+        \hline
+    \end{tabular}
+\end{table}
 
-tabel kueri juga -> jelasin efisiensi kueri tiap varian.
-
-mention juga bahwa selama pengujian ternyata emang banyak banget kueri baca dan bebannya ga bisa dibiarin.
-
-jelaskan citus yugabyte struggle juga buat handle kueri baca.
+Latensi dan laju pemrosesan yang baik pada PostgreSQL didukung dengan latensi kueri yang rendah. Kueri baca pada CitusData beberapa milisekon lebih lambat dibandingkan dengan PostgreSQL. Perbedaan signifikan terletak pada latensi penulisan yang berada pada ordo milisekon. Bila dibandingkan, latensi penulisan pada CitusData puluhan kali lebih lambat daripada latensi penulisan pada PostgreSQL. Di sisi lain, latensi kueri pada YugabyteDB lebih lambat hingga ratusan kali lipat dibandingkan dengan PostgreSQL baik itu pada kueri baca dan penulisan. Terlebih lagi, YugabyteDB kesulitan menangani kueri LockFreeStandingSeats dengan latensi hingga 1800 milisekon. Perbedaan latensi ini yang membuat laju penulisan CitusData dan YugabyteDB lebih lambat dibandingkan dengan PostgreSQL.
 
 \subsubsection{Mengapa CitusData tidak perform}
 
@@ -111,9 +140,9 @@ ambil hasil referensi pengujian juga (pokoknya artikel yg bandingin raw performa
 
 \subsection{Pengoptimalan Kueri Baca}
 
-buktikan kalau kueri ini banyak banget dipanggil -> pakai grafik/ data dari grafana.  
+buktikan kalau kueri ini banyak banget dipanggil -> pakai grafik/ data dari grafana.
 
-refer ke redis. pakai data pengujian fc postgres (jgn nofc). 
+refer ke redis. pakai data pengujian fc postgres (jgn nofc).
 
 apakah hasilnya oke?
 
