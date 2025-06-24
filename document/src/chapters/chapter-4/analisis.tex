@@ -45,7 +45,7 @@ Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan
     \label{fig:pattern-sim-order}
 \end{figure}
 
-Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang sangat banyak bahkan sejak proses penjualan dimulai. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana digambarkan pada keadaan akhir penguji pada gambar berikut.
+Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang cukup banyak bahkan sejak proses penjualan dimulai. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana digambarkan pada keadaan akhir penguji pada gambar berikut.
 
 \begin{figure}[htbp]
     \centering
@@ -57,9 +57,33 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang
 
 \subsection{Kinerja Selama Pengujian}
 
-Jelaskan overallnya aja gimana (utilization blablabla). kasih tabel i guess terus lempar ke lampiran \ref{apx:test-run-performance}
+Secara garis besar, varian PostgreSQL mampu menangani beban yang diberikan dengan sangat baik. Varian CitusData masih memiliki kinerja yang baik, meski memiliki latensi yang lebih tinggi dibandingkan dengan PostgreSQL. YugabyteDB mengalami lebih banyak kegagalan dan kinerja yang buruk sehingga tidak dapat menyelesaikan proses penjualan dengan baik. Sampel pengujian yang dipilih pada adalah skenario stress-2 tanpa pengendalian aliran. Skenario ini merupakan skenario pengujian dengan kinerja YugabyteDB yang dapat diterima dan mampu menyelesaikan proses penjualan. Dengan beban yang lebih tinggi, YugabyteDB mengalami banyak kegagalan. Pembahasan lebih lanjut hasil pelaksanaan setiap pengujian dibahas pada lampiran \ref{apx:test-run-performance}.
+
+\begin{table}[h]
+    \centering
+    \caption{Gambaran Kinerja Permosesan Pesanan}
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Metrik} & \textbf{PostgreSQL} & \textbf{CitusData} & \textbf{YugabyteDB} \\
+        \hline
+        \textit{Throughput} Maksimum & 466 rps & 410 rps & 216 rps \\
+        \hline
+        Penggunaan CPU (Puncak) & 8 vCPU & 10 vCPU & 19 vCPU \\
+        \hline
+        Penggunaan Memori (Puncak) & 3.4 GB & 5 GB & 36 GB \\
+        \hline
+        Latensi Pemrosesan (P50) & 192-382 ms & 496-650 ms & 854-10000 ms \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Latensi dan \textit{throughput} pemrosesan diukur dari sisi Ticket Server, bukan dari level basis data. Latensi pemrosesan yang diambil merupakan latensi terbaik saat beban sudah cukup tinggi dan laju pemrosesan mulai stabil. Penggunaan CPU dan penggunaan memori merupakan agregat puncak jumlah penggunaan sumber daya setiap instans basis data yang berkaitan. Apabila terdapat dua nilai maksimal \textit{throughput} yang mendekati, nilai yang dipilih adalah nilai yang memiliki rasio sukses (respons 200) paling tinggi.
+
+Berdasarkan tabel di atas, PostgreSQL unggul dari segala aspek, mulai dari laju pemrosesan, penggunaan sumber daya, serta latensi. CitusData memiliki laju pemrosesan yang mendekati PostgreSQL dengan latensi 2x lebih lambat dan penggunaan sumber daya yang sedikit lebih tinggi. Di sisi lain, YugabyteDB memiliki laju pemrosesan kurang dari setengah PostgreSQL dengan latensi setidaknya 4x lebih lambat, penggunaan CPU 2.4x lebih banyak, dan penggunaan memori 10x lebih banyak.
 
 \subsection{Kinerja Basis Data Terdistribusi}
+
+
 
 Bandingkan kinerja setiap basis data. highlight how optimized postgres
 
