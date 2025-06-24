@@ -39,7 +39,7 @@ def generate_test_report():
             db_key = 'PostgreSQL'
         elif db == 'citusdata':
             db_key = 'CitusData'
-        elif db == 'yugabytedb':
+        elif db == 'yugabyte':
              db_key = 'YugabyteDB'
         else:
             db_key = db # Fallback for other databases

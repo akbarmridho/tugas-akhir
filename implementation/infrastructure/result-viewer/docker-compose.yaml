@@ -11,11 +11,39 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: tugas-akhir
 
-  prom_backend:
+  prom_backend_f11:
     image: prom/prometheus:v3.4.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./backend_result:/prometheus
+      - ./backend_result/f11:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=0"
+      - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"
+      - "--web.enable-admin-api"
+      - "--enable-feature=native-histograms"
+
+  prom_backend_f23:
+    image: prom/prometheus:v3.4.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./backend_result/f23:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=0"
+      - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"
+      - "--web.enable-admin-api"
+      - "--enable-feature=native-histograms"
+
+  prom_backend_f45:
+    image: prom/prometheus:v3.4.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./backend_result/f45:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -37,11 +65,39 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: tugas-akhir
 
-  prom_agent:
+  prom_agent_f11:
     image: prom/prometheus:v3.4.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./agent_result:/prometheus
+      - ./agent_result/f11:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=0"
+      - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"
+      - "--web.enable-admin-api"
+      - "--enable-feature=native-histograms"
+
+  prom_agent_f23:
+    image: prom/prometheus:v3.4.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./agent_result/f23:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=0"
+      - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"
+      - "--web.enable-admin-api"
+      - "--enable-feature=native-histograms"
+
+  prom_agent_f45:
+    image: prom/prometheus:v3.4.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./agent_result/f45:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
