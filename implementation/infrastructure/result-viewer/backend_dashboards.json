@@ -1,15 +1,23 @@
 [
     {
+        "name": "Ticket Flow Control",
+        "url": "http://localhost:3010/d/54aa8ab3-9c6f-46af-8367-464fa73f22ee/ticket-flow-control"
+    },
+    {
+        "name": "Ticket Overview",
+        "url": "http://localhost:3010/d/4afdbe33-3619-4dc2-aaee-b47116433e99/ticket-overview"
+    },
+    {
+        "name": "Kubernetes Pod",
+        "url": "http://localhost:3010/d/d09b22e0-7577-4115-83d9-87f00ec2ef2d/kubernetes-views-pods"
+    },
+    {
         "name": "Kube State Metrics",
         "url": "http://localhost:3010/d/de479369-2e17-4709-8fec-351f010c09dc/kube-state-metrics-v2"
     },
     {
         "name": "Kubernetes",
         "url": "http://localhost:3010/d/183bea66-3dcd-47b1-b19d-9385681bed6b/kubernetes"
-    },
-    {
-        "name": "Kubernetes Pod Overview",
-        "url": "http://localhost:3010/d/a635b332-6e12-4be4-9870-21f8fc70378a/kubernetes-pod-overview"
     },
     {
         "name": "NGINX Ingress Controller",
@@ -26,14 +34,6 @@
     {
         "name": "PgCat Dashboard",
         "url": "http://localhost:3010/d/849470cf-f41f-4436-9fc6-001cba91b8a2/pgcat-dashboard"
-    },
-    {
-        "name": "Pod Detail",
-        "url": "http://localhost:3010/d/058f2d30-77a4-402f-8b33-caac1b759110/pod-detail"
-    },
-    {
-        "name": "Pod Overview",
-        "url": "http://localhost:3010/d/7dcdd716-eaf7-4f79-a980-a60db5ab3610/pod-overview"
     },
     {
         "name": "PostgreSQL Database",
@@ -54,14 +54,6 @@
     {
         "name": "Sanity Check",
         "url": "http://localhost:3010/d/beca7eed-0f3e-414c-9171-7e1e2ce44fd1/sanity-check"
-    },
-    {
-        "name": "Ticket Flow Control",
-        "url": "http://localhost:3010/d/54aa8ab3-9c6f-46af-8367-464fa73f22ee/ticket-flow-control"
-    },
-    {
-        "name": "Ticket Overview",
-        "url": "http://localhost:3010/d/4afdbe33-3619-4dc2-aaee-b47116433e99/ticket-overview"
     },
     {
         "name": "YugabyteDB",
