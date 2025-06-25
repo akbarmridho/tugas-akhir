@@ -195,17 +195,39 @@ Singkat cerita, YugabyteDB kesulitan menangani beban koneksi yang ada pada pengu
 
 \subsection{Pengoptimalan Kueri Baca}
 
-buktikan kalau kueri ini banyak banget dipanggil -> pakai grafik/ data dari grafana.
+\subsubsection{Kueri Ketersediaan Area}
 
-refer ke redis. pakai data pengujian fc postgres (jgn nofc).
+Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dipanggil, terutama ketika ketersediaan tiket mulai menipis dan pengguna mencoba mengeksplorasi lebih banyak area. Pada pengujian f5t2, \textit{endpoint} ini memiliki puncak pemanggilan sebanyak 1700 rps. Sepanjang pengujian, latensi rata-rata operasi tersebut berkisar antara 2.5-4.5 milisekon. Hal ini menunjukkan bahwa pengoptimalan kueri ketersediaan area dengan menggunakan Redis merupakan pendekatan yang sangat efektif, terutama dalam meringankan beban pada basis data.
 
-apakah hasilnya oke?
+\pagebreak
 
-\subsection{Integritas Tiket selama Perebutan Tiket}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-area-availability.png}
+    \caption{Metrik Baca Ketersediaan Area (f5t2)}
+    \label{fig:latency-get-area}
+\end{figure}
 
-Apakah terjadi perbedaan data ketersediaan, dropper availability?
+\subsubsection{Kueri Ketersediaan Kursi}
 
-Apakah terjadi double booking?
+Operasi baca ketersediaan kursi tidak dipanggil sebanyak operasi sebelumnya. Hal ini karena tidak semua tiket merupakan tiket dengan nomor kursi dan pengguna tidak akan memanggil operasi ini apabila tidak menemukan area yang memenuhi kriterianya. Meskipun begitu, pengoptimalan kueri ini tidak berjalan dengan cukup baik sebagaimana ditunjukkan pada grafik berikut.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-seat-availability.png}
+    \caption{Metrik Baca Ketersediaan Kursi (f5t2)}
+    \label{fig:latency-get-seat}
+\end{figure}
+
+Rata-rata latensi (P50) memiliki nilai mulai dari 40 milisekon hingga 1.75 sekon (apabila mengesampingkan latensi di awal saat jumlah koneksi masih sedikit). Di sisi lain, latensi P95 cukup mengkhawatirkan dengan nilai mulai dari 1.6 sekon hingga 7 sekon. Hal ini menunjukkan bahwa penggunaan tembolok singkat (waktu hidup 150 milisekon) tidak begitu efektif. Hal ini terjadi karena beberapa hal berikut:
+
+\begin{enumerate}
+    \item Tembolok yang bersifat lokal pada level aplikasi.
+    \item Sebaran pengguna yang membaca ID area yang berbeda-beda.
+    \item Waktu hidup yang terlalu singkat.
+\end{enumerate}
+
+Kombinasi hal tersebut membuat \textit{cache hit} operasi ini sangat rendah sehingga tidak efektif. Selain itu, latensi ini menunjukkan bahwa operasi ini merupakan operasi yang cukup berat yang ditandai dengan latensi yang ada dan merupakan hal yang dapat menjadi fokus pengoptimalan di masa mendatang. Sebagaimana ditunjukkan pada pengoptimalan sebelumnya, pengoptimalan penggunaan Redis bisa menjadi alternatif yang dapat dieksplorasi lebih lanjut.
 
 \subsection{Penggunaan Pengendalian Aliran}
 
@@ -213,3 +235,8 @@ Jelasin berapa banyak request yg ditolak (respons 409). Gbs response based on co
 
 Dampaknya gimana (blm tau).
 
+\subsection{Integritas Tiket selama Perebutan Tiket}
+
+Apakah terjadi perbedaan data ketersediaan, dropper availability?
+
+Apakah terjadi double booking?
