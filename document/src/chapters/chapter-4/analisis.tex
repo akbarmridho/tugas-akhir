@@ -235,8 +235,37 @@ Jelasin berapa banyak request yg ditolak (respons 409). Gbs response based on co
 
 Dampaknya gimana (blm tau).
 
-\subsection{Integritas Tiket selama Perebutan Tiket}
+\subsection{Integritas Tiket Selama Perebutan Tiket}
 
-Apakah terjadi perbedaan data ketersediaan, dropper availability?
+Pengoptimalan baca dengan menggunakan Redis memungkinkan terjadinya ketidakcocokan data antara basis data dengan hasil pengoptimalan. Di sisi lain, sistem juga harus memastikan bahwa tidak ada kursi yang terjual lebih dari satu kali. Oleh karena itu, terdapat tiga hal yang diperiksa untuk memastikan integritas sistem tiket:
 
-Apakah terjadi double booking?
+\begin{enumerate}
+    \item Selisih agregat ketersediaan antara basis data dengan Redis pada akhirnya harus nol untuk pengoptimalan operasi baca ketersediaan area.
+    \item Selisih ketersediaan antara basis data dengan Redis pada akhirnya harus nol untuk pengoptimalan pengendalian aliran bagian penolakan permintaan lebih awal (hanya berlaku pada varian pengendalian aliran).
+    \item Tidak ada kursi yang terjual lebih dari satu kali.
+\end{enumerate}
+
+Berikut adalah sampel hasil \textit{sanity check} selama pelaksanaan pengujian:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{resources/chapter-4/sanity-f2t3.png}
+    \caption{Hasil \textit{Sanity Check} (f2t3)}
+    \label{fig:sanity-f2t3}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{resources/chapter-4/sanity-f3t1.png}
+    \caption{Hasil \textit{Sanity Check} (f3t1)}
+    \label{fig:sanity-f3t1}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{resources/chapter-4/sanity-f5t4.png}
+    \caption{Hasil \textit{Sanity Check} (f5t4)}
+    \label{fig:sanity-f5t4}
+\end{figure}
+
+Berdasarkan sampel di atas, terdapat beberapa waktu terjadinya ketidaksesuaian data yang pada akhirnya konsisten. Setelah ditelusuri, hal tersebut terjadi karena masalah pada pengumpulan data yang mengalami kegagalan memperoleh data yang lengkap. Hal ini didukung dengan fakta bahwa selisih nilainya memang sangat ekstrem. Oleh karena itu, dapat disimpulkan bahwa implementasi yang ada sekarang telah menjamin kesesuaian data dan berhasil menjamin bahwa tidak ada kursi yang terjual lebih dari satu kali.
