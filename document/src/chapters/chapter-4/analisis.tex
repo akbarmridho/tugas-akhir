@@ -231,9 +231,19 @@ Kombinasi hal tersebut membuat \textit{cache hit} operasi ini sangat rendah sehi
 
 \subsection{Penggunaan Pengendalian Aliran}
 
-Jelasin berapa banyak request yg ditolak (respons 409). Gbs response based on code? atau apa gitu bandingin latensinya fak.
+Jelasin berapa banyak request yg ditolak (respons 409) -> respons 409 emang lebih banyak di flow control tapi kalau gitu harusnya jumlah yg ditolaknya sama gak sih? -> latensinya gede jadi pemrosesannya lama dan user ngira masih available padahal bakal enggak.
 
-Dampaknya gimana (blm tau).
+ubah grafana dashboard agar bisa lihat latensi by response code -> bandingkan latensi pas 409 di flow control dan no flow control buat ngetes early dropper.
+
+rabbitmq bikin latensi jadi terlalu tinggi -> gak feasible. ada side efek data kelamaan diupdate jg sebagaimana terjadi di atas.
+
+latensi tinggi di sini karena overhead di rabbitmq dan kode yg butuh komunikasi dr backend ke worker terus worker kirim response.
+
+bandingkan latensi utk kueri related to processing tiket. kayaknya varian flow control lebih rendah (walau pun rabbitmq unintentionally make arrival order lebih lambat) tapi dengan jaga flow bisa terbukti lumayan cukup buat jaga latensi database.
+
+verdict: (hopefully) early dropper konsepnya oke. buffer/ queue lebih baik per instance aja -> tapi harus mikirin gimana handle masalah idempotency (kalau retry user hrs dilempar ke instance yg sama).
+
+todo integritas tiket di bawah: cek grafik yg kelihatan nol, aslinya nilainya gak nol itu.
 
 \subsection{Integritas Tiket Selama Perebutan Tiket}
 

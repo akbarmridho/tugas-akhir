@@ -12,6 +12,10 @@ pakai resource lebih banyak agar lebih fair ke yugabytedb.
 
 pisah penanganan kueri baca tulis agar resource usage utk tiap operasi bisa dibedain -> dampaknya lebih bisa diukur. kalau skrg banyak noise.
 
+manajemen koneksi buat operasi yang kritikal. mungkin buat processing transaction pakai direct connection aja? atau pisah pool agar gak rebutan koneksi sama operasi baca.
+
+better monitoring system, bisa pakai sampling tracing untuk semua dan backup data logs buat analisis kasus seperti yugabyte yang penuh kegagalan.
+
 \subsection{Apa yang Sebaiknya Menjadi Fokus Pengoptimalan untuk Sistem Tiket?}
 
 primary fokusin buat write, load balance query read ke instans lain baik redis or read replica.
@@ -21,3 +25,5 @@ this make latency for write berkurang.
 citusdata juga bisa tapi koordinator dibikin replika juga.
 
 buffer might be a good idea but rabbitmq is not it. maybe use in memory buffer or something.
+
+might be filled with more insights kalau misalkan bisa improve sistem tiket ini di iterasi berikutnya (hopefully gak revisi buat apply further optimization dan ngelakuin pengujian ulang).
