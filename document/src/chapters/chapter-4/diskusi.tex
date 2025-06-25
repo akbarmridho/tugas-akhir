@@ -11,3 +11,11 @@ harusnya ngikutin distribusi sesuai gambar drpd load test
 pakai resource lebih banyak agar lebih fair ke yugabytedb.
 
 pisah penanganan kueri baca tulis agar resource usage utk tiap operasi bisa dibedain -> dampaknya lebih bisa diukur. kalau skrg banyak noise.
+
+\subsection{Apa yang Sebaiknya Menjadi Fokus Pengoptimalan untuk Sistem Tiket?}
+
+primary fokusin buat write, load balance query read ke instans lain baik redis or read replica.
+
+this make latency for write berkurang.
+
+citusdata juga bisa tapi koordinator dibikin replika juga.
