@@ -57,7 +57,7 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang
 
 \subsection{Kinerja Selama Pengujian}
 
-Secara garis besar, varian PostgreSQL mampu menangani beban yang diberikan dengan sangat baik. Varian CitusData masih memiliki kinerja yang baik, meski memiliki latensi yang lebih tinggi dibandingkan dengan PostgreSQL. YugabyteDB mengalami lebih banyak kegagalan dan kinerja yang buruk sehingga tidak dapat menyelesaikan proses penjualan dengan baik. Sampel pengujian yang dipilih pada adalah skenario stress-2 tanpa pengendalian aliran. Skenario ini merupakan skenario pengujian dengan kinerja YugabyteDB yang dapat diterima dan mampu menyelesaikan proses penjualan. Dengan beban yang lebih tinggi, YugabyteDB mengalami banyak kegagalan. Pembahasan lebih lanjut hasil pelaksanaan setiap pengujian dibahas pada lampiran \ref{apx:test-run-performance}.
+Secara garis besar, varian PostgreSQL mampu menangani beban yang diberikan dengan sangat baik. Varian CitusData masih memiliki kinerja yang baik, meski memiliki latensi yang lebih tinggi dibandingkan dengan PostgreSQL. YugabyteDB mengalami lebih banyak kegagalan dan kinerja yang buruk sehingga tidak dapat menyelesaikan proses penjualan dengan baik. Sampel pengujian yang dipilih pada adalah skenario stress-2 tanpa pengendalian aliran. Skenario ini merupakan skenario pengujian dengan kinerja YugabyteDB yang dapat diterima dan mampu menyelesaikan proses penjualan. Dengan beban yang lebih tinggi, YugabyteDB mengalami banyak kegagalan.
 
 \begin{table}[h]
     \centering
@@ -233,11 +233,54 @@ Kombinasi hal tersebut membuat \textit{cache hit} operasi ini sangat rendah sehi
 
 Jelasin berapa banyak request yg ditolak (respons 409) -> respons 409 emang lebih banyak di flow control tapi kalau gitu harusnya jumlah yg ditolaknya sama gak sih? -> latensinya gede jadi pemrosesannya lama dan user ngira masih available padahal bakal enggak.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
+    \caption{Laju Pemrosesan dengan Pengendalian Aliran}
+    \label{fig:rps-fc-pg-stress-0}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
+    \caption{Laju Pemrosesan tanpa Pengendalian Aliran}
+    \label{fig:rps-nofc-pg-stress-0}
+\end{figure}
+
+
 ubah grafana dashboard agar bisa lihat latensi by response code -> bandingkan latensi pas 409 di flow control dan no flow control buat ngetes early dropper.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
+    \caption{Latensi Berdasarkan Status Kode tanpa Pengendalian Aliran}
+    \label{fig:latency-by-code-nofc}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
+    \caption{Latensi Berdasarkan Status Kode dengan Pengendalian Aliran}
+    \label{fig:latency-by-code-fc}
+\end{figure}
 
 rabbitmq bikin latensi jadi terlalu tinggi -> gak feasible. ada side efek data kelamaan diupdate jg sebagaimana terjadi di atas.
 
 latensi tinggi di sini karena overhead di rabbitmq dan kode yg butuh komunikasi dr backend ke worker terus worker kirim response.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
+    \caption{Latensi Pemrosesan dengan Pengendalian Aliran}
+    \label{fig:latency-fc}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
+    \caption{Latensi Pemrosesan tanpa Pengendalian Aliran}
+    \label{fig:latency-nofc}
+\end{figure}
 
 bandingkan latensi utk kueri related to processing tiket. kayaknya varian flow control lebih rendah (walau pun rabbitmq unintentionally make arrival order lebih lambat) tapi dengan jaga flow bisa terbukti lumayan cukup buat jaga latensi database.
 
