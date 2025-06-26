@@ -28,7 +28,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 4,
+    "id": 2,
     "links": [],
     "panels": [
         {
@@ -79,7 +79,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -162,7 +162,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -247,7 +247,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -344,7 +344,7 @@
                     "sort": "none"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -358,7 +358,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "Response Status",
+            "title": "Responses Per Second by Status Code",
             "type": "timeseries"
         },
         {
@@ -428,7 +428,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -513,7 +513,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -583,7 +583,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -651,7 +651,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "datasource": {
@@ -759,7 +759,7 @@
                     "sort": "desc"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "application": {
@@ -883,7 +883,7 @@
                     "sort": "desc"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "application": {
@@ -1020,7 +1020,7 @@
                     "sort": "desc"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "application": {
@@ -1145,7 +1145,7 @@
                     "sort": "desc"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "application": {
@@ -1283,7 +1283,7 @@
                     "sort": "desc"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "application": {
@@ -1432,7 +1432,7 @@
                     "sort": "desc"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "application": {
@@ -1581,7 +1581,7 @@
                     "sort": "desc"
                 }
             },
-            "pluginVersion": "11.6.1",
+            "pluginVersion": "12.0.1",
             "targets": [
                 {
                     "application": {
@@ -1645,6 +1645,180 @@
                 }
             ],
             "title": "Latency by instance",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "uid": "$datasource"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": [
+                    {
+                        "__systemRef": "hideSeriesFrom",
+                        "matcher": {
+                            "id": "byNames",
+                            "options": {
+                                "mode": "exclude",
+                                "names": [
+                                    "kubernetes-pods - 409 - p50"
+                                ],
+                                "prefix": "All except:",
+                                "readOnly": true
+                            }
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.hideFrom",
+                                "value": {
+                                    "legend": false,
+                                    "tooltip": false,
+                                    "viz": true
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 35
+            },
+            "id": 55,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "12.0.1",
+            "targets": [
+                {
+                    "application": {
+                        "filter": ""
+                    },
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.5, sum by (job, code, le) (rate(ticket_backend_echo_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", url=~\"$handler\"}[$__rate_interval])))",
+                    "format": "time_series",
+                    "functions": [],
+                    "group": {
+                        "filter": ""
+                    },
+                    "host": {
+                        "filter": ""
+                    },
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "item": {
+                        "filter": ""
+                    },
+                    "legendFormat": "{{ job }} - {{ code }} - p50",
+                    "mode": 0,
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "refId": "A",
+                    "resultFormat": "time_series",
+                    "table": {
+                        "skipEmptyValues": false
+                    },
+                    "triggers": {
+                        "acknowledged": 2,
+                        "count": true,
+                        "minSeverity": 3
+                    }
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.95, sum by (job , code, le) (rate(ticket_backend_echo_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", url=~\"$handler\"}[$__rate_interval])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ code }} - p95",
+                    "range": true,
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.99, sum by (job, code, le) (rate(ticket_backend_echo_request_duration_seconds_bucket{job=~\"$job\",instance=~\"$instance\", url=~\"$handler\"}[$__rate_interval])))",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ job }} - {{ code }} - p99",
+                    "range": true,
+                    "refId": "C"
+                }
+            ],
+            "title": "Latency by Status Code",
             "type": "timeseries"
         }
     ],
@@ -1732,5 +1906,5 @@
     "timezone": "browser",
     "title": "Ticket Overview",
     "uid": "4afdbe33-3619-4dc2-aaee-b47116433e99",
-    "version": 1
+    "version": 2
 }
