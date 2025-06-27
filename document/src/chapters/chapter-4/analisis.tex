@@ -231,62 +231,92 @@ Kombinasi hal tersebut membuat \textit{cache hit} operasi ini sangat rendah sehi
 
 \subsection{Penggunaan Pengendalian Aliran}
 
-Jelasin berapa banyak request yg ditolak (respons 409) -> respons 409 emang lebih banyak di flow control tapi kalau gitu harusnya jumlah yg ditolaknya sama gak sih? -> latensinya gede jadi pemrosesannya lama dan user ngira masih available padahal bakal enggak.
+Gambar \ref{fig:latency-fc} dan gambar \ref{fig:latency-nofc} menunjukkan perbedaan latensi pemrosesan antara sistem dengan pendendalian aliran dan tanpa pengendalian aliran. Saat berjalan dengan baik, latensi pemrosesan dengan pengendalian aliran dapat turun hingga ratusan milisekon.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
+    \caption{Latensi Pemrosesan dengan Pengendalian Aliran}
+    \label{fig:latency-fc}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
+    \caption{Latensi Pemrosesan tanpa Pengendalian Aliran}
+    \label{fig:latency-nofc}
+\end{figure}
+
+Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana ditunjukkan pada gambar \ref{fig:rps-fc-pg-stress-0} dan \ref{fig:rps-nofc-pg-stress-0}. Meskipun memiliki latensi yang lebih tinggi, laju pemrosesan puncak varian ini sama dengan laju pemrosesan puncak pada sistem referensi. Oleh karena itu, latensi yang tinggi tidak serta merta membuat laju pemrosesan lebih lambat.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
     \caption{Laju Pemrosesan dengan Pengendalian Aliran}
     \label{fig:rps-fc-pg-stress-0}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
     \caption{Laju Pemrosesan tanpa Pengendalian Aliran}
     \label{fig:rps-nofc-pg-stress-0}
 \end{figure}
 
+Latensi yang tinggi pada sistem ini merupakan konsekuensi yang tidak diinginkan karena penggunaan RabbitMQ dan pemisahan pemrosesan dengan \textit{worker} (pengendalian aliran dengan sistem antrean). Dengan menggunakan antrean melalui RabbitMQ, sebuah pemesanan harus dikirimkan melalui RabbitMQ, menunggu diproses di \textit{worker}, diproses, dikirim kembali ke Ticket Server melalui RabbitMQ, dan Ticket Server menunggu hingga respons pemesanan diterima. Penambahan \textit{network round trip} ini yang membuat lantesi menjadi sangat tinggi. Meskipun begitu, sistem tetap memproses pesanan sebagaimana mestinya.
 
-ubah grafana dashboard agar bisa lihat latensi by response code -> bandingkan latensi pas 409 di flow control dan no flow control buat ngetes early dropper.
+Kode respons 409 yang tinggi pada varian pengendalian aliran juga merupakan dampak dari implementasi sistem antrean yang kurang optimal. Dengan latensi yang tinggi, terdapat lebih banyak \textit{time window} ketika sebuah kursi seharusnya sudah dipesan tetapi pemrosesan belum sepenuhnya berhasil. Oleh karena itu, kemungkinan pengguna virtual memesan tiket yang sudah dipesan menjadi lebih tinggi. Hal ini juga yang menyebabkan laju pemrosesan yang berhasil terkadang turun. Pada sistem antrean dengan latensi yang lebih rendah, kode respons 409 seharusnya menjadi lebih berkurang.
+
+Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal positif yang dapat dibahas. Perhatikan tabel berikut yang membandingkan latensi kueri pada varian dengan pengendalian aliran (FC) dan tanpa pengendalian aliran (No FC):
+
+\begin{table}[h]
+    \centering
+    \caption{Latensi Eksekusi Kueri pada Pengendalian Aliran dalam Milisekon}
+    \label{table:latensi-kueri-fc-nofcc}
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Kueri}        & \textbf{No FC} & \textbf{FC} \\
+        \hline
+        LockFreeStandingSeats & 8.5            & 0.98        \\
+        \hline
+        LockNumberedSeats     & -              & -           \\
+        \hline
+        InsertOrder           & 0.2            & 0.2         \\
+        \hline
+        InsertIssuedTiket     & 0.28           & 0.3         \\
+        \hline
+        InsertInvoice         & 0.12           & 0.12        \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Tidak ada perbedaan latensi pada operasi tulis. Meskipun begitu, latensi untuk \textit{lock} kursi pada varian dengan pengendalian aliran jauh lebih kecil. Selanjutnya, mari bandingkan latensi pemrosesan pesanan saat kode respons 409 berdasarkan gambar \ref{fig:latency-by-code-nofc} dan gambar \ref{fig:latency-by-code-fc}.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode tanpa Pengendalian Aliran}
     \label{fig:latency-by-code-nofc}
 \end{figure}
 
+\pagebreak
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode dengan Pengendalian Aliran}
     \label{fig:latency-by-code-fc}
 \end{figure}
 
-rabbitmq bikin latensi jadi terlalu tinggi -> gak feasible. ada side efek data kelamaan diupdate jg sebagaimana terjadi di atas.
+Latensi rata-rata pada varian dengan pengendalian aliran berkisar antara 50-100 milisekon, sedangkan latensi rata-rata pada varian tanpa pengendalian aliran berkisar antara 1000-2000 milisekon. Hal ini menunjukkan perbedaan yang signifikan karena pesanan yang pada akhirnya akan ditolak menjadi ditolak lebih awal. Latensi tanpa \textit{early dropper} lebih tinggi karena pesanan baru akan ditolak saat sudah memasuki basis data. Selain memiliki latensi yang lebih tinggi, kasus ini juga dapat membebani basis data lebih jauh.
 
-latensi tinggi di sini karena overhead di rabbitmq dan kode yg butuh komunikasi dr backend ke worker terus worker kirim response.
+Secara umum, pendekatan pengendalian aliran dengan menolak pesanan lebih awal cukup baik dalam mengurangi beban basis data. Di sisi lain, pada pengujian kali ini pendekatan pengendalian aliran dengan sistem antrean tidak terlalu optimal karena latensi yang tinggi. Selain itu, beban pesanan yang masuk tidak cukup tinggi sehingga tidak cukup mengganggu keberjalanan pemrosesan pesanan. Meskipun begitu, pengendalian aliran pesanan yang masuk menunjukkan dampak positif dalam menurunkan \textit{contention} yang ditunjukkan dengan penurunan latensi salah satu kueri \textit{locking}.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
-    \caption{Latensi Pemrosesan dengan Pengendalian Aliran}
-    \label{fig:latency-fc}
-\end{figure}
+Implementasi antrean yang lebih baik dan beban yang lebih tinggi seharusnya dapat menunjukkan perbedaan kinerja kedua varian lebih jauh. Agar latensi lebih baik, opsi untuk tidak menggunakan RabbitMQ juga dapat digunakan. Alih-alih memisahkan komponen Ticket Server dan Ticket Worker, antrean dapat dibuat lokal per Ticket Server. Dengan begitu, tidak perlu ada tambahan \textit{network round trip} yang menambah latensi secara signifikan. Meskipun begitu, pendekatan ini harus memikirkan bagaimana penanganan \textit{idempotency} dan penanganan ketika pengguna mengirimkan ulang pesanan yang sama.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
-    \caption{Latensi Pemrosesan tanpa Pengendalian Aliran}
-    \label{fig:latency-nofc}
-\end{figure}
-
-bandingkan latensi utk kueri related to processing tiket. kayaknya varian flow control lebih rendah (walau pun rabbitmq unintentionally make arrival order lebih lambat) tapi dengan jaga flow bisa terbukti lumayan cukup buat jaga latensi database.
-
-verdict: (hopefully) early dropper konsepnya oke. buffer/ queue lebih baik per instance aja -> tapi harus mikirin gimana handle masalah idempotency (kalau retry user hrs dilempar ke instance yg sama).
-
-todo integritas tiket di bawah: cek grafik yg kelihatan nol, aslinya nilainya gak nol itu.
+\pagebreak
 
 \subsection{Integritas Tiket Selama Perebutan Tiket}
 
