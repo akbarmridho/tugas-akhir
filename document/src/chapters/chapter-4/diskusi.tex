@@ -1,22 +1,22 @@
 \section{Diskusi}
 
 \subsection{Keterbatasan Pengujian}
+\label{keterbatasan-pengujian}
 
-List keterbatasan apa aja yang ada selama pengujian/ analisis yang mengakibatkan hasil kinerja bisa jauh berbeda.
+Setelah pengujian dan analisis dilakukan, terdapat temuan dan beberapa hal yang menjadi keterbatasan dan kekurangan pengujian pada penelitian ini. Apabila keterbatasan ini berhasil dilalui, hasil pengujian bisa saja memberikan hasil yang berbeda. Beberapa keterbatasan tersebut adalah:
 
-jumlah virtual user yang dikit.
+\begin{enumerate}
+    \item Karena keterbatasan sumber daya, jumlah pengguna virtual terbatas hingga 15.000 pada saat yang bersamaan. Idealnya, jumlah pengguna virtual ini dibuat lebih banyak hingga setidaknya 100.000 pengguna virtual pada saat yang bersamaan. Jumlah pengguna virtual yang lebih banyak dapat menunjukkan hasil yang lebih representatif sesuai dengan yang terjadi pada sistem tiket sesungguhnya.
+    \item Keterbatasan jumlah pengguna juga membuat pengujian dengan distribusi lognormal (kasus perebutan tiket) tidak berjalan pada beban yang tinggi dengan penjualan tiket yang lebih banyak. Skenario pengujian yang berfokus pada \textit{arrival rate} dengan distribusi yang mendekati dunia nyata bisa saja memberikan temuan lain yang lebih representatif.
+    \item Utilisasi sumber daya YugabyteDB sangat tinggi selama pengujian. Oleh karena itu, keterbatasan sumber daya dapat menjadi kendala yang membuat kinerja YugabyteDB tidak optimal pada pengujian ini. Oleh karena itu, YugabyteDB dapat diuji lagi dengan alokasi sumber daya yang lebih tinggi untuk mengetahui kinerja YugabyteDB yang sesungguhnya.
+    \item Terdapat beberapa data pengujian yang tidak dikumpulkan dan dianalisis lebih mendalam, seperti \textit{log} aplikasi dan sampel \textit{trace} untuk mengetahui pembagian waktu eksekusi hingga level yang lebih kecil. Saat ini, metrik latensi hanya menunjukkan latensi keseluruhan sehingga bagian eksekusi yang lambat tidak dapat dianalisis.
+\end{enumerate}
 
-harusnya ngikutin distribusi sesuai gambar drpd load test
-
-pakai resource lebih banyak agar lebih fair ke yugabytedb.
+\subsection{Apa yang Sebaiknya Menjadi Fokus Pengoptimalan untuk Sistem Tiket?}
 
 pisah penanganan kueri baca tulis agar resource usage utk tiap operasi bisa dibedain -> dampaknya lebih bisa diukur. kalau skrg banyak noise.
 
 manajemen koneksi buat operasi yang kritikal. mungkin buat processing transaction pakai direct connection aja? atau pisah pool agar gak rebutan koneksi sama operasi baca.
-
-better monitoring system, bisa pakai sampling tracing untuk semua dan backup data logs buat analisis kasus seperti yugabyte yang penuh kegagalan.
-
-\subsection{Apa yang Sebaiknya Menjadi Fokus Pengoptimalan untuk Sistem Tiket?}
 
 primary fokusin buat write, load balance query read ke instans lain baik redis or read replica.
 
