@@ -2,21 +2,30 @@
 
 \section{Kesimpulan}
 
-apa guys kesimpulannya?
+Penelitian ini telah membahas, mengimplementasikan, dan menguji sistem tiket yang dirancang untuk berjalan pada beban tinggi dengan berbagai macam variasi dan pengoptimalan. Berdasarkan hasil analisis yang sudah dipaparkan sebelumnya, berikut adalah beberapa temuan pada penelitian ini:
 
-postgres op.
+\begin{enumerate}
+    \item PostgreSQL merupakan basis data yang memiliki kinerja sangat baik dan mampu menangani beban sistem tiket dengan baik. Arsitektur monolitik membuat latensi penulisan dan penanganan \textit{contention} menjadi sangat efisien. Selain itu, penggunaan \textit{read replica} memungkinkan pengoptimalan PostgreSQL hingga tingkatan tertentu. Meskipun begitu, beban pengujian pada penelitian ini belum cukup tinggi sehingga membuat PostgreSQL mencapai batasnya.
+    \item CitusData merupakan alternatif yang baik dengan \textit{overhead} tertentu seperti latensi yang lebih tinggi dan penggunaan sumber daya yang lebih besar untuk membuat penskalaan PostgreSQL secara horizontal termasuk operasi tulis. CitusData dapat menjadi pilihan ketika beban penulisan pada sistem cukup tinggi sehingga tidak dapat ditangani oleh satu instans PostgreSQL. Meskipun begitu, penskalaan berdasarkan baris memberikan \textit{overhead} dari sisi koordinator, terutama untuk operasi baca karena koordinator terlalu banyak melakukan \textit{query planning}. Penggunaan kluster CitusData untuk kasus sistem tiket harus disertai dengan pengoptimalan yang berfokus pada pengurangan \textit{overhead} dari sisi koordinator agar penskalaan secara horizontal menjadi jauh lebih efektif.
+    \item YugabyteDB merupakan basis data yang tidak cocok untuk kasus pemesanan tiket karena beberapa hal. Pertama, penggunaan sumber daya yang tinggi dan tidak optimal membuat basis data ini membutuhkan sumber daya yang beberapa kali lipat lebih banyak hanya untuk menyamai kinerja PostgreSQL atau pun CitusData. Kedua, penanganan transaksi pada YugabyteDB membutuhkan koordinasi antar-\textit{node} yang lebih banyak sehingga meningkatkan latensi secara signifikan. YugabyteDB memberikan hasil yang buruk terutama pada penanganan data yang tinggi \textit{contention}.
+    \item Pengoptimalan kueri baca untuk operasi baca ketersediaan tiket berdasarkan area menggunakan Redis merupakan pengoptimalan yang berjalan dengan sangat baik. Hal ini ditunjukkan dengan kestabilan dan rendahnya latensi operasi tersebut. Di sisi lain, penggunaan tembolok dengan waktu hidup rendah tidak berjalan sesuai harapan karena tembolok disimpan pada level instans dan tersebar berdasarkan area sehingga \textit{cache hit} rendah.
+    \item Implementasi pengoptimalan sistem tiket disertai dengan integritas penjualan tiket dan kesesuaian data antara basis data relasional dengan Redis.
+    \item Penggunaan pengendalian aliran dengan cara menolak pesanan lebih awal merupakan cara yang efektif untuk mengurangi beban pada basis data dengan tidak menghabiskan waktu untuk menolak pesanan setelah berada di basis data. Hal ini ditunjukkan dengan latensi yang lebih rendah untuk penanganan pesanan yang ditolak dibandingkan dengan tidak menggunakan pengendalian aliran.
+    \item Pengendalian aliran dengan sistem antrean belum diimplementasikan dengan cukup baik karena memiliki latensi yang tinggi. Meskipun begitu, laju pemrosesan secara umum sama dengan varian tanpa pengendalian aliran. Analisis kueri menunjukkan latensi yang lebih rendah untuk kueri \textit{locking} pada varian ini. Meskipun begitu, beban pengujian tidak cukup tinggi untuk menunjukkan perbedaan kinerja yang signifikan.
+\end{enumerate}
 
-
+\pagebreak
 
 \section{Saran}
-Adapun banyak kekurangan dan kelemahan yang ditemukan dalam penelitian tugas akhir ini. Berikut adalah beberapa saran yang dapat dilakukan untuk pengembangan atau penelitian selanjutnya agar dapat meningkatkan kegunaan PERISAI terutama bagian proses \textit{remote deployment}.
 
-apa aja guys sarannya?
+Tentu penelitian ini tidak luput dari keterbatasan dan kekurangan. Sebagaimana dibahas pada bagian \ref{keterbatasan-pengujian} dan \ref{pengembangan-lebih-lanjut}, berikut adalah beberapa saran yang dapat dilakukan untuk pengembangan atau penelitian selanjutnya agar dapat membuat sistem tiket yang lebih optimal.
 
-lebih baik fokus dulu ke gimana cara biar primary fokus handle write dan read didelegate ke replica atau apalah.
-
-setup citusdata yugabyte buat koordinator dipakein replika juga biar primary koodinator fokus ke write dan sisanya handle read.
-
-skala pengujian yang lebih representatif.
-
-optimization spesifik yang enable basis data itu ketimbang implementasi sama semua. biar bisa perform at their best
+\begin{enumerate}
+    \item Desain pengujian yang lebih representatif dengan simulasi distribusi \textit{arrival} pengguna dengan jumlah \textit{concurrent user} yang lebih banyak.
+    \item Pengoptimalan lebih lanjut dan pemberian sumber daya yang lebih banyak untuk YugabyteDB agar kinerjanya lebih optimal.
+    \item Pengumpulan data pengujian yang lebih baik, terutama pengumpulan dan analisis \textit{log} aplikasi dan penggunaan \textit{tracing} untuk analisis kinerja yang lebih mendalam.
+    \item Manajemen koneksi basis data yang lebih baik dan pemisahan koneksi antara operasi kritikal seperti penanganan pemesanan tiket dengan operasi baca biasa.
+    \item Implementasi antrean untuk pengendalian aliran yang lebih baik sehingga latensi bisa jauh lebih rendah.
+    \item Pengoptimalan operasi baca ketersediaan kursi yang lebih baik dari penggunaan tembolok dengan waktu hidup singkat.
+    \item Pengoptimalan yang spesifik dan menyesuaikan dengan keunggulan dan keterbatasan pada basis data yang digunakan, terutama untuk CitusData dan YugabyteDB.
+\end{enumerate}
