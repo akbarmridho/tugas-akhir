@@ -1,28 +1,26 @@
 \section{Sistematika Pembahasan}
 
-Proses pengembangan PERISAI akan dibagi menjadi lima bagian yang terdiri dari:
+Proses pengembangan dan pengujian untuk pengoptimalan sistem tiket acara berskala besar ini akan dibagi menjadi lima bab utama, yang terdiri dari:
 
 \begin{enumerate}
-  \item \textbf{Pendahuluan}
+      \item \textbf{Pendahuluan}
 
-        Bab I menjelaskan gagasan utama dari tugas akhir ini yang berisi dari latar belakang, rumusan masalah, tujuan, batasan, metodologi hingga sistematika pembahasan mengenai proses pengembangan sistem PERISAI.
+            Bab I akan menguraikan gagasan utama dari penelitian ini. Bagian ini mencakup latar belakang masalah terkait tantangan penjualan tiket acara berskala besar, rumusan masalah mengenai skalabilitas dan stabilitas sistem, tujuan untuk mengembangkan arsitektur yang optimal, batasan masalah, metodologi penelitian yang digunakan, hingga sistematika pembahasan yang akan memandu alur laporan tugas akhir ini.
 
-  \item \textbf{Studi Literatur}
+      \item \textbf{Kajian Pustaka}
 
-        Bab II menjelaskan mengenai studi literatur yang telah dilakukan selama melakukan penilitian mengenai proses \textit{remote deployment} untuk aplikasi IoT. Selain itu, bab ini juga membahas mengenai teori dasar mengenai topik yang dibahas.
+            Bab II akan membahas studi literatur dan landasan teori yang menjadi dasar penelitian. Topik yang dibahas meliputi teknik penskalaan basis data relasional seperti replikasi dan pemartisian, konsep basis data relasional terdistribusi dengan studi kasus pada CitusData dan YugabyteDB, teori mengenai pengendalian aliran (\textit{flow control}), serta teknologi pendukung seperti Redis dan RabbitMQ. Bab ini juga akan meninjau penelitian terkait yang telah ada sebelumnya mengenai arsitektur sistem tiket.
 
-  \item \textbf{Analisis Persoalan dan Rancangan Solusi}
+      \item \textbf{Analisis Persoalan dan Rancangan Solusi}
 
-        Bab III menjelaskan analisis dari masalah yang ditemukan pada kondisi saat ini diikuti dengan kemungkinan solusi yang dianalisis kekurangan dan kelebihannya. Selain itu, bab ini juga membahas mengenai rancangan solusi yang dipilih sebagai implementasi dari sistem PERISAI.
+            Bab III akan menjelaskan analisis mendalam terhadap permasalahan yang ada pada sistem tiket konvensional saat menghadapi beban tinggi. Analisis ini diikuti dengan perancangan berbagai alternatif solusi untuk meningkatkan laju pemrosesan transaksi, mengoptimalkan operasi baca, menjaga integritas data, dan menerapkan skema pengendalian aliran. Bab ini juga akan merinci arsitektur solusi yang dipilih untuk diimplementasikan, termasuk variasi penggunaan basis data dan komponen sistem.
 
-  \item \textbf{Implementasi dan Pengujian}
+      \item \textbf{Implementasi dan Pengujian}
 
+            Bab IV akan memaparkan detail teknis dari proses implementasi rancangan yang telah dibuat, termasuk lingkungan pengembangan, kakas yang digunakan, dan konfigurasi deployment pada kluster Kubernetes. Selanjutnya, bab ini akan menjelaskan secara rinci metodologi pengujian yang dilakukan, mencakup skenario pengujian beban berkelanjutan dan simulasi perebutan tiket. Hasil dari setiap skenario pengujian akan dianalisis secara komparatif untuk mengevaluasi kinerja setiap variasi arsitektur.
 
-        Bab IV menjelaskan hasil implementasi dari rancangan yang telah dibuat. Selain itu, bab ini juga menjelaskan mengenai pengujian yang dilakukan.
+      \item \textbf{Kesimpulan dan Saran}
 
-  \item \textbf{Kesimpulan dan Saran}
-
-
-        Bab V menjadi penutup dari pembahasan penelitian ini. Bab ini berisi kesimpulan dan saran dari penulis setelah menjalani penelitian ini. Dengan ini, penulis bisa mengedukasi pembaca agar dapat membuat penelitian ini menjadi lebih baik lagi.
+            Bab V akan menjadi bagian penutup dari laporan penelitian. Bab ini berisi rangkuman kesimpulan yang ditarik dari hasil analisis dan pengujian, seperti perbandingan kinerja antara kluster PostgreSQL, CitusData, dan YugabyteDB, serta efektivitas strategi pengendalian aliran. Selain itu, bab ini juga akan memberikan saran untuk pengembangan lebih lanjut yang dapat dilakukan di masa depan guna menyempurnakan sistem yang telah dibangun.
 
 \end{enumerate}
