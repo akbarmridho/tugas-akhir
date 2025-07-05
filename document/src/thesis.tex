@@ -31,7 +31,7 @@
   Akbar Maulana Ridho \\
   NIM: 13521093
 }
-\newcommand\tanggalpengesahan{1 Juli 2025}
+\newcommand\tanggalpengesahan{17 Juli 2025}
 
 \pagenumbering{roman}
 \setcounter{page}{1}
@@ -46,7 +46,7 @@
 \input{chapters/abstract-en}
 \input{chapters/forewords}
 
-\titleformat*{\section}{\centering\bfseries\Large\MakeUpperCase}
+% \titleformat*{\section}{\centering\bfseries\Large\MakeUpperCase}
 \titlespacing*{\chapter}{0pt}{0pt}{4pt}
 
 % Setting judul toc, lot, lof, bib
@@ -63,7 +63,7 @@
 
 \newpage
 
-\titleformat*{\section}{\bfseries\large}
+% \titleformat*{\section}{\bfseries\large}
 \pagenumbering{arabic}
 
 %----------------------------------------------------------------%
@@ -78,6 +78,12 @@
 % Dafter Bab
 % Untuk menambahkan daftar bab, buat berkas bab misalnya `chapter-6` di direktori `chapters`, dan masukkan ke sini.
 %----------------------------------------------------------------%
+
+% Adjust spacing around section titles
+\titlespacing*{\section}{0pt}{12pt}{8pt}
+\titlespacing*{\section}{0pt}{8pt}{6pt}
+\titlespacing*{\section}{0pt}{6pt}{4pt}
+
 \input{chapters/chapter-1}
 
 \input{chapters/chapter-2}

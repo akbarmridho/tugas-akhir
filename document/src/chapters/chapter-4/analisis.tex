@@ -31,7 +31,7 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) sela
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-traffic.png}
+    \includegraphics[width=0.5\textwidth]{resources/chapter-4/pattern-sim-traffic.png}
     \caption{Pola Permintaan pada Perebutan Tiket}
     \label{fig:pattern-sim-traffic}
 \end{figure}
@@ -40,7 +40,7 @@ Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-order.png}
+    \includegraphics[width=0.5\textwidth]{resources/chapter-4/pattern-sim-order.png}
     \caption{Status Respons pada Perebutan Tiket}
     \label{fig:pattern-sim-order}
 \end{figure}
@@ -49,7 +49,7 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-k6.png}
+    \includegraphics[width=0.5\textwidth]{resources/chapter-4/pattern-sim-k6.png}
     \caption{Keadaan Akhir Penguji pada Perebutan Tiket}
     \label{fig:pattern-sim-k6}
 \end{figure}
@@ -133,6 +133,8 @@ Kinerja PostgreSQL yang baik berasal dari arsitekturnya yang monolitik. PostgreS
 
 Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perhatikan perbedaan penggunaan sumber daya antara koordinator dan \textit{worker} CitusData pada gambar berikut:
 
+\pagebreak
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/citusdata-usage.png}
@@ -158,20 +160,20 @@ Pada kasus yang lebih sederhana, seorang pengguna melaporkan penurunan kinerja h
 
 Permasalahan latensi ini dapat diterima apabila kinerja YugabyteDB juga diiringi dengan keunggulan dari aspek lain, seperti kemampuan menangani keadaan perebutan tiket dengan baik dan kestabilan kluster yang baik. Meskipun begitu, hal ini juga tidak dapat ditunjukkan oleh YugabyteDB. Berikut adalah gambaran kinerja YugabyteDB saat berjalan dengan baik:
 
+\pagebreak
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latensi-yugabyte-success.png}
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latensi-yugabyte-success.png}
     \caption{Metrik Pemrosesan Pesanan (f3t2)}
     \label{fig:metrics-f3t1}
 \end{figure}
 
 Latensi pemrosesan pada YugabyteDB diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesannya mulai stabil. Setelah itu, latensi pemrosesan mulai meningkat hingga tiba-tiba turun lagi. Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh sebagaimana terjadi pada hasil pengujian lain:
 
-\pagebreak
-
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latensi-yugabyte-fail.png}
+    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latensi-yugabyte-fail.png}
     \caption{Metrik Pemrosesan Pesanan (f3t2)}
     \label{fig:metrics-f3t2}
 \end{figure}
@@ -198,8 +200,6 @@ Singkat cerita, YugabyteDB kesulitan menangani beban koneksi yang ada pada pengu
 \subsubsection{Kueri Ketersediaan Area}
 
 Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dipanggil, terutama ketika ketersediaan tiket mulai menipis dan pengguna mencoba mengeksplorasi lebih banyak area. Pada pengujian f5t2, \textit{endpoint} ini memiliki puncak pemanggilan sebanyak 1700 rps. Sepanjang pengujian, latensi rata-rata operasi tersebut berkisar antara 2.5-4.5 milisekon. Hal ini menunjukkan bahwa pengoptimalan kueri ketersediaan area dengan menggunakan Redis merupakan pendekatan yang sangat efektif, terutama dalam meringankan beban pada basis data.
-
-\pagebreak
 
 \begin{figure}[htbp]
     \centering
@@ -240,8 +240,6 @@ Gambar \ref{fig:latency-fc} dan gambar \ref{fig:latency-nofc} menunjukkan perbed
     \label{fig:latency-fc}
 \end{figure}
 
-\pagebreak
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
@@ -250,6 +248,8 @@ Gambar \ref{fig:latency-fc} dan gambar \ref{fig:latency-nofc} menunjukkan perbed
 \end{figure}
 
 Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana ditunjukkan pada gambar \ref{fig:rps-fc-pg-stress-0} dan \ref{fig:rps-nofc-pg-stress-0}. Meskipun memiliki latensi yang lebih tinggi, laju pemrosesan puncak varian ini sama dengan laju pemrosesan puncak pada sistem referensi. Oleh karena itu, latensi yang tinggi tidak serta merta membuat laju pemrosesan lebih lambat.
+
+\pagebreak
 
 \begin{figure}[htbp]
     \centering
@@ -296,16 +296,14 @@ Tidak ada perbedaan latensi pada operasi tulis. Meskipun begitu, latensi untuk \
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
+    \includegraphics[width=0.7\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode tanpa Pengendalian Aliran}
     \label{fig:latency-by-code-nofc}
 \end{figure}
 
-\pagebreak
-
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
+    \includegraphics[width=0.7\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode dengan Pengendalian Aliran}
     \label{fig:latency-by-code-fc}
 \end{figure}
@@ -315,8 +313,6 @@ Latensi rata-rata pada varian dengan pengendalian aliran berkisar antara 50-100 
 Secara umum, pendekatan pengendalian aliran dengan menolak pesanan lebih awal cukup baik dalam mengurangi beban basis data. Di sisi lain, pada pengujian kali ini pendekatan pengendalian aliran dengan sistem antrean tidak terlalu optimal karena latensi yang tinggi. Selain itu, beban pesanan yang masuk tidak cukup tinggi sehingga tidak cukup mengganggu keberjalanan pemrosesan pesanan. Meskipun begitu, pengendalian aliran pesanan yang masuk menunjukkan dampak positif dalam menurunkan \textit{contention} yang ditunjukkan dengan penurunan latensi salah satu kueri \textit{locking}.
 
 Implementasi antrean yang lebih baik dan beban yang lebih tinggi seharusnya dapat menunjukkan perbedaan kinerja kedua varian lebih jauh. Agar latensi lebih baik, opsi untuk tidak menggunakan RabbitMQ juga dapat digunakan. Alih-alih memisahkan komponen Ticket Server dan Ticket Worker, antrean dapat dibuat lokal per Ticket Server. Dengan begitu, tidak perlu ada tambahan \textit{network round trip} yang menambah latensi secara signifikan. Meskipun begitu, pendekatan ini harus memikirkan bagaimana penanganan \textit{idempotency} dan penanganan ketika pengguna mengirimkan ulang pesanan yang sama.
-
-\pagebreak
 
 \subsection{Integritas Tiket Selama Perebutan Tiket}
 

@@ -2,14 +2,16 @@
 
 Citus merupakan mesin basis data terdistribusi untuk PostgreSQL yang menangani kebutuhan skalabilitas pada ekosistem PostgreSQL \parencite{citus}. Sebagai sebuah ekstensi, Citus menjaga kompatibilitas dengan PostgreSQL, sehingga dapat digunakan dengan PostgreSQL versi terbaru.
 
+Sebuah kluster memiliki banyak \textit{node} yang terspesialisasi menjadi koordinator dan node pekerja. Aplikasi mengirimkan kueri kepada koordinator, lalu diteruskan kepada node pekerja terkait. Pendekatan ini memungkinkan setiap \textit{node} mampu memproses permintaan tulis sehingga pemrosesan bisa dilakukan secara parallel.
+
+\pagebreak
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.6\textwidth]{resources/chapter-2/row-vs-schema-sharding.png}
     \caption{Perbandingan Pemartisian Data \parencite{schemaBasedSharding}}
     \label{fig:row-vs-schema-sharding}
 \end{figure}
-
-Sebuah kluster memiliki banyak \textit{node} yang terspesialisasi menjadi koordinator dan node pekerja. Aplikasi mengirimkan kueri kepada koordinator, lalu diteruskan kepada node pekerja terkait. Pendekatan ini memungkinkan setiap \textit{node} mampu memproses permintaan tulis sehingga pemrosesan bisa dilakukan secara parallel.
 
 Selain itu, berikut adalah fitur lain ekstensi Citus:
 

@@ -17,4 +17,6 @@ Salah satu pendekatan yang umum diimplementasikan pada basis data relasional sep
     \label{fig:leader-based-replication}
 \end{figure}
 
+\pagebreak
+
 Selain itu, tipe replikasi juga terbagi menjadi dua, yaitu replikasi sinkron dan replikasi asinkron. Pada replikasi sinkron, data yang akan ditulis harus sudah ditulis oleh semua (atau mayoritas) replika sebelum dapat dianggap sukses. Pada replikasi asinkron, data akan diterima dan ditulis terlebih dahulu pada pemimpin, lalu perubahannya dipropagasikan kepada replika. Replikasi sinkron menjamin mayoritas \textit{node} memiliki data terbaru, tetapi latensi pada proses penulisan akan meningkat. Sedangkan, pada replikasi asinkron latensi penulisan jauh lebih kecil, tetapi data pada replika menjadi \textit{eventually consistent}. Kedua tipe replikasi ini didukung oleh PostgreSQL.

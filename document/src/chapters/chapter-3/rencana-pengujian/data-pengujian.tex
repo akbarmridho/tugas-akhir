@@ -1,8 +1,6 @@
 \subsection{Skenario Penjualan Tiket}
 
-Penelitian ini menggunakan Stadion Utama Gelora Bung Karno (GBK) sebagai dasar lokasi, dengan asumsi kapasitas total sekitar 80.000 penonton per hari. Kapasitas ini dibagi menjadi dua jenis: area berdiri/ festival dan area tribun/ duduk. Setiap jenis ini nantinya dipecah menjadi beberapa kategori tiket dengan harga yang bervariasi.
-
-Skenario ini juga mempertimbangkan bahwa sebuah acara dapat berlangsung selama beberapa hari. Skenario pengujian dirancang untuk dapat menangani penjualan tiket hingga untuk empat hari.
+Penelitian ini menggunakan Stadion Utama Gelora Bung Karno (GBK) sebagai dasar lokasi, dengan asumsi kapasitas total sekitar 80.000 penonton per hari. Kapasitas ini dibagi menjadi dua jenis: area berdiri/ festival dan area tribun/ duduk. Setiap jenis ini nantinya dipecah menjadi beberapa kategori tiket dengan harga yang bervariasi. Skenario ini juga mempertimbangkan bahwa sebuah acara dapat berlangsung selama beberapa hari. Skenario pengujian dirancang untuk dapat menangani penjualan tiket hingga untuk empat hari.
 
 Meskipun beberapa kategori tiket berada dalam satu blok yang sama (seperti Lower - Silver North dengan total 5.000 kursi), pada basis data, area ini dipecah menjadi beberapa area yang lebih kecil dengan kapasitas sekitar 1000 hingga 2000 kursi per area. Tujuan utamanya adalah untuk pengoptimalan dan kemudahan sharding, terutama dari sisi basis data. Hal ini bermanfaat pada varian CitusData dan YugabyteDB. Pendekatan ini tidak akan berpengaruh pada pengalaman pengguna karena pembeli tiket cenderung mencari dan membeli beberapa kursi yang letaknya berdetakan dalam satu area yang sama.
 
@@ -11,69 +9,69 @@ Harga dan kategori tiket dirancang untuk merefleksikan konser pada umumnya. Beri
 \begingroup
 \footnotesize
 \begin{longtable}{|l|l|r|r|r|r|}
-    \caption{Spesifikasi Kategori, Area, dan Kapasitas Tiket per Hari} \label{tab:ticket_spec}                                                                \\
+    \caption{Spesifikasi Kategori, Area, dan Kapasitas Tiket per Hari} \label{tab:ticket_spec}                                                                     \\
     \hline
     \textbf{Nama Kategori}                                          & \textbf{Tipe}   & \textbf{Harga (Rp)} & \textbf{Area} & \textbf{Kursi/Area} & \textbf{Total} \\
     \hline
     \endfirsthead
 
     \multicolumn{6}{c}%
-    {{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}}                                                                                   \\
+    {{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}}                                                                                        \\
     \hline
     \textbf{Nama Kategori}                                          & \textbf{Tipe}   & \textbf{Harga (Rp)} & \textbf{Area} & \textbf{Kursi/Area} & \textbf{Total} \\
     \hline
     \endhead
 
-    \hline \multicolumn{6}{r}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                     \\
+    \hline \multicolumn{6}{r}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                          \\
     \endfoot
 
     \hline
     \endlastfoot
 
     % --- Seated Categories ---
-    Lower - Platinum East 1                                         & Seated          & 3.000.000      & 1             & 2.000               & 2.000          \\
+    Lower - Platinum East 1                                         & Seated          & 3.000.000           & 1             & 2.000               & 2.000          \\
     \hline
-    Lower - Platinum East 2                                         & Seated          & 3.000.000      & 1             & 2.000               & 2.000          \\
+    Lower - Platinum East 2                                         & Seated          & 3.000.000           & 1             & 2.000               & 2.000          \\
     \hline
-    Lower - Platinum West 1                                         & Seated          & 3.000.000      & 1             & 2.000               & 2.000          \\
+    Lower - Platinum West 1                                         & Seated          & 3.000.000           & 1             & 2.000               & 2.000          \\
     \hline
-    Lower - Platinum West 2                                         & Seated          & 3.000.000      & 1             & 2.000               & 2.000          \\
+    Lower - Platinum West 2                                         & Seated          & 3.000.000           & 1             & 2.000               & 2.000          \\
     \hline
-    Lower - Gold East 1                                             & Seated          & 2.500.000      & 1             & 1.750               & 1.750          \\
+    Lower - Gold East 1                                             & Seated          & 2.500.000           & 1             & 1.750               & 1.750          \\
     \hline
-    Lower - Gold East 2                                             & Seated          & 2.500.000      & 1             & 1.750               & 1.750          \\
+    Lower - Gold East 2                                             & Seated          & 2.500.000           & 1             & 1.750               & 1.750          \\
     \hline
-    Lower - Gold West 1                                             & Seated          & 2.500.000      & 1             & 1.750               & 1.750          \\
+    Lower - Gold West 1                                             & Seated          & 2.500.000           & 1             & 1.750               & 1.750          \\
     \hline
-    Lower - Gold West 2                                             & Seated          & 2.500.000      & 1             & 1.750               & 1.750          \\
+    Lower - Gold West 2                                             & Seated          & 2.500.000           & 1             & 1.750               & 1.750          \\
     \hline
-    Lower - Silver North                                            & Seated          & 2.000.000      & 5             & 1.000               & 5.000          \\
+    Lower - Silver North                                            & Seated          & 2.000.000           & 5             & 1.000               & 5.000          \\
     \hline
-    Lower - Silver South                                            & Seated          & 2.000.000      & 5             & 1.000               & 5.000          \\
+    Lower - Silver South                                            & Seated          & 2.000.000           & 5             & 1.000               & 5.000          \\
     \hline
-    Upper - Bronze West                                             & Seated          & 1.750.000      & 10            & 1.050               & 10.500         \\
+    Upper - Bronze West                                             & Seated          & 1.750.000           & 10            & 1.050               & 10.500         \\
     \hline
-    Upper - Bronze East                                             & Seated          & 1.750.000      & 10            & 1.050               & 10.500         \\
+    Upper - Bronze East                                             & Seated          & 1.750.000           & 10            & 1.050               & 10.500         \\
     \hline
-    Upper - Bronze North                                            & Seated          & 1.500.000      & 7             & 1.000               & 7.000          \\
+    Upper - Bronze North                                            & Seated          & 1.500.000           & 7             & 1.000               & 7.000          \\
     \hline
-    Upper - Bronze South                                            & Seated          & 1.500.000      & 7             & 1.000               & 7.000          \\
+    Upper - Bronze South                                            & Seated          & 1.500.000           & 7             & 1.000               & 7.000          \\
     \hline
-    \multicolumn{5}{|l|}{\textbf{Subtotal Kursi Seated}}            & \textbf{60.000}                                                                         \\
+    \multicolumn{5}{|l|}{\textbf{Subtotal Kursi Seated}}            & \textbf{60.000}                                                                              \\
     \hline \hline
 
     % --- Free Standing Categories ---
-    VIP                                                             & Free-Standing   & 4.000.000      & 1             & 4.000               & 4.000          \\
+    VIP                                                             & Free-Standing   & 4.000.000           & 1             & 4.000               & 4.000          \\
     \hline
-    Zone A                                                          & Free-Standing   & 3.250.000      & 1             & 8.000               & 8.000          \\
+    Zone A                                                          & Free-Standing   & 3.250.000           & 1             & 8.000               & 8.000          \\
     \hline
-    Zone B                                                          & Free-Standing   & 2.500.000      & 1             & 8.000               & 8.000          \\
+    Zone B                                                          & Free-Standing   & 2.500.000           & 1             & 8.000               & 8.000          \\
     \hline
-    \multicolumn{5}{|l|}{\textbf{Subtotal Kapasitas Free-Standing}} & \textbf{20.000}                                                                         \\
+    \multicolumn{5}{|l|}{\textbf{Subtotal Kapasitas Free-Standing}} & \textbf{20.000}                                                                              \\
     \hline \hline
 
     % --- Grand Total ---
-    \multicolumn{5}{|l|}{\textbf{Total Kapasitas per Hari}}   & \textbf{80.000}                                                                         \\
+    \multicolumn{5}{|l|}{\textbf{Total Kapasitas per Hari}}         & \textbf{80.000}                                                                              \\
 \end{longtable}
 \endgroup
 

@@ -18,32 +18,30 @@ Terdapat berbagai \textit{endpoint} selain health check dan metrics yang tersedi
 
 Berikut adalah \textit{endpoint} yang tersedia pada sistem tiket:
 
-\pagebreak
-
 \begin{table}[h!]
-\centering
-\caption{Daftar \textit{Endpoint} Layanan Tiket}
-\begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|}
-\hline
-\textbf{Endpoint} & \textbf{Keterangan} \\
-\hline
-GetEvents \newline GET /events & Mengembalikan daftar acara yang tersedia. \\
-\hline
-GetEventByID \newline GET /events/:id & Mengembalikan informasi detail terkait suatu acara, seperti kategori tiket, penjualan tiket, dan lain-lain. \\
-\hline
-GetEventAvailability \newline GET /events/availability/:ticketSaleID & Mengembalikan agregasi ketersediaan tiket yang dibagi berdasarkan area untuk penjualan tiket tertentu. \\
-\hline
-GetSeats \newline GET /events/seats/:ticketAreaID & Mengembalikan daftar ketersediaan kursi dalam suatu area. \\
-\hline
-Create Order \newline POST /orders & Menangani permintaan pemesanan tiket. Ketika permintaan pesanan tidak dapat diproses karena konflik, \textit{endpoint} ini akan mengembalikan status 409 dan pengguna akan direkomendasikan untuk memesan kursi lain. Selain itu, \textit{endpoint} ini akan mengembalikan status 423 apabila sistem tidak dapat melakukan penguncian dan pengguna disarankan untuk mengirim ulang permintaan. \\
-\hline
-Get Order \newline GET /orders/:id & Mengembalikan detail order berdasarkan ID. \\
-\hline
-Get Issued Tickets \newline GET /orders/:id/tickets & Mengembalikan tiket yang sudah diterbitkan untuk suatu pesanan yang sudah berhasil. \\
-\hline
-Notify Webhook \newline POST /webhook & Menangani notifikasi dari layanan pembayaran terkait dengan perubahan status tagihan. \\
-\hline
-\end{tabular}
+      \centering
+      \caption{Daftar \textit{Endpoint} Layanan Tiket}
+      \begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|}
+            \hline
+            \textbf{Endpoint}                                                    & \textbf{Keterangan}                                                                                                                                                                                                                                                                                                                                                                            \\
+            \hline
+            GetEvents \newline GET /events                                       & Mengembalikan daftar acara yang tersedia.                                                                                                                                                                                                                                                                                                                                                      \\
+            \hline
+            GetEventByID \newline GET /events/:id                                & Mengembalikan informasi detail terkait suatu acara, seperti kategori tiket, penjualan tiket, dan lain-lain.                                                                                                                                                                                                                                                                                    \\
+            \hline
+            GetEventAvailability \newline GET /events/availability/:ticketSaleID & Mengembalikan agregasi ketersediaan tiket yang dibagi berdasarkan area untuk penjualan tiket tertentu.                                                                                                                                                                                                                                                                                         \\
+            \hline
+            GetSeats \newline GET /events/seats/:ticketAreaID                    & Mengembalikan daftar ketersediaan kursi dalam suatu area.                                                                                                                                                                                                                                                                                                                                      \\
+            \hline
+            Create Order \newline POST /orders                                   & Menangani permintaan pemesanan tiket. Ketika permintaan pesanan tidak dapat diproses karena konflik, \textit{endpoint} ini akan mengembalikan status 409 dan pengguna akan direkomendasikan untuk memesan kursi lain. Selain itu, \textit{endpoint} ini akan mengembalikan status 423 apabila sistem tidak dapat melakukan penguncian dan pengguna disarankan untuk mengirim ulang permintaan. \\
+            \hline
+            Get Order \newline GET /orders/:id                                   & Mengembalikan detail order berdasarkan ID.                                                                                                                                                                                                                                                                                                                                                     \\
+            \hline
+            Get Issued Tickets \newline GET /orders/:id/tickets                  & Mengembalikan tiket yang sudah diterbitkan untuk suatu pesanan yang sudah berhasil.                                                                                                                                                                                                                                                                                                            \\
+            \hline
+            Notify Webhook \newline POST /webhook                                & Menangani notifikasi dari layanan pembayaran terkait dengan perubahan status tagihan.                                                                                                                                                                                                                                                                                                          \\
+            \hline
+      \end{tabular}
 \end{table}
 
 \subsubsection{Pengoptimalan Skema Basis Data Terdistribusi}
@@ -93,7 +91,7 @@ Sistem tiket dapat dibagi menjadi enam program yang berbeda, yaitu:
       \item Sanity Check
 
             Program ini melakukan kueri terhadap data ketersediaan dan \textit{early dropper} pada basis data dan pada Redis. Hal ini digunakan untuk melakukan validasi terhadap sinkronisasi data antara Redis dengan basis data. Pemeriksaan ini dilakukan setiap 2 menit.
-
+            \pagebreak
       \item Seeder
 
             Program ini dijalankan saat sebelum pengujian dimulai. Program ini menjalankan hal-hal yang berkaitan dengan pengaturan basis data dan Redis, seperti membuat skema, penyemaian data, \textit{prewarm} basis data, penyemaian data ketersediaan pada Redis, dan lain-lain.

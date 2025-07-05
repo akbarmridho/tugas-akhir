@@ -11,6 +11,8 @@ Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu layanan tiket,
     \label{fig:ticket-nofc}
 \end{figure}
 
+\pagebreak
+
 \subsection{Komponen Sistem Tiket (dengan Pengendalian Aliran)}
 
 \begin{figure}[htbp]
@@ -22,15 +24,13 @@ Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu layanan tiket,
 
 Pada sistem tiket dengan pengendalian aliran, terdapat dua komponen baru yaitu RabbitMQ dan pemroses pesanan. RabbitMQ bertugas untuk menyimpan antrean permintaan pemesanan tiket dan pemroses pesanan bertugas untuk memproses pemesanan tiket. Selain itu, kluster Redis memiliki tanggung jawab tambahan untuk menyimpan data yang digunakan untuk menolak permintaan pesanan yang masuk lebih awal.
 
-\pagebreak
-
 \subsection{Variasi Basis Data Relasional}
 
 Berikut adalah variasi konfigurasi basis data relasional yang mungkin terjadi.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.5\textwidth]{resources/chapter-3/rdbms.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-3/rdbms.png}
     \caption{Variasi Basis Data Relasional}
     \label{fig:rdbms-variation}
 \end{figure}
@@ -47,9 +47,11 @@ Konfigurasi kluster PostgreSQL memiliki skalabilitas yang terbatas dengan pening
 
 Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membaca agregat ketersediaan area, dan membaca ketersediaan kursi. Operasi baca agregat ketersediaan area menggunakan data agregat yang dipelihara pada Redis alih-alih melakukan agregat dari basis data. Operasi baca ketersediaan kursi membaca langsung data dari basis data dengan sedikit pengoptimalan dengan menggunakan tembolok mikro.
 
+\pagebreak
+
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-3/event-flow.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-3/event-flow.png}
     \caption{Diagram Alur Fitur acara}
     \label{fig:flow-event}
 \end{figure}
@@ -60,7 +62,7 @@ Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membac
 
 Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/book-flow.png}
     \caption{Diagram Alur Fitur Pemesanan Tiket (tanpa pengendalian aliran)}

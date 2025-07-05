@@ -1,6 +1,6 @@
 \subsection{Layanan Pembayaran}
 
-Layanan ini merupakan perupaan sistem gerbang pembayaran eksternal. Layanan ini bukan gerbang pembayaran sesungguhnya, tetapi merupakan \textit{mock service} yang menyimulasikan alur gerbang pembayaran. 
+Layanan ini merupakan perupaan sistem gerbang pembayaran eksternal. Layanan ini bukan gerbang pembayaran sesungguhnya, tetapi merupakan \textit{mock service} yang menyimulasikan alur gerbang pembayaran.
 
 \subsubsection{Kebutuhan Fungsional}
 
@@ -8,29 +8,29 @@ Layanan ini merupakan perupaan sistem gerbang pembayaran eksternal. Layanan ini 
 \begingroup
 \footnotesize
 \begin{longtable}{|l|p{0.4\textwidth}|p{0.4\textwidth}|}
-    \caption{Kebutuhan Fungsional Sistem Pembayaran}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \\
+    \caption{Kebutuhan Fungsional Sistem Pembayaran}                                                                                                                                                                                                                                                                                                                                                                                                      \\
     \hline
-    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                           & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                       \\
     \endfirsthead
 
-    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                             \\
     \hline
-    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                           & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                       \\
     \endhead
 
     \hline
-    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \\
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                      \\
     \endfoot
 
     \hline
     \endlastfoot
 
     \hline
-    PF-01       & Sistem dapat membuat tagihan pembayaran dan pranala pembayaran.                                                                                                                                                                 & Pembayaran dilakukan dengan mengirimkan permintaan kepada pranala yang diberikan dengan parameter sukses atau gagal. Selain itu, terdapat tenggat waktu pembayaran yang ditentukan berdasarkan parameter pada saat pembuatan tagihan. Pembayaran akan otomatis gagal apabila tidak dipenuhi hingga batas waktu tersebut. \\
+    PF-01       & Sistem dapat membuat tagihan pembayaran dan pranala pembayaran.                                              & Pembayaran dilakukan dengan mengirimkan permintaan kepada pranala yang diberikan dengan parameter sukses atau gagal. Selain itu, terdapat tenggat waktu pembayaran yang ditentukan berdasarkan parameter pada saat pembuatan tagihan. Pembayaran akan otomatis gagal apabila tidak dipenuhi hingga batas waktu tersebut. \\
     \hline
-    PF-02       & Sistem memanggil \textit{webhook} yang telah ditentukan ketika terdapat pembayaran yang berhasil atau gagal.                                                                                                                    &                                                                                                                                                                     \\
+    PF-02       & Sistem memanggil \textit{webhook} yang telah ditentukan ketika terdapat pembayaran yang berhasil atau gagal. &                                                                                                                                                                                                                                                                                                                          \\
     \hline
-    PF-03       & Sistem menyediakan \textit{endpoint} untuk menampilkan detail tagihan pembayaran.                                                                                                                                               &                                                                                                                                                                                                                                                                                                                                                       \\
+    PF-03       & Sistem menyediakan \textit{endpoint} untuk menampilkan detail tagihan pembayaran.                            &                                                                                                                                                                                                                                                                                                                          \\
 \end{longtable}
 \endgroup
 
@@ -38,46 +38,48 @@ Layanan ini merupakan perupaan sistem gerbang pembayaran eksternal. Layanan ini 
 
 Entitas yang berkaitan dengan layanan ini adalah entitas tagihan (Invoice). Entitas tersebut memiliki properti sebagai berikut:
 
+\pagebreak
+
 \begingroup
 \footnotesize
 \begin{longtable}{|l|p{0.4\textwidth}|p{0.4\textwidth}|}
-    \caption{Skema Entitas Invoice}                                                                                                                              \\
+    \caption{Skema Entitas Invoice}                                                                                       \\
     \hline
-    \textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi}                                                                                              \\
+    \textbf{Atribut} & \textbf{Tipe Data}                     & \textbf{Deskripsi}                                        \\
     \hline
     \endfirsthead
 
-    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                      \\
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                             \\
     \hline
-    \textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi}                                                                                              \\
+    \textbf{Atribut} & \textbf{Tipe Data}                     & \textbf{Deskripsi}                                        \\
     \hline
     \endhead
 
     \hline
-    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                \\
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                      \\
     \endfoot
 
     \hline
     \endlastfoot
 
     \hline
-    id          & \texttt{string}                                & ID unik untuk setiap tagihan.                                                                   \\
+    id               & \texttt{string}                        & ID unik untuk setiap tagihan.                             \\
     \hline
-    amount      & \texttt{number}                       & Jumlah total tagihan.                                                                           \\
+    amount           & \texttt{number}                        & Jumlah total tagihan.                                     \\
     \hline
-    description & \texttt{string}                  & Deskripsi dari tagihan.                                                                         \\
+    description      & \texttt{string}                        & Deskripsi dari tagihan.                                   \\
     \hline
-    externalId  & \texttt{string}                                & ID dari sistem eksternal yang terkait dengan tagihan ini.                                       \\
+    externalId       & \texttt{string}                        & ID dari sistem eksternal yang terkait dengan tagihan ini. \\
     \hline
-    createdAt   & \texttt{date}                                  & Waktu saat tagihan dibuat.                                                                      \\
+    createdAt        & \texttt{date}                          & Waktu saat tagihan dibuat.                                \\
     \hline
-    expiredAt   & \texttt{date}                                  & Waktu saat tagihan akan kedaluwarsa.                                                            \\
+    expiredAt        & \texttt{date}                          & Waktu saat tagihan akan kedaluwarsa.                      \\
     \hline
-    paidAt      & \texttt{date}               & Waktu saat tagihan dibayar.                     \\
+    paidAt           & \texttt{date}                          & Waktu saat tagihan dibayar.                               \\
     \hline
-    paidAmount  & \texttt{number}             & Jumlah yang telah dibayarkan.            \\
+    paidAmount       & \texttt{number}                        & Jumlah yang telah dibayarkan.                             \\
     \hline
-    status      & "pending", "expired", "paid", "failed" & Status terkini dari tagihan.                                                           \\
+    status           & "pending", "expired", "paid", "failed" & Status terkini dari tagihan.                              \\
     \hline
 \end{longtable}
 \endgroup

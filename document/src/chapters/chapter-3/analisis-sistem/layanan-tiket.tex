@@ -1,3 +1,5 @@
+\pagebreak
+
 \subsection{Layanan Tiket}
 
 Layanan tiket memproses setiap permintaan yang berkaitan dengan pemesanan tiket. Layanan ini dapat dipecah menjadi beberapa layanan bergantung pada desain setiap arsitektur solusi.
@@ -9,36 +11,37 @@ Berikut adalah kebutuhan fungsional layanan tiket:
 \begingroup
 \footnotesize
 \begin{longtable}{|l|p{0.4\textwidth}|p{0.4\textwidth}|}
-    \caption{Kebutuhan Fungsional Layanan Tiket}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \\
+    \caption{Kebutuhan Fungsional Layanan Tiket}                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\
     \hline
-    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                   & \textbf{Deskripsi}                                                                                                                                                                                                                                                                  \\
     \endfirsthead
 
-    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                                                                                \\
     \hline
-    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                                              & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Kebutuhan}                                                                                                                                                                                   & \textbf{Deskripsi}                                                                                                                                                                                                                                                                  \\
     \endhead
 
     \hline
-    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \\
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                                                                         \\
     \endfoot
 
     \hline
     \endlastfoot
 
     \hline
-    TF-01       & Sistem dapat melayani permintaan ketersediaan acara.                                                                                                                                                                            &                                                                                                                                                                                                                                                                                                                                                       \\
+    TF-01       & Sistem dapat melayani permintaan ketersediaan acara.                                                                                                                                                 &                                                                                                                                                                                                                                                                                     \\
     \hline
-    TF-02       & Sistem dapat melayani permintaan ketersediaan tiket untuk suatu acara .                                                                                                                                                         & Ketersediaan tiket dibagi berdasarkan kategori. Data ketersediaan bisa lebih granular (menampilkan ketersediaan per kursi) atau hanya menampilkan jumlah ketersediaan untuk suatu kategori. Perilaku ini dapat diatur per kategori tiket.                                                                                                             \\
+    TF-02       & Sistem dapat melayani permintaan ketersediaan tiket untuk suatu acara .                                                                                                                              & Ketersediaan tiket dibagi berdasarkan kategori. Data ketersediaan bisa lebih granular (menampilkan ketersediaan per kursi) atau hanya menampilkan jumlah ketersediaan untuk suatu kategori. Perilaku ini dapat diatur per kategori tiket.                                           \\
     \hline
-    TF-03       & Sistem dapat melayani permintaan pemesanan tiket untuk suatu acara. Sebuah acara dapat dilaksanakan selama beberapa hari pada tempat yang sama dengan setiap tiket hanya berlaku pada hari itu saja. & Seorang pengguna dapat memesan hingga lima tiket dalam kategori yang sama sekaligus. Pengguna dapat memesan berdasarkan kursi atau area tiket, bergantung pada pengaturan kategori tiket. Pemesanan akan dibatalkan secara otomatis ketika sudah melewati tenggat waktu pembayaran.                                                                   \\
+    TF-03       & Sistem dapat melayani permintaan pemesanan tiket untuk suatu acara. Sebuah acara dapat dilaksanakan selama beberapa hari pada tempat yang sama dengan setiap tiket hanya berlaku pada hari itu saja. & Seorang pengguna dapat memesan hingga lima tiket dalam kategori yang sama sekaligus. Pengguna dapat memesan berdasarkan kursi atau area tiket, bergantung pada pengaturan kategori tiket. Pemesanan akan dibatalkan secara otomatis ketika sudah melewati tenggat waktu pembayaran. \\
     \hline
-    TF-04       & Pengguna dapat melihat status tiket yang pernah dipesan.                                                                                                                                                                        &                                                                                                                                                                                                                                                                                                                                                       \\
+    TF-04       & Pengguna dapat melihat status tiket yang pernah dipesan.                                                                                                                                             &                                                                                                                                                                                                                                                                                     \\
     \hline
-    TF-05       & Sistem dapat menangani penjualan tiket untuk lebih dari satu acara dalam satu waktu.                                                                                                                                            &                                                                                                                                                                                                                                                                                                                                                       \\
-
+    TF-05       & Sistem dapat menangani penjualan tiket untuk lebih dari satu acara dalam satu waktu.                                                                                                                 &                                                                                                                                                                                                                                                                                     \\
 \end{longtable}
 \endgroup
+
+\pagebreak
 
 Daftar acara dan ketersediaan awal tiket merupakan data yang diisi dari awal, sehingga kebutuhan fungsional untuk manajemen acara dan tiket tidak diperlukan.
 
@@ -46,42 +49,33 @@ Berikut adalah kebutuhan non-fungsional layanan tiket:
 
 \begingroup
 \footnotesize
-\begin{longtable}{|l|p{0.4\textwidth}|p{0.5\textwidth}|}
-    \caption{Kebutuhan Non-Fungsional Sistem Tiket}                                                                                                                                                                            \\
+\begin{longtable}{|l|p{0.3\textwidth}|p{0.4\textwidth}|}
+    \caption{Kebutuhan Non-Fungsional Sistem Tiket}                                                                                       \\
     \hline
-    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                                                                                                                    \\    \endfirsthead
+    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                               \\    \endfirsthead
 
-    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                  \\
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                             \\
     \hline
-    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                                                                                                                    \\
+    \textbf{ID} & \textbf{Parameter}                   & \textbf{Kebutuhan}                                                               \\
     \endhead
 
     \hline
-    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                           \\
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                      \\
     \endfoot
 
     \hline
     \endlastfoot
 
     \hline
-    TN-01       & Konsistensi dan integritas transaksi & Sistem harus memastikan tidak terjadi pemesanan ganda pada saat pemesanan tiket.                                                                              \\
+    TN-01       & Konsistensi dan integritas transaksi & Sistem harus memastikan tidak terjadi pemesanan ganda pada saat pemesanan tiket. \\
     \hline
-    TN-02       & Keterbaruan Data              & Sistem harus selalu mengembalikan data ketersediaan paling terbaru.                                                                                                                \\
+    TN-02       & Keterbaruan Data                     & Sistem harus selalu mengembalikan data ketersediaan paling terbaru.              \\
 \end{longtable}
 \endgroup
 
-\pagebreak
-
 \subsubsection{Entitas Layanan}
 
-Skema lengkap setiap entitas dibahas pada bagian lampiran \ref{apx:ticket-schema}. Berikut adalah gambaran diagram relasi entitas pada layanan tiket:
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.5\textwidth]{resources/chapter-3/erd-mini.png}
-    \caption{ERD Layanan Tiket}
-    \label{fig:erd-ticket-service}
-\end{figure}
+Skema lengkap setiap entitas dibahas pada bagian lampiran \ref{apx:ticket-schema}. Gambaran diagram relasi entitas pada layanan tiket disertakan pada halaman berikutnya.
 
 Entitas layanan tiket dapat dibagi menjadi dua grup, yaitu:
 
@@ -89,6 +83,14 @@ Entitas layanan tiket dapat dibagi menjadi dua grup, yaitu:
     \item Entitas yang berkaitan dengan tiket dan acara, yaitu: Event, TicketSale, TicketCategory, TicketPackage, TicketArea dan TicketSeat.
     \item Entitas yang berkaitan dengan pemesanan, yaitu: Order, OrderItem, Invoice, dan IssuedTicket.
 \end{enumerate}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{resources/chapter-3/erd-mini.png}
+    \caption{ERD Layanan Tiket}
+    \label{fig:erd-ticket-service}
+\end{figure}
 
 \pagebreak
 
