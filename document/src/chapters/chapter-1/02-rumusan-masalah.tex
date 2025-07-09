@@ -1,5 +1,10 @@
 \section{Rumusan Masalah}
+\label{sec:rumusan-masalah}
 
-Saat ini masih banyak penyedia layanan tiket yang kesulitan menangani penjualan tiket berskala tinggi (dalam orde jutaan pengguna) untuk satu acara. Kegagalan dalam menangani beban ini mengakibatkan terganggunya proses penjualan tiket, sehingga mengakibatkan pengalaman pengguna yang buruk. Seiring dengan berjalannya waktu, bukan hal yang tidak mungkin kasus seperti ini akan terjadi lagi di masa mendatang. Oleh karena itu, diperlukan pengoptimalan pada arsitektur sistem tiket agar kasus seperti ini dapat ditangani dengan baik di kemudian hari.
+Berdasarkan latar belakang yang telah diuraikan mengentai tanganan sistem tiket, maka dirumuskan pertanyaan-pertanyaan penelitian sebagaimana berikut:
 
-Penelitian ini akan mengoptimalkan kinerja sistem tiket secara umum. Selain itu, terdapat hal spesifik yang ingin dioptimalkan, seperti penggunaan berbagai basis data terdistribusi serta penggunaan pengendalian aliran saat proses pemesanan tiket. Basis data yang akan diuji adalah kluster PostgreSQL dengan replika baca, CitusData, dan YugaByteDB. Strategi pengendalian aliran yang digunakan adalah penolakan pemrosesan pesanan lebih awal dan antrean pemrosesan pesanan.
+\begin{enumerate}
+    \item Bagimana perbandingan kinerja antara beberapa arsitektur basis data terdistribusi (kluster PostgreSQL dengan replika baca, CitusData, dan YugabyteDB) dalam menangani laju pemrosesan pesanan (\textit{throughput}) dan latensi pada skenario penjualan tiket dengan beban tinggi?
+    \item Bagaimana dampak pengoptimalan operasi baca ketersediaan tiket terhadap kinerja dan keterbaruan data?
+    \item Bagaimana efektivitas penggunaan strategi pengendalian aliran dalam menjaga kestabilan laju pemrosesan pesanan?
+\end{enumerate}
