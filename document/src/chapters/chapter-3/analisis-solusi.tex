@@ -26,7 +26,7 @@ Operasi berikutnya adalah operasi baca ketersediaan kursi pada suatu area. Opera
 
 \subsection{Integritas data dan Pencegahan Pesanan Ganda}
 
-Pemesanan tiket dibagi menjadi dua tahap, yaitu fase \textit{hold seating} dan fase pembayaran. Fase \textit{hold seating} akan mencadangkan tiket sampai batas waktu tertentu hingga pengguna menyelesaikan fase pembayaran. Saat pembayaran berhasil, pembelian tiket baru akan dianggap sukses.
+Pemesanan tiket dibagi menjadi dua tahap, yaitu fase \textit{hold seating} dan fase penyelesaian pesanan. Fase \textit{hold seating} akan mencadangkan tiket sampai batas waktu tertentu hingga pengguna menyelesaikan pembayaran. Saat pembayaran berhasil, pembelian tiket baru akan dianggap sukses.
 
 Penggunaan basis data relasional seperti PostgreSQL memungkinkan implementasi pemesanan tiket yang lebih mudah dan terjamin konsistensinya. Untuk mencegah pemesanan ganda, basis data dapat melakukan penguncian pada level baris di dalam transaksi, sehingga setiap tiket hanya terjual sebanyak satu kali.
 
