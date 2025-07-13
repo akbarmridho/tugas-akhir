@@ -1,4 +1,4 @@
-\chapter{Skema Layanan Tiket}
+\chapter{Skema Basis Data Layanan Tiket}
 \label{apx:ticket-schema}
 
 Berikut adalah skema setiap entitas tiket dan acara:
@@ -6,105 +6,105 @@ Berikut adalah skema setiap entitas tiket dan acara:
 \begingroup
 \footnotesize
 \begin{longtable}{|l|p{0.2\textwidth}|p{0.5\textwidth}|}
-	\caption{Skema Entitas Event dan Tiket} 																																	\\
+	\caption{Skema Entitas Event dan Tiket}                                                                                             \\
 	\hline
-	\textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi} 																																	\\
+	\textbf{Atribut}     & \textbf{Tipe Data}    & \textbf{Deskripsi}                                                                   \\
 	\endfirsthead
 
-	\multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}} 																																	\\
+	\multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                           \\
 	\hline
-	\textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi} 																																	\\
+	\textbf{Atribut}     & \textbf{Tipe Data}    & \textbf{Deskripsi}                                                                   \\
 	\endhead
 
 	\hline
-	\multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}} 																																	\\
+	\multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                    \\
 	\endfoot
 
 	\hline
 	\endlastfoot
 
 	\hline
-	\multicolumn{3}{|l|}{\textbf{Event}} \\
+	\multicolumn{3}{|l|}{\textbf{Event}}                                                                                                \\
 	\hline
-	id 				& \texttt{bigint} 		& ID unik untuk setiap event. (PK) 																													\\
+	id                   & \texttt{bigint}       & ID unik untuk setiap event. (PK)                                                     \\
 	\hline
-	name 			& \texttt{text} 			& Nama event. 																																		\\
+	name                 & \texttt{text}         & Nama event.                                                                          \\
 	\hline
-	location 		& \texttt{text} 			& Lokasi diselenggarakannya event. 																													\\
+	location             & \texttt{text}         & Lokasi diselenggarakannya event.                                                     \\
 	\hline
-	description 	& \texttt{text} 			& Deskripsi detail dari event. 																															\\
+	description          & \texttt{text}         & Deskripsi detail dari event.                                                         \\
 	\hline
-	created\_at 	& \texttt{timestamptz} 	& Waktu record event dibuat. 																															\\
+	created\_at          & \texttt{timestamptz}  & Waktu record event dibuat.                                                           \\
 	\hline
-	updated\_at 	& \texttt{timestamptz} 	& Waktu record event terakhir diperbarui. 																											\\
+	updated\_at          & \texttt{timestamptz}  & Waktu record event terakhir diperbarui.                                              \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{TicketCategory}} \\
+	\multicolumn{3}{|l|}{\textbf{TicketCategory}}                                                                                       \\
 	\hline
-	id 				& \texttt{bigint} 		& ID unik untuk setiap kategori tiket. (PK) 																										\\
+	id                   & \texttt{bigint}       & ID unik untuk setiap kategori tiket. (PK)                                            \\
 	\hline
-	name 			& \texttt{text} 			& Nama kategori tiket (misalnya, "VIP", "Reguler"). 																								\\
+	name                 & \texttt{text}         & Nama kategori tiket (misalnya, "VIP", "Reguler").                                    \\
 	\hline
-	event\_id 		& \texttt{bigint} 		& Foreign Key ke \texttt{Event.id}. 																													\\
+	event\_id            & \texttt{bigint}       & Foreign Key ke \texttt{Event.id}.                                                    \\
 	\hline
-	created\_at 	& \texttt{timestamptz} 	& Waktu record kategori tiket dibuat. 																												\\
+	created\_at          & \texttt{timestamptz}  & Waktu record kategori tiket dibuat.                                                  \\
 	\hline
-	updated\_at 	& \texttt{timestamptz} 	& Waktu record kategori tiket terakhir diperbarui. 																								\\
+	updated\_at          & \texttt{timestamptz}  & Waktu record kategori tiket terakhir diperbarui.                                     \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{TicketSale}} \\
+	\multicolumn{3}{|l|}{\textbf{TicketSale}}                                                                                           \\
 	\hline
-	id 				& \texttt{bigint} 		& ID unik untuk setiap periode penjualan tiket. (PK) 																								\\
+	id                   & \texttt{bigint}       & ID unik untuk setiap periode penjualan tiket. (PK)                                   \\
 	\hline
-	name 			& \texttt{text} 			& Nama periode penjualan (misalnya, "Presale 1"). 																									\\
+	name                 & \texttt{text}         & Nama periode penjualan (misalnya, "Presale 1").                                      \\
 	\hline
-	sale\_begin\_at & \texttt{timestamptz} 	& Waktu dimulainya periode penjualan tiket. 																										\\
+	sale\_begin\_at      & \texttt{timestamptz}  & Waktu dimulainya periode penjualan tiket.                                            \\
 	\hline
-	sale\_end\_at 	& \texttt{timestamptz} 	& Waktu berakhirnya periode penjualan tiket. 																										\\
+	sale\_end\_at        & \texttt{timestamptz}  & Waktu berakhirnya periode penjualan tiket.                                           \\
 	\hline
-	event\_id 		& \texttt{bigint} 		& Foreign Key ke \texttt{Event.id}. 																													\\
+	event\_id            & \texttt{bigint}       & Foreign Key ke \texttt{Event.id}.                                                    \\
 	\hline
-	created\_at 	& \texttt{timestamptz} 	& Waktu record penjualan tiket dibuat. 																												\\
+	created\_at          & \texttt{timestamptz}  & Waktu record penjualan tiket dibuat.                                                 \\
 	\hline
-	updated\_at 	& \texttt{timestamptz} 	& Waktu record penjualan tiket terakhir diperbarui. 																								\\
+	updated\_at          & \texttt{timestamptz}  & Waktu record penjualan tiket terakhir diperbarui.                                    \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{TicketPackage}} \\
+	\multicolumn{3}{|l|}{\textbf{TicketPackage}}                                                                                        \\
 	\hline
-	id 					& \texttt{bigint} 		& ID unik untuk setiap paket tiket. (PK) 																											\\
+	id                   & \texttt{bigint}       & ID unik untuk setiap paket tiket. (PK)                                               \\
 	\hline
-	price 				& \texttt{int} 			& Harga dari paket tiket. 																															\\
+	price                & \texttt{int}          & Harga dari paket tiket.                                                              \\
 	\hline
-	ticket\_category\_id & \texttt{bigint} 		& Foreign Key ke \texttt{TicketCategory.id}. 																										\\
+	ticket\_category\_id & \texttt{bigint}       & Foreign Key ke \texttt{TicketCategory.id}.                                           \\
 	\hline
-	ticket\_sale\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketSale.id}. 																											\\
+	ticket\_sale\_id     & \texttt{bigint}       & Foreign Key ke \texttt{TicketSale.id}.                                               \\
 	\hline
-	created\_at 		& \texttt{timestamptz} 	& Waktu record paket tiket dibuat. 																													\\
+	created\_at          & \texttt{timestamptz}  & Waktu record paket tiket dibuat.                                                     \\
 	\hline
-	updated\_at 		& \texttt{timestamptz} 	& Waktu record paket tiket terakhir diperbarui. 																									\\
+	updated\_at          & \texttt{timestamptz}  & Waktu record paket tiket terakhir diperbarui.                                        \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{TicketArea}} \\
+	\multicolumn{3}{|l|}{\textbf{TicketArea}}                                                                                           \\
 	\hline
-	id 					& \texttt{bigint} 		& ID unik untuk setiap area tiket. (PK) 																											\\
+	id                   & \texttt{bigint}       & ID unik untuk setiap area tiket. (PK)                                                \\
 	\hline
-	area\_type 			& \texttt{type} 			& Tipe area: 'numbered-seating' (duduk bernomor) atau 'free-standing' (berdiri bebas). 												\\
+	area\_type           & \texttt{type}         & Tipe area: 'numbered-seating' (duduk bernomor) atau 'free-standing' (berdiri bebas). \\
 	\hline
-	ticket\_package\_id & \texttt{bigint} 		& Foreign Key ke \texttt{TicketPackage.id}. 																										\\
+	ticket\_package\_id  & \texttt{bigint}       & Foreign Key ke \texttt{TicketPackage.id}.                                            \\
 	\hline
-	created\_at 		& \texttt{timestamptz} 	& Waktu record area tiket dibuat. 																													\\
+	created\_at          & \texttt{timestamptz}  & Waktu record area tiket dibuat.                                                      \\
 	\hline
-	updated\_at 		& \texttt{timestamptz} 	& Waktu record area tiket terakhir diperbarui. 																									\\
+	updated\_at          & \texttt{timestamptz}  & Waktu record area tiket terakhir diperbarui.                                         \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{TicketSeat}} \\
+	\multicolumn{3}{|l|}{\textbf{TicketSeat}}                                                                                           \\
 	\hline
-	id 					& \texttt{bigint} 		& ID unik untuk kursi (Bagian dari Composite PK). 																								\\
+	id                   & \texttt{bigint}       & ID unik untuk kursi (Bagian dari Composite PK).                                      \\
 	\hline
-	seat\_number 		& \texttt{text} 			& Nomor kursi. 																																	\\
+	seat\_number         & \texttt{text}         & Nomor kursi.                                                                         \\
 	\hline
-	status 				& \texttt{seat\_status} 	& Status kursi: 'available' (tersedia), 'on-hold' (ditahan), 'sold' (terjual). 														\\
+	status               & \texttt{seat\_status} & Status kursi: 'available' (tersedia), 'on-hold' (ditahan), 'sold' (terjual).         \\
 	\hline
-	ticket\_area\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK). 																		\\
+	ticket\_area\_id     & \texttt{bigint}       & Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK).                    \\
 	\hline
-	created\_at 		& \texttt{timestamptz} 	& Waktu record kursi dibuat. 																														\\
+	created\_at          & \texttt{timestamptz}  & Waktu record kursi dibuat.                                                           \\
 	\hline
-	updated\_at 		& \texttt{timestamptz} 	& Waktu record kursi terakhir diperbarui. 																										\\
+	updated\_at          & \texttt{timestamptz}  & Waktu record kursi terakhir diperbarui.                                              \\
 \end{longtable}
 \endgroup
 
@@ -113,106 +113,106 @@ Berikut adalah skema setiap entitas pemesanan:
 \begingroup
 \footnotesize
 \begin{longtable}{|l|p{0.2\textwidth}|p{0.5\textwidth}|}
-	\caption{Skema Entitas Pemesanan} 																															\\
+	\caption{Skema Entitas Pemesanan}                                                                                     \\
 	\hline
-	\textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi} 																																	\\
+	\textbf{Atribut}     & \textbf{Tipe Data}       & \textbf{Deskripsi}                                                  \\
 	\endfirsthead
 
-	\multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}} 																																	\\
+	\multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                             \\
 	\hline
-	\textbf{Atribut} & \textbf{Tipe Data} & \textbf{Deskripsi} 																																	\\
+	\textbf{Atribut}     & \textbf{Tipe Data}       & \textbf{Deskripsi}                                                  \\
 	\endhead
 
 	\hline
-	\multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}} 																																	\\
+	\multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                      \\
 	\endfoot
 
 	\hline
 	\endlastfoot
 
 	\hline
-	\multicolumn{3}{|l|}{\textbf{Order}} \\
+	\multicolumn{3}{|l|}{\textbf{Order}}                                                                                  \\
 	\hline
-	id 					& \texttt{bigint} 		& ID unik untuk setiap pesanan (Bagian dari Composite PK). 																				\\
+	id                   & \texttt{bigint}          & ID unik untuk setiap pesanan (Bagian dari Composite PK).            \\
 	\hline
-	status 				& \texttt{order\_status} & Status pesanan: 'waiting-for-payment', 'failed', 'success'. 																			\\
+	status               & \texttt{order\_status}   & Status pesanan: 'waiting-for-payment', 'failed', 'success'.         \\
 	\hline
-	fail\_reason 		& \texttt{text} 			& Alasan jika status pesanan 'failed'. 																												\\
+	fail\_reason         & \texttt{text}            & Alasan jika status pesanan 'failed'.                                \\
 	\hline
-	event\_id 			& \texttt{bigint} 		& Foreign Key ke \texttt{Event.id}. 																													\\
+	event\_id            & \texttt{bigint}          & Foreign Key ke \texttt{Event.id}.                                   \\
 	\hline
-	ticket\_sale\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketSale.id}. 																											\\
+	ticket\_sale\_id     & \texttt{bigint}          & Foreign Key ke \texttt{TicketSale.id}.                              \\
 	\hline
-	ticket\_area\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK). 																		\\
+	ticket\_area\_id     & \texttt{bigint}          & Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK).   \\
 	\hline
-	external\_user\_id 	& \texttt{text} 			& Foreign Key ke \texttt{User.external\_user\_id}. 																									\\
+	external\_user\_id   & \texttt{text}            & Foreign Key ke \texttt{User.external\_user\_id}.                    \\
 	\hline
-	created\_at 		& \texttt{timestamptz} 	& Waktu record pesanan dibuat. 																														\\
+	created\_at          & \texttt{timestamptz}     & Waktu record pesanan dibuat.                                        \\
 	\hline
-	updated\_at 		& \texttt{timestamptz} 	& Waktu record pesanan terakhir diperbarui. 																										\\
+	updated\_at          & \texttt{timestamptz}     & Waktu record pesanan terakhir diperbarui.                           \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{OrderItem}} \\
+	\multicolumn{3}{|l|}{\textbf{OrderItem}}                                                                              \\
 	\hline
-	id 					& \texttt{bigint} 		& ID unik untuk setiap item dalam pesanan (Bagian dari Composite PK). 																		\\
+	id                   & \texttt{bigint}          & ID unik untuk setiap item dalam pesanan (Bagian dari Composite PK). \\
 	\hline
-	customer\_name 		& \texttt{text} 			& Nama pelanggan untuk item tiket ini. 																												\\
+	customer\_name       & \texttt{text}            & Nama pelanggan untuk item tiket ini.                                \\
 	\hline
-	customer\_email 	& \texttt{text} 			& Alamat surel pelanggan untuk item tiket ini. 																										\\
+	customer\_email      & \texttt{text}            & Alamat surel pelanggan untuk item tiket ini.                        \\
 	\hline
-	price 				& \texttt{int} 			& Harga yang dibayarkan untuk item ini. 																												\\
+	price                & \texttt{int}             & Harga yang dibayarkan untuk item ini.                               \\
 	\hline
-	order\_id 			& \texttt{bigint} 		& Foreign Key ke \texttt{Order.id}. 																													\\
+	order\_id            & \texttt{bigint}          & Foreign Key ke \texttt{Order.id}.                                   \\
 	\hline
-	ticket\_category\_id & \texttt{bigint} 		& Foreign Key ke \texttt{TicketCategory.id}. 																										\\
+	ticket\_category\_id & \texttt{bigint}          & Foreign Key ke \texttt{TicketCategory.id}.                          \\
 	\hline
-	ticket\_seat\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketSeat.id}. 																											\\
+	ticket\_seat\_id     & \texttt{bigint}          & Foreign Key ke \texttt{TicketSeat.id}.                              \\
 	\hline
-	ticket\_area\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK). 																		\\
+	ticket\_area\_id     & \texttt{bigint}          & Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK).   \\
 	\hline
-	created\_at 		& \texttt{timestamptz} 	& Waktu record item pesanan dibuat. 																													\\
+	created\_at          & \texttt{timestamptz}     & Waktu record item pesanan dibuat.                                   \\
 	\hline
-	updated\_at 		& \texttt{timestamptz} 	& Waktu record item pesanan terakhir diperbarui. 																								\\
+	updated\_at          & \texttt{timestamptz}     & Waktu record item pesanan terakhir diperbarui.                      \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{Invoice}} \\
+	\multicolumn{3}{|l|}{\textbf{Invoice}}                                                                                \\
 	\hline
-	id 					& \texttt{bigint} 		& ID unik untuk setiap invoice (Bagian dari Composite PK). 																				\\
+	id                   & \texttt{bigint}          & ID unik untuk setiap invoice (Bagian dari Composite PK).            \\
 	\hline
-	status 				& \texttt{invoice\_status} & Status invoice: 'pending', 'expired', 'failed', 'paid'. 																				\\
+	status               & \texttt{invoice\_status} & Status invoice: 'pending', 'expired', 'failed', 'paid'.             \\
 	\hline
-	amount 				& \texttt{int} 			& Total jumlah yang harus dibayar pada invoice. 																										\\
+	amount               & \texttt{int}             & Total jumlah yang harus dibayar pada invoice.                       \\
 	\hline
-	external\_id 		& \texttt{text} 			& ID eksternal dari penyedia layanan pembayaran. 																							\\
+	external\_id         & \texttt{text}            & ID eksternal dari penyedia layanan pembayaran.                      \\
 	\hline
-	order\_id 			& \texttt{bigint} 		& Foreign Key ke \texttt{Order.id}. 																													\\
+	order\_id            & \texttt{bigint}          & Foreign Key ke \texttt{Order.id}.                                   \\
 	\hline
-	ticket\_area\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK). 																		\\
+	ticket\_area\_id     & \texttt{bigint}          & Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK).   \\
 	\hline
-	created\_at 		& \texttt{timestamptz} 	& Waktu record invoice dibuat. 																														\\
+	created\_at          & \texttt{timestamptz}     & Waktu record invoice dibuat.                                        \\
 	\hline
-	updated\_at 		& \texttt{timestamptz} 	& Waktu record invoice terakhir diperbarui. 																										\\
+	updated\_at          & \texttt{timestamptz}     & Waktu record invoice terakhir diperbarui.                           \\
 	\hline
-	\multicolumn{3}{|l|}{\textbf{IssuedTicket}} \\
+	\multicolumn{3}{|l|}{\textbf{IssuedTicket}}                                                                           \\
 	\hline
-	id 					& \texttt{bigint} 		& ID unik untuk tiket yang diterbitkan (Bagian dari Composite PK). 																			\\
+	id                   & \texttt{bigint}          & ID unik untuk tiket yang diterbitkan (Bagian dari Composite PK).    \\
 	\hline
-	serial\_number 		& \texttt{text} 			& Nomor seri unik pada tiket yang diterbitkan. 																										\\
+	serial\_number       & \texttt{text}            & Nomor seri unik pada tiket yang diterbitkan.                        \\
 	\hline
-	holder\_name 		& \texttt{text} 			& Nama pemegang tiket. 																																\\
+	holder\_name         & \texttt{text}            & Nama pemegang tiket.                                                \\
 	\hline
-	name 				& \texttt{text} 			& Nama tiket (misalnya, nama kategori tiket). 																										\\
+	name                 & \texttt{text}            & Nama tiket (misalnya, nama kategori tiket).                         \\
 	\hline
-	description 		& \texttt{text} 			& Deskripsi pada tiket. 																															\\
+	description          & \texttt{text}            & Deskripsi pada tiket.                                               \\
 	\hline
-	ticket\_seat\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketSeat.id}. 																											\\
+	ticket\_seat\_id     & \texttt{bigint}          & Foreign Key ke \texttt{TicketSeat.id}.                              \\
 	\hline
-	order\_id 			& \texttt{bigint} 		& Foreign Key ke \texttt{Order.id}. 																													\\
+	order\_id            & \texttt{bigint}          & Foreign Key ke \texttt{Order.id}.                                   \\
 	\hline
-	order\_item\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{OrderItem.id}. 																												\\
+	order\_item\_id      & \texttt{bigint}          & Foreign Key ke \texttt{OrderItem.id}.                               \\
 	\hline
-	ticket\_area\_id 	& \texttt{bigint} 		& Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK). 																		\\
+	ticket\_area\_id     & \texttt{bigint}          & Foreign Key ke \texttt{TicketArea.id} (Bagian dari Composite PK).   \\
 	\hline
-	created\_at 		& \texttt{timestamptz} 	& Waktu record tiket diterbitkan. 																													\\
+	created\_at          & \texttt{timestamptz}     & Waktu record tiket diterbitkan.                                     \\
 	\hline
-	updated\_at 		& \texttt{timestamptz} 	& Waktu record tiket terakhir diperbarui. 																										\\
+	updated\_at          & \texttt{timestamptz}     & Waktu record tiket terakhir diperbarui.                             \\
 \end{longtable}
 \endgroup
