@@ -7,23 +7,23 @@ Terdapat berbagai Docker Image Container dan Helm Chart yang digunakan untuk \te
 % The table now has 3 columns: Kakas, Versi, Deskripsi
 \begin{longtable}{|p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|}
     \caption{Daftar Docker Image Container dan Helm Chart}
-    \label{tab:kakas-implementasi-deployment} \\
+    \label{tab:kakas-implementasi-deployment}                                                                                                                                    \\
     \hline
     % Header for the first page
-    \textbf{Kakas} & \textbf{Versi/ Base} & \textbf{Deskripsi} \\
+    \textbf{Kakas}                   & \textbf{Versi/Base}        & \textbf{Deskripsi}                                                                                           \\
     \hline
     \endfirsthead
 
     % Header for continuation pages
-    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}} \\
+    \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                    \\
     \hline
-    \textbf{Kakas} & \textbf{Versi/ Base} & \textbf{Deskripsi} \\
+    \textbf{Kakas}                   & \textbf{Versi/Base}        & \textbf{Deskripsi}                                                                                           \\
     \hline
     \endhead
 
     % Footer for pages with continuation
     \hline
-    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}} \\
+    \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                             \\
     \endfoot
 
     % Final footer of the table
@@ -32,34 +32,33 @@ Terdapat berbagai Docker Image Container dan Helm Chart yang digunakan untuk \te
 
     % Category: Custom Docker Images
     \hline
-    \multicolumn{3}{|l|}{\textbf{Custom Docker Image}} \\
+    \multicolumn{3}{|l|}{\textbf{Custom Docker Image}}                                                                                                                           \\
     \hline
-    Layanan Pembayaran & node:20.19.1-bookworm-slim & \textit yang menyimpan entrypoint untuk payment server dan payment notifier. \\
-    Layanan Tiket & golang:1.24.0-bullseye & \textit{Custom image} yang menyimpan berkas hasil kompilasi untuk server, seeder, dan \textit{order worker}. \\
-    K6 & grafana/k6:1.0.0 & \textit{Custom image} K6 dengan tambahan ekstensi grafana/xk6-faker. \\
-    PostgreSQL Cluster & postgres:16.8 & \textit{Custom image} untuk kluster primary-replica PostgreSQL dengan Patroni. \\
-    CitusData Cluster & postgres:16.8 & \textit{Custom image} untuk kluster CitusData dengan Patroni. \\
+    Layanan Pembayaran               & node:20.19.1-bookworm-slim & \textit yang menyimpan entrypoint untuk payment server dan payment notifier.                                 \\
+    Layanan Tiket                    & golang:1.24.0-bullseye     & \textit{Custom image} yang menyimpan berkas hasil kompilasi untuk server, seeder, dan \textit{order worker}. \\
+    K6                               & grafana/k6:1.0.0           & \textit{Custom image} K6 dengan tambahan ekstensi grafana/xk6-faker.                                         \\
+    PostgreSQL Cluster               & postgres:16.8              & \textit{Custom image} untuk kluster primary-replica PostgreSQL dengan Patroni.                               \\
+    CitusData Cluster                & postgres:16.8              & \textit{Custom image} untuk kluster CitusData dengan Patroni.                                                \\
     \hline
 
     % Category: Helm Charts
-    \multicolumn{3}{|l|}{\textbf{Helm Chart}} \\
+    \multicolumn{3}{|l|}{\textbf{Helm Chart}}                                                                                                                                    \\
     \hline
-    grafana/grafana & 8.13.1 & Helm chart untuk Grafana. \\
-    prometheus & 27.11.0 & Helm chart untuk Prometheus. \\
-    grafana/loki & 6.29.0 & Helm chart untuk Loki. \\
-    grafana/alloy & 1.0.2 & Helm chart untuk Alloy. \\
-    jetstack/cert-manager & 1.17.2 & Helm chart untuk cert-manager. \\
-    bitnami/nginx-ingress-controller & 11.6.16 & Helm chart untuk NGINX Ingress Controller. \\
-    bitnami/redis-cluster & 11.5.3 & Helm chart untuk kluster Redis. \\
-    bitnami/rabbitmq & 16.0.1 & Helm chart untuk RabbitMQ. \\
-    yugabytedb/yugabyte & 2024.2.2 & Helm chart untuk YugabyteDB. \\
-    xxl-job-admin/pgcat & 0.3.2 & Helm chart untuk PgCat. \\
+    grafana/grafana                  & 8.13.1                     & Helm chart untuk Grafana.                                                                                    \\
+    prometheus                       & 27.11.0                    & Helm chart untuk Prometheus.                                                                                 \\
+    grafana/loki                     & 6.29.0                     & Helm chart untuk Loki.                                                                                       \\
+    grafana/alloy                    & 1.0.2                      & Helm chart untuk Alloy.                                                                                      \\
+    jetstack/cert-manager            & 1.17.2                     & Helm chart untuk cert-manager.                                                                               \\
+    bitnami/nginx-ingress-controller & 11.6.16                    & Helm chart untuk NGINX Ingress Controller.                                                                   \\
+    bitnami/redis-cluster            & 11.5.3                     & Helm chart untuk kluster Redis.                                                                              \\
+    bitnami/rabbitmq                 & 16.0.1                     & Helm chart untuk RabbitMQ.                                                                                   \\
+    yugabytedb/yugabyte              & 2024.2.2                   & Helm chart untuk YugabyteDB.                                                                                 \\
+    xxl-job-admin/pgcat              & 0.3.2                      & Helm chart untuk PgCat.                                                                                      \\
     \hline
-    
-    % Category: Kubernetes Operator
-    \multicolumn{3}{|l|}{\textbf{Kubernetes Operator}} \\
-    \hline
-    grafana/k6-operator & 3.13.0 & Operator untuk menjalankan pengujian K6 secara terdistribusi. \\
 
+    % Category: Kubernetes Operator
+    \multicolumn{3}{|l|}{\textbf{Kubernetes Operator}}                                                                                                                           \\
+    \hline
+    grafana/k6-operator              & 3.13.0                     & Operator untuk menjalankan pengujian K6 secara terdistribusi.                                                \\
 \end{longtable}
 \endgroup
