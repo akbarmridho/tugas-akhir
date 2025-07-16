@@ -7,16 +7,16 @@ Pemartisian dapat dibagi menjadi dua, yaitu pemartisian horizontal yang membagi 
 Tujuan dari pemartisian data adalah untuk menyebarkan data dan beban secara adil kepada \textit{node} yang berbeda. Untuk itu, pendekatan untuk membagi data juga menjadi hal yang penting dalam partisi data. Berikut adalah beberapa pendekatan yang umum digunakan:
 
 \begin{enumerate}
-    \item Partisi berdasarkan kunci, seperti judul buku yang berawalan A-E, F-J, dan seterusnya. Meskipun begitu, perlu diiperhatikan apakah distribusi kunci tersebar secara merata.
+    \item Partisi berdasarkan kunci, seperti judul buku yang berawalan A-E, F-J, dan seterusnya. Meskipun begitu, perlu diiperhatikan apakah distribusi kunci tersebar secara merata. Gambar \ref{fig:partition-by-key-range} menunjukkan ilustrasi pemartisian berdasarkan rentang kunci.
           \pagebreak
           \begin{figure}[htbp]
               \centering
               \includegraphics[width=0.8\textwidth]{resources/chapter-2/partition-by-key-range.png}
               \caption{Pemartisian berdasarkan rentang kunci \parencite{dataIntensiveApplications}}
-              \label{fig: partition-by-key-range}
+              \label{fig:partition-by-key-range}
           \end{figure}
 
-    \item Partisi berdasarkan hash kunci. Fungsi hash yang baik dapat mengubah distribusi kunci yang tidak simetris menjadi merata.
+    \item Partisi berdasarkan hash kunci. Fungsi hash yang baik dapat mengubah distribusi kunci yang tidak simetris menjadi merata. Gambar \ref{fig:partition-by-hash} menunjukkan ilustrasi pemartisian berdasarkan kunci hash.
           \begin{figure}[htbp]
               \centering
               \includegraphics[width=0.8\textwidth]{resources/chapter-2/partition-by-hash.png}

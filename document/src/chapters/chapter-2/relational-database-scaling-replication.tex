@@ -8,7 +8,7 @@ Replikasi berarti menyimpan salinan data yang sama pada beberapa mesin yang berb
     \item Untuk meningkatkan jumlah mesin yang bisa melayani permintaan baca.
 \end{enumerate}
 
-Salah satu pendekatan yang umum diimplementasikan pada basis data relasional seperti PostgreSQL adalah replikasi berbasiskan pemimpin dan pengikut. Satu \textit{node} ditugaskan sebagai pemimpin yang melayani permintaan baca dan tulis, lalu setiap perubahan yang terjadi akan direplikasi oleh replika (pengikut). Dengan pola seperti ini, umumnya operasi tulis hanya dapat ditangani oleh pemimpin dan operasi baca dapat ditangani oleh semua \textit{node}.
+Salah satu pendekatan yang umum diimplementasikan pada basis data relasional seperti PostgreSQL adalah replikasi berbasiskan pemimpin dan pengikut. Satu \textit{node} ditugaskan sebagai pemimpin yang melayani permintaan baca dan tulis, lalu setiap perubahan yang terjadi akan direplikasi oleh replika (pengikut). Dengan pola seperti ini, umumnya operasi tulis hanya dapat ditangani oleh pemimpin dan operasi baca dapat ditangani oleh semua \textit{node}. Gambar \ref{fig:leader-based-replication} menunjukkan ilustrasi replikasi basis data.
 
 \begin{figure}[htbp]
     \centering

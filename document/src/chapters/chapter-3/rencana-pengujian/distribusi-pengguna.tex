@@ -2,11 +2,12 @@
 
 Ketika pengguna berhasil memesan tiket, terdapat 5\% kemungkinan bahwa pembayaran pengguna gagal. Hal ini dilakukan untuk menyimulasikan pengguna yang batal membeli tiket atau mengalami kegagalan pembayaran.
 
-Sebuah acara memiliki dua tipe kursi, yaitu kursi bernomor (\textit{numbered seat}) dan festival (\textit{free-standing}). Tiket kursi bernomor memiliki kategori Platinum, Gold, Silver, dan Bronze. Tiket festival memiliki kategori VIP, Zona A, dan Zona B. Setiap pengguna memiliki preferensi kategori kursi yang ingin dibeli, sebagaimana digambarkan pada distribusi berikut.
+Sebuah acara memiliki dua tipe kursi, yaitu kursi bernomor (\textit{numbered seat}) dan festival (\textit{free-standing}). Tiket kursi bernomor memiliki kategori Platinum, Gold, Silver, dan Bronze. Tiket festival memiliki kategori VIP, Zona A, dan Zona B. Setiap pengguna memiliki preferensi kategori kursi yang ingin dibeli, sebagaimana digambarkan pada tabel \ref{table:distribusi-kategori}.
 
 \begin{table}[h]
     \centering
     \caption{Distribusi Kategori}
+    \label{table:distribusi-kategori}
     \begin{tabular}{|l|l|l|}
         \hline
         \textbf{Tingkatan} & \textbf{Distribusi} & \textbf{Minat Kategori} \\
@@ -24,11 +25,12 @@ Sebuah acara memiliki dua tipe kursi, yaitu kursi bernomor (\textit{numbered sea
     \end{tabular}
 \end{table}
 
-Tingkatan merupakan nama profil dengan minat kategori tertentu secara terurut. Selain itu, setiap pengguna memiliki preferensi hari. Pengguna yang memiliki preferensi spesifik akan mengutamakan hari yang sesuai dengan preferensinya (bisa satu atau dua pilihan hari), dibandingkan dengan kesesuaian preferensi kategori. Pengguna yang tidak memiliki preferensi akan mengutamakan kesesuaian preferensi kategori dibandingkan dengan kesesuaian hari.
+Tingkatan merupakan nama profil dengan minat kategori tertentu secara terurut. Selain itu, setiap pengguna memiliki preferensi hari. Pengguna yang memiliki preferensi spesifik akan mengutamakan hari yang sesuai dengan preferensinya (bisa satu atau dua pilihan hari), dibandingkan dengan kesesuaian preferensi kategori. Pengguna yang tidak memiliki preferensi akan mengutamakan kesesuaian preferensi kategori dibandingkan dengan kesesuaian hari. Distribusi preferensi hari digambarkan pada tabel \ref{table:distribusi-hari}.
 
 \begin{table}[h]
     \centering
     \caption{Distribusi Hari}
+    \label{table:distribusi-hari}
     \begin{tabular}{|l|l|}
         \hline
         \textbf{Hari} & \textbf{Distribusi} \\
@@ -40,11 +42,12 @@ Tingkatan merupakan nama profil dengan minat kategori tertentu secara terurut. S
     \end{tabular}
 \end{table}
 
-Variasi berikutnya adalah variasi dari seberapa persisten pengguna untuk mendapatkan tiket yang diinginkan. Variasi ini ditentukan dengan berapa kali maksimal pencarian dan pemesanan sebelum pengguna tersebut menyerah.
+Variasi berikutnya adalah variasi dari seberapa persisten pengguna untuk mendapatkan tiket yang diinginkan. Variasi ini ditentukan dengan berapa kali maksimal pencarian dan pemesanan sebelum pengguna tersebut menyerah. Distribusi persistensi pengguna dibahas pada tabel \ref{table:distribusi-persistensi}.
 
 \begin{table}[h]
     \centering
     \caption{Distribusi Persistensi}
+    \label{table:distribusi-persistensi}
     \begin{tabular}{|l|l|l|}
         \hline
         \textbf{Persistence} & \textbf{Distribusi} & \textbf{Batas}                      \\
@@ -60,11 +63,12 @@ Variasi berikutnya adalah variasi dari seberapa persisten pengguna untuk mendapa
 
 \pagebreak
 
-Variasi terakhir adalah variasi dari berapa banyak tiket yang dipesan oleh suatu pengguna dalam satu kali pemesanan. Hal ini untuk menyimulasikan pengguna yang datang sendiri, bersama pasangan, dan datang dalam satu grup.
+Variasi terakhir adalah variasi dari berapa banyak tiket yang dipesan oleh suatu pengguna dalam satu kali pemesanan. Hal ini untuk menyimulasikan pengguna yang datang sendiri, bersama pasangan, dan datang dalam satu grup. Distribusi ini dibahas pada tabel \ref{table:distribusi-kuantitas}.
 
 \begin{table}[h]
     \centering
     \caption{Distribusi Kuantitas}
+    \label{table:distribusi-kuantitas}
     \begin{tabular}{|l|l|l|}
         \hline
         \textbf{Varian} & \textbf{Distribusi} & \textbf{Kuantitas} \\

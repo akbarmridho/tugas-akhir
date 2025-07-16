@@ -4,7 +4,7 @@ Citus merupakan mesin basis data terdistribusi untuk PostgreSQL yang menangani k
 
 Sebuah kluster memiliki banyak \textit{node} yang terspesialisasi menjadi koordinator dan node pekerja. Aplikasi mengirimkan kueri kepada koordinator, lalu diteruskan kepada node pekerja terkait. Pendekatan ini memungkinkan setiap \textit{node} mampu memproses permintaan tulis sehingga pemrosesan bisa dilakukan secara parallel.
 
-\pagebreak
+Selain itu, Citus memiliki skema \textit{sharding} berdasarkan skema dan baris. Hal ini diilustrasikan pada gambar \ref{fig:row-vs-schema-sharding}.
 
 \begin{figure}[htbp]
     \centering

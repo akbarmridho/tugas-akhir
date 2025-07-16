@@ -4,11 +4,12 @@ Untuk menyimulasikan proses pembayaran, sebuah \textit{mock service} untuk gerba
 
 Interaksi antara sistem tiket dan Payment Service dilakukan melalui serangkaian \textit{endpoint} REST API. Layanan ini juga mengirimkan pemberitahuan melalui \textit{webhook} ketika status sebuah tagihan berubah (misalnya, berhasil dibayar atau kedaluwarsa). Untuk menjamin keamanan, setiap isi data \textit{webhook} diamankan menggunakan HMAC. Detail teknis lebih lanjut mengenai arsitektur internal dan teknologi yang digunakan pada layanan ini dapat dilihat pada lampiran \ref{apx:payment-implementation}.
 
-Berikut adalah daftar \textit{endpoint} yang tersedia pada Payment Service untuk berinteraksi dengan sistem tiket dan pengguna.
+Tabel \ref{table:payment-endpoint} membahas daftar \textit{endpoint} yang tersedia pada Payment Service untuk berinteraksi dengan sistem tiket dan pengguna.
 
 \begin{table}[h!]
 \centering
 \caption{Daftar \textit{Endpoint} Layanan Pembayaran}
+\label{table:payment-endpoint}
 \begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|}
 \hline
 \textbf{Endpoint} & \textbf{Keterangan} \\
