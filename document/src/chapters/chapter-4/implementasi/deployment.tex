@@ -2,45 +2,33 @@
 
 \subsubsection{Sistem Pengawasan}
 
-Sebagaimana dibahas pada bagian sebelumnya, komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Loki, Grafana Dashboard, dan Prometheus. Meskipun begitu, terdapat beberapa instans tambahan yang merupakan pengaturan bawaan dari Helm Chart yang digunakan.
+Komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Loki, Grafana Dashboard, dan Prometheus dengan beberapa instans tambahan yang merupakan pengaturan bawaan dari Helm Chart yang digunakan. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-monitoring}.
 
 \begin{figure}[htbp!]
     \centering
-    \includegraphics[width=1\textwidth]{resources/chapter-4/monitoring-1.png}
-    \caption{\textit{Deployment} Sistem Pengawasan (Bagian 1)}
-    \label{fig:deployment-monitoring-1}
-\end{figure}
-
-\begin{figure}[htbp!]
-    \centering
-    \includegraphics[width=1\textwidth]{resources/chapter-4/monitoring-2.png}
-    \caption{\textit{Deployment} Sistem Pengawasan (Bagian 2)}
-    \label{fig:deployment-monitoring-2}
+    \includegraphics[width=0.9\textwidth]{resources/chapter-4/monitoring-1.png}
+    \caption{\textit{Deployment} Sistem Pengawasan}
+    \label{fig:deployment-monitoring}
 \end{figure}
 
 \pagebreak
 
 \subsubsection{Nginx Ingress Controller}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=1\textwidth]{resources/chapter-4/nginx-2.png}
-    \caption{\textit{Deployment} Nginx Ingress (Bagian 1)}
-    \label{fig:deployment-nginx-1}
-\end{figure}
-
-Sistem ini terdiri atas cert-manager untuk menangani sertifikat SSL domain secara otomatis, layanan Nginx Ingress Controller, serta beberapa ingress yang mengekspos layanan internal kubernetes ke dunia luar. Pada kluster ini terdapat empat \textit{service} yang diekspos, yaitu layanan tiket, layanan pembayaran, dasbor prometheus, dan dasbor Grafana.
+Sistem ini terdiri atas cert-manager, layanan Nginx Ingress Controller, serta beberapa \textit{ingress} yang mengekspos layanan internal kubernetes ke dunia luar. Terdapat empat \textit{service} yang diekspos, yaitu layanan tiket, layanan pembayaran, dasbor prometheus, dan dasbor Grafana. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-nginx}.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=1\textwidth]{resources/chapter-4/nginx-1.png}
-    \caption{\textit{Deployment} Nginx Ingress (Bagian 2)}
-    \label{fig:deployment-nginx-2}
+    \includegraphics[width=0.8\textwidth]{resources/chapter-4/nginx-1.png}
+    \caption{\textit{Deployment} Nginx Ingress}
+    \label{fig:deployment-nginx}
 \end{figure}
 
 \pagebreak
 
 \subsubsection{Layanan Pembayaran}
+
+Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service, dan kluster Redis. Deployment Payment terdiri atas dua kontainer, yaitu Payment Server dan Payment Notifier. Layanan ini digabung dengan kluster sistem tiket untuk mempermudah \textit{deployment}, pengujian, dan memastikan tidak ada masalah jaringan yang terjadi. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-payment}.
 
 \begin{figure}[htbp]
     \centering
@@ -49,11 +37,12 @@ Sistem ini terdiri atas cert-manager untuk menangani sertifikat SSL domain secar
     \label{fig:deployment-payment}
 \end{figure}
 
-Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service, dan kluster Redis. Deployment Payment terdiri atas dua kontainer, yaitu Payment Server dan Payment Notifier. Layanan ini digabung dengan kluster sistem tiket untuk mempermudah \textit{deployment}, pengujian, dan memastikan tidak ada masalah jaringan yang terjadi.
 
 \pagebreak
 
 \subsubsection{Layanan Tiket tanpa Pengendalian Aliran}
+
+Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, kluster redis, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-ticket-nofc}.
 
 \begin{figure}[htbp]
     \centering
@@ -62,11 +51,11 @@ Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service,
     \label{fig:deployment-ticket-nofc}
 \end{figure}
 
-Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, kluster redis, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat.
-
 \pagebreak
 
 \subsubsection{Layanan Tiket varian dengan Pengendalian Aliran}
+
+Layanan tiket dengan pengendalian aliran terdiri atas Ticket Server Deployment, Ticket Worker Deployment, kluster redis, RabbitMQ, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-ticket-fc}.
 
 \begin{figure}[htbp]
     \centering
@@ -75,11 +64,13 @@ Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, k
     \label{fig:deployment-ticket-fc}
 \end{figure}
 
-Layanan tiket dengan pengendalian aliran terdiri atas Ticket Server Deployment, Ticket Worker Deployment, kluster redis, RabbitMQ, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat.
+Hal yang membedakan \textit{deployment} varian ini dengan varian tanpa pengendalian aliran adalah keberadaan kluster RabbitMQ dan Ticket Worker Deployment. Selain itu, program yang dijalankan pada Ticket Server Deployment juga berbeda.
 
 \pagebreak
 
 \subsubsection{Kluster PostgreSQL}
+
+Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas satu \textit{primary} dan satu replika. Selain itu, terdapat PGCat yang bertindak sebagai pooler dan \textit{load balancer} pada level kueri. PGCat akan membaca kueri dan meneruskan query kepada \textit{primary} atau replika berdasarkan jenis kueri dan beban setiap instans. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-postgres}.
 
 \begin{figure}[htbp]
     \centering
@@ -88,11 +79,12 @@ Layanan tiket dengan pengendalian aliran terdiri atas Ticket Server Deployment, 
     \label{fig:deployment-postgres}
 \end{figure}
 
-Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas satu \textit{primary} dan satu replika. Selain itu, terdapat PGCat yang bertindak sebagai pooler dan \textit{load balancer} pada level kueri. PGCat akan membaca kueri dan meneruskan query kepada \textit{primary} atau replika berdasarkan jenis kueri dan beban setiap instans.
 
 \pagebreak
 
 \subsubsection{Kluster CitusData}
+
+Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama merupakan koordinator dan sisanya merupakan pekerja. Terdapat PGCat yang terhubung dengan koordinator. Sistem tiket terhubung langsung dengan PGCat. Koneksi dengan pekerja dilakukan melalui koordinator. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-citusdata}.
 
 \begin{figure}[htbp]
     \centering
@@ -101,11 +93,11 @@ Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas s
     \label{fig:deployment-citusdata}
 \end{figure}
 
-Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama merupakan koordinator dan sisanya merupakan pekerja. Terdapat PGCat yang terhubung dengan koordinator. Sistem tiket terhubung langsung dengan PGCat. Koneksi dengan pekerja dilakukan melalui koordinator.
-
 \pagebreak
 
 \subsubsection{Kluster YugabyteDB}
+
+Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set, dan PGCat. PGCat terhubung dengan semua instans YB-TServer. Sistem tiket terhubung langsung dengan PGCat. Proses \textit{load balancing} koneksi dengan YB-TServer ditangani oleh PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-yugabyte}.
 
 \begin{figure}[htbp]
     \centering
@@ -114,13 +106,13 @@ Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama m
     \label{fig:deployment-yugabyte}
 \end{figure}
 
-Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set, dan PGCat. PGCat terhubung dengan semua instans YB-TServer. Sistem tiket terhubung langsung dengan PGCat. Proses \textit{load balancing} koneksi dengan YB-TServer ditangani oleh PGCat.
-
 \pagebreak
 
 \subsection{Konfigurasi \textit{Deployment} Kluster Agen Penguji}
 
 \subsubsection{Sistem Pengawasan}
+
+Sistem pengawasan pada agen penguji lebih sederhana dengan komponen pengawasan hanya terdiri atas Grafana Dashboard dan Prometheus. Grafana Alloy dan Loki tidak digunakan karena \textit{log} yang relevan hanya berasal dari eksekusi K6 yang isinya dapat ditampilkan dengan perintah tertentu. Selain itu, hal ini dilakukan untuk mengurangi penggunaan sumber daya yang tidak perlu, sehingga besarnya sumber daya yang dapat digunakan untuk K6 menjadi lebih banyak. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-monitoring-agent}.
 
 \begin{figure}[htbp]
     \centering
@@ -129,24 +121,15 @@ Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set,
     \label{fig:deployment-monitoring-agent}
 \end{figure}
 
-Sistem pengawasan pada agen penguji lebih sederhana dengan komponen pengawasan hanya terdiri atas Grafana Dashboard dan Prometheus. Grafana Alloy dan Loki tidak digunakan karena \textit{log} yang relevan hanya berasal dari eksekusi K6 yang isinya dapat ditampilkan dengan perintah tertentu. Selain itu, hal ini dilakukan untuk mengurangi penggunaan sumber daya yang tidak perlu, sehingga besarnya sumber daya yang dapat digunakan untuk K6 menjadi lebih banyak.
-
-\pagebreak
-
 \subsubsection{Nginx Ingress Controller}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=1\textwidth]{resources/chapter-4/agent-nginx-1.png}
-    \caption{Deployment Nginx Ingress}
-    \label{fig:deployment-nginx-agent-1}
-\end{figure}
-
-Sistem ini terdiri atas cert-manager untuk menangani sertifikat SSL domain secara otomatis, layanan Nginx Ingress Controller, serta beberapa ingress yang mengekspos layanan internal kubernetes ke dunia luar. Pada kluster ini terdapat dua \textit{service} yang diekspos, yaitu dasbor prometheus dan dasbor Grafana. Konfigurasi cert-manager kluster penguji sama dengan konfigurasi cert-manager kluster sistem tiket sebagaimana ditunjukkan pada gambar \ref{fig:deployment-nginx-1}.
+Komponen ini memiliki \textit{deployment} yang sama seperti klsuter sistem tiket sebagaimana ditunjukkan pada gambar \ref{fig:deployment-nginx}. Hanya saja, perbedaannya terletak pada tidak adanya \textit{ingress} layanan tiket dan layanan pembayaran.
 
 \pagebreak
 
 \subsubsection{K6 Operator}
+
+K6 Operator merupakan komponen utama kluster penguji. Komponen ini mengatur inisiasi dan \textit{runtime} kode pengujian k6. Saat pengujian dijalankan, Grafana Operator akan menginisiasi instans K6 sebanyak 12 instans. Instans ini akan didistribusikan ke berbagai node pada kluster. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-k6-operator}.
 
 \begin{figure}[htbp]
     \centering
@@ -154,7 +137,5 @@ Sistem ini terdiri atas cert-manager untuk menangani sertifikat SSL domain secar
     \caption{Deployment K6 Operator}
     \label{fig:deployment-k6-operator}
 \end{figure}
-
-K6 Operator merupakan komponen utama kluster penguji. Komponen ini mengatur inisiasi dan \textit{runtime} kode pengujian k6. Saat pengujian dijalankan, Grafana Operator akan menginisiasi instans K6 sebanyak 12 buah. Instans ini akan didistribusikan pada kluster.
 
 \pagebreak

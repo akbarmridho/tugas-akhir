@@ -2,7 +2,7 @@
 
 \subsubsection{Kluster Sistem Tiket}
 
-Berikut adalah alokasi sumber daya untuk komponen esensial pada kluster tiket:
+Daftar alokasi sumber daya untuk komponen esensial pada kluster tiket dijelaskan pada tabel \ref{tab:resource_allocation}.
 
 \begin{table}[htpb]
     \centering
@@ -25,9 +25,10 @@ Berikut adalah alokasi sumber daya untuk komponen esensial pada kluster tiket:
     \end{tabular}
 \end{table}
 
-Tidak semua komponen dimasukkan ke dalam tabel tersebut. Terdapat beberapa komponen tambahan seperti Prometheus Exporter, MinIO, dan lain-lain yang alokasinya kecil dan dapat diabaikan.
+Tidak semua komponen dimasukkan ke dalam tabel tersebut. Terdapat beberapa komponen tambahan seperti Prometheus Exporter, MinIO, dan lain-lain yang alokasinya kecil dan dapat diabaikan. Selain itu, komponen inti dari sistem ini memiliki besar \textit{request allocation} dan \textit{limit allocation} sama.
 
-Pada komponen berikut besar \textit{request allocation} dan \textit{limit allocation} sama. Berikut adalah alokasi sumber daya untuk varian tanpa pengendalian aliran:
+Di sisi lain, daftar alokasi sumber daya untuk varian sistem dengan dan tanpa pengendalian aliran sedikit berbeda. Daftar alokasi sumber daya untuk varian tanpa pengendalian aliran dijelaskan pada tabel \ref{tab:nofc-allocation} dan daftar alokasi sumber daya untuk varian dengan pengendalian aliran dijelaskan pada tabel \ref{tab:service_comparison_fc}
+
 
 \begin{table}[htbp]
     \centering
@@ -48,8 +49,6 @@ Pada komponen berikut besar \textit{request allocation} dan \textit{limit alloca
 
 \pagebreak
 
-Berikut adalah alokasi sumber daya untuk varian dengan pengendalian aliran:
-
 \begin{table}[htbp]
     \centering
     \caption{Alokasi Sumber Daya dengan pengendalian aliran}
@@ -69,7 +68,7 @@ Apabila diperhatikan, jumlah instans Ticket Server cukup banyak dengan alokasi s
 
 \subsubsection{Kluster Penguji}
 
-Berikut adalah alokasi sumber daya untuk kluster penguji:
+Daftar alokasi sumber daya untuk kluster penguji dijelaskan pada tabel \ref{tab:test-cluster-allocation}.
 
 \begin{table}[htbp]
     \centering

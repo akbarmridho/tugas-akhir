@@ -7,20 +7,20 @@ Ketika pembayaran berhasil atau kedaluwarsa, layanan ini akan memanggil \textit{
 
 \section{Komponen Layanan}
 
-Komponen pada layanan ini akan dibagi menjadi dua, yaitu pemroses pembayaran dan komponen notifikasi. Pemroses pembayaran merupakan komponen yang melayani pembuatan tagihan dan pembayaran tagihan. Komponen notifikasi merupakan komponen yang menangani pengatur waktu ketika terdapat pembayaran yang kedaluwarsa dan  memanggil \textit{webhook} ketika pembayaran berhasil atau kedaluwarsa. Penskalaan setiap komponen dapat dilakukan secara horizontal.
+Komponen pada layanan ini akan dibagi menjadi dua, yaitu pemroses pembayaran dan komponen notifikasi. Pemroses pembayaran merupakan komponen yang melayani pembuatan tagihan dan pembayaran tagihan. Komponen notifikasi merupakan komponen yang menangani pengatur waktu ketika terdapat pembayaran yang kedaluwarsa dan  memanggil \textit{webhook} ketika pembayaran berhasil atau kedaluwarsa. Penskalaan setiap komponen dapat dilakukan secara horizontal. Arsitektur layanan pembayaran ditunjukkan pada gambar \ref{fig:payment-service-deployment}.
 
 \pagebreak
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-3/payment-service.png}
+    \includegraphics[width=0.65\textwidth]{resources/chapter-3/payment-service.png}
     \caption{Arsitektur Layanan Pembayaran}
     \label{fig:payment-service-deployment}
 \end{figure}
 
 \section{Alur Layanan}
 
-Berikut adalah alur sistem pembayaran untuk fitur pembuatan tagihan, pembayaran tagihan, dan baca data tagihan.
+Gambar \ref{fig:payment-flow1} menunjukkan alur sistem pembayaran untuk fitur pembuatan tagihan, pembayaran tagihan, dan baca data tagihan.
 
 \begin{figure}[htbp]
     \centering
@@ -31,7 +31,7 @@ Berikut adalah alur sistem pembayaran untuk fitur pembuatan tagihan, pembayaran 
 
 \pagebreak
 
-Selanjutnya, diagram berikut menunjukkan alur pemrosesan \textit{webhook} untuk pembayaran pemesanan yang berhasil atau pun gagal. Skema ini menggunakan strategi \textit{exponential backoff} untuk menangani kasus pemberitahuan yang gagal.
+Selanjutnya, gambar \ref{fig:payment-flow2} menunjukkan alur pemrosesan \textit{webhook} untuk pembayaran pemesanan yang berhasil atau pun gagal. Skema ini menggunakan strategi \textit{exponential backoff} untuk menangani kasus pemberitahuan yang gagal.
 
 \begin{figure}[htbp]
     \centering

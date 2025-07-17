@@ -2,12 +2,13 @@
 
 \subsubsection{Variasi Sistem Tiket}
 
-Terdapat empat variasi sistem yang akan diuji pada penelitian ini, yaitu:
+Terdapat empat variasi sistem yang akan diuji pada penelitian ini. Daftar variasi ini dijelaskan pada tabel \ref{table:variasi-selama-pengujian}. Varian nofc-pg merupakan varian yang menjadi tolok ukur/basis pengujian untuk mengukur kinerja varian yang lain.
 
 \begingroup
 \footnotesize
 \begin{longtable}{|l|l|l|}
-    \caption{Variasi Sistem Selama Pengujian}                                                 \\
+    \caption{Variasi Sistem Selama Pengujian}
+    \label{table:variasi-selama-pengujian}                                                 \\
     \hline
     \textbf{ID}   & \textbf{Pengendalian Aliran} & \textbf{Basis Data}                        \\
     \hline
@@ -37,8 +38,6 @@ Terdapat empat variasi sistem yang akan diuji pada penelitian ini, yaitu:
 \end{longtable}
 \endgroup
 
-Varian nofc-pg merupakan varian yang menjadi tolok ukur/basis pengujian untuk mengukur kinerja varian yang lain.
-
 \pagebreak
 
 \subsubsection{Variasi Skenario Penjualan Tiket}
@@ -54,12 +53,13 @@ Terdapat dua skenario yang akan digunakan selama pengujian, yaitu:
 
 Terdapat dua skenario pengujian yang dilakukan, yaitu skenario beban berkelanjutan dan skenario perebutan tiket. Banyaknya pengguna dalam satu waktu (\textit{concurrent user}) didefinisikan sebagai VU (\textit{virtual user}). Satu iterasi berarti satu alur eksekusi penuh simulasi pengguna. Terdapat perbedaan mendasar pada kedua skenario. Skenario beban berkelanjutan menjaga agar \textit{concurrent user} tetap sama sepanjang waktu, sedangkan skenario perebutan tiket menggunakan distribusi \textit{arrival} pengguna sehingga jumlah \textit{concurrent user} tidak selalu sama.
 
-Berikut adalah daftar skenario pengujian beban berkelanjutan:
+Daftar skenario pengujian beban berkelanjutan dijelaskan pada tabel \ref{table:skenario-beban-berkelanjutan} dan daftar skenario pengujian perebutan tiket dijelaskan pada tabel \ref{table:skenario-perebutan-tiket}.
 
 \begingroup
 \footnotesize
 \begin{longtable}{|l|l|l|l|l|}
-    \caption{Skenario Beban Berkelanjutan}                                                                                  \\
+    \caption{Skenario Beban Berkelanjutan}
+    \label{table:skenario-beban-berkelanjutan}                                                                                  \\
     \hline
     \textbf{ID} & \textbf{Skenario Penjualan} & \textbf{Jumlah Iterasi} & \textbf{Banyaknya VUs} & \textbf{Durasi Maksimal} \\
     \hline
@@ -87,12 +87,11 @@ Berikut adalah daftar skenario pengujian beban berkelanjutan:
 \end{longtable}
 \endgroup
 
-Berikut adalah daftar skenario pengujian perebutan tiket:
-
 \begingroup
 \footnotesize
 \begin{longtable}{|l|l|l|l|l|}
-    \caption{Skenario Perebutan Tiket}                                                                                   \\
+    \caption{Skenario Perebutan Tiket}
+    \label{table:skenario-perebutan-tiket}                                                                                   \\
     \hline
     \textbf{ID} & \textbf{Skenario Penjualan} & \textbf{Jumlah Iterasi} & \textbf{VUs Puncak} & \textbf{Durasi Maksimal} \\
     \hline
@@ -115,7 +114,9 @@ Berikut adalah daftar skenario pengujian perebutan tiket:
 \end{longtable}
 \endgroup
 
-Kedatangan pengguna skenario perebutan tiket mengikuti distribusi lognormal yang digambarkan pada grafik berikut:
+\pagebreak
+
+Kedatangan pengguna skenario perebutan tiket mengikuti distribusi lognormal yang digambarkan pada gambar \ref{fig:vus-arrival}.
 
 \begin{figure}[htbp]
     \centering
