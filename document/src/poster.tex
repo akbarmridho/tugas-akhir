@@ -1,262 +1,226 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% a0poster Landscape Poster
-% LaTeX Template
-% Version 1.0 (22/06/13)
-%
-% The a0poster class was created by:
-% Gerlinde Kettl and Matthias Weiser (tex@kettl.de)
-% 
-% This template has been downloaded from:
-% http://www.LaTeXTemplates.com
-%
-% License:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
-%
+% a0poster Landscape Poster - REVAMPED STYLE
+% Original Template from: http://www.LaTeXTemplates.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%   PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
 \documentclass[a0,landscape]{config/poster/a0poster}
-
 \usepackage{config/poster/a0size}
 
-\usepackage{multicol} % This is so we can have multiple columns of text side-by-side
-\columnsep=100pt % This is the amount of white space between the columns in the poster
-\columnseprule=3pt % This is the thickness of the black line between the columns in the poster
-
-\usepackage[svgnames]{xcolor} % Specify colors by their 'svgnames', for a full list of all colors available see here: http://www.latextemplates.com/svgnames-colors
-
+% Core Packages
+\usepackage{multicol} % For multiple columns
+\usepackage[svgnames]{xcolor} % For custom colors
 \usepackage{times} % Use the times font
-%\usepackage{palatino} % Uncomment to use the Palatino font
+\usepackage{graphicx} % For including images
+\usepackage{booktabs} % For professional tables
+\usepackage[font=small,labelfont=bf]{caption} % For figure/table captions
+\usepackage{amsfonts, amsmath, amsthm, amssymb} % Math packages
+\usepackage[style=ieee]{biblatex} % IEEE style citations
 
-\usepackage{graphicx} % Required for including images
-\graphicspath{{resources/}} % Location of the graphics files
-\usepackage{booktabs} % Top and bottom rules for table
-\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
-\usepackage{amsfonts, amsmath, amsthm, amssymb} % For math fonts, symbols and environments
-\usepackage{wrapfig} % Allows wrapping text around tables and figures
-\usepackage[style=ieee]{biblatex}
+% Styling Packages
+\usepackage[most]{tcolorbox} % For creating colored boxes (headers)
 
+\hyphenpenalty=100000
+\tolerance=10000
+
+%----------------------------------------------------------------------------------------
+%   DOCUMENT CONFIGURATION
+%----------------------------------------------------------------------------------------
+
+% Layout settings
+\columnsep=80pt % Space between columns
+%\columnseprule=3pt % Remove the vertical line for a cleaner look
+
+% Set graphic path
+\graphicspath{{./}{resources/chapter-4/}} % Location of the graphics files
+
+% Bibliography resources
 \addbibresource{config/paper/IEEEabrv.bib}
 \addbibresource{references.bib}
+
+% Custom Colors and Commands
+\definecolor{IEEEblue}{rgb}{0.0, 0.21, 0.42} % Define a standard blue for branding
+
+% Command for creating a styled section header
+\newcommand{\postersection}[1]{%
+  \begin{tcolorbox}[
+    colback=IEEEblue,
+    colframe=IEEEblue,
+    fonttitle=\bfseries,
+    coltext=white,
+    sharp corners,
+    boxrule=0pt,
+    top=4pt,
+    bottom=4pt,
+    halign=center
+  ]
+    \large #1
+  \end{tcolorbox}%
+}
+
+%----------------------------------------------------------------------------------------
 
 \begin{document}
 
 %----------------------------------------------------------------------------------------
-%	POSTER HEADER 
+%   POSTER HEADER 
 %----------------------------------------------------------------------------------------
 
-% The header is divided into three boxes:
-% The first is 55% wide and houses the title, subtitle, names and university/organization
-% The second is 25% wide and houses contact information
-% The third is 19% wide and houses a logo for your university/organization or a photo of you
-% The widths of these boxes can be easily edited to accommodate your content as you see fit
-
-\begin{minipage}[b]{0.55\linewidth}
-    \veryHuge \color{NavyBlue} \textbf{Unnecessarily Complicated Research Title} \color{Black}\\ % Title
-    \Huge\textit{An Exploration of Complexity}\\[1cm] % Subtitle
-    \huge \textbf{John Smith \& James Smith}\\ % Author(s)
-    \huge University and Department Name\\ % University/organization
-\end{minipage}
-%
-\begin{minipage}[b]{0.25\linewidth}
-    \color{DarkSlateGray}\Large \textbf{Contact Information:}\\
-    Department Name\\ % Address
-    University Name\\
-    123 Broadway, State, Country\\\\
-    Phone: +1 (000) 111 1111\\ % Phone number
-    Email: \texttt{john@LaTeXTemplates.com}\\ % Email address
-\end{minipage}
-%
-\begin{minipage}[b]{0.19\linewidth}
-    \includegraphics[width=20cm]{logo.png} % Logo or a photo of you, adjust its dimensions here
+\begin{minipage}[c]{0.8\linewidth}
+    \veryHuge \textbf{Large-Scale Event Ticket System Optimization with Distributed Relational Database and Transaction Processing Flow Control} \\[1.5cm]
+    \LARGE {Akbar Maulana Ridho} \\
+    \Large {13521093@std.stei.itb.ac.id} \\
+    \Large {Teknik Informatika, Institut Teknologi Bandung}
 \end{minipage}
 
-\vspace{1cm} % A bit of extra whitespace between the header and poster content
+\vspace{1cm} % Whitespace between header and content
 
 %----------------------------------------------------------------------------------------
+%   POSTER BODY
+%----------------------------------------------------------------------------------------
 
-\begin{multicols}{4} % This is how many columns your poster will be broken into, a poster with many figures may benefit from less columns whereas a text-heavy poster benefits from more
-
-    %----------------------------------------------------------------------------------------
-    %	ABSTRACT
-    %----------------------------------------------------------------------------------------
-
-    \color{Navy} % Navy color for the abstract
-
-    \begin{abstract}
-
-        Sed fringilla tempus hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Etiam ut elit sit amet metus lobortis consequat sit amet in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel sem magna. Nunc at convallis urna. isus ante. Pellentesque condimentum dui. Etiam sagittis purus non tellus tempor volutpat. Donec et dui non massa tristique adipiscing. Quisque vestibulum eros eu. Phasellus imperdiet, tortor vitae congue bibendum, felis enim sagittis lorem, et volutpat ante orci sagittis mi. Morbi rutrum laoreet semper. Morbi accumsan enim nec tortor consectetur non commodo nisi sollicitudin. Proin sollicitudin. Pellentesque eget orci eros. Fusce ultricies, tellus et pellentesque fringilla, ante massa luctus libero, quis tristique purus urna nec nibh.
-
-    \end{abstract}
+\begin{multicols}{4} % Use 4 columns for the body
 
     %----------------------------------------------------------------------------------------
-    %	INTRODUCTION
+    %   ABSTRACT
     %----------------------------------------------------------------------------------------
 
-    \color{SaddleBrown} % SaddleBrown color for the introduction
-
-    \section*{Introduction}
-
-    Aliquam non lacus dolor, \textit{a aliquam quam} \cite{citus}. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla in nibh mauris. Donec vel ligula nisi, a lacinia arcu. Sed mi dui, malesuada vel consectetur et, egestas porta nisi. Sed eleifend pharetra dolor, et dapibus est vulputate eu. \textbf{Integer faucibus elementum felis vitae fringilla.} In hac habitasse platea dictumst. Duis tristique rutrum nisl, nec vulputate elit porta ut. Donec sodales sollicitudin turpis sed convallis. Etiam mauris ligula, blandit adipiscing condimentum eu, dapibus pellentesque risus.
-
-    \textit{Aliquam auctor}, metus id ultrices porta, risus enim cursus sapien, quis iaculis sapien tortor sed odio. Mauris ante orci, euismod vitae tincidunt eu, porta ut neque. Aenean sapien est, viverra vel lacinia nec, venenatis eu nulla. Maecenas ut nunc nibh, et tempus libero. Aenean vitae risus ante. Pellentesque condimentum dui. Etiam sagittis purus non tellus tempor volutpat. Donec et dui non massa tristique adipiscing.
-
-    Phasellus imperdiet, tortor vitae congue bibendum, felis enim sagittis lorem, et volutpat ante orci sagittis mi. Morbi rutrum laoreet semper. Morbi accumsan enim nec tortor consectetur non commodo nisi sollicitudin. Proin sollicitudin. Pellentesque eget orci eros. Fusce ultricies, tellus et pellentesque fringilla, ante massa luctus libero, quis tristique \textbf{purus urna nec nibh}.
+    \postersection{Abstract}
+    \begin{quote}
+        High-demand event ticketing systems require high throughput and stability under extreme query loads and seat contention. This paper investigates database and application-level optimizations to address these challenges. We evaluate the performance of a traditional PostgreSQL cluster against distributed SQL databases, specifically CitusData and YugabyteDB, for scaling transaction rates. Additionally, we introduce an asynchronous, concurrency-limited order processing flow control scheme designed to reduce database strain by rejecting invalid requests early. Under load tests with 10,000 to 15,000 virtual users, the baseline PostgreSQL cluster demonstrated superior performance with the lowest latency and most efficient resource utilization. In contrast, CitusData showed acceptable but higher latency, while YugabyteDB exhibited poor performance and an unacceptable failure rate. The flow control mechanism, when applied to the PostgreSQL cluster, proved highly effective, significantly reducing database load by pre-emptively filtering requests for unavailable tickets. Our findings suggest that for this specific high-contention workload, a well-tuned monolithic relational database combined with an intelligent application-level flow control strategy provides a more robust and efficient solution than the tested distributed database alternatives.
+    \end{quote}
 
     %----------------------------------------------------------------------------------------
-    %	OBJECTIVES
+    %   INTRODUCTION
     %----------------------------------------------------------------------------------------
 
-    \color{DarkSlateGray} % DarkSlateGray color for the rest of the content
+    \postersection{Introduction}
+    Online ticket sales for major events present immense technical challenges. High-profile sales, like Taylor Swift's "The Eras Tour," have seen system failures due to overwhelming demand, where millions of users attempt to buy tickets simultaneously \cite{swiftTicketmaster}. This highlights a critical need for systems that can handle extreme, sudden spikes in traffic without failing.
 
-    \section*{Main Objectives}
+    Ticketing systems face a unique load profile:
+    \begin{itemize}
+        \item \textbf{Exponential User Arrival:} A massive number of users access the system in a very short window.
+        \item \textbf{High Read/Write Load:} Users constantly check for available tickets (reads) while simultaneously trying to purchase them (writes).
+        \item \textbf{Extreme Resource Contention:} Many users compete for the exact same limited resources (seats).
+    \end{itemize}
+    This research investigates various architectural solutions to build a reliable, high-performance ticketing system capable of withstanding these conditions.
 
+    %----------------------------------------------------------------------------------------
+    %   OBJECTIVES
+    %----------------------------------------------------------------------------------------
+
+    \postersection{Main Objectives}
+    This study aims to formulate an optimal and reliable solution for large-scale ticket sales systems by focusing on four key challenges:
     \begin{enumerate}
-        \item Lorem ipsum dolor sit amet, consectetur.
-        \item Nullam at mi nisl. Vestibulum est purus, ultricies cursus volutpat sit amet, vestibulum eu.
-        \item Praesent tortor libero, vulputate quis elementum a, iaculis.
-        \item Phasellus a quam mauris, non varius mauris. Fusce tristique, enim tempor varius porta, elit purus commodo velit, pretium mattis ligula nisl nec ante.
-        \item Ut adipiscing accumsan sapien, sit amet pretium.
-        \item Estibulum est purus, ultricies cursus volutpat
-        \item Nullam at mi nisl. Vestibulum est purus, ultricies cursus volutpat sit amet, vestibulum eu.
-        \item Praesent tortor libero, vulputate quis elementum a, iaculis.
+        \item \textbf{Increase Transaction Throughput:} Evaluate and compare different database architectures (standard vs. distributed) to scale write operations effectively.
+        \item \textbf{Optimize Read Operations:} Design and test a multi-layered caching strategy to handle high-volume queries for ticket availability.
+        \item \textbf{Ensure Data Integrity:} Implement robust mechanisms within the database to prevent critical errors like double-booking under high concurrency.
+        \item \textbf{Maintain System Stability:} Develop and assess an application-level order processing flow control mechanism to manage request spikes and prevent system overload.
     \end{enumerate}
 
     %----------------------------------------------------------------------------------------
-    %	MATERIALS AND METHODS
+    %   MATERIALS AND METHODS
     %----------------------------------------------------------------------------------------
 
-    \section*{Materials and Methods}
-
-    Fusce magna risus, molestie ut porttitor in, consectetur sed mi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque consectetur blandit pellentesque. Sed odio justo, viverra nec porttitor vel, lacinia a nunc. Suspendisse pulvinar euismod arcu, sit amet accumsan enim fermentum quis. In id mauris ut dui feugiat egestas. Vestibulum ac turpis lacinia nisl commodo sagittis eget sit amet sapien. Phasellus imperdiet, tortor vitae congue bibendum, felis enim sagittis lorem, et volutpat ante orci sagittis mi. Morbi rutrum laoreet semper. Morbi accumsan enim nec tortor consectetur non commodo nisi sollicitudin. Proin sollicitudin. Pellentesque eget orci eros. Fusce ultricies, tellus et pellentesque fringilla, ante massa luctus libero, quis tristique purus urna nec nibh. Proin sollicitudin. Pellentesque eget orci eros. Fusce ultricies, tellus et pellentesque fringilla, ante massa luctus libero, quis tristique purus urna nec nibh.
-
-    %------------------------------------------------
-
-    \subsection*{Mathematical Section}
-
-    Nulla vel nisl sed mauris auctor mollis non sed.
-
-    \begin{equation}
-        E = mc^{2}
-        \label{eqn:Einstein}
-    \end{equation}
-
-    Curabitur mi sem, pulvinar quis aliquam rutrum. (1) edf (2)
-    , $\Omega=[-1,1]^3$, maecenas leo est, ornare at. $z=-1$ edf $z=1$ sed interdum felis dapibus sem. $x$ set $y$ ytruem.
-    Turpis $j$ amet accumsan enim $y$-lacina;
-    ref $k$-viverra nec porttitor $x$-lacina.
-
-    Vestibulum ac diam a odio tempus congue. Vivamus id enim nisi:
-
-    \begin{eqnarray}
-        \cos\bar{\phi}_k Q_{j,k+1,t} + Q_{j,k+1,x}+\frac{\sin^2\bar{\phi}_k}{T\cos\bar{\phi}_k} Q_{j,k+1} &=&\nonumber\\
-        -\cos\phi_k Q_{j,k,t} + Q_{j,k,x}-\frac{\sin^2\phi_k}{T\cos\phi_k} Q_{j,k}\label{edgek}
-    \end{eqnarray}
-    and
-    \begin{eqnarray}
-        \cos\bar{\phi}_j Q_{j+1,k,t} + Q_{j+1,k,y}+\frac{\sin^2\bar{\phi}_j}{T\cos\bar{\phi}_j} Q_{j+1,k}&=&\nonumber \\
-        -\cos\phi_j Q_{j,k,t} + Q_{j,k,y}-\frac{\sin^2\phi_j}{T\cos\phi_j} Q_{j,k}.\label{edgej}
-    \end{eqnarray}
-
-    Nulla sed arcu arcu. Duis et ante gravida orci venenatis tincidunt. Fusce vitae lacinia metus. Pellentesque habitant morbi. $\mathbf{A}\underline{\xi}=\underline{\beta}$ Vim $\underline{\xi}$ enum nidi $3(P+2)^{2}$ lacina. Id feugain $\mathbf{A}$ nun quis; magno. Fusce convallis rutrum turpis, quis aliquet enim accumsan id. Vestibulum ullamcorper porttitor convallis. Integer sagittis interdum malesuada. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed adipiscing tristique orci at ullamcorper. Morbi accumsan, urna et porttitor pulvinar, lacus risus dignissim massa. Proin sollicitudin. Pellentesque eget orci eros. Fusce ultricies, tellus et pellentesque fringilla, ante massa luctus libero, quis tristique purus urna nec nibh.
-
-    %----------------------------------------------------------------------------------------
-    %	RESULTS 
-    %----------------------------------------------------------------------------------------
-
-    \section*{Results}
-
-    Donec faucibus purus at tortor egestas eu fermentum dolor facilisis. Maecenas tempor dui eu neque fringilla rutrum. Mauris \emph{lobortis} nisl accumsan. Aenean vitae risus ante. Pellentesque condimentum dui. Etiam sagittis purus non tellus tempor volutpat. Donec et dui non massa tristique adipiscing.
-    %
-    \begin{wraptable}{l}{12cm} % Left or right alignment is specified in the first bracket, the width of the table is in the second
-        \begin{tabular}{l l l}
-            \toprule
-            \textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2} \\
-            \midrule
-            Treatment 1         & 0.0003262           & 0.562               \\
-            Treatment 2         & 0.0015681           & 0.910               \\
-            Treatment 3         & 0.0009271           & 0.296               \\
-            \bottomrule
-        \end{tabular}
-        \captionof{table}{\color{Green} Table caption}
-    \end{wraptable}
-    %
-    Phasellus imperdiet, tortor vitae congue bibendum, felis enim sagittis lorem, et volutpat ante orci sagittis mi. Morbi rutrum laoreet semper. Morbi accumsan enim nec tortor consectetur non commodo nisi sollicitudin. Proin sollicitudin. Pellentesque eget orci eros. Fusce ultricies, tellus et pellentesque fringilla, ante massa luctus libero, quis tristique purus urna nec nibh.
-
-    Nulla ut porttitor enim. Suspendisse venenatis dui eget eros gravida tempor. Mauris feugiat elit et augue placerat ultrices. Morbi accumsan enim nec tortor consectetur non commodo. Pellentesque condimentum dui. Etiam sagittis purus non tellus tempor volutpat. Donec et dui non massa tristique adipiscing. Quisque vestibulum eros eu. Phasellus imperdiet, tortor vitae congue bibendum, felis enim sagittis lorem, et volutpat ante orci sagittis mi. Morbi rutrum laoreet semper. Morbi accumsan enim nec tortor consectetur non commodo nisi sollicitudin.
-
-    \begin{center}\vspace{1cm}
-        \includegraphics[width=0.8\linewidth]{placeholder}
-        \captionof{figure}{\color{Green} Figure caption}
-    \end{center}\vspace{1cm}
-
-    In hac habitasse platea dictumst. Etiam placerat, risus ac.
-
-    Adipiscing lectus in magna blandit:
-
-    \begin{center}\vspace{1cm}
-        \begin{tabular}{l l l l}
-            \toprule
-            \textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2} \\
-            \midrule
-            Treatment 1         & 0.0003262           & 0.562               \\
-            Treatment 2         & 0.0015681           & 0.910               \\
-            Treatment 3         & 0.0009271           & 0.296               \\
-            \bottomrule
-        \end{tabular}
-        \captionof{table}{\color{Green} Table caption}
-    \end{center}\vspace{1cm}
-
-    Vivamus sed nibh ac metus tristique tristique a vitae ante. Sed lobortis mi ut arcu fringilla et adipiscing ligula rutrum. Aenean turpis velit, placerat eget tincidunt nec, ornare in nisl. In placerat.
-
-    \begin{center}\vspace{1cm}
-        \includegraphics[width=0.8\linewidth]{placeholder}
-        \captionof{figure}{\color{Green} Figure caption}
-    \end{center}\vspace{1cm}
-
-    %----------------------------------------------------------------------------------------
-    %	CONCLUSIONS
-    %----------------------------------------------------------------------------------------
-
-    \color{SaddleBrown} % SaddleBrown color for the conclusions to make them stand out
-
-    \section*{Conclusions}
-
+    \postersection{Methods and Materials}
+    \subsection*{Architectures and Technologies}
+    We compared three PostgreSQL-compatible database architectures:
     \begin{itemize}
-        \item Pellentesque eget orci eros. Fusce ultricies, tellus et pellentesque fringilla, ante massa luctus libero, quis tristique purus urna nec nibh. Phasellus fermentum rutrum elementum. Nam quis justo lectus.
-        \item Vestibulum sem ante, hendrerit a gravida ac, blandit quis magna.
-        \item Donec sem metus, facilisis at condimentum eget, vehicula ut massa. Morbi consequat, diam sed convallis tincidunt, arcu nunc.
-        \item Nunc at convallis urna. isus ante. Pellentesque condimentum dui. Etiam sagittis purus non tellus tempor volutpat. Donec et dui non massa tristique adipiscing.
+        \item \textbf{PostgreSQL Cluster:} A standard primary-replica setup serving as the performance baseline.
+        \item \textbf{CitusData:} A PostgreSQL extension that creates a distributed, coordinator-worker database architecture \cite{citus}.
+        \item \textbf{YugabyteDB:} A fully distributed SQL database using the Raft consensus protocol for high availability \cite{yugabyte}.
     \end{itemize}
 
-    \color{DarkSlateGray} % Set the color back to DarkSlateGray for the rest of the content
+    To manage the high load, we implemented two key optimization strategies:
+    \begin{itemize}
+        \item \textbf{Caching with Redis:} An in-memory Redis cluster was used to cache aggregated data to offload read queries from the main database.
+        \item \textbf{Flow Control with RabbitMQ:} An asynchronous order processing system was designed using a RabbitMQ message queue to control the rate of requests hitting the database.
+    \end{itemize}
+
+    \subsection*{Testing Methodology}
+    We used the K6 load testing tool to simulate 10,000-15,000 virtual users. Two main scenarios were tested:
+    \begin{enumerate}
+        \item \textbf{Sustained Load Test:} A constant high number of users for 10-15 minutes to measure stability and throughput.
+        \item \textbf{Ticket Scramble (Spike Test):} A massive initial spike in users to test the system's response to a sudden "ticket drop."
+    \end{enumerate}
+    Performance was monitored using Prometheus and Grafana.
 
     %----------------------------------------------------------------------------------------
-    %	FORTHCOMING RESEARCH
+    %   RESULTS 
     %----------------------------------------------------------------------------------------
 
-    \section*{Forthcoming Research}
+    \postersection{Results}
+    \subsection*{Database Performance}
+    The monolithic PostgreSQL cluster significantly outperformed the distributed databases. It provided the highest throughput at the lowest latency and resource cost. CitusData was acceptable but had ~2x higher latency. YugabyteDB performed poorly, with high instability, >4x latency, and excessive resource usage.
 
-    Vivamus molestie, risus tempor vehicula mattis, libero arcu volutpat purus, sed blandit sem nibh eget turpis. Maecenas rutrum dui blandit lorem vulputate gravida. Praesent venenatis mi vel lorem tempor at varius diam sagittis. Nam eu leo id turpis interdum luctus a sed augue. Nam tellus.
+    \begin{center}\vspace{0.5cm}
+        \captionof{table}{Overall Performance of Order Processing}
+        \begin{tabular}{l l l l}
+            \toprule
+            \textbf{Metric} & \textbf{PostgreSQL} & \textbf{CitusData} & \textbf{YugabyteDB} \\
+            \midrule
+            Max Throughput  & 466 rps             & 410 rps            & 216 rps             \\
+            Peak CPU Usage  & 8 vCPU              & 10 vCPU            & 19 vCPU             \\
+            Peak Memory     & 3.4 GB              & 5 GB               & 36 GB               \\
+            Latency (P50)   & 192-382 ms          & 496-650 ms         & 854-10k ms          \\
+            \bottomrule
+        \end{tabular}
+    \end{center}\vspace{0.5cm}
+
+    \subsection*{Read Optimization and Flow Control}
+    Caching aggregated availability in Redis was highly effective, handling 1700 rps at just 2.5-4.5 ms latency.
+
+    The flow control mechanism successfully reduced database load. By rejecting requests for unavailable tickets early, latency for failed bookings dropped from 1-2 seconds to just 50-100 ms.
+
+    \begin{center}\vspace{0.5cm}
+        \includegraphics[width=0.9\linewidth]{latency-nofc-pg-stress-0.png}
+        \captionof{figure}{High, erratic latency \textbf{without} flow control.}
+    \end{center}\vspace{0.5cm}
+
+    \begin{center}\vspace{0.5cm}
+        \includegraphics[width=0.9\linewidth]{latency-fc-pg-stress-0.png}
+        \captionof{figure}{Lower, more stable latency \textbf{with} flow control.}
+    \end{center}\vspace{0.5cm}
+
+    Throughout all high-contention tests, the use of transactional row-level locking (`SELECT ... FOR UPDATE`) proved robust, with zero instances of double-booked seats.
 
     %----------------------------------------------------------------------------------------
-    %	REFERENCES
+    %   CONCLUSIONS
     %----------------------------------------------------------------------------------------
 
-    \printbibliography
+    \postersection{Conclusions}
+    \begin{itemize}
+        \item For high-contention transactional workloads, a well-tuned \textbf{monolithic PostgreSQL database offers superior performance} and efficiency compared to the tested distributed solutions.
+        \item The overhead of coordination in CitusData and YugabyteDB outweighed their scaling benefits for this specific use case.
+        \item \textbf{Flow control, especially early request rejection}, is a critical strategy for maintaining system stability during traffic spikes.
+        \item Offloading aggregate read queries to an in-memory store like \textbf{Redis is highly effective}.
+    \end{itemize}
 
     %----------------------------------------------------------------------------------------
-    %	ACKNOWLEDGEMENTS
+    %   FUTURE WORK
     %----------------------------------------------------------------------------------------
 
-    \section*{Acknowledgements}
+    \postersection{Future Work}
+    Future work should focus on:
+    \begin{enumerate}
+        \item Exploring more advanced, distributed caching strategies.
+        \item Implementing a lower-latency queueing mechanism to reduce overhead.
+        \item Testing the architecture under extreme loads (>100,000 VUs) to find the breaking point of the monolithic setup.
+        \item Separating database connection pools for read and write operations.
+    \end{enumerate}
 
-    Etiam fermentum, arcu ut gravida fringilla, dolor arcu laoreet justo, ut imperdiet urna arcu a arcu. Donec nec ante a dui tempus consectetur. Cras nisi turpis, dapibus sit amet mattis sed, laoreet.
+    \postersection{Acknowledgements}
+    The author thanks his supervisor, Achmad Imam Kistijantoro, S.T., M.Sc., Ph.D., and Dr.techn. Saiful Akbar, S.T., M.T., for their invaluable guidance. Gratitude is also extended to the academic staff of Informatics Engineering at ITB.
 
     %----------------------------------------------------------------------------------------
+    %   REFERENCES
+    %----------------------------------------------------------------------------------------
+
+    \postersection{References}
+    \printbibliography[heading=none]
 
 \end{multicols}
 \end{document}

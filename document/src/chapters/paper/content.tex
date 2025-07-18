@@ -19,7 +19,7 @@ The core of high-load systems often lies in database scalability. Traditional re
           \begin{enumerate}
               \item \textbf{PostgreSQL Cluster}: A standard primary-replica setup serves as the baseline.
               \item \textbf{CitusData}: An extension that transforms PostgreSQL into a distributed database with a coordinator-worker architecture, enabling parallel query processing and multiple-writer \cite{citus}.
-              \item \textbf{YugabyteDB}: A distributed SQL database built from the ground up, using the Raft consensus protocol for high availability and native distribution, compatible with the PostgreSQL API \cite{yugabyteBaeldung}.
+              \item \textbf{YugabyteDB}: A distributed SQL database built from the ground up, using the Raft consensus protocol for high availability and native distribution, compatible with the PostgreSQL API \cite{yugabyte}.
           \end{enumerate}
     \item \textbf{Flow Control}: To manage backpressure from high request volumes, we investigated the Queue-Based Load Leveling pattern. This pattern uses a queue as a buffer to decouple tasks from services, allowing the system to process messages at a consistent rate, thus ensuring stability \cite{queueLoadLeveling}.
     \item \textbf{Supporting Technologies}: \textbf{Redis} was chosen for its high-speed, in-memory key-value store capabilities, ideal for caching frequently accessed data like ticket availability aggregates. \textbf{RabbitMQ} was selected as the message broker for its reliability and support for the queueing pattern needed in the flow control mechanism.
