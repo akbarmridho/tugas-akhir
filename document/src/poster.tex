@@ -136,25 +136,25 @@
 
     To manage the high load, we implemented two key optimization strategies:
     \begin{itemize}
-        \item \textbf{Caching with Redis:} An in-memory Redis cluster was used to cache aggregated data to offload read queries from the main database.
-        \item \textbf{Flow Control with RabbitMQ:} An asynchronous order processing system was designed using a RabbitMQ message queue to control the rate of requests hitting the database.
+        \item \textbf{Caching with Redis:} An in-memory Redis cluster was used to cache aggregated data (e.g., ticket availability per section) to offload high-volume read queries from the main database.
+        \item \textbf{Flow Control with RabbitMQ:} An asynchronous order processing system was designed. This system first rejects requests for unavailable seats via a Redis pre-check, then places valid requests into a RabbitMQ message queue. This approach controls the rate of transactions hitting the database, preventing overload from traffic spikes.
     \end{itemize}
 
     \subsection*{Testing Methodology}
-    We used the K6 load testing tool to simulate 10,000-15,000 virtual users. Two main scenarios were tested:
+    We used the K6 load testing tool to simulate 10,000-15,000 virtual users (VUs). To mimic realistic buyer behavior, VUs were assigned diverse profiles with varying ticket preferences and persistence in retrying failed attempts. Two primary scenarios were executed:
     \begin{enumerate}
-        \item \textbf{Sustained Load Test:} A constant high number of users for 10-15 minutes to measure stability and throughput.
-        \item \textbf{Ticket Scramble (Spike Test):} A massive initial spike in users to test the system's response to a sudden "ticket drop."
+        \item \textbf{Sustained Load Test:} A constant, high number of VUs were active for 10-15 minutes to measure the system's stability and maximum throughput under continuous stress.
+        \item \textbf{Ticket Scramble (Spike Test):} A massive initial spike in users, simulated with a log-normal arrival rate, was used to test the system's response to a sudden "ticket drop" event.
     \end{enumerate}
-    Performance was monitored using Prometheus and Grafana.
+    System performance, including latency, throughput, error rates, and resource utilization, was closely monitored using Prometheus for metrics collection and Grafana for visualization.
 
     %----------------------------------------------------------------------------------------
     %   RESULTS 
     %----------------------------------------------------------------------------------------
 
     \postersection{Results}
-    \subsection*{Database Performance}
-    The monolithic PostgreSQL cluster significantly outperformed the distributed databases. It provided the highest throughput at the lowest latency and resource cost. CitusData was acceptable but had ~2x higher latency. YugabyteDB performed poorly, with high instability, >4x latency, and excessive resource usage.
+    \subsection*{Database Performance Comparison}
+    The baseline \textbf{PostgreSQL cluster} significantly outperformed the distributed databases. Its monolithic nature avoided the network and coordination overhead inherent in distributed systems, proving more efficient for numerous small, fast transactions. \textbf{CitusData}'s performance was acceptable but was bottlenecked by its coordinator node, leading to ~2x higher latency for this type of workload \cite{Slot2020}. The Raft-based consensus mechanism in \textbf{YugabyteDB} introduced high latency (\textgreater4x) and resource costs, making it unsuitable for this high-contention use case.
 
     \begin{center}\vspace{0.5cm}
         \captionof{table}{Overall Performance of Order Processing}
@@ -170,33 +170,35 @@
         \end{tabular}
     \end{center}\vspace{0.5cm}
 
-    \subsection*{Read Optimization and Flow Control}
-    Caching aggregated availability in Redis was highly effective, handling 1700 rps at just 2.5-4.5 ms latency.
+    \subsection*{Read Query Optimization}
+    The multi-layered caching strategy yielded mixed results:
+    \begin{itemize}
+        \item \textbf{Highly Effective:} Caching aggregated seat availability (e.g., seats left per section) in Redis successfully offloaded significant traffic from the database, handling up to \textbf{1700 rps} with an average latency of only \textbf{2.5-4.5 ms}.
+        \item \textbf{Ineffective:} A short-lived (150 ms) in-memory cache for granular, individual seat availability had a very low hit ratio. The local nature of the cache per application instance and wide distribution of user requests made this approach a bottleneck, with P95 latencies up to 7 seconds.
+    \end{itemize}
 
-    The flow control mechanism successfully reduced database load. By rejecting requests for unavailable tickets early, latency for failed bookings dropped from 1-2 seconds to just 50-100 ms.
+    \subsection*{Flow Control Mechanism}
+    The flow control system was highly beneficial for system stability:
+    \begin{itemize}
+        \item \textbf{Early Request Rejection:} Pre-checking ticket availability against Redis before queueing was extremely effective. It reduced latency for failed booking attempts from over 1-2 seconds down to just \textbf{50-100 ms}, significantly lessening useless load on the database.
+        \item \textbf{Queued Processing:} Using RabbitMQ to buffer requests successfully smoothed out traffic spikes and reduced database contention. However, it introduced significant end-to-end latency, indicating a trade-off between stability and responsiveness. The test load was not high enough to fully overwhelm the non-queued system, where this pattern would provide maximum benefit.
+    \end{itemize}
 
-    \begin{center}\vspace{0.5cm}
-        \includegraphics[width=0.9\linewidth]{latency-nofc-pg-stress-0.png}
-        \captionof{figure}{High, erratic latency \textbf{without} flow control.}
-    \end{center}\vspace{0.5cm}
-
-    \begin{center}\vspace{0.5cm}
-        \includegraphics[width=0.9\linewidth]{latency-fc-pg-stress-0.png}
-        \captionof{figure}{Lower, more stable latency \textbf{with} flow control.}
-    \end{center}\vspace{0.5cm}
-
-    Throughout all high-contention tests, the use of transactional row-level locking (`SELECT ... FOR UPDATE`) proved robust, with zero instances of double-booked seats.
+    \subsection*{Data Integrity}
+    Throughout all high-contention tests, the use of transactional row-level locking (\texttt{SELECT ... FOR UPDATE}) in PostgreSQL proved completely robust. Sanity checks confirmed \textbf{zero instances of double-booked seats}, validating the reliability of this approach for handling race conditions.
 
     %----------------------------------------------------------------------------------------
     %   CONCLUSIONS
     %----------------------------------------------------------------------------------------
+
+    \columnbreak
 
     \postersection{Conclusions}
     \begin{itemize}
         \item For high-contention transactional workloads, a well-tuned \textbf{monolithic PostgreSQL database offers superior performance} and efficiency compared to the tested distributed solutions.
         \item The overhead of coordination in CitusData and YugabyteDB outweighed their scaling benefits for this specific use case.
         \item \textbf{Flow control, especially early request rejection}, is a critical strategy for maintaining system stability during traffic spikes.
-        \item Offloading aggregate read queries to an in-memory store like \textbf{Redis is highly effective}.
+        \item Offloading aggregate read queries to an in-memory store like \textbf{Redis is highly effective}, but fine-grained caching needs a more sophisticated, distributed approach.
     \end{itemize}
 
     %----------------------------------------------------------------------------------------
@@ -206,10 +208,9 @@
     \postersection{Future Work}
     Future work should focus on:
     \begin{enumerate}
-        \item Exploring more advanced, distributed caching strategies.
+        \item Exploring more advanced, distributed caching strategies for granular data.
         \item Implementing a lower-latency queueing mechanism to reduce overhead.
-        \item Testing the architecture under extreme loads (>100,000 VUs) to find the breaking point of the monolithic setup.
-        \item Separating database connection pools for read and write operations.
+        \item Testing the architecture under extreme loads (\textgreater100,000 VUs) to find the breaking point of the monolithic setup.
     \end{enumerate}
 
     \postersection{Acknowledgements}
