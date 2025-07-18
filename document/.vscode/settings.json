@@ -6,6 +6,10 @@
       "name": "latex_itb_ta MAC",
       "tools": ["latex_itb_make"]
       // "tools": ["latex_itb_make", "latex_itb_move"]
+    },
+    {
+      "name": "latex_itb_ta Paper",
+      "tools": ["latex_itb_make_paper"]
     }
   ],
   "latex-workshop.latex.tools": [
@@ -23,7 +27,22 @@
         "./thesis.tex"
       ],
       "env": {}
-    }
+    },
+    {
+      "name": "latex_itb_make_paper",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-bibtex",
+        "-outdir=../build",
+        "-cd",
+        "./paper.tex"
+      ],
+      "env": {}
+    },
     // {
     //   "name": "latex_itb_move",
     //   "command": "cp",
