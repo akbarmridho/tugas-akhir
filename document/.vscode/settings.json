@@ -10,6 +10,10 @@
     {
       "name": "latex_itb_ta Paper",
       "tools": ["latex_itb_make_paper"]
+    },
+        {
+      "name": "latex_itb_ta Poster",
+      "tools": ["latex_itb_make_poster"]
     }
   ],
   "latex-workshop.latex.tools": [
@@ -40,6 +44,21 @@
         "-outdir=../build",
         "-cd",
         "./paper.tex"
+      ],
+      "env": {}
+    },
+    {
+      "name": "latex_itb_make_poster",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-bibtex",
+        "-outdir=../build",
+        "-cd",
+        "./poster.tex"
       ],
       "env": {}
     },
