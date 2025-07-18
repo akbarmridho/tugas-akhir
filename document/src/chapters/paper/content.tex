@@ -5,14 +5,11 @@ The phenomenon of online ticket sales for large-scale events has become a major 
 
 The scalability of ticketing systems has unique characteristics. Users arrive exponentially in a short period, demanding the system to handle spikes in both read operations (checking ticket availability) and write operations (processing orders). Furthermore, resource contention is extreme as many users attempt to book the same seats. While various architectural approaches like event-driven architecture, database sharding, and flow control mechanisms exist, there is limited specific research on the combined performance of these approaches in extreme-demand scenarios for ticketing systems.
 
-This research aims to fill this gap by investigating and testing various architectural approaches to formulate an optimal and reliable solution for ticket sales systems. The main contribution of this paper is a comprehensive performance comparison of different distributed relational database architectures and the evaluation of flow control strategies in maintaining system stability and performance under high-load conditions. The objective is to analyze the throughput, latency, and resource usage of a standard PostgreSQL cluster, CitusData, and YugabyteDB, and to evaluate the effectiveness of flow control in stabilizing order processing. This study is limited to open-source solutions and focuses on a single-event, single-region sales scenario, without delving into user experience aspects like virtual queues or failover testing.
-
-
-
+This research aims to fill this gap by investigating and testing various architectural approaches to formulate an optimal and reliable solution for ticket sales systems. The main contribution of this paper is a comprehensive performance comparison of different distributed relational database architectures and the evaluation of flow control strategies in maintaining system stability and performance under high-load conditions. The objective is to analyze the throughput, latency, and resource usage of a standard PostgreSQL cluster, CitusData, and YugabyteDB, and to evaluate the effectiveness of flow control in stabilizing order processing. This study is limited to open-source solutions and focuses on a single-event, single-region sales scenario, without go through into user experience aspects like virtual queues or failover testing.
 
 \section{Methods and Materials}
 \label{sec:methods}
-This study evaluates different architectural solutions for a high-traffic ticketing system. The system is modeled with user, ticket, and payment services, focusing on backend performance rather than user interface.
+This study evaluates different architectural solutions for a high-traffic ticketing system. The system is modeled ticket and payment services, focusing on backend performance rather than user interface.
 
 \subsection{Literature Review}
 The core of high-load systems often lies in database scalability. Traditional relational databases scale vertically, which has physical and cost limitations. This research explores horizontally scalable relational databases.
@@ -21,7 +18,7 @@ The core of high-load systems often lies in database scalability. Traditional re
     \item \textbf{Distributed Relational Databases}: We selected three PostgreSQL-compatible databases to represent different architectures:
           \begin{enumerate}
               \item \textbf{PostgreSQL Cluster}: A standard primary-replica setup serves as the baseline.
-              \item \textbf{CitusData}: An extension that transforms PostgreSQL into a distributed database with a coordinator-worker architecture, enabling parallel query processing \cite{citus}.
+              \item \textbf{CitusData}: An extension that transforms PostgreSQL into a distributed database with a coordinator-worker architecture, enabling parallel query processing and multiple-writer \cite{citus}.
               \item \textbf{YugabyteDB}: A distributed SQL database built from the ground up, using the Raft consensus protocol for high availability and native distribution, compatible with the PostgreSQL API \cite{yugabyteBaeldung}.
           \end{enumerate}
     \item \textbf{Flow Control}: To manage backpressure from high request volumes, we investigated the Queue-Based Load Leveling pattern. This pattern uses a queue as a buffer to decouple tasks from services, allowing the system to process messages at a consistent rate, thus ensuring stability \cite{queueLoadLeveling}.
@@ -61,7 +58,6 @@ A rigorous testing methodology was designed to simulate real-world, high-demand 
 
 \section{Results and Discussion}
 \label{sec:results}
-The system was implemented using Golang for the ticket service and deployed on a Kubernetes cluster. Load tests were conducted with 10,000 to 15,000 virtual users over 10 to 15 minutes.
 
 \subsection{Performance of Distributed Databases}
 The performance of the three database architectures varied significantly under high load. A summary of the performance during the sustained load test is presented in Table \ref{tab:perf_summary}.
@@ -88,7 +84,7 @@ The performance of the three database architectures varied significantly under h
 \begin{itemize}
     \item \textbf{PostgreSQL Cluster}: The baseline PostgreSQL cluster demonstrated excellent performance. It handled the load with the lowest latency, highest throughput, and most efficient resource utilization. Its monolithic architecture avoided the network and coordination overhead inherent in distributed systems, proving highly effective for the workload characterized by numerous small, fast transactions.
 
-    \item \textbf{CitusData}: CitusData showed acceptable performance, with throughput approaching that of PostgreSQL but with significantly higher latency (approx. 2x) and greater resource consumption. The overhead was largely attributed to the coordinator node, which became a bottleneck for query planning and coordination, especially since the workload consisted of many simple queries rather than complex analytical ones.
+    \item \textbf{CitusData}: CitusData showed acceptable performance, with throughput approaching that of PostgreSQL but with significantly higher latency (approx. 2x) and greater resource consumption. The overhead was largely attributed to the coordinator node, which became a bottleneck for query planning and coordination, especially since the workload consisted of many simple queries rather than complex analytical ones \cite{Slot2020}.
 
     \item \textbf{YugabyteDB}: YugabyteDB performed poorly. It had less than half the throughput of PostgreSQL, latency that was at least 4x higher, and vastly greater CPU (2.4x) and memory (10x) usage. The cluster exhibited instability under higher loads, with high failure rates and inconsistent performance. The inherent latency of its Raft-based consensus mechanism proved detrimental for this type of high-contention, low-latency transactional workload.
 
@@ -98,15 +94,56 @@ The performance of the three database architectures varied significantly under h
 The read optimization strategies yielded mixed results.
 \begin{itemize}
     \item The use of \textbf{Redis for caching aggregated area availability} was highly effective. This endpoint handled up to 1700 rps with an average latency of just 2.5-4.5 ms, successfully offloading significant read traffic from the primary database.
+          \begin{figure}[h!]
+              \centering
+              \includegraphics[width=0.35\textwidth]{resources/chapter-4/latency-area-availability.png}
+              \caption{Read Area Availability Metrics}
+              \label{fig:latency-get-area}
+          \end{figure}
+
     \item The \textbf{in-memory micro-caching for individual seat availability} was not effective. The cache hit ratio was very low due to the local nature of the cache (per application instance), the wide distribution of requests across different areas, and the short cache lifetime (150 ms). This resulted in high P95 latencies (up to 7 seconds), indicating that this remains a bottleneck.
+          \begin{figure}[h!]
+              \centering
+              \includegraphics[width=0.35\textwidth]{resources/chapter-4/latency-seat-availability.png}
+              \caption{Read Seat Availability Metrics}
+              \label{fig:latency-get-seat}
+          \end{figure}
 \end{itemize}
 
 \subsection{Impact of Flow Control}
 The flow control mechanism demonstrated significant benefits, particularly in reducing database load.
 \begin{itemize}
     \item \textbf{Early request rejection} using Redis was highly effective. It successfully filtered out requests for unavailable seats before they hit the database, reducing the latency for failed booking attempts from 1-2 seconds down to 50-100 milliseconds.
+          \begin{figure}[htbp]
+              \centering
+              \includegraphics[width=0.45\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
+              \caption{Processing Latency with Flow Control}
+              \label{fig:latency-fc}
+          \end{figure}
+
+          \begin{figure}[htbp]
+              \centering
+              \includegraphics[width=0.45\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
+              \caption{Processing Latency without Flow Control}
+              \label{fig:latency-nofc}
+          \end{figure}
     \item The \textbf{queue-based processing} showed potential but was hampered by the high latency introduced by RabbitMQ. While it successfully smoothed out the load on the database and reduced contention (evidenced by lower query latency for locking), the overall end-to-end latency for the user was much higher. The test load was also not high enough to create a scenario where the baseline PostgreSQL system was completely overwhelmed, which is where this pattern would provide the most benefit.
+          \begin{figure}[h!]
+              \centering
+              \includegraphics[width=0.45\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
+              \caption{Transaction Processing Rate with Flow Control}
+              \label{fig:rps-fc-pg-stress-0}
+          \end{figure}
+
+          \begin{figure}[h!]
+              \centering
+              \includegraphics[width=0.45\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
+              \caption{Transaction Processing Rate without Flow Control}
+              \label{fig:rps-nofc-pg-stress-0}
+          \end{figure}
 \end{itemize}
+
+\pagebreak
 
 \subsection{Data Integrity}
 Throughout all tests, including the high-contention ticket scramble scenario, the system maintained perfect data integrity. Sanity checks confirmed that there were no instances of double-booked seats, and the data between Redis and the database remained eventually consistent. This validates the robustness of using transactional row-level locking in the relational database to handle race conditions.
@@ -121,6 +158,10 @@ Future work should focus on:
 \begin{enumerate}
     \item Exploring more advanced caching strategies for granular data.
     \item Implementing a lower-latency queueing mechanism, possibly at the application level, to reduce the overhead seen with RabbitMQ.
-    \item Testing the architectures under even higher loads (e.g., >100,000 VUs) to find the breaking point of the monolithic PostgreSQL setup and determine where a distributed solution like CitusData, perhaps with optimizations like stored procedures, becomes necessary.
+    \item Testing the architectures under even higher loads (e.g., \textgreater
+          100,000 VUs) to find the breaking point of the monolithic PostgreSQL setup and determine where a distributed solution like CitusData, perhaps with optimizations like stored procedures, becomes necessary.
     \item Separating connection pools for read and write operations to further reduce contention on the primary database instance.
 \end{enumerate}
+
+\section{Availability}
+The complete thesis, including the source code for the system implementation and load testing scripts, is publicly available in the author's GitHub repository: \url{https://github.com/akbarmridho/tugas-akhir}.
