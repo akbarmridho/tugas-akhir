@@ -47,8 +47,6 @@ Konfigurasi kluster PostgreSQL memiliki skalabilitas yang terbatas dengan pening
 
 Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membaca agregat ketersediaan area, dan membaca ketersediaan kursi. Operasi baca agregat ketersediaan area menggunakan data agregat yang dipelihara pada Redis alih-alih melakukan agregat dari basis data. Operasi baca ketersediaan kursi membaca langsung data dari basis data dengan sedikit pengoptimalan dengan menggunakan tembolok mikro. Alur fitur ini diilustrasikan pada gambar \ref{fig:flow-event}.
 
-\pagebreak
-
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/event-flow.png}

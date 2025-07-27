@@ -3,27 +3,41 @@
 \subsection{Keterbatasan Pengujian}
 \label{keterbatasan-pengujian}
 
-Setelah pengujian dan analisis dilakukan, terdapat temuan dan beberapa hal yang menjadi keterbatasan dan kekurangan pengujian pada penelitian ini. Apabila keterbatasan ini berhasil dilalui, hasil pengujian bisa saja memberikan hasil yang berbeda. Beberapa keterbatasan tersebut adalah:
+Penelitian ini memiliki beberapa keterbatasan pengujian yang dapat memengaruhi hasil akhir. Keterbatasan ini meliputi:
 
 \begin{enumerate}
     \item Karena keterbatasan sumber daya, jumlah pengguna virtual terbatas hingga 15.000 pada saat yang bersamaan. Idealnya, jumlah pengguna virtual ini dibuat lebih banyak hingga setidaknya 100.000 pengguna virtual pada saat yang bersamaan. Jumlah pengguna virtual yang lebih banyak dapat menunjukkan hasil yang lebih representatif sesuai dengan yang terjadi pada sistem tiket sesungguhnya.
     \item Keterbatasan jumlah pengguna juga membuat pengujian dengan distribusi lognormal (kasus perebutan tiket) tidak berjalan pada beban yang tinggi dengan penjualan tiket yang lebih banyak. Skenario pengujian yang berfokus pada \textit{arrival rate} dengan distribusi yang mendekati dunia nyata bisa saja memberikan temuan lain yang lebih representatif.
-    \item Utilisasi sumber daya YugabyteDB sangat tinggi selama pengujian. Oleh karena itu, keterbatasan sumber daya dapat menjadi kendala yang membuat kinerja YugabyteDB tidak optimal pada pengujian ini. Oleh karena itu, YugabyteDB dapat diuji lagi dengan alokasi sumber daya yang lebih tinggi untuk mengetahui kinerja YugabyteDB yang sesungguhnya.
-    \item Terdapat beberapa data pengujian yang tidak dikumpulkan dan dianalisis lebih mendalam, seperti \textit{log} aplikasi dan sampel \textit{trace} untuk mengetahui pembagian waktu eksekusi hingga level yang lebih kecil. Saat ini, metrik latensi hanya menunjukkan latensi keseluruhan sehingga bagian eksekusi yang lambat tidak dapat dianalisis.
-    \item Penanganan kueri baca dan tulis tidak dipisah, sehingga penggunaan sumber daya untuk setiap operasi tidak dapat dibedakan. Oleh karena itu, dampak dan penggunaan sumber daya masing-masing operasi tidak dapat diukur.
+    \item Tingginya utilisasi sumber daya YugabyteDB mengindikasikan kinerjanya terhambat oleh alokasi sumber daya, sehingga pengujian lanjutan dengan sumber daya lebih tinggi diperlukan untuk mengukur potensi sebenarnya.
+    \item Tidak adanya data terperinci seperti \textit{log} aplikasi dan \textit{trace} menyulitkan identifikasi bagian eksekusi yang lambat, karena latensi hanya terukur secara keseluruhan.
+    \item Penanganan kueri baca dan tulis tidak dipisah, sehingga dampak dan konsumsi sumber daya untuk masing-masing operasi tidak dapat diukur secara independen.
 \end{enumerate}
 
-\pagebreak
-
-\subsection{Pengembangan Lebih Lanjut}
+\subsection{Eksplorasi Lebih Lanjut}
 \label{pengembangan-lebih-lanjut}
 
 Meskipun tidak semua pengoptimalan memberikan hasil yang sesuai harapan, terdapat banyak temuan menarik yang dapat memberikan arah untuk pengembangan sistem tiket yang optimal untuk menangani kasus dengan beban tinggi. Temuan ini memberikan arah yang dapat menjadi fokus dalam pengoptimalan sistem tiket, seperti:
 
 \begin{enumerate}
     \item Manajemen koneksi basis data merupakan hal yang kritis dan harus ditangani dengan baik. Manajemen koneksi ini idealnya juga dilakukan pada level operasi. Sebagai contoh, \textit{pool} koneksi untuk operasi baca dan tulis sebaiknya dipisah agar \textit{contention} pada koneksi untuk operasi baca tidak mengganggu keberjalanan pemrosesan pesanan.
-    \item Selain pemisahan koneksi, pengurangan beban pada \textit{primary instance} juga penting. Pengurangan beban ini dapat dilakukan dengan melakukan \textit{query load balancing} untuk operasi baca pada instans \textit{replica}. Selain pada kluster PostgreSQL, penggunaan \textit{primary} dan \textit{replica} ini juga dapat dilakukan pada kluster CitusData, sehingga beban koordinator dapat dibagi dan koordinator utama dapat fokus menangani operasi yang lebih kritis. Selain itu, sebagaimana ditunjukkan pada pengoptimalan operasi ketersediaan, sebagian operasi baca juga dapat dilakukan melalui Redis alih-alih langsung melalui basis data. Dengan begitu, instans \textit{primary} dapat fokus menangani operasi yang kritis seperti pemrosesan tiket.
+    \item Pengurangan beban pada \textit{primary instance} juga penting. Pengurangan beban ini dapat dilakukan dengan melakukan \textit{query load balancing} untuk operasi baca pada instans \textit{replica}. Penggunaan \textit{primary} dan \textit{replica} ini juga dapat dilakukan pada kluster CitusData, sehingga beban koordinator dapat dibagi dan koordinator utama dapat fokus menangani operasi yang lebih kritis. Selain itu, sebagian operasi baca juga dapat dilakukan melalui Redis alih-alih langsung melalui basis data. Dengan begitu, instans \textit{primary} dapat fokus menangani operasi yang kritis seperti pemrosesan tiket.
+    \item Eksperimen pengujian dengan menggunakan \textit{sharding} pada level aplikasi atau pun pada \textit{connection pooler}. Pendekatan ini menarik untuk diuji setelah kinerja CitusData dan YugaByteDB yang tidak cukup memuaskan dibandingkan dengan basis pengujian. Selain itu, pendekatan ini memberikan keuntungan kinerja yang sama dengan PostgreSQL biasa. Tidak ada \textit{overhead} koordinasi dan jaringan sebagaimana terjadi pada CitusData dan YugaByteDB. Meskipun begitu, pendekatan ini memiliki kompleksitas aplikasi dan \textit{overhead} manajemen basis data yang lebih tinggi.
     \item Pengoptimalan operasi baca ketersediaan kursi (bukan agregat area) dengan Redis alih-alih menggunakan tembolok dengan waktu hidup singkat.
     \item Penggunaan antrean merupakan ide yang baik, tetapi implementasi pendekatan tersebut harus mempertimbangkan aspek latensi yang dapat menyebabkan waktu pemrosesan menjadi jauh lebih tinggi. Antrean dengan menggunakan Redis atau pada level aplikasi merupakan pendekatan yang dapat dieksplorasi lebih lanjut.
     \item Pengoptimalan implementasi yang menyesuaikan dengan kelebihan dan keterbatasan varian basis data agar dapat berjalan dengan jauh lebih optimal.
+\end{enumerate}
+
+\subsection{Rekomendasi Arsitektur Sistem Tiket}
+\label{rekomendasi-arsitektur}
+
+Berdasarkan analisis dan temuan pada penelitian ini, berikut adalah rekomendasi arsitektur sistem tiket untuk menangani beban tinggi:
+
+\begin{enumerate}
+    \item \textbf{Basis Data}: Gunakan PostgreSQL dengan replika baca. Pendekatan ini terbukti paling efisien dari segi latensi dan penggunaan sumber daya. Untuk skalabilitas tulis di masa depan, rencanakan pemartisian pada level aplikasi atau \textit{connection pooler}.
+
+    \item \textbf{Penggunaan Tembolok}: Gunakan Redis untuk menangani operasi baca bervolume tinggi. Prioritaskan tembolok untuk data agregat dan ketersediaan kursi agar dapat secara signifikan mengurangi beban pada basis data.
+
+    \item \textbf{Penolakan Permintaan Pesanan Lebih Awal}: Sebagaimana ditunjukkan pada hasil pengujian, gunakan pendekatan ini untuk mengurangi beban tulis pada basis data.
+
+    \item \textbf{Antrean Permosesan Pesanan}: Gunakan sistem antrean untuk menangani lonjakan pesanan dengan catatan implementasi harus memiliki latensi pemrosesan yang baik.
 \end{enumerate}
