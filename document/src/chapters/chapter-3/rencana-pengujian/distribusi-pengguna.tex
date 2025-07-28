@@ -1,8 +1,8 @@
 \subsection{Distribusi Profil Pengguna}
 
-Ketika pengguna berhasil memesan tiket, terdapat 5\% kemungkinan bahwa pembayaran pengguna gagal. Hal ini dilakukan untuk menyimulasikan pengguna yang batal membeli tiket atau mengalami kegagalan pembayaran.
+Ketika pengguna berhasil memesan tiket, terdapat 5\% kemungkinan bahwa pembayaran pengguna gagal. Hal ini dilakukan untuk menyimulasikan pengguna yang batal membeli tiket atau mengalami kegagalan pembayaran. Meskipun begitu, tidak ada referensi pasti yang menyebutkan tingkat kegagalan pemesanan untuk penjualan tiket. Sebagai referensi, tingkat kegagalan pemrosesan transaksi pada \textit{e-commerce} berkisar pada 11\% \parencite{paymentFail}. Meskipun begitu, angka yang lebih rendah diambil karena pada kasus ini pengguna yang mendaftar memiliki keinginan yang lebih kuat untuk memperoleh tiket.
 
-Sebuah acara memiliki dua tipe kursi, yaitu kursi bernomor (\textit{numbered seat}) dan festival (\textit{free-standing}). Tiket kursi bernomor memiliki kategori Platinum, Gold, Silver, dan Bronze. Tiket festival memiliki kategori VIP, Zona A, dan Zona B. Setiap pengguna memiliki preferensi kategori kursi yang ingin dibeli, sebagaimana digambarkan pada tabel \ref{table:distribusi-kategori}.
+Distribusi preferensi kategori tiket, sebagaimana dirinci pada tabel \ref{table:distribusi-kategori}, didasarkan pada teori diskriminasi harga (\textit{tiered pricing}) \parencite{acei2022}. Pendekatan ini biasanya digunakan oleh penyelenggara untuk memaksimalkan pendapatan dengan mensegmentasi pasar berdasarkan kesediaan untuk membayar (\textit{willingness to pay}). Sebagian besar permintaan (53\%) terkonsentrasi pada tingkatan harga menengah ke bawah (\textit{Seated Low \& Mid}), yang mencerminkan segmen pasar yang lebih besar dan sensitif terhadap harga. Sebaliknya, profil dengan minat pada kategori harga lebih tinggi merepresentasikan segmen pasar yang lebih kecil dan kurang sensitif terhadap harga untuk tiket yang lebih mahal.
 
 \begin{table}[h]
     \centering
@@ -25,7 +25,7 @@ Sebuah acara memiliki dua tipe kursi, yaitu kursi bernomor (\textit{numbered sea
     \end{tabular}
 \end{table}
 
-Tingkatan merupakan nama profil dengan minat kategori tertentu secara terurut. Selain itu, setiap pengguna memiliki preferensi hari. Pengguna yang memiliki preferensi spesifik akan mengutamakan hari yang sesuai dengan preferensinya (bisa satu atau dua pilihan hari), dibandingkan dengan kesesuaian preferensi kategori. Pengguna yang tidak memiliki preferensi akan mengutamakan kesesuaian preferensi kategori dibandingkan dengan kesesuaian hari. Distribusi preferensi hari digambarkan pada tabel \ref{table:distribusi-hari}.
+Preferensi hari acara dibagi menjadi 52\% "Spesifik" dan 48\% "Bebas" (\textit{Any}), seperti pada Tabel \ref{table:distribusi-hari}. Pembagian ini mencerminkan keseimbangan antara penonton dengan jadwal yang kaku dan mereka yang memiliki fleksibilitas. Terdapat preferensi konsumen yang kuat untuk acara rekreasi pada akhir pekan karena berbagai komitmen sosial dan pekerjaan \parencite{rgate2013}. Kelompok "Spesifik" mewakili mereka yang terikat pada hari tertentu, sementara kelompok "Bebas" mewakili penggemar yang lebih fleksibel atau sangat termotivasi untuk mendapatkan tiket.
 
 \begin{table}[h]
     \centering
@@ -61,9 +61,7 @@ Variasi berikutnya adalah variasi dari seberapa persisten pengguna untuk mendapa
     \end{tabular}
 \end{table}
 
-\pagebreak
-
-Variasi terakhir adalah variasi dari berapa banyak tiket yang dipesan oleh suatu pengguna dalam satu kali pemesanan. Hal ini untuk menyimulasikan pengguna yang datang sendiri, bersama pasangan, dan datang dalam satu grup. Distribusi ini dibahas pada tabel \ref{table:distribusi-kuantitas}.
+Variasi terakhir adalah variasi dari berapa banyak tiket yang dipesan oleh suatu pengguna dalam satu kali pemesanan. Hal ini untuk menyimulasikan pengguna yang datang sendiri, bersama pasangan, dan datang dalam satu grup. Distribusi ini dibahas pada tabel \ref{table:distribusi-kuantitas}. Model ini menghasilkan rata-rata tertimbang 2-3 tiket per transaksi, yang sangat selaras dengan data dari industri hiburan lain, seperti penjualan tiket film yang menunjukkan rata-rata 2.3 tiket per transaksi \parencite{vista2025}.
 
 \begin{table}[h]
     \centering

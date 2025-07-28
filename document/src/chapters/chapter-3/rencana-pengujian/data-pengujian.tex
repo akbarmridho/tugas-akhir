@@ -2,8 +2,6 @@
 
 Penelitian ini menggunakan Stadion Utama Gelora Bung Karno (GBK) sebagai dasar lokasi, dengan asumsi kapasitas total sekitar 80.000 penonton per hari. Kapasitas ini dibagi menjadi dua jenis: area berdiri/festival dan area tribun/duduk. Setiap jenis ini nantinya dipecah menjadi beberapa kategori tiket dengan harga yang bervariasi. Skenario ini juga mempertimbangkan bahwa sebuah acara dapat berlangsung selama beberapa hari. Skenario pengujian dirancang untuk dapat menangani penjualan tiket hingga untuk empat hari.
 
-Meskipun beberapa kategori tiket berada dalam satu blok yang sama (seperti Lower - Silver North dengan total 5.000 kursi), pada basis data, area ini dipecah menjadi beberapa area yang lebih kecil dengan kapasitas sekitar 1000 hingga 2000 kursi per area. Tujuan utamanya adalah untuk pengoptimalan dan kemudahan sharding, terutama dari sisi basis data. Hal ini bermanfaat pada varian CitusData dan YugabyteDB. Pendekatan ini tidak akan berpengaruh pada pengalaman pengguna karena pembeli tiket cenderung mencari dan membeli beberapa kursi yang letaknya berdetakan dalam satu area yang sama.
-
 Harga dan kategori tiket dirancang untuk merefleksikan konser pada umumnya. Tabel \ref{tab:ticket_spec} membahas kategori tiket yang dibuat beserta banyaknya kursi per area.
 
 \begingroup
@@ -76,3 +74,5 @@ Harga dan kategori tiket dirancang untuk merefleksikan konser pada umumnya. Tabe
 \endgroup
 
 Spesifikasi di atas merupakan distribusi penjualan tiket per hari. Selain itu, terdapat kasus ketika banyaknya tiket yang dijual juga di-\textit{scaled down} untuk skenario pengujian perebutan tiket. Hal ini dilakukan untuk menjaga banyaknya kategori yang dijual dan menjaga distribusi area kursi tetap sama. Opsi untuk mengurangi kategori atau area juga dapat dilakukan, tetapi pendekatan tersebut mengurangi kompleksitas penjualan sehingga tidak cukup representatif.
+
+Meskipun beberapa kategori tiket berada dalam satu blok yang sama (seperti Lower - Silver North dengan total 5.000 kursi), pada basis data, area ini dipecah menjadi beberapa area yang lebih kecil dengan kapasitas sekitar 1000 hingga 2000 kursi per area. Tujuan utamanya adalah untuk pengoptimalan dan kemudahan sharding, terutama dari sisi basis data. Hal ini bermanfaat pada varian CitusData dan YugabyteDB. Pendekatan ini tidak akan berpengaruh pada pengalaman pengguna karena pembeli tiket cenderung mencari dan membeli beberapa kursi yang letaknya berdetakan dalam satu area yang sama.
