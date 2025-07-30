@@ -12,7 +12,6 @@ Penelitian ini telah membahas, mengimplementasikan, dan menguji sistem tiket yan
     \item Implementasi pengoptimalan sistem tiket disertai dengan integritas penjualan tiket dan kesesuaian data antara basis data relasional dengan Redis.
     \item Penggunaan pengendalian aliran dengan cara menolak pesanan lebih awal merupakan cara yang efektif untuk mengurangi beban pada basis data dengan tidak menghabiskan waktu untuk menolak pesanan setelah berada di basis data. Hal ini ditunjukkan dengan latensi yang lebih rendah untuk penanganan pesanan yang ditolak dibandingkan dengan tidak menggunakan pengendalian aliran.
     \item Pengendalian aliran dengan sistem antrean belum diimplementasikan dengan cukup baik karena memiliki latensi yang tinggi. Meskipun begitu, laju pemrosesan secara umum sama dengan varian tanpa pengendalian aliran. Analisis kueri menunjukkan latensi yang lebih rendah untuk kueri \textit{locking} pada varian ini. Meskipun begitu, beban pengujian tidak cukup tinggi untuk menunjukkan perbedaan kinerja yang signifikan.
-    \item Eksperimen pengujian dengan menggunakan \textit{sharding} pada level aplikasi atau pun pada \textit{connection pooler}.
 \end{enumerate}
 
 \pagebreak
@@ -29,4 +28,5 @@ Tentu penelitian ini tidak luput dari keterbatasan dan kekurangan. Sebagaimana d
     \item Implementasi antrean untuk pengendalian aliran yang lebih baik sehingga latensi bisa jauh lebih rendah.
     \item Pengoptimalan operasi baca ketersediaan kursi yang lebih baik dari penggunaan tembolok dengan waktu hidup singkat.
     \item Pengoptimalan yang spesifik dan menyesuaikan dengan keunggulan dan keterbatasan pada basis data yang digunakan, terutama untuk CitusData dan YugabyteDB.
+    \item Eksperimen pengujian dengan menggunakan \textit{sharding} pada level aplikasi atau pun pada \textit{connection pooler}.
 \end{enumerate}
