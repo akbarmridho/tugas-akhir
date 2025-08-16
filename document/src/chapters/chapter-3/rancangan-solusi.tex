@@ -41,6 +41,10 @@ Konfigurasi kluster PostgreSQL memiliki skalabilitas yang terbatas dengan pening
 
 \textit{Pooler} PGCat akan digunakan agar direct connection basis data yang terbatas dapat digunakan ulang dan dipakai oleh client yang lebih banyak. Selain itu, pada konfigurasi kluster PostgreSQL \textit{pooler} ini berguna sebagai pembagi beban kueri baca antara \textit{primary} dan replika.
 
+\subsection{Integrasi Layanan Pembayaran}
+
+Sistem tiket terintegrasi dengan layanan pembayaran yang disimulasikan (\textit{mock service}). Rancangan layanan ini dibahas pada Lampiran ref{apx:payment-service}.
+
 \subsection{Alur Sistem Tiket}
 
 \subsubsection{Alur Fitur Acara}
