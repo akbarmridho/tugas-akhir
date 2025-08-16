@@ -4,9 +4,9 @@ Redis merupakan basis data sumber terbuka berbasiskan \textit{key-value store}. 
 
 Konfigurasi Redis Cluster memungkinkan penskalaan secara horizontal dengan menyebarkan data pada mesin. Redis menggunakan fungsi hash deterministik untuk mendistribusikan data. Selain itu, Redis menggunakan \textit{gossip protocol} untuk menilai keadaan kluster. Ketika \textit{master} tidak responsif, node \textit{secondary} dapat dipromosikan menjadi node \textit{primary} \parencite{redisExplained}. Konsep umum lain pada Redis diilustrasikan pada Gambar \ref{fig:redis-explained}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{resources/chapter-2/redis.jpg}
+    \includegraphics[width=0.9\textwidth]{resources/chapter-2/redis.jpg}
     \caption{\textit{Redis Explained \parencite{redisExplained}}}
     \label{fig:redis-explained}
 \end{figure}

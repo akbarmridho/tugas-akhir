@@ -11,7 +11,7 @@ Komponen pada layanan ini akan dibagi menjadi dua, yaitu pemroses pembayaran dan
 
 \pagebreak
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{resources/chapter-3/payment-service.png}
     \caption{Arsitektur Layanan Pembayaran}
@@ -22,7 +22,7 @@ Komponen pada layanan ini akan dibagi menjadi dua, yaitu pemroses pembayaran dan
 
 Gambar \ref{fig:payment-flow1} menunjukkan alur sistem pembayaran untuk fitur pembuatan tagihan, pembayaran tagihan, dan baca data tagihan.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{resources/chapter-3/payment-flow1.png}
     \caption{Diagram Alur Pembuatan, Pembayaran dan Baca Tagihan}
@@ -33,7 +33,7 @@ Gambar \ref{fig:payment-flow1} menunjukkan alur sistem pembayaran untuk fitur pe
 
 Selanjutnya, Gambar \ref{fig:payment-flow2} menunjukkan alur pemrosesan \textit{webhook} untuk pembayaran pemesanan yang berhasil atau pun gagal. Skema ini menggunakan strategi \textit{exponential backoff} untuk menangani kasus pemberitahuan yang gagal.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-3/payment-flow2.png}
     \caption{Diagram Alur Pemrosesan \textit{Webhook}}

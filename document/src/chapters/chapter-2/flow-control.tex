@@ -12,11 +12,11 @@ Dalam konteks perangkat lunak, \textit{backpressure} dapat didefinisikan sebagai
 
 Pola penyeimbangan beban berbasiskan antrean merupakan pola desain yang menyelesaikan masalah \textit{backpressure} dengan menggunakan antrean yang bertindak sebagai penyangga antara pesan dengan sebuah layanan, sehingga beban dapat dikontrol dan layanan tetap berjalan dengan stabil \parencite{queueLoadLeveling}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-2/queue-based-load-leveling-pattern.png}
+    \includegraphics[width=0.8\textwidth]{resources/chapter-2/queue-based-load-leveling-pattern.png}
     \caption{Pola Penyeimbangan Beban Berbasiskan Antrean \parencite{queueLoadLeveling}}
     \label{fig:queue-based-load-leveling-pattern}
 \end{figure}
 
-Gambar \ref{fig:queue-based-load-leveling-pattern} mengilustrasikan penggunaan pola penyeimbangan beban berbasiskan antrean. Penggunaan antrean memisahkan pesan dengan pekerja, sehingga pekerja dapat menangani pesan berdasarkan kemampuannya, terlepas dari banyaknya pekerjaan yang bertambah seiring dengan berjalannya waktu. Pola ini memiliki berbagai keuntungan, seperti menjaga ketersediaan, memaksimalkan skalabilitas, dan membatasi biaya atau penggunaan sumber daya. Meskipun begitu, penggunaan pola ini akan meningkatkan latensi, terlebih lagi apabila pesan yang dikirimkan jauh lebih besar daripada kapasitas pemrosesan pada sistem.
+Gambar \ref{fig:queue-based-load-leveling-pattern} memperlihatkan pola antrean sebagai mekanisme pengendalian aliran. Ini menunjukkan bagaimana antrean dapat menahan permintaan berlebih agar tidak langsung membebani layanan downstream. Penggunaan antrean memisahkan pesan dengan pekerja, sehingga pekerja dapat menangani pesan berdasarkan kemampuannya, terlepas dari banyaknya pekerjaan yang bertambah seiring dengan berjalannya waktu. Pola ini memiliki berbagai keuntungan, seperti menjaga ketersediaan, memaksimalkan skalabilitas, dan membatasi biaya atau penggunaan sumber daya. Meskipun begitu, penggunaan pola ini akan meningkatkan latensi, terlebih lagi apabila pesan yang dikirimkan jauh lebih besar daripada kapasitas pemrosesan pada sistem.

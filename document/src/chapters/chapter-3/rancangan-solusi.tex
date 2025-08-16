@@ -4,7 +4,7 @@
 
 Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu layanan tiket, basis data relasional, dan kluster Redis. Komponen basis data relasional dapat dibagi menjadi tiga jenis, yaitu kluster PostgreSQL dengan replika baca, kluster CitusData, dan kluster YugabyteDB. Komponen ini yang akan menjadi sumber kebenaran utama dari sistem ini. Selain itu, kluster Redis digunakan untuk menyimpan data agregat ketersediaan berdasarkan area. Arsitektur ini diilustrasikan pada Gambar \ref{fig:ticket-nofc}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-3/ticket-nofc.png}
     \caption{Diagram Arsitektur Sistem Tiket Tanpa Pengendalian Aliran}
@@ -17,7 +17,7 @@ Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu layanan tiket,
 
 Pada sistem tiket dengan pengendalian aliran, terdapat dua komponen baru yaitu RabbitMQ dan pemroses pesanan. RabbitMQ bertugas untuk menyimpan antrean permintaan pemesanan tiket dan pemroses pesanan bertugas untuk memproses pemesanan tiket. Selain itu, kluster Redis memiliki tanggung jawab tambahan untuk menyimpan data yang digunakan untuk menolak permintaan pesanan yang masuk lebih awal. Arsitektur ini diilustrasikan pada Gambar \ref{fig:ticket-fc}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-3/ticket-fc.png}
     \caption{Diagram Arsitektur Sistem Tiket dengan Pengendalian Aliran}
@@ -28,7 +28,7 @@ Pada sistem tiket dengan pengendalian aliran, terdapat dua komponen baru yaitu R
 
 Gambar \ref{fig:rdbms-variation} mengilustrasikan variasi pengaturan basis data relasional yang mungkin terjadi.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/rdbms.png}
     \caption{Variasi Basis Data Relasional}
@@ -64,7 +64,7 @@ Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membac
 
 Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-book-flow}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/book-flow.png}
     \caption{Diagram Alur Fitur Pemesanan Tiket (tanpa pengendalian aliran)}

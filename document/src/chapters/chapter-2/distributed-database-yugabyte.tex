@@ -4,11 +4,11 @@ YugaByteDB merupakan basis data relasional terdistribusi dengan konsensus Raft. 
 
 YugaByteDB memanfaatkan pemartisian untuk mencapai ketersediaan tinggi dan toleransi kegagalan. Tablet yang berisi grup data direplikasi pada beberapa instans. Dengan begitu, penulisan dapat dilakukan pada instans yang berbeda dan operasi pembacaan dapat dilakukan pada banyak instans \parencite{yugabyteBaeldung}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-2/yugabyte.png}
     \caption{Arsitektur YugaByteDB \parencite{yugabyteBaeldung}}
     \label{fig:yugabyte-architecture}
 \end{figure}
 
-Gambar \ref{fig:yugabyte-architecture} menunjukkan gambaran arsitektur YugaByteDB. YugaByteDB terdiri atas Master dan TServer. Master merupakan layer kontrol yang mengatur operasi pada kluster dan metadata kluster. TServer bertugas untuk menyimpan dan mengatur data yang disimpan.
+Gambar \ref{fig:yugabyte-architecture} menunjukkan arsitektur YugabyteDB dengan komponen Master dan TServer. Master mengelola metadata, sedangkan TServer menyimpan data. Ini relevan karena memperlihatkan bagaimana replikasi Raft digunakan.

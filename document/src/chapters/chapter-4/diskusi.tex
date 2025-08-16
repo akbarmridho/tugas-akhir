@@ -3,7 +3,7 @@
 \subsection{Keterbatasan Pengujian}
 \label{keterbatasan-pengujian}
 
-Penelitian ini memiliki beberapa keterbatasan pengujian yang dapat memengaruhi hasil akhir. Keterbatasan ini meliputi:
+Tugas akhir ini memiliki beberapa keterbatasan pengujian yang dapat memengaruhi hasil akhir. Keterbatasan ini meliputi:
 
 \begin{enumerate}
     \item Karena keterbatasan sumber daya, jumlah pengguna virtual terbatas hingga 15.000 pada saat yang bersamaan. Idealnya, jumlah pengguna virtual ini dibuat lebih banyak hingga setidaknya 100.000 pengguna virtual pada saat yang bersamaan. Jumlah pengguna virtual yang lebih banyak dapat menunjukkan hasil yang lebih representatif sesuai dengan yang terjadi pada sistem tiket sesungguhnya.
@@ -30,7 +30,7 @@ Meskipun tidak semua pengoptimalan memberikan hasil yang sesuai harapan, terdapa
 \subsection{Rekomendasi Arsitektur Sistem Tiket}
 \label{rekomendasi-arsitektur}
 
-Berdasarkan analisis dan temuan pada penelitian ini, berikut adalah rekomendasi arsitektur sistem tiket untuk menangani beban tinggi:
+Berdasarkan analisis dan temuan pada tugas akhir ini, berikut adalah rekomendasi arsitektur sistem tiket untuk menangani beban tinggi:
 
 \begin{enumerate}
     \item \textbf{Basis Data}: Gunakan PostgreSQL dengan replika baca. Pendekatan ini terbukti paling efisien dari segi latensi dan penggunaan sumber daya. Untuk skalabilitas tulis di masa depan, rencanakan pemartisian pada level aplikasi atau \textit{connection pooler}.

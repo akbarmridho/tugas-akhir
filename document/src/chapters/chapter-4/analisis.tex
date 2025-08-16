@@ -8,7 +8,7 @@ Kedua skenario pengujian ini memiliki siklus/fase pola permintaan yang berbeda. 
 
 Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Setelah tiket habis terjual, jumlah permintaan ketersediaan tiket jauh meningkat karena penguji mencoba mencari tiket dari berbagai area dengan lebih banyak. Pola ini ditunjukkan pada Gambar \ref{fig:pattern-stress-traffic}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{resources/chapter-4/pattern-stress-traffic.png}
     \caption{Pola Permintaan pada Beban Berkelanjutan}
@@ -17,7 +17,7 @@ Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penju
 
 Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) selama pemrosesan pesanan sebanyak 3-10\% dari respons secara keseluruhan. Hal ini ditunjukkan pada Gambar \ref{fig:pattern-stress-order}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{resources/chapter-4/pattern-stress-order.png}
     \caption{Status Respons pada Beban Berkelanjutan}
@@ -31,7 +31,7 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) sela
 Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan permintaan pemesanan tiket. Hal ini wajar karena terdapat lebih banyak peminat dibandingkan dengan tiket yang tersedia. Berdasarkan Gambar \ref{fig:pattern-sim-traffic}, tiket habis terjual dalam kurang lebih 2 menit penjualan.
 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-traffic.png}
     \caption{Pola Permintaan pada Perebutan Tiket}
@@ -40,7 +40,7 @@ Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan
 
 Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang cukup banyak bahkan sejak proses penjualan dimulai. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana digambarkan pada keadaan akhir penguji pada Gambar \ref{fig:pattern-sim-order}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-order.png}
     \caption{Status Respons pada Perebutan Tiket}
@@ -126,7 +126,7 @@ Kinerja PostgreSQL yang baik berasal dari arsitekturnya yang monolitik. PostgreS
 
 Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perhatikan perbedaan penggunaan sumber daya antara koordinator dan \textit{worker} CitusData pada Gambar \ref{fig:citusdata-usage}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/citusdata-usage.png}
     \caption{Penggunaan CPU CitusData (f2t3)}
@@ -141,7 +141,7 @@ Beban TPC-C dan beban penjualan tiket memiliki kemiripan, sehingga hal yang sama
 
 Terdapat alternatif \textit{benchmark} TPC-C yang juga dibahas pada komentar tersebut, yaitu \textit{benchmark} HammerDB. HammerDB menyimpan logika pengujian pada \textit{stored procedure} PostgreSQL. Citus dapat mendelegasikan pemanggilan prosedur tersebut dengan \textit{overhead} yang jauh lebih kecil dan dengan jumlah \textit{network round-trip} yang lebih sedikit \parencite{Slot2020}. Hal ini dibahas lebih lanjut pada artikel yang membahas penggunaan \textit{distributed function} untuk latensi yang lebih baik pada CitusData versi 9 \parencite{Slot2020faster}.
 
-Pendekatan dengan \textit{stored procedure} merupakan alternatif yang dapat dipelajari lebih lanjut pada penelitian lain untuk pengoptimalan yang lebih optimal. Meskipun begitu, permasalahan dari pendekatan ini adalah pemindahan logika bisnis dari kode aplikasi ke basis data. Selain karena keterbatasan sintaks dan dukungan integrasi, logika bisnis yang dijalankan pada level aplikasi belum tentu dapat diterjemahkan secara persis menjadi \textit{stored procedure} PostgreSQL.
+Pendekatan dengan \textit{stored procedure} merupakan alternatif yang dapat dipelajari lebih lanjut pada tugas akhir lain untuk pengoptimalan yang lebih optimal. Meskipun begitu, permasalahan dari pendekatan ini adalah pemindahan logika bisnis dari kode aplikasi ke basis data. Selain karena keterbatasan sintaks dan dukungan integrasi, logika bisnis yang dijalankan pada level aplikasi belum tentu dapat diterjemahkan secara persis menjadi \textit{stored procedure} PostgreSQL.
 
 \subsubsection{Pembahasan Kinerja YugabyteDB}
 
@@ -151,7 +151,7 @@ Pada kasus yang lebih sederhana, seorang pengguna melaporkan penurunan kinerja h
 
 Permasalahan latensi ini dapat diterima apabila kinerja YugabyteDB juga diiringi dengan keunggulan dari aspek lain, seperti kemampuan menangani keadaan perebutan tiket dengan baik dan kestabilan kluster yang baik. Meskipun begitu, hal ini juga tidak dapat ditunjukkan oleh YugabyteDB. Gambar \ref{fig:metrics-f3t1} menunjukkan gambaran kinerja YugabyteDB saat berjalan dengan baik.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{resources/chapter-4/latensi-yugabyte-success.png}
     \caption{Metrik Pemrosesan Pesanan (f3t2)}
@@ -160,7 +160,7 @@ Permasalahan latensi ini dapat diterima apabila kinerja YugabyteDB juga diiringi
 
 Latensi pemrosesan diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesannya mulai stabil. Setelah itu, latensi pemrosesan mulai meningkat hingga tiba-tiba turun lagi. Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh sebagaimana terjadi pada hasil pengujian lain yang ditunjukkan pada Gambar \ref{fig:metrics-f3t2}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{resources/chapter-4/latensi-yugabyte-fail.png}
     \caption{Metrik Pemrosesan Pesanan (f3t2)}
@@ -175,7 +175,7 @@ Masalah lain yang berhasil diidentifikasi pada YugabyteDB ini adalah masalah man
 
 Dari sisi \textit{throughput}, terdapat kasus ketika YugabyteDB memiliki hasil yang cukup baik sebagaimana ditunjukkan pada Gambar \ref{fig:yugabytedb-throughput}. Meskipun begitu, hasil ini tidak dapat direplikasi pada pengujian lain.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/yugabyte-ops.png}
     \caption{\textit{Throughput} Kueri Pada YugabyteDB}
@@ -190,7 +190,7 @@ Singkat cerita, YugabyteDB kesulitan menangani beban koneksi yang ada pada pengu
 
 Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dipanggil, terutama ketika ketersediaan tiket mulai menipis dan pengguna mencoba mengeksplorasi lebih banyak area. Hal ini ditunjukkan pada Gambar \ref{fig:latency-get-area}. Pada pengujian f5t2, \textit{endpoint} ini memiliki puncak pemanggilan sebanyak 1700 rps. Sepanjang pengujian, latensi rata-rata operasi tersebut berkisar antara 2.5-4.5 milisekon. Hal ini menunjukkan bahwa pengoptimalan kueri ketersediaan area dengan menggunakan Redis merupakan pendekatan yang sangat efektif, terutama dalam meringankan beban pada basis data.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/latency-area-availability.png}
     \caption{Metrik Baca Ketersediaan Area (f5t2)}
@@ -203,7 +203,7 @@ Operasi baca ketersediaan kursi tidak dipanggil sebanyak operasi sebelumnya. Hal
 
 \pagebreak
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/latency-seat-availability.png}
     \caption{Metrik Baca Ketersediaan Kursi (f5t2)}
@@ -224,14 +224,14 @@ Kombinasi hal tersebut membuat \textit{cache hit} operasi ini sangat rendah sehi
 
 Gambar \ref{fig:latency-fc} dan Gambar \ref{fig:latency-nofc} menunjukkan perbedaan latensi pemrosesan antara sistem dengan pendendalian aliran dan tanpa pengendalian aliran. Saat berjalan dengan baik, latensi pemrosesan dengan pengendalian aliran dapat turun hingga ratusan milisekon.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
     \caption{Latensi Pemrosesan dengan Pengendalian Aliran}
     \label{fig:latency-fc}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
     \caption{Latensi Pemrosesan tanpa Pengendalian Aliran}
@@ -242,14 +242,14 @@ Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana dit
 
 \pagebreak
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
     \caption{Laju Pemrosesan dengan Pengendalian Aliran}
     \label{fig:rps-fc-pg-stress-0}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
     \caption{Laju Pemrosesan tanpa Pengendalian Aliran}
@@ -285,14 +285,14 @@ Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal posit
 
 Tidak ada perbedaan latensi pada operasi tulis. Meskipun begitu, latensi untuk \textit{lock} kursi pada varian dengan pengendalian aliran jauh lebih kecil. Selanjutnya, mari bandingkan latensi pemrosesan pesanan saat kode respons 409 berdasarkan Gambar \ref{fig:latency-by-code-nofc} dan Gambar \ref{fig:latency-by-code-fc}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode tanpa Pengendalian Aliran}
     \label{fig:latency-by-code-nofc}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode dengan Pengendalian Aliran}
@@ -317,21 +317,21 @@ Pengoptimalan baca dengan menggunakan Redis memungkinkan terjadinya ketidakcocok
 
 Gambar \ref{fig:sanity-f2t3}, Gambar \ref{fig:sanity-f3t1}, dan Gambar \ref{fig:sanity-f5t4} menunjukkan sampel hasil \textit{sanity check} selama pelaksanaan pengujian.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/sanity-f2t3.png}
     \caption{Hasil \textit{Sanity Check} (f2t3)}
     \label{fig:sanity-f2t3}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/sanity-f3t1.png}
     \caption{Hasil \textit{Sanity Check} (f3t1)}
     \label{fig:sanity-f3t1}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/sanity-f5t4.png}
     \caption{Hasil \textit{Sanity Check} (f5t4)}

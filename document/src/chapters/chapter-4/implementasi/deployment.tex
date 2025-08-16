@@ -17,7 +17,7 @@ Komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Lo
 
 Sistem ini terdiri atas cert-manager, layanan Nginx Ingress Controller, serta beberapa \textit{ingress} yang mengekspos layanan internal kubernetes ke dunia luar. Terdapat empat \textit{service} yang diekspos, yaitu layanan tiket, layanan pembayaran, dasbor prometheus, dan dasbor Grafana. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-nginx}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/nginx-1.png}
     \caption{\textit{Deployment} Nginx Ingress}
@@ -30,7 +30,7 @@ Sistem ini terdiri atas cert-manager, layanan Nginx Ingress Controller, serta be
 
 Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service, dan kluster Redis. Deployment Payment terdiri atas dua kontainer, yaitu Payment Server dan Payment Notifier. Layanan ini digabung dengan kluster sistem tiket untuk mempermudah \textit{deployment}, pengujian, dan memastikan tidak ada masalah jaringan yang terjadi. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-payment}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/chapter-4/payment.png}
     \caption{\textit{Deployment} Layanan Pembayaran}
@@ -44,7 +44,7 @@ Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service,
 
 Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, kluster redis, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-ticket-nofc}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/ticket-nofc.png}
     \caption{\textit{Deployment} Layanan Ticket tanpa Pengendalian Aliran}
@@ -57,7 +57,7 @@ Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, k
 
 Layanan tiket dengan pengendalian aliran terdiri atas Ticket Server Deployment, Ticket Worker Deployment, kluster redis, RabbitMQ, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-ticket-fc}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/ticket-fc.png}
     \caption{Deployment Layanan Ticket dengan Pengendalian Aliran}
@@ -72,7 +72,7 @@ Hal yang membedakan \textit{deployment} varian ini dengan varian tanpa pengendal
 
 Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas satu \textit{primary} dan satu replika. Selain itu, terdapat PGCat yang bertindak sebagai pooler dan \textit{load balancer} pada level kueri. PGCat akan membaca kueri dan meneruskan query kepada \textit{primary} atau replika berdasarkan jenis kueri dan beban setiap instans. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-postgres}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/postgres.png}
     \caption{Deployment kluster PostgreSQL}
@@ -86,7 +86,7 @@ Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas s
 
 Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama merupakan koordinator dan sisanya merupakan pekerja. Terdapat PGCat yang terhubung dengan koordinator. Sistem tiket terhubung langsung dengan PGCat. Koneksi dengan pekerja dilakukan melalui koordinator. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-citusdata}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/citusdata.png}
     \caption{Deployment kluster CitusData}
@@ -99,7 +99,7 @@ Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama m
 
 Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set, dan PGCat. PGCat terhubung dengan semua instans YB-TServer. Sistem tiket terhubung langsung dengan PGCat. Proses \textit{load balancing} koneksi dengan YB-TServer ditangani oleh PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-yugabyte}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/yugabyte.png}
     \caption{Deployment kluster YugabyteDB}
@@ -114,7 +114,7 @@ Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set,
 
 Sistem pengawasan pada agen penguji lebih sederhana dengan komponen pengawasan hanya terdiri atas Grafana Dashboard dan Prometheus. Grafana Alloy dan Loki tidak digunakan karena \textit{log} yang relevan hanya berasal dari eksekusi K6 yang isinya dapat ditampilkan dengan perintah tertentu. Selain itu, hal ini dilakukan untuk mengurangi penggunaan sumber daya yang tidak perlu, sehingga besarnya sumber daya yang dapat digunakan untuk K6 menjadi lebih banyak. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-monitoring-agent}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/agent-monitoring.png}
     \caption{\textit{Deployment} Sistem Monitoring}
@@ -131,7 +131,7 @@ Komponen ini memiliki \textit{deployment} yang sama seperti klsuter sistem tiket
 
 K6 Operator merupakan komponen utama kluster penguji. Komponen ini mengatur inisiasi dan \textit{runtime} kode pengujian k6. Saat pengujian dijalankan, Grafana Operator akan menginisiasi instans K6 sebanyak 12 instans. Instans ini akan didistribusikan ke berbagai node pada kluster. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-k6-operator}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/k6-operator.png}
     \caption{Deployment K6 Operator}

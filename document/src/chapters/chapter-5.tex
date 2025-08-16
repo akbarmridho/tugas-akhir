@@ -2,10 +2,10 @@
 
 \section{Kesimpulan}
 
-Penelitian ini telah membahas, mengimplementasikan, dan menguji sistem tiket yang dirancang untuk berjalan pada beban tinggi dengan berbagai macam variasi dan pengoptimalan. Berdasarkan hasil analisis yang sudah dipaparkan sebelumnya, berikut adalah beberapa temuan pada penelitian ini:
+Tugas akhir ini telah membahas, mengimplementasikan, dan menguji sistem tiket yang dirancang untuk berjalan pada beban tinggi dengan berbagai macam variasi dan pengoptimalan. Berdasarkan hasil analisis yang sudah dipaparkan sebelumnya, berikut adalah beberapa temuan pada tugas akhir ini:
 
 \begin{enumerate}
-    \item PostgreSQL merupakan basis data yang memiliki kinerja sangat baik dan mampu menangani beban sistem tiket dengan baik. Arsitektur monolitik membuat latensi penulisan dan penanganan \textit{contention} menjadi sangat efisien. Selain itu, penggunaan \textit{read replica} memungkinkan pengoptimalan PostgreSQL hingga tingkatan tertentu. Meskipun begitu, beban pengujian pada penelitian ini belum cukup tinggi sehingga membuat PostgreSQL mencapai batasnya.
+    \item PostgreSQL merupakan basis data yang memiliki kinerja sangat baik dan mampu menangani beban sistem tiket dengan baik. Arsitektur monolitik membuat latensi penulisan dan penanganan \textit{contention} menjadi sangat efisien. Selain itu, penggunaan \textit{read replica} memungkinkan pengoptimalan PostgreSQL hingga tingkatan tertentu. Meskipun begitu, beban pengujian pada tugas akhir ini belum cukup tinggi sehingga membuat PostgreSQL mencapai batasnya.
     \item CitusData merupakan alternatif yang baik dengan \textit{overhead} tertentu seperti latensi yang lebih tinggi dan penggunaan sumber daya yang lebih besar untuk membuat penskalaan PostgreSQL secara horizontal termasuk operasi tulis. CitusData dapat menjadi pilihan ketika beban penulisan pada sistem cukup tinggi sehingga tidak dapat ditangani oleh satu instans PostgreSQL. Meskipun begitu, penskalaan berdasarkan baris memberikan \textit{overhead} dari sisi koordinator, terutama untuk operasi baca karena koordinator terlalu banyak melakukan \textit{query planning}. Penggunaan kluster CitusData untuk kasus sistem tiket harus disertai dengan pengoptimalan yang berfokus pada pengurangan \textit{overhead} dari sisi koordinator agar penskalaan secara horizontal menjadi jauh lebih efektif.
     \item YugabyteDB merupakan basis data yang tidak cocok untuk kasus pemesanan tiket karena beberapa hal. Pertama, penggunaan sumber daya yang tinggi dan tidak optimal membuat basis data ini membutuhkan sumber daya yang beberapa kali lipat lebih banyak hanya untuk menyamai kinerja PostgreSQL atau pun CitusData. Kedua, penanganan transaksi pada YugabyteDB membutuhkan koordinasi antar-\textit{node} yang lebih banyak sehingga meningkatkan latensi secara signifikan. YugabyteDB memberikan hasil yang buruk terutama pada penanganan data yang tinggi \textit{contention}.
     \item Pengoptimalan kueri baca untuk operasi baca ketersediaan tiket berdasarkan area menggunakan Redis merupakan pengoptimalan yang berjalan dengan sangat baik. Hal ini ditunjukkan dengan kestabilan dan rendahnya latensi operasi tersebut. Di sisi lain, penggunaan tembolok dengan waktu hidup rendah tidak berjalan sesuai harapan karena tembolok disimpan pada level instans dan tersebar berdasarkan area sehingga \textit{cache hit} rendah.
@@ -18,7 +18,7 @@ Penelitian ini telah membahas, mengimplementasikan, dan menguji sistem tiket yan
 
 \section{Saran}
 
-Tentu penelitian ini tidak luput dari keterbatasan dan kekurangan. Sebagaimana dibahas pada Subbab \ref{keterbatasan-pengujian} dan Subbab \ref{pengembangan-lebih-lanjut}, berikut adalah beberapa saran yang dapat dilakukan untuk pengembangan atau penelitian selanjutnya agar dapat membuat sistem tiket yang lebih optimal.
+Tentu tugas akhir ini tidak luput dari keterbatasan dan kekurangan. Sebagaimana dibahas pada Subbab \ref{keterbatasan-pengujian} dan Subbab \ref{pengembangan-lebih-lanjut}, berikut adalah beberapa saran yang dapat dilakukan untuk pengembangan atau tugas akhir selanjutnya agar dapat membuat sistem tiket yang lebih optimal.
 
 \begin{enumerate}
     \item Desain pengujian yang lebih representatif dengan simulasi distribusi \textit{arrival} pengguna dengan jumlah \textit{concurrent user} yang lebih banyak.

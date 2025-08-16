@@ -94,7 +94,7 @@ The performance of the three database architectures varied significantly under h
 The read optimization strategies yielded mixed results.
 \begin{itemize}
     \item The use of \textbf{Redis for caching aggregated area availability} was highly effective. This endpoint handled up to 1700 rps with an average latency of just 2.5-4.5 ms, successfully offloading significant read traffic from the primary database.
-          \begin{figure}[h!]
+          \begin{figure}[H]
               \centering
               \includegraphics[width=0.35\textwidth]{resources/chapter-4/latency-area-availability.png}
               \caption{Read Area Availability Metrics}
@@ -102,7 +102,7 @@ The read optimization strategies yielded mixed results.
           \end{figure}
 
     \item The \textbf{in-memory micro-caching for individual seat availability} was not effective. The cache hit ratio was very low due to the local nature of the cache (per application instance), the wide distribution of requests across different areas, and the short cache lifetime (150 ms). This resulted in high P95 latencies (up to 7 seconds), indicating that this remains a bottleneck.
-          \begin{figure}[h!]
+          \begin{figure}[H]
               \centering
               \includegraphics[width=0.35\textwidth]{resources/chapter-4/latency-seat-availability.png}
               \caption{Read Seat Availability Metrics}
@@ -114,28 +114,28 @@ The read optimization strategies yielded mixed results.
 The flow control mechanism demonstrated significant benefits, particularly in reducing database load.
 \begin{itemize}
     \item \textbf{Early request rejection} using Redis was highly effective. It successfully filtered out requests for unavailable seats before they hit the database, reducing the latency for failed booking attempts from 1-2 seconds down to 50-100 milliseconds.
-          \begin{figure}[htbp]
+          \begin{figure}[H]
               \centering
               \includegraphics[width=0.45\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
               \caption{Processing Latency with Flow Control}
               \label{fig:latency-fc}
           \end{figure}
 
-          \begin{figure}[htbp]
+          \begin{figure}[H]
               \centering
               \includegraphics[width=0.45\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
               \caption{Processing Latency without Flow Control}
               \label{fig:latency-nofc}
           \end{figure}
     \item The \textbf{queue-based processing} showed potential but was hampered by the high latency introduced by RabbitMQ. While it successfully smoothed out the load on the database and reduced contention (evidenced by lower query latency for locking), the overall end-to-end latency for the user was much higher. The test load was also not high enough to create a scenario where the baseline PostgreSQL system was completely overwhelmed, which is where this pattern would provide the most benefit.
-          \begin{figure}[h!]
+          \begin{figure}[H]
               \centering
               \includegraphics[width=0.45\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
               \caption{Transaction Processing Rate with Flow Control}
               \label{fig:rps-fc-pg-stress-0}
           \end{figure}
 
-          \begin{figure}[h!]
+          \begin{figure}[H]
               \centering
               \includegraphics[width=0.45\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
               \caption{Transaction Processing Rate without Flow Control}
