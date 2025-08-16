@@ -1,0 +1,47 @@
+graph LR
+    Browser --> IngressNginx
+    IngressNginx --> Client
+    IngressNginx --> Auth
+    IngressNginx --> Tickets
+    IngressNginx --> Orders
+    IngressNginx --> Payments
+    IngressNginx --> Expiration
+    Client --> NATS
+    Auth --> AuthMongoDB
+    AuthMongoDB --> NATS
+    Tickets --> TicketsMongoDB
+    TicketsMongoDB --> NATS
+    Orders --> OrdersMongoDB
+    OrdersMongoDB --> NATS
+    Payments --> PaymentsMongoDB
+    PaymentsMongoDB --> NATS
+    Expiration --> ExpirationRedis
+    ExpirationRedis --> NATS
+    subgraph Kubernetes Cluster
+        direction LR
+        Client
+        Auth
+        Tickets
+        Orders
+        Payments
+        Expiration
+        AuthMongoDB
+        TicketsMongoDB
+        OrdersMongoDB
+        PaymentsMongoDB
+        ExpirationRedis
+        NATS
+    end
+    style Client fill:#fff,stroke:#333,stroke-width:2px
+    style Auth fill:#fff,stroke:#333,stroke-width:2px
+    style Tickets fill:#fff,stroke:#333,stroke-width:2px
+    style Orders fill:#fff,stroke:#333,stroke-width:2px
+    style Payments fill:#fff,stroke:#333,stroke-width:2px
+    style Expiration fill:#fff,stroke:#333,stroke-width:2px
+    style AuthMongoDB fill:#fff,stroke:#333,stroke-width:2px
+    style TicketsMongoDB fill:#fff,stroke:#333,stroke-width:2px
+    style OrdersMongoDB fill:#fff,stroke:#333,stroke-width:2px
+    style PaymentsMongoDB fill:#fff,stroke:#333,stroke-width:2px
+    style ExpirationRedis fill:#fff,stroke:#333,stroke-width:2px
+    style NATS fill:#fff,stroke:#333,stroke-width:2px
+    style IngressNginx fill:#fff,stroke:#333,stroke-width:2px
