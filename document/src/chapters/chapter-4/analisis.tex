@@ -6,7 +6,7 @@ Kedua skenario pengujian ini memiliki siklus/fase pola permintaan yang berbeda. 
 
 \subsubsection{Skenario Beban Berkelanjutan}
 
-Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Setelah tiket habis terjual, jumlah permintaan ketersediaan tiket jauh meningkat karena penguji mencoba mencari tiket dari berbagai area dengan lebih banyak. Pola ini ditunjukkan pada gambar \ref{fig:pattern-stress-traffic}.
+Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Setelah tiket habis terjual, jumlah permintaan ketersediaan tiket jauh meningkat karena penguji mencoba mencari tiket dari berbagai area dengan lebih banyak. Pola ini ditunjukkan pada Gambar \ref{fig:pattern-stress-traffic}.
 
 \begin{figure}[htbp]
     \centering
@@ -15,7 +15,7 @@ Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penju
     \label{fig:pattern-stress-traffic}
 \end{figure}
 
-Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) selama pemrosesan pesanan sebanyak 3-10\% dari respons secara keseluruhan. Hal ini ditunjukkan pada gambar \ref{fig:pattern-stress-order}.
+Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) selama pemrosesan pesanan sebanyak 3-10\% dari respons secara keseluruhan. Hal ini ditunjukkan pada Gambar \ref{fig:pattern-stress-order}.
 
 \begin{figure}[htbp]
     \centering
@@ -28,7 +28,7 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) sela
 
 \subsubsection{Skenario Perebutan Tiket}
 
-Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan permintaan pemesanan tiket. Hal ini wajar karena terdapat lebih banyak peminat dibandingkan dengan tiket yang tersedia. Berdasarkan gambar \ref{fig:pattern-sim-traffic}, tiket habis terjual dalam kurang lebih 2 menit penjualan.
+Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan permintaan pemesanan tiket. Hal ini wajar karena terdapat lebih banyak peminat dibandingkan dengan tiket yang tersedia. Berdasarkan Gambar \ref{fig:pattern-sim-traffic}, tiket habis terjual dalam kurang lebih 2 menit penjualan.
 
 
 \begin{figure}[htbp]
@@ -38,7 +38,7 @@ Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan
     \label{fig:pattern-sim-traffic}
 \end{figure}
 
-Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang cukup banyak bahkan sejak proses penjualan dimulai. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana digambarkan pada keadaan akhir penguji pada gambar \ref{fig:pattern-sim-order}.
+Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang cukup banyak bahkan sejak proses penjualan dimulai. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana digambarkan pada keadaan akhir penguji pada Gambar \ref{fig:pattern-sim-order}.
 
 \begin{figure}[htbp]
     \centering
@@ -50,7 +50,7 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang
 
 \subsection{Kinerja Selama Pengujian}
 
-Gambaran kinerja setiap varian basis data ditunjukkan pada tabel \ref{table:kinerja-pemrosesan-pesanan}. Secara garis besar, varian PostgreSQL mampu menangani beban yang diberikan dengan sangat baik. Varian CitusData masih memiliki kinerja yang baik, meski memiliki latensi yang lebih tinggi dibandingkan dengan PostgreSQL. YugabyteDB mengalami lebih banyak kegagalan dan kinerja yang buruk sehingga tidak dapat menyelesaikan proses penjualan dengan baik. Sampel pengujian yang dipilih pada adalah skenario stress-2 tanpa pengendalian aliran. Skenario ini merupakan skenario pengujian dengan kinerja YugabyteDB yang dapat diterima dan mampu menyelesaikan proses penjualan. Dengan beban yang lebih tinggi, YugabyteDB mengalami banyak kegagalan.
+Gambaran kinerja setiap varian basis data ditunjukkan pada Tabel \ref{table:kinerja-pemrosesan-pesanan}. Secara garis besar, varian PostgreSQL mampu menangani beban yang diberikan dengan sangat baik. Varian CitusData masih memiliki kinerja yang baik, meski memiliki latensi yang lebih tinggi dibandingkan dengan PostgreSQL. YugabyteDB mengalami lebih banyak kegagalan dan kinerja yang buruk sehingga tidak dapat menyelesaikan proses penjualan dengan baik. Sampel pengujian yang dipilih pada adalah skenario stress-2 tanpa pengendalian aliran. Skenario ini merupakan skenario pengujian dengan kinerja YugabyteDB yang dapat diterima dan mampu menyelesaikan proses penjualan. Dengan beban yang lebih tinggi, YugabyteDB mengalami banyak kegagalan.
 
 \begin{table}[h]
     \centering
@@ -73,11 +73,11 @@ Gambaran kinerja setiap varian basis data ditunjukkan pada tabel \ref{table:kine
 
 Latensi dan \textit{throughput} pemrosesan diukur dari sisi Ticket Server, bukan dari level basis data. Latensi pemrosesan yang diambil merupakan latensi terbaik saat beban sudah cukup tinggi dan laju pemrosesan mulai stabil. Penggunaan CPU dan penggunaan memori merupakan agregat puncak jumlah penggunaan sumber daya setiap instans basis data yang berkaitan. Apabila terdapat dua nilai maksimal \textit{throughput} yang mendekati, nilai yang dipilih adalah nilai yang memiliki rasio sukses (kode respons 200) paling tinggi.
 
-Berdasarkan tabel \ref{table:kinerja-pemrosesan-pesanan}, PostgreSQL unggul dari segala aspek, mulai dari laju pemrosesan, penggunaan sumber daya, serta latensi. CitusData memiliki laju pemrosesan yang mendekati PostgreSQL dengan latensi 2x lebih lambat dan penggunaan sumber daya yang sedikit lebih tinggi. Di sisi lain, YugabyteDB memiliki laju pemrosesan kurang dari setengah PostgreSQL dengan latensi setidaknya 4x lebih lambat, penggunaan CPU 2.4x lebih banyak, dan penggunaan memori 10x lebih banyak.
+Berdasarkan Tabel \ref{table:kinerja-pemrosesan-pesanan}, PostgreSQL unggul dari segala aspek, mulai dari laju pemrosesan, penggunaan sumber daya, serta latensi. CitusData memiliki laju pemrosesan yang mendekati PostgreSQL dengan latensi 2x lebih lambat dan penggunaan sumber daya yang sedikit lebih tinggi. Di sisi lain, YugabyteDB memiliki laju pemrosesan kurang dari setengah PostgreSQL dengan latensi setidaknya 4x lebih lambat, penggunaan CPU 2.4x lebih banyak, dan penggunaan memori 10x lebih banyak.
 
 \subsection{Kinerja Basis Data Terdistribusi}
 
-Sebagaimana digambarkan pada tabel \ref{table:kinerja-pemrosesan-pesanan}, kinerja PostgreSQL lebih baik dibandingkan CitusData dan YugabyteDB. Berikut adalah penelusuran lebih mendalam untuk kinerja setiap basis data, terutama pada skenario lain.
+Sebagaimana digambarkan pada Tabel \ref{table:kinerja-pemrosesan-pesanan}, kinerja PostgreSQL lebih baik dibandingkan CitusData dan YugabyteDB. Berikut adalah penelusuran lebih mendalam untuk kinerja setiap basis data, terutama pada skenario lain.
 
 \subsubsection{Rata-Rata Waktu Eksekusi Kueri}
 
@@ -124,7 +124,7 @@ Kinerja PostgreSQL yang baik berasal dari arsitekturnya yang monolitik. PostgreS
 
 \subsubsection{Pembahasan Kinerja CitusData}
 
-Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perhatikan perbedaan penggunaan sumber daya antara koordinator dan \textit{worker} CitusData pada gambar \ref{fig:citusdata-usage}.
+Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perhatikan perbedaan penggunaan sumber daya antara koordinator dan \textit{worker} CitusData pada Gambar \ref{fig:citusdata-usage}.
 
 \begin{figure}[htbp]
     \centering
@@ -145,7 +145,7 @@ Pendekatan dengan \textit{stored procedure} merupakan alternatif yang dapat dipe
 
 \subsubsection{Pembahasan Kinerja YugabyteDB}
 
-Sebagaimana ditunjukkan pada tabel \ref{table:latensi-kueri}, latensi YugabyteDB memang dapat diprediksi karena mekanisme di baliknya yang menggunakan konsensus berbasiskan Raft. Setiap penulisan harus menunggu kluster mencapai konsensus terlebih dahulu, sehingga latensinya lebih tinggi. Meskipun begitu, latensi YugabyteDB yang lebih lambat hingga 100-200x dibandingkan dengan PostgreSQL merupakan hal yang tidak diprediksi.
+Sebagaimana ditunjukkan pada Tabel \ref{table:latensi-kueri}, latensi YugabyteDB memang dapat diprediksi karena mekanisme di baliknya yang menggunakan konsensus berbasiskan Raft. Setiap penulisan harus menunggu kluster mencapai konsensus terlebih dahulu, sehingga latensinya lebih tinggi. Meskipun begitu, latensi YugabyteDB yang lebih lambat hingga 100-200x dibandingkan dengan PostgreSQL merupakan hal yang tidak diprediksi.
 
 Pada kasus yang lebih sederhana, seorang pengguna melaporkan penurunan kinerja hingga 300x lebih lambat dibandingkan dengan PostgreSQL. Meski setelah beberapa tahun berlalu telah banyak dilakukan pengoptimalan pada YugabyteDB, referensi hasil pengujian ini tetap dapat dianggap relevan sebagai validasi bahwa penurunan kinerja seperti ini memang juga terjadi pada kasus lain \parencite{yugabyteIssuePerformance}.
 
@@ -158,7 +158,7 @@ Permasalahan latensi ini dapat diterima apabila kinerja YugabyteDB juga diiringi
     \label{fig:metrics-f3t1}
 \end{figure}
 
-Latensi pemrosesan diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesannya mulai stabil. Setelah itu, latensi pemrosesan mulai meningkat hingga tiba-tiba turun lagi. Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh sebagaimana terjadi pada hasil pengujian lain yang ditunjukkan pada gambar \ref{fig:metrics-f3t2}.
+Latensi pemrosesan diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesannya mulai stabil. Setelah itu, latensi pemrosesan mulai meningkat hingga tiba-tiba turun lagi. Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh sebagaimana terjadi pada hasil pengujian lain yang ditunjukkan pada Gambar \ref{fig:metrics-f3t2}.
 
 \begin{figure}[htbp]
     \centering
@@ -169,11 +169,11 @@ Latensi pemrosesan diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesan
 
 Selama pengujian, terdapat beberapa kasus ketika salah satu \textit{node} YugabyteDB mati, sehingga menyebabkan kluster basis data mati dan tidak dapat menangani permintaan selama beberapa waktu. Kestabilan kluster ini juga merupakan hal yang menjadi permasalahan selama pengujian.
 
-Setelah ditelusuri, laju pemrosesan kueri saat YugabyteDB mengalami kegagalan sebagaimana ditunjukkan pada gambar \ref{fig:metrics-f3t2} mengalami penurunan yang cukup tajam dibandingkan saat YugabyteDB berjalan cukup baik sebagiamana ditunjukkan pada gambar \ref{fig:metrics-f3t1}. Penyebab pasti hal ini belum dapat diidentifikasi hingga pengujian selesai dilaksanakan. Akan tetapi, dapat diasumsikan bahwa setelah melewati beban tertentu, YugabyteDB mulai kesulitan menangani beban yang diberikan, sehingga kegagalan mulai sering terjadi dan laju pemrosesan kueri menjadi lebih lambat.
+Setelah ditelusuri, laju pemrosesan kueri saat YugabyteDB mengalami kegagalan sebagaimana ditunjukkan pada Gambar \ref{fig:metrics-f3t2} mengalami penurunan yang cukup tajam dibandingkan saat YugabyteDB berjalan cukup baik sebagiamana ditunjukkan pada Gambar \ref{fig:metrics-f3t1}. Penyebab pasti hal ini belum dapat diidentifikasi hingga pengujian selesai dilaksanakan. Akan tetapi, dapat diasumsikan bahwa setelah melewati beban tertentu, YugabyteDB mulai kesulitan menangani beban yang diberikan, sehingga kegagalan mulai sering terjadi dan laju pemrosesan kueri menjadi lebih lambat.
 
 Masalah lain yang berhasil diidentifikasi pada YugabyteDB ini adalah masalah manajemen koneksi. Setelah beberapa kali pengujian, tidak ditemukan kombinasi pengaturan koneksi yang memberikan kinerja yang baik, baik itu jumlah koneksi dari sisi klien ke PGCat atau pun jumlah koneksi dari PGCat ke TServer. \textit{Pooler} bawaan YugabyteDB, yaitu YSQL Connection Manager juga tidak memberikan perubahan kinerja. Selain itu, pengujian tanpa \textit{pooler} (menggunakan \textit{direct connection}) juga sudah dicoba dan tetap tidak memperoleh hasil yang baik.
 
-Dari sisi \textit{throughput}, terdapat kasus ketika YugabyteDB memiliki hasil yang cukup baik sebagaimana ditunjukkan pada gambar \ref{fig:yugabytedb-throughput}. Meskipun begitu, hasil ini tidak dapat direplikasi pada pengujian lain.
+Dari sisi \textit{throughput}, terdapat kasus ketika YugabyteDB memiliki hasil yang cukup baik sebagaimana ditunjukkan pada Gambar \ref{fig:yugabytedb-throughput}. Meskipun begitu, hasil ini tidak dapat direplikasi pada pengujian lain.
 
 \begin{figure}[htbp]
     \centering
@@ -188,7 +188,7 @@ Singkat cerita, YugabyteDB kesulitan menangani beban koneksi yang ada pada pengu
 
 \subsubsection{Kueri Ketersediaan Area}
 
-Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dipanggil, terutama ketika ketersediaan tiket mulai menipis dan pengguna mencoba mengeksplorasi lebih banyak area. Hal ini ditunjukkan pada gambar \ref{fig:latency-get-area}. Pada pengujian f5t2, \textit{endpoint} ini memiliki puncak pemanggilan sebanyak 1700 rps. Sepanjang pengujian, latensi rata-rata operasi tersebut berkisar antara 2.5-4.5 milisekon. Hal ini menunjukkan bahwa pengoptimalan kueri ketersediaan area dengan menggunakan Redis merupakan pendekatan yang sangat efektif, terutama dalam meringankan beban pada basis data.
+Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dipanggil, terutama ketika ketersediaan tiket mulai menipis dan pengguna mencoba mengeksplorasi lebih banyak area. Hal ini ditunjukkan pada Gambar \ref{fig:latency-get-area}. Pada pengujian f5t2, \textit{endpoint} ini memiliki puncak pemanggilan sebanyak 1700 rps. Sepanjang pengujian, latensi rata-rata operasi tersebut berkisar antara 2.5-4.5 milisekon. Hal ini menunjukkan bahwa pengoptimalan kueri ketersediaan area dengan menggunakan Redis merupakan pendekatan yang sangat efektif, terutama dalam meringankan beban pada basis data.
 
 \begin{figure}[htbp]
     \centering
@@ -199,7 +199,7 @@ Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dip
 
 \subsubsection{Kueri Ketersediaan Kursi}
 
-Operasi baca ketersediaan kursi tidak dipanggil sebanyak operasi sebelumnya. Hal ini karena tidak semua tiket merupakan tiket dengan nomor kursi dan pengguna tidak akan memanggil operasi ini apabila tidak menemukan area yang memenuhi kriterianya. Meskipun begitu, pengoptimalan kueri ini tidak berjalan dengan cukup baik sebagaimana ditunjukkan pada gambar \ref{fig:latency-get-seat}.
+Operasi baca ketersediaan kursi tidak dipanggil sebanyak operasi sebelumnya. Hal ini karena tidak semua tiket merupakan tiket dengan nomor kursi dan pengguna tidak akan memanggil operasi ini apabila tidak menemukan area yang memenuhi kriterianya. Meskipun begitu, pengoptimalan kueri ini tidak berjalan dengan cukup baik sebagaimana ditunjukkan pada Gambar \ref{fig:latency-get-seat}.
 
 \pagebreak
 
@@ -222,7 +222,7 @@ Kombinasi hal tersebut membuat \textit{cache hit} operasi ini sangat rendah sehi
 
 \subsection{Penggunaan Pengendalian Aliran}
 
-Gambar \ref{fig:latency-fc} dan gambar \ref{fig:latency-nofc} menunjukkan perbedaan latensi pemrosesan antara sistem dengan pendendalian aliran dan tanpa pengendalian aliran. Saat berjalan dengan baik, latensi pemrosesan dengan pengendalian aliran dapat turun hingga ratusan milisekon.
+Gambar \ref{fig:latency-fc} dan Gambar \ref{fig:latency-nofc} menunjukkan perbedaan latensi pemrosesan antara sistem dengan pendendalian aliran dan tanpa pengendalian aliran. Saat berjalan dengan baik, latensi pemrosesan dengan pengendalian aliran dapat turun hingga ratusan milisekon.
 
 \begin{figure}[htbp]
     \centering
@@ -238,7 +238,7 @@ Gambar \ref{fig:latency-fc} dan gambar \ref{fig:latency-nofc} menunjukkan perbed
     \label{fig:latency-nofc}
 \end{figure}
 
-Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana ditunjukkan pada gambar \ref{fig:rps-fc-pg-stress-0} dan \ref{fig:rps-nofc-pg-stress-0}. Meskipun memiliki latensi yang lebih tinggi, laju pemrosesan puncak varian ini sama dengan laju pemrosesan puncak pada sistem referensi. Oleh karena itu, latensi yang tinggi tidak serta merta membuat laju pemrosesan lebih lambat.
+Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana ditunjukkan pada Gambar \ref{fig:rps-fc-pg-stress-0} dan Gambar \ref{fig:rps-nofc-pg-stress-0}. Meskipun memiliki latensi yang lebih tinggi, laju pemrosesan puncak varian ini sama dengan laju pemrosesan puncak pada sistem referensi. Oleh karena itu, latensi yang tinggi tidak serta merta membuat laju pemrosesan lebih lambat.
 
 \pagebreak
 
@@ -260,7 +260,7 @@ Latensi yang tinggi pada sistem ini merupakan konsekuensi yang tidak diinginkan 
 
 Kode respons 409 yang tinggi pada varian pengendalian aliran juga merupakan dampak dari implementasi sistem antrean yang kurang optimal. Dengan latensi yang tinggi, terdapat lebih banyak \textit{time window} ketika sebuah kursi seharusnya sudah dipesan tetapi pemrosesan belum sepenuhnya berhasil. Oleh karena itu, kemungkinan pengguna virtual memesan tiket yang sudah dipesan menjadi lebih tinggi. Hal ini juga yang menyebabkan laju pemrosesan yang berhasil terkadang turun. Pada sistem antrean dengan latensi yang lebih rendah, kode respons 409 seharusnya menjadi lebih berkurang.
 
-Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal positif yang dapat dibahas. Perhatikan tabel \ref{table:latensi-kueri-fc-nofc} yang membandingkan latensi kueri pada varian dengan pengendalian aliran (FC) dan tanpa pengendalian aliran (No FC):
+Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal positif yang dapat dibahas. Perhatikan Tabel \ref{table:latensi-kueri-fc-nofc} yang membandingkan latensi kueri pada varian dengan pengendalian aliran (FC) dan tanpa pengendalian aliran (No FC):
 
 \begin{table}[h]
     \centering
@@ -283,7 +283,7 @@ Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal posit
     \end{tabular}
 \end{table}
 
-Tidak ada perbedaan latensi pada operasi tulis. Meskipun begitu, latensi untuk \textit{lock} kursi pada varian dengan pengendalian aliran jauh lebih kecil. Selanjutnya, mari bandingkan latensi pemrosesan pesanan saat kode respons 409 berdasarkan gambar \ref{fig:latency-by-code-nofc} dan gambar \ref{fig:latency-by-code-fc}.
+Tidak ada perbedaan latensi pada operasi tulis. Meskipun begitu, latensi untuk \textit{lock} kursi pada varian dengan pengendalian aliran jauh lebih kecil. Selanjutnya, mari bandingkan latensi pemrosesan pesanan saat kode respons 409 berdasarkan Gambar \ref{fig:latency-by-code-nofc} dan Gambar \ref{fig:latency-by-code-fc}.
 
 \begin{figure}[htbp]
     \centering
@@ -315,7 +315,7 @@ Pengoptimalan baca dengan menggunakan Redis memungkinkan terjadinya ketidakcocok
     \item Tidak ada kursi yang terjual lebih dari satu kali.
 \end{enumerate}
 
-Gambar \ref{fig:sanity-f2t3}, \ref{fig:sanity-f3t1}, dan \ref{fig:sanity-f5t4} menunjukkan sampel hasil \textit{sanity check} selama pelaksanaan pengujian.
+Gambar \ref{fig:sanity-f2t3}, Gambar \ref{fig:sanity-f3t1}, dan Gambar \ref{fig:sanity-f5t4} menunjukkan sampel hasil \textit{sanity check} selama pelaksanaan pengujian.
 
 \begin{figure}[htbp]
     \centering

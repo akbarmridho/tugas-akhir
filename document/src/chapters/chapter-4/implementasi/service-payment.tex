@@ -2,23 +2,23 @@
 
 Untuk menyimulasikan proses pembayaran, sebuah \textit{mock service} untuk gerbang pembayaran diimplementasikan. Layanan ini bertanggung jawab untuk mengelola siklus hidup tagihan, mulai dari pembuatan, simulasi pembayaran, hingga pemberitahuan status pembayaran kembali ke sistem tiket.
 
-Interaksi antara sistem tiket dan Payment Service dilakukan melalui serangkaian \textit{endpoint} REST API. Layanan ini juga mengirimkan pemberitahuan melalui \textit{webhook} ketika status sebuah tagihan berubah (misalnya, berhasil dibayar atau kedaluwarsa). Untuk menjamin keamanan, setiap isi data \textit{webhook} diamankan menggunakan HMAC. Detail teknis lebih lanjut mengenai arsitektur internal dan teknologi yang digunakan pada layanan ini dapat dilihat pada lampiran \ref{apx:payment-implementation}.
+Interaksi antara sistem tiket dan Payment Service dilakukan melalui serangkaian \textit{endpoint} REST API. Layanan ini juga mengirimkan pemberitahuan melalui \textit{webhook} ketika status sebuah tagihan berubah (misalnya, berhasil dibayar atau kedaluwarsa). Untuk menjamin keamanan, setiap isi data \textit{webhook} diamankan menggunakan HMAC. Detail teknis lebih lanjut mengenai arsitektur internal dan teknologi yang digunakan pada layanan ini dapat dilihat pada Lampiran \ref{apx:payment-implementation}.
 
 Tabel \ref{table:payment-endpoint} membahas daftar \textit{endpoint} yang tersedia pada Payment Service untuk berinteraksi dengan sistem tiket dan pengguna.
 
 \begin{table}[h!]
-\centering
-\caption{Daftar \textit{Endpoint} Layanan Pembayaran}
-\label{table:payment-endpoint}
-\begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|}
-\hline
-\textbf{Endpoint} & \textbf{Keterangan} \\
-\hline
-Get Invoice \newline GET /invoices/{id} & Mengembalikan data tagihan berdasarkan ID yang diberikan pada parameter. \\
-\hline
-Create Invoice \newline POST /invoices & Menerima jumlah tagihan, deskripsi, dan ID eksternal dari layanan tiket untuk membuat tagihan baru. Tagihan akan kedaluwarsa dalam 15 menit. \\
-\hline
-Pay Invoice \newline POST /invoices/{id}/payment & Menyimulasikan proses pembayaran yang dilakukan pengguna. Endpoint ini menerima data untuk menandai apakah pembayaran berhasil atau gagal. \\
-\hline
-\end{tabular}
+    \centering
+    \caption{Daftar \textit{Endpoint} Layanan Pembayaran}
+    \label{table:payment-endpoint}
+    \begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|}
+        \hline
+        \textbf{Endpoint}                                & \textbf{Keterangan}                                                                                                                          \\
+        \hline
+        Get Invoice \newline GET /invoices/{id}          & Mengembalikan data tagihan berdasarkan ID yang diberikan pada parameter.                                                                     \\
+        \hline
+        Create Invoice \newline POST /invoices           & Menerima jumlah tagihan, deskripsi, dan ID eksternal dari layanan tiket untuk membuat tagihan baru. Tagihan akan kedaluwarsa dalam 15 menit. \\
+        \hline
+        Pay Invoice \newline POST /invoices/{id}/payment & Menyimulasikan proses pembayaran yang dilakukan pengguna. Endpoint ini menerima data untuk menandai apakah pembayaran berhasil atau gagal.   \\
+        \hline
+    \end{tabular}
 \end{table}

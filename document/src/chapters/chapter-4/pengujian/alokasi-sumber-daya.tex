@@ -2,7 +2,7 @@
 
 \subsubsection{Kluster Sistem Tiket}
 
-Daftar alokasi sumber daya untuk komponen esensial pada kluster tiket dijelaskan pada tabel \ref{tab:resource_allocation}.
+Daftar alokasi sumber daya untuk komponen esensial pada kluster tiket dijelaskan pada Tabel \ref{tab:resource_allocation}.
 
 \begin{table}[htpb]
     \centering
@@ -11,23 +11,23 @@ Daftar alokasi sumber daya untuk komponen esensial pada kluster tiket dijelaskan
     \begin{tabular}{|l|l|l|l|}
         \hline
         \textbf{Komponen} & \textbf{\textit{Request Allocation}} & \textbf{\textit{Limit Allocation}} & \textbf{Tambahan} \\ \hline
-        Prometheus            & 0.5/2Gi                     & 0.75/4Gi                  & PVC 50Gi       \\ \hline
-        Alloy                 & 0.5/0.25Gi                  & 0.75/0.5Gi                & -              \\ \hline
-        Grafana               & 0.25/0.5Gi                  & 0.5/0.75Gi                & PVC 20Gi       \\ \hline
-        Loki                  & 0.5/1.5Gi                   & 0.75/2Gi                  & -              \\ \hline
-        Cert Manager          & 0.1/0.25Gi                  & 0.25/0.385Gi              & -              \\ \hline
-        Nginx                 & 2/2Gi                       & 3/2.5Gi                   & -              \\ \hline
-        Payment Redis         & 3x @ 0.5/1.5Gi              & 3x @ 0.5/1.5Gi            & -              \\ \hline
-        Payment Server        & 1/2Gi                       & 1/2Gi                     & -              \\ \hline
-        Payment Worker        & 0.5/1Gi                     & 0.5/1Gi                   & -              \\ \hline
-        PGCat                 & 2/1Gi                       & 2/1Gi                     & -              \\ \hline
-        Ticket Sanity         & 0.25/0.25Gi                 & 0.25/0.25Gi               & -              \\ \hline
+        Prometheus        & 0.5/2Gi                              & 0.75/4Gi                           & PVC 50Gi          \\ \hline
+        Alloy             & 0.5/0.25Gi                           & 0.75/0.5Gi                         & -                 \\ \hline
+        Grafana           & 0.25/0.5Gi                           & 0.5/0.75Gi                         & PVC 20Gi          \\ \hline
+        Loki              & 0.5/1.5Gi                            & 0.75/2Gi                           & -                 \\ \hline
+        Cert Manager      & 0.1/0.25Gi                           & 0.25/0.385Gi                       & -                 \\ \hline
+        Nginx             & 2/2Gi                                & 3/2.5Gi                            & -                 \\ \hline
+        Payment Redis     & 3x @ 0.5/1.5Gi                       & 3x @ 0.5/1.5Gi                     & -                 \\ \hline
+        Payment Server    & 1/2Gi                                & 1/2Gi                              & -                 \\ \hline
+        Payment Worker    & 0.5/1Gi                              & 0.5/1Gi                            & -                 \\ \hline
+        PGCat             & 2/1Gi                                & 2/1Gi                              & -                 \\ \hline
+        Ticket Sanity     & 0.25/0.25Gi                          & 0.25/0.25Gi                        & -                 \\ \hline
     \end{tabular}
 \end{table}
 
 Tidak semua komponen dimasukkan ke dalam tabel tersebut. Terdapat beberapa komponen tambahan seperti Prometheus Exporter, MinIO, dan lain-lain yang alokasinya kecil dan dapat diabaikan. Selain itu, komponen inti dari sistem ini memiliki besar \textit{request allocation} dan \textit{limit allocation} sama.
 
-Di sisi lain, daftar alokasi sumber daya untuk varian sistem dengan dan tanpa pengendalian aliran sedikit berbeda. Daftar alokasi sumber daya untuk varian tanpa pengendalian aliran dijelaskan pada tabel \ref{tab:nofc-allocation} dan daftar alokasi sumber daya untuk varian dengan pengendalian aliran dijelaskan pada tabel \ref{tab:service_comparison_fc}
+Di sisi lain, daftar alokasi sumber daya untuk varian sistem dengan dan tanpa pengendalian aliran sedikit berbeda. Daftar alokasi sumber daya untuk varian tanpa pengendalian aliran dijelaskan pada Tabel \ref{tab:nofc-allocation} dan daftar alokasi sumber daya untuk varian dengan pengendalian aliran dijelaskan pada Tabel \ref{tab:service_comparison_fc}
 
 
 \begin{table}[htbp]
@@ -38,12 +38,12 @@ Di sisi lain, daftar alokasi sumber daya untuk varian sistem dengan dan tanpa pe
         \hline
         \textbf{Komponen}           & \textbf{Postgres} & \textbf{Citus} & \textbf{YugaByteDB} \\ \hline
         Postgres Primary \& Replica & 2 x 8/16Gi        & -              & -                   \\ \hline
-        Citusdata Coordinator       & -                 & 6/12Gi        & -                    \\ \hline
-        Citusdata Worker            & -                 & 2 x 6/12Gi      & -                  \\ \hline
-        YugabyteDB Master           & -                 & -              & 3 x 0.5/1Gi             \\ \hline
-        YugabyteDB TServer          & -                 & -              & 3 x 6.5/13Gi            \\ \hline
-        Redis Cluster               & 3 x 1/2Gi    & 3 x 1/2Gii & 3 x 1/2Gi                   \\ \hline
-        Ticket Server              & 8 x 1/2Gi         & 8 x 1/2Gi      & 8 x 1/2Gi           \\ \hline
+        Citusdata Coordinator       & -                 & 6/12Gi         & -                   \\ \hline
+        Citusdata Worker            & -                 & 2 x 6/12Gi     & -                   \\ \hline
+        YugabyteDB Master           & -                 & -              & 3 x 0.5/1Gi         \\ \hline
+        YugabyteDB TServer          & -                 & -              & 3 x 6.5/13Gi        \\ \hline
+        Redis Cluster               & 3 x 1/2Gi         & 3 x 1/2Gii     & 3 x 1/2Gi           \\ \hline
+        Ticket Server               & 8 x 1/2Gi         & 8 x 1/2Gi      & 8 x 1/2Gi           \\ \hline
     \end{tabular}
 \end{table}
 
@@ -55,12 +55,12 @@ Di sisi lain, daftar alokasi sumber daya untuk varian sistem dengan dan tanpa pe
     \label{tab:service_comparison_fc}
     \begin{tabular}{|l|l|}
         \hline
-        \textbf{Komponen}           & \textbf{Postgres}     \\ \hline
-        Postgres Primary \& Replica & 2 x 6/12Gi            \\ \hline
-        Redis Cluster               & 3 x 1/2Gi             \\ \hline
-        RabbitMQ                    & 2/4Gi                 \\ \hline
-        Ticket Server               & 8 x 1/2Gi             \\ \hline
-        Ticket Worker               & 4/6Gi                 \\ \hline
+        \textbf{Komponen}           & \textbf{Postgres} \\ \hline
+        Postgres Primary \& Replica & 2 x 6/12Gi        \\ \hline
+        Redis Cluster               & 3 x 1/2Gi         \\ \hline
+        RabbitMQ                    & 2/4Gi             \\ \hline
+        Ticket Server               & 8 x 1/2Gi         \\ \hline
+        Ticket Worker               & 4/6Gi             \\ \hline
     \end{tabular}
 \end{table}
 
@@ -68,7 +68,7 @@ Apabila diperhatikan, jumlah instans Ticket Server cukup banyak dengan alokasi s
 
 \subsubsection{Kluster Penguji}
 
-Daftar alokasi sumber daya untuk kluster penguji dijelaskan pada tabel \ref{tab:test-cluster-allocation}.
+Daftar alokasi sumber daya untuk kluster penguji dijelaskan pada Tabel \ref{tab:test-cluster-allocation}.
 
 \begin{table}[htbp]
     \centering
@@ -77,11 +77,11 @@ Daftar alokasi sumber daya untuk kluster penguji dijelaskan pada tabel \ref{tab:
     \begin{tabular}{|l|l|l|l|}
         \hline
         \textbf{Service} & \textbf{\textit{Request Allocation}} & \textbf{\textit{Limit Allocation}} & \textbf{Tambahan} \\ \hline
-        Nginx            & 0.5/0.5Gi                    & 1/1Gi                      & -              \\ \hline
-        Cert Manager     & 0.1/0.25Gi                   & 0.25/0.385Gi               & -              \\ \hline
-        Grafana          & 0.5/0.75Gi                   & 1/1.5Gi                    & PVC 10Gi       \\ \hline
-        Prometheus       & 2/4Gi                        & 4/8Gi                      & PVC 50Gi       \\ \hline
-        K6 Run           & 12 x 2/4Gi                   & 12x 2/4Gi                  & -              \\ \hline
+        Nginx            & 0.5/0.5Gi                            & 1/1Gi                              & -                 \\ \hline
+        Cert Manager     & 0.1/0.25Gi                           & 0.25/0.385Gi                       & -                 \\ \hline
+        Grafana          & 0.5/0.75Gi                           & 1/1.5Gi                            & PVC 10Gi          \\ \hline
+        Prometheus       & 2/4Gi                                & 4/8Gi                              & PVC 50Gi          \\ \hline
+        K6 Run           & 12 x 2/4Gi                           & 12x 2/4Gi                          & -                 \\ \hline
     \end{tabular}
 \end{table}
 

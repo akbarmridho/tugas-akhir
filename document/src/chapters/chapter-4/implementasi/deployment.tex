@@ -2,7 +2,7 @@
 
 \subsubsection{Sistem Pengawasan}
 
-Komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Loki, Grafana Dashboard, dan Prometheus dengan beberapa instans tambahan yang merupakan pengaturan bawaan dari Helm Chart yang digunakan. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-monitoring}.
+Komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Loki, Grafana Dashboard, dan Prometheus dengan beberapa instans tambahan yang merupakan pengaturan bawaan dari Helm Chart yang digunakan. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-monitoring}.
 
 \begin{figure}[htbp!]
     \centering
@@ -15,7 +15,7 @@ Komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Lo
 
 \subsubsection{Nginx Ingress Controller}
 
-Sistem ini terdiri atas cert-manager, layanan Nginx Ingress Controller, serta beberapa \textit{ingress} yang mengekspos layanan internal kubernetes ke dunia luar. Terdapat empat \textit{service} yang diekspos, yaitu layanan tiket, layanan pembayaran, dasbor prometheus, dan dasbor Grafana. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-nginx}.
+Sistem ini terdiri atas cert-manager, layanan Nginx Ingress Controller, serta beberapa \textit{ingress} yang mengekspos layanan internal kubernetes ke dunia luar. Terdapat empat \textit{service} yang diekspos, yaitu layanan tiket, layanan pembayaran, dasbor prometheus, dan dasbor Grafana. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-nginx}.
 
 \begin{figure}[htbp]
     \centering
@@ -28,7 +28,7 @@ Sistem ini terdiri atas cert-manager, layanan Nginx Ingress Controller, serta be
 
 \subsubsection{Layanan Pembayaran}
 
-Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service, dan kluster Redis. Deployment Payment terdiri atas dua kontainer, yaitu Payment Server dan Payment Notifier. Layanan ini digabung dengan kluster sistem tiket untuk mempermudah \textit{deployment}, pengujian, dan memastikan tidak ada masalah jaringan yang terjadi. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-payment}.
+Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service, dan kluster Redis. Deployment Payment terdiri atas dua kontainer, yaitu Payment Server dan Payment Notifier. Layanan ini digabung dengan kluster sistem tiket untuk mempermudah \textit{deployment}, pengujian, dan memastikan tidak ada masalah jaringan yang terjadi. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-payment}.
 
 \begin{figure}[htbp]
     \centering
@@ -42,7 +42,7 @@ Layanan pembayaran secara umum terdiri atas Payment Deployment, Payment Service,
 
 \subsubsection{Layanan Tiket tanpa Pengendalian Aliran}
 
-Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, kluster redis, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-ticket-nofc}.
+Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, kluster redis, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-ticket-nofc}.
 
 \begin{figure}[htbp]
     \centering
@@ -55,7 +55,7 @@ Layanan tiket tanpa pengendalian aliran terdiri atas Ticket Server Deployment, k
 
 \subsubsection{Layanan Tiket varian dengan Pengendalian Aliran}
 
-Layanan tiket dengan pengendalian aliran terdiri atas Ticket Server Deployment, Ticket Worker Deployment, kluster redis, RabbitMQ, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-ticket-fc}.
+Layanan tiket dengan pengendalian aliran terdiri atas Ticket Server Deployment, Ticket Worker Deployment, kluster redis, RabbitMQ, dan Sanity Check Deployment. Sistem ini juga terhubung dengan salah satu kluster basis data relasional yang ada melalui pooler PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-ticket-fc}.
 
 \begin{figure}[htbp]
     \centering
@@ -70,7 +70,7 @@ Hal yang membedakan \textit{deployment} varian ini dengan varian tanpa pengendal
 
 \subsubsection{Kluster PostgreSQL}
 
-Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas satu \textit{primary} dan satu replika. Selain itu, terdapat PGCat yang bertindak sebagai pooler dan \textit{load balancer} pada level kueri. PGCat akan membaca kueri dan meneruskan query kepada \textit{primary} atau replika berdasarkan jenis kueri dan beban setiap instans. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-postgres}.
+Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas satu \textit{primary} dan satu replika. Selain itu, terdapat PGCat yang bertindak sebagai pooler dan \textit{load balancer} pada level kueri. PGCat akan membaca kueri dan meneruskan query kepada \textit{primary} atau replika berdasarkan jenis kueri dan beban setiap instans. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-postgres}.
 
 \begin{figure}[htbp]
     \centering
@@ -84,7 +84,7 @@ Kluster PostgreSQL terdiri atas PostgreSQL Stateful Set yang akan terdiri atas s
 
 \subsubsection{Kluster CitusData}
 
-Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama merupakan koordinator dan sisanya merupakan pekerja. Terdapat PGCat yang terhubung dengan koordinator. Sistem tiket terhubung langsung dengan PGCat. Koneksi dengan pekerja dilakukan melalui koordinator. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-citusdata}.
+Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama merupakan koordinator dan sisanya merupakan pekerja. Terdapat PGCat yang terhubung dengan koordinator. Sistem tiket terhubung langsung dengan PGCat. Koneksi dengan pekerja dilakukan melalui koordinator. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-citusdata}.
 
 \begin{figure}[htbp]
     \centering
@@ -97,7 +97,7 @@ Kluster CitusData terdiri atas tiga CitusCluster Stateful Set. Kluster pertama m
 
 \subsubsection{Kluster YugabyteDB}
 
-Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set, dan PGCat. PGCat terhubung dengan semua instans YB-TServer. Sistem tiket terhubung langsung dengan PGCat. Proses \textit{load balancing} koneksi dengan YB-TServer ditangani oleh PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-yugabyte}.
+Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set, dan PGCat. PGCat terhubung dengan semua instans YB-TServer. Sistem tiket terhubung langsung dengan PGCat. Proses \textit{load balancing} koneksi dengan YB-TServer ditangani oleh PGCat. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-yugabyte}.
 
 \begin{figure}[htbp]
     \centering
@@ -112,7 +112,7 @@ Kluster YugabyteDB terdiri atas YB-Master Stateful Set, YB-TServer Stateful Set,
 
 \subsubsection{Sistem Pengawasan}
 
-Sistem pengawasan pada agen penguji lebih sederhana dengan komponen pengawasan hanya terdiri atas Grafana Dashboard dan Prometheus. Grafana Alloy dan Loki tidak digunakan karena \textit{log} yang relevan hanya berasal dari eksekusi K6 yang isinya dapat ditampilkan dengan perintah tertentu. Selain itu, hal ini dilakukan untuk mengurangi penggunaan sumber daya yang tidak perlu, sehingga besarnya sumber daya yang dapat digunakan untuk K6 menjadi lebih banyak. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-monitoring-agent}.
+Sistem pengawasan pada agen penguji lebih sederhana dengan komponen pengawasan hanya terdiri atas Grafana Dashboard dan Prometheus. Grafana Alloy dan Loki tidak digunakan karena \textit{log} yang relevan hanya berasal dari eksekusi K6 yang isinya dapat ditampilkan dengan perintah tertentu. Selain itu, hal ini dilakukan untuk mengurangi penggunaan sumber daya yang tidak perlu, sehingga besarnya sumber daya yang dapat digunakan untuk K6 menjadi lebih banyak. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-monitoring-agent}.
 
 \begin{figure}[htbp]
     \centering
@@ -123,13 +123,13 @@ Sistem pengawasan pada agen penguji lebih sederhana dengan komponen pengawasan h
 
 \subsubsection{Nginx Ingress Controller}
 
-Komponen ini memiliki \textit{deployment} yang sama seperti klsuter sistem tiket sebagaimana ditunjukkan pada gambar \ref{fig:deployment-nginx}. Hanya saja, perbedaannya terletak pada tidak adanya \textit{ingress} layanan tiket dan layanan pembayaran.
+Komponen ini memiliki \textit{deployment} yang sama seperti klsuter sistem tiket sebagaimana ditunjukkan pada Gambar \ref{fig:deployment-nginx}. Hanya saja, perbedaannya terletak pada tidak adanya \textit{ingress} layanan tiket dan layanan pembayaran.
 
 \pagebreak
 
 \subsubsection{K6 Operator}
 
-K6 Operator merupakan komponen utama kluster penguji. Komponen ini mengatur inisiasi dan \textit{runtime} kode pengujian k6. Saat pengujian dijalankan, Grafana Operator akan menginisiasi instans K6 sebanyak 12 instans. Instans ini akan didistribusikan ke berbagai node pada kluster. Diagram \textit{deployment} sistem ini ditunjukkan pada gambar \ref{fig:deployment-k6-operator}.
+K6 Operator merupakan komponen utama kluster penguji. Komponen ini mengatur inisiasi dan \textit{runtime} kode pengujian k6. Saat pengujian dijalankan, Grafana Operator akan menginisiasi instans K6 sebanyak 12 instans. Instans ini akan didistribusikan ke berbagai node pada kluster. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-k6-operator}.
 
 \begin{figure}[htbp]
     \centering

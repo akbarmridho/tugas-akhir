@@ -2,7 +2,7 @@
 
 \subsection{Komponen Sistem Tiket (tanpa Pengendalian Aliran)}
 
-Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu layanan tiket, basis data relasional, dan kluster Redis. Komponen basis data relasional dapat dibagi menjadi tiga jenis, yaitu kluster PostgreSQL dengan replika baca, kluster CitusData, dan kluster YugabyteDB. Komponen ini yang akan menjadi sumber kebenaran utama dari sistem ini. Selain itu, kluster Redis digunakan untuk menyimpan data agregat ketersediaan berdasarkan area. Arsitektur ini diilustrasikan pada gambar \ref{fig:ticket-nofc}.
+Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu layanan tiket, basis data relasional, dan kluster Redis. Komponen basis data relasional dapat dibagi menjadi tiga jenis, yaitu kluster PostgreSQL dengan replika baca, kluster CitusData, dan kluster YugabyteDB. Komponen ini yang akan menjadi sumber kebenaran utama dari sistem ini. Selain itu, kluster Redis digunakan untuk menyimpan data agregat ketersediaan berdasarkan area. Arsitektur ini diilustrasikan pada Gambar \ref{fig:ticket-nofc}.
 
 \begin{figure}[htbp]
     \centering
@@ -15,7 +15,7 @@ Komponen sistem tiket dapat dibagi menjadi beberapa bagian, yaitu layanan tiket,
 
 \subsection{Komponen Sistem Tiket (dengan Pengendalian Aliran)}
 
-Pada sistem tiket dengan pengendalian aliran, terdapat dua komponen baru yaitu RabbitMQ dan pemroses pesanan. RabbitMQ bertugas untuk menyimpan antrean permintaan pemesanan tiket dan pemroses pesanan bertugas untuk memproses pemesanan tiket. Selain itu, kluster Redis memiliki tanggung jawab tambahan untuk menyimpan data yang digunakan untuk menolak permintaan pesanan yang masuk lebih awal. Arsitektur ini diilustrasikan pada gambar \ref{fig:ticket-fc}.
+Pada sistem tiket dengan pengendalian aliran, terdapat dua komponen baru yaitu RabbitMQ dan pemroses pesanan. RabbitMQ bertugas untuk menyimpan antrean permintaan pemesanan tiket dan pemroses pesanan bertugas untuk memproses pemesanan tiket. Selain itu, kluster Redis memiliki tanggung jawab tambahan untuk menyimpan data yang digunakan untuk menolak permintaan pesanan yang masuk lebih awal. Arsitektur ini diilustrasikan pada Gambar \ref{fig:ticket-fc}.
 
 \begin{figure}[htbp]
     \centering
@@ -45,7 +45,7 @@ Konfigurasi kluster PostgreSQL memiliki skalabilitas yang terbatas dengan pening
 
 \subsubsection{Alur Fitur Acara}
 
-Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membaca agregat ketersediaan area, dan membaca ketersediaan kursi. Operasi baca agregat ketersediaan area menggunakan data agregat yang dipelihara pada Redis alih-alih melakukan agregat dari basis data. Operasi baca ketersediaan kursi membaca langsung data dari basis data dengan sedikit pengoptimalan dengan menggunakan tembolok mikro. Alur fitur ini diilustrasikan pada gambar \ref{fig:flow-event}.
+Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membaca agregat ketersediaan area, dan membaca ketersediaan kursi. Operasi baca agregat ketersediaan area menggunakan data agregat yang dipelihara pada Redis alih-alih melakukan agregat dari basis data. Operasi baca ketersediaan kursi membaca langsung data dari basis data dengan sedikit pengoptimalan dengan menggunakan tembolok mikro. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-event}.
 
 \begin{figure}[h]
     \centering
@@ -58,7 +58,7 @@ Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membac
 
 \subsubsection{Alur Fitur Pemesanan Tiket (tanpa pengendalian aliran)}
 
-Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket. Alur fitur ini diilustrasikan pada gambar \ref{fig:flow-book-flow}.
+Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-book-flow}.
 
 \begin{figure}[htbp]
     \centering
@@ -69,7 +69,7 @@ Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan 
 
 \pagebreak
 
-Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerbang pembayaran. Setelah pembayaran selesai, pengguna memeriksa status pesanan yang telah dibuat. Alur fitur ini diilustrasikan pada gambar \ref{fig:flow-order-payment-flow}.
+Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerbang pembayaran. Setelah pembayaran selesai, pengguna memeriksa status pesanan yang telah dibuat. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-payment-flow}.
 
 \begin{figure}[h]
     \centering
@@ -82,7 +82,7 @@ Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerb
 
 \subsubsection{Alur Fitur Pemesanan Tiket (dengan pengendalian aliran)}
 
-Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket. Perbedaan dengan alur tanpa pengendalian aliran adalah penggunaan RabbitMQ dan pemroses pesanan. Proses pemesanan akan diproses secara \textit{partial synchrony} agar sistem dapat memproses pesanan sesuai dengan kapatiasnya. Selain itu, pendekatan ini juga memeriksa data dari Redis untuk menolak sebuah pesanan ketika terdapat pesanan yang sama untuk suatu kursi, tetapi memiliki pesanan lain yang sedang diproses dan belum sepenuhnya berhasil. Alur fitur ini diilustrasikan pada gambar \ref{fig:flow-book-fc}.
+Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket. Perbedaan dengan alur tanpa pengendalian aliran adalah penggunaan RabbitMQ dan pemroses pesanan. Proses pemesanan akan diproses secara \textit{partial synchrony} agar sistem dapat memproses pesanan sesuai dengan kapatiasnya. Selain itu, pendekatan ini juga memeriksa data dari Redis untuk menolak sebuah pesanan ketika terdapat pesanan yang sama untuk suatu kursi, tetapi memiliki pesanan lain yang sedang diproses dan belum sepenuhnya berhasil. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-book-fc}.
 
 \begin{figure}[h]
     \centering
@@ -93,7 +93,7 @@ Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan 
 
 \pagebreak
 
-Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerbang pembayaran. Setelah pembayaran selesai, pengguna memeriksa status pesanan yang telah dibuat. Tidak ada perbedaan signifikan selain pembaruan data pada Redis untuk sinkronisasi data yang menjadi basis untuk menolak permintaan pesanan lebih awal. Alur fitur ini diilustrasikan pada gambar \ref{fig:flow-order-payment-fc}.
+Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerbang pembayaran. Setelah pembayaran selesai, pengguna memeriksa status pesanan yang telah dibuat. Tidak ada perbedaan signifikan selain pembaruan data pada Redis untuk sinkronisasi data yang menjadi basis untuk menolak permintaan pesanan lebih awal. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-payment-fc}.
 
 \begin{figure}[h]
     \centering
@@ -106,7 +106,7 @@ Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerb
 
 \subsubsection{Alur Fitur Pembacaan Pesanan}
 
-Terdapat dua operasi tambahan yang berkaitan dengan pembacaan pesanan, yaitu membaca detail pesanan dan membaca tiket yang sudah diterbitkan. Alur fitur ini diilustrasikan pada gambar \ref{fig:flow-order-flow}.
+Terdapat dua operasi tambahan yang berkaitan dengan pembacaan pesanan, yaitu membaca detail pesanan dan membaca tiket yang sudah diterbitkan. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-flow}.
 
 \begin{figure}[h]
     \centering
