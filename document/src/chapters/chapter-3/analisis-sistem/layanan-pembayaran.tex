@@ -14,25 +14,21 @@ Kebutuhan fungsional layanan pembayaran dibahas pada Tabel \ref{table:fungsional
     \hline
     \textbf{ID} & \textbf{Kebutuhan}                                                                                           & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                       \\
     \endfirsthead
-
     \multicolumn{3}{|l|}{\tablename\ \thetable\ -- \textit{Lanjutan dari halaman sebelumnya}}                                                                                                                                                                                                                                                                                                                                                             \\
     \hline
     \textbf{ID} & \textbf{Kebutuhan}                                                                                           & \textbf{Deskripsi}                                                                                                                                                                                                                                                                                                       \\
     \endhead
-
     \hline
     \multicolumn{3}{|r|}{\textit{Dilanjutkan ke halaman berikutnya}}                                                                                                                                                                                                                                                                                                                                                                                      \\
     \endfoot
-
     \hline
     \endlastfoot
-
     \hline
     PF-01       & Sistem dapat membuat tagihan pembayaran dan pranala pembayaran.                                              & Pembayaran dilakukan dengan mengirimkan permintaan kepada pranala yang diberikan dengan parameter sukses atau gagal. Selain itu, terdapat tenggat waktu pembayaran yang ditentukan berdasarkan parameter pada saat pembuatan tagihan. Pembayaran akan otomatis gagal apabila tidak dipenuhi hingga batas waktu tersebut. \\
     \hline
-    PF-02       & Sistem memanggil \textit{webhook} yang telah ditentukan ketika terdapat pembayaran yang berhasil atau gagal. &                                                                                                                                                                                                                                                                                                                          \\
+    PF-02       & Sistem memanggil \textit{webhook} yang telah ditentukan ketika terdapat pembayaran yang berhasil atau gagal. & Kebutuhan ini memastikan sistem dapat secara otomatis mengirimkan notifikasi ke sistem lain (seperti sistem tiket) setelah status pembayaran berubah.                                                                                                                                                                    \\
     \hline
-    PF-03       & Sistem menyediakan \textit{endpoint} untuk menampilkan detail tagihan pembayaran.                            &                                                                                                                                                                                                                                                                                                                          \\
+    PF-03       & Sistem menyediakan \textit{endpoint} untuk menampilkan detail tagihan pembayaran.                            & Kebutuhan ini memungkinkan pengguna atau sistem lain untuk melihat rincian tagihan pembayaran, termasuk jumlah, tenggat waktu, dan statusnya.                                                                                                                                                                            \\
 \end{longtable}
 \endgroup
 

@@ -268,17 +268,17 @@ Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal posit
     \label{table:latensi-kueri-fc-nofc}
     \begin{tabular}{|l|l|l|}
         \hline
-        \textbf{Kueri}        & \textbf{No FC} & \textbf{FC} \\
+        \textbf{Kueri}        & \textbf{Tanpa Pengendalian Aliran} & \textbf{Dengan Pengendalian Aliran} \\
         \hline
-        LockFreeStandingSeats & 8.5            & 0.98        \\
+        LockFreeStandingSeats & 8.5                                & 0.98                                \\
         \hline
-        LockNumberedSeats     & -              & -           \\
+        LockNumberedSeats     & -                                  & -                                   \\
         \hline
-        InsertOrder           & 0.2            & 0.2         \\
+        InsertOrder           & 0.2                                & 0.2                                 \\
         \hline
-        InsertIssuedTiket     & 0.28           & 0.3         \\
+        InsertIssuedTiket     & 0.28                               & 0.3                                 \\
         \hline
-        InsertInvoice         & 0.12           & 0.12        \\
+        InsertInvoice         & 0.12                               & 0.12                                \\
         \hline
     \end{tabular}
 \end{table}
