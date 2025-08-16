@@ -26,7 +26,7 @@ Pada sistem tiket dengan pengendalian aliran, terdapat dua komponen baru yaitu R
 
 \subsection{Variasi Basis Data Relasional}
 
-Gambar \ref{fig:rdbms-variation} mengilustrasikan variasi pengaturan basis data relasional yang mungkin terjadi.
+Untuk membandingkan pendekatan penskalaan yang berbeda, tiga arsitektur basis data diuji. Gambar \ref{fig:rdbms-variation} secara visual membedakan ketiganya: (1) kluster PostgreSQL standar dengan satu \textit{Primary} untuk tulis dan satu \textit{Replica} untuk baca; (2) kluster CitusData dengan satu Citus Coordinator yang mendistribusikan kueri ke beberapa Citus Worker; dan (3) kluster YugabyteDB dengan beberapa \textit{node} Master untuk metadata dan beberapa \textit{node} TServer untuk penyimpanan data.
 
 \begin{figure}[H]
     \centering
@@ -49,9 +49,15 @@ Sistem tiket terintegrasi dengan layanan pembayaran yang disimulasikan (\textit{
 
 \subsubsection{Alur Fitur Acara}
 
-Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membaca agregat ketersediaan area, dan membaca ketersediaan kursi. Operasi baca agregat ketersediaan area menggunakan data agregat yang dipelihara pada Redis alih-alih melakukan agregat dari basis data. Operasi baca ketersediaan kursi membaca langsung data dari basis data dengan sedikit pengoptimalan dengan menggunakan tembolok mikro. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-event}.
+Alur untuk berbagai fitur terkait acara diilustrasikan pada Gambar \ref{fig:flow-event}. Diagram ini menunjukkan tiga alur permintaan opsional (opt) dari User ke Ticket Backend:
 
-\begin{figure}[h]
+\begin{enumerate}
+    \item Untuk detail acara, sistem langsung melakukan kueri ke Database.
+    \item Untuk ketersediaan area secara agregat, sistem mengambil data yang sudah diolah dari Redis, sehingga mengurangi beban pada basis data utama.
+    \item Untuk ketersediaan kursi, diagram menunjukkan blok alternatif (alt). Sistem pertama-tama memeriksa cache di memori internal. Jika data ditemukan, data akan langsung dikembalikan (\textit{cache hit}). Jika tidak (\textit{cache miss}), sistem akan melakukan kueri ke Database, menyimpan hasilnya di-\textit{cache} untuk permintaan berikutnya, lalu mengembalikannya ke pengguna.
+\end{enumerate}
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/event-flow.png}
     \caption{Diagram Alur Fitur acara}
@@ -62,7 +68,7 @@ Terdapat tiga operasi pada fitur acara, yaitu membaca ketersediaan acara, membac
 
 \subsubsection{Alur Fitur Pemesanan Tiket (tanpa pengendalian aliran)}
 
-Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-book-flow}.
+Proses pemesanan tiket tanpa pengendalian aliran, yang diilustrasikan pada Gambar \ref{fig:flow-book-flow}, dirancang untuk menjaga integritas data. Alurnya adalah sebagai berikut: setelah menerima permintaan, sistem pertama-tama melakukan pengecekan idempotensi di Redis untuk mencegah pemrosesan duplikat. Jika ini adalah permintaan baru, Ticket Backend akan memulai transaksi (Begin Transaction) dengan Database. Langkah krusialnya adalah melakukan kueri penguncian baris (Lock seat rows) untuk memastikan kursi yang dipilih tidak dapat dipesan oleh transaksi lain secara bersamaan. Jika kursi tidak tersedia atau gagal dikunci, transaksi akan dibatalkan (Rollback). Jika berhasil, sistem akan membuat tagihan di Payment Backend, menyimpan informasi pesanan, dan akhirnya melakukan Commit Transaction untuk menyelesaikan pemesanan.
 
 \begin{figure}[H]
     \centering
@@ -73,9 +79,9 @@ Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan 
 
 \pagebreak
 
-Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerbang pembayaran. Setelah pembayaran selesai, pengguna memeriksa status pesanan yang telah dibuat. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-payment-flow}.
+Alur pembayaran dan konfirmasi tiket, seperti yang ditunjukkan pada Gambar \ref{fig:flow-order-payment-flow}, melibatkan dua proses yang berjalan paralel. Pertama, User berinteraksi langsung dengan Payment Backend untuk membayar tagihan (Pay Invoice). Kedua, dan yang lebih penting, diagram ini menunjukkan proses notifikasi asinkron dalam blok par. Payment Backend secara independen mengirimkan webhook (Notify Payment Status Update) ke Ticket Backend. Bergantung pada status pembayaran, Ticket Backend kemudian akan memperbarui status pesanan, menerbitkan tiket (Insert Published Ticket), dan mengoreksi data agregat ketersediaan di Redis. Pengguna kemudian dapat secara terpisah memeriksa status pesanan mereka, yang sudah diperbarui oleh proses di latar belakang ini.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/order-payment.png}
     \caption{Diagram Alur Fitur Pembayaran Tiket (tanpa pengendalian aliran)}
@@ -86,9 +92,9 @@ Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerb
 
 \subsubsection{Alur Fitur Pemesanan Tiket (dengan pengendalian aliran)}
 
-Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan kepada sistem tiket. Perbedaan dengan alur tanpa pengendalian aliran adalah penggunaan RabbitMQ dan pemroses pesanan. Proses pemesanan akan diproses secara \textit{partial synchrony} agar sistem dapat memproses pesanan sesuai dengan kapatiasnya. Selain itu, pendekatan ini juga memeriksa data dari Redis untuk menolak sebuah pesanan ketika terdapat pesanan yang sama untuk suatu kursi, tetapi memiliki pesanan lain yang sedang diproses dan belum sepenuhnya berhasil. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-book-fc}.
+Alur pemesanan tiket dengan pengendalian aliran, yang dirinci pada Gambar \ref{fig:flow-book-fc}, memperkenalkan antrean untuk mengatur beban ke basis data. Prosesnya sebagai berikut: setelah cek idempotensi, sistem melakukan pengecekan kedua di Redis untuk menolak permintaan lebih awal jika kursi yang sama sedang dalam proses pemesanan lain. Jika lolos, Ticket Backend tidak langsung ke basis data, melainkan mempublikasikan permintaan ke antrean di RabbitMQ dan menunggu pesan balasan. Di sisi lain, sebuah Ticket Worker mengambil pesan dari antrean tersebut (bagian "Worker Processing"). Worker inilah yang bertanggung jawab menjalankan transaksi basis data yang intensif (mengunci baris, membuat tagihan, dan commit). Setelah selesai, worker mengirimkan hasilnya kembali melalui antrean balasan, yang kemudian diterima oleh Ticket Backend dan diteruskan kepada User. Alur ini mengubah pemrosesan yang tadinya sinkron menjadi asinkron untuk menjaga stabilitas.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/book-async.png}
     \caption{Diagram Alur Fitur Pemesanan Tiket (dengan pengendalian aliran)}
@@ -99,7 +105,7 @@ Proses pemesanan tiket dimulai dengan pengguna mengirimkan permintaan pemesanan 
 
 Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerbang pembayaran. Setelah pembayaran selesai, pengguna memeriksa status pesanan yang telah dibuat. Tidak ada perbedaan signifikan selain pembaruan data pada Redis untuk sinkronisasi data yang menjadi basis untuk menolak permintaan pesanan lebih awal. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-payment-fc}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/order-payment-fc.png}
     \caption{Diagram Alur Fitur Pembayaran Tiket (dengan pengendalian aliran)}
@@ -112,7 +118,7 @@ Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerb
 
 Terdapat dua operasi tambahan yang berkaitan dengan pembacaan pesanan, yaitu membaca detail pesanan dan membaca tiket yang sudah diterbitkan. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-flow}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-3/order-flow.png}
     \caption{Diagram Alur Fitur Pembacaan Pesanan}

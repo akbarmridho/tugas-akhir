@@ -1,5 +1,3 @@
-\pagebreak
-
 \subsection{Layanan Tiket}
 
 Layanan tiket memproses setiap permintaan yang berkaitan dengan pemesanan tiket. Layanan ini dapat dipecah menjadi beberapa layanan bergantung pada desain setiap arsitektur solusi.
@@ -72,9 +70,7 @@ Berikut adalah kebutuhan non-fungsional layanan tiket:
 
 \subsubsection{Entitas Layanan}
 
-Skema lengkap setiap entitas dibahas pada bagian Lampiran \ref{apx:ticket-schema}. Gambaran diagram relasi entitas pada layanan tiket disertakan pada halaman berikutnya.
-
-Entitas layanan tiket dapat dibagi menjadi dua grup, yaitu:
+Skema lengkap setiap entitas dibahas pada bagian Lampiran \ref{apx:ticket-schema}. Entitas layanan tiket dapat dibagi menjadi dua grup, yaitu:
 
 \begin{enumerate}
     \item Entitas yang berkaitan dengan tiket dan acara, yaitu: Event, TicketSale, TicketCategory, TicketPackage, TicketArea dan TicketSeat.
@@ -89,7 +85,7 @@ Entitas layanan tiket dapat dibagi menjadi dua grup, yaitu:
     \label{fig:erd-ticket-service}
 \end{figure}
 
-\pagebreak
+Seperti yang diilustrasikan pada Gambar \ref{ig:erd-ticket-service}, relasi antar entitas ini berpusat pada entitas Order dan OrderItem. Keduanya bertindak sebagai jembatan yang menghubungkan seorang User dengan Event yang spesifik, serta mengalokasikan TicketSeat yang dipesan dari TicketCategory yang tersedia.
 
 Sebuah acara bisa memiliki banyak kategori tiket, seperti tiket kategori reguler, gold, platinum. Setiap kategori tiket bisa meliputi banyak area, seperti tribun timur dan barat. Setiap area terdiri atas banyak Seat dengan status ketersediaan, yaitu tersedia, sedang dipesan, dan terjual.
 

@@ -2,9 +2,9 @@
 
 \subsubsection{Sistem Pengawasan}
 
-Komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Loki, Grafana Dashboard, dan Prometheus dengan beberapa instans tambahan yang merupakan pengaturan bawaan dari Helm Chart yang digunakan. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-monitoring}.
+Diagram deployment untuk sistem pengawasan ditunjukkan pada Gambar \ref{fig:deployment-monitoring}. Arsitektur ini menunjukkan bagaimana Prometheus mengumpulkan metrik, sementara Loki (yang dipecah menjadi beberapa komponen seperti distributor dan ingester) mengagregasi log. Kedua sumber data ini disimpan dalam Persistent Volume Claims (pvc-storage-loki), dan Grafana berfungsi sebagai antarmuka terpadu untuk visualisasi dasbor dan log, yang diakses melalui service grafana.
 
-\begin{figure}[htbp!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{resources/chapter-4/monitoring-1.png}
     \caption{\textit{Deployment} Sistem Pengawasan}
@@ -15,7 +15,7 @@ Komponen utama dari sistem pengawasan ini terdiri atas Grafana Alloy, Grafana Lo
 
 \subsubsection{Nginx Ingress Controller}
 
-Sistem ini terdiri atas cert-manager, layanan Nginx Ingress Controller, serta beberapa \textit{ingress} yang mengekspos layanan internal kubernetes ke dunia luar. Terdapat empat \textit{service} yang diekspos, yaitu layanan tiket, layanan pembayaran, dasbor prometheus, dan dasbor Grafana. Diagram \textit{deployment} sistem ini ditunjukkan pada Gambar \ref{fig:deployment-nginx}.
+Gambar \ref{fig:deployment-nginx} menampilkan arsitektur ingress. Komponen inti adalah deploy/nginx-ingress-controller, yang bertindak sebagai reverse proxy untuk mengarahkan lalu lintas eksternal ke layanan internal yang sesuai. Diagram ini juga menunjukkan integrasi dengan cert-manager (terdiri dari webhook, controller, dan cainjector) yang secara otomatis mengelola sertifikat TLS untuk mengamankan endpoint yang diekspos.
 
 \begin{figure}[H]
     \centering

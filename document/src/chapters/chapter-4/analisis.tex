@@ -6,7 +6,7 @@ Kedua skenario pengujian ini memiliki siklus/fase pola permintaan yang berbeda. 
 
 \subsubsection{Skenario Beban Berkelanjutan}
 
-Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Setelah tiket habis terjual, jumlah permintaan ketersediaan tiket jauh meningkat karena penguji mencoba mencari tiket dari berbagai area dengan lebih banyak. Pola ini ditunjukkan pada Gambar \ref{fig:pattern-stress-traffic}.
+Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Pola ini ditunjukkan dengan jelas pada Gambar \ref{fig:pattern-stress-traffic}. Perhatikan bagaimana kurva ungu (POST /orders) tetap stabil lalu menurun saat tiket habis, sementara kurva abu-abu (GET /events/availability) melonjak tajam setelahnya. Ini menandakan fase di mana pengguna beralih dari aktif memesan menjadi hanya memeriksa sisa ketersediaan.
 
 \begin{figure}[H]
     \centering
@@ -52,7 +52,7 @@ Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang
 
 Gambaran kinerja setiap varian basis data ditunjukkan pada Tabel \ref{table:kinerja-pemrosesan-pesanan}. Secara garis besar, varian PostgreSQL mampu menangani beban yang diberikan dengan sangat baik. Varian CitusData masih memiliki kinerja yang baik, meski memiliki latensi yang lebih tinggi dibandingkan dengan PostgreSQL. YugabyteDB mengalami lebih banyak kegagalan dan kinerja yang buruk sehingga tidak dapat menyelesaikan proses penjualan dengan baik. Sampel pengujian yang dipilih pada adalah skenario stress-2 tanpa pengendalian aliran. Skenario ini merupakan skenario pengujian dengan kinerja YugabyteDB yang dapat diterima dan mampu menyelesaikan proses penjualan. Dengan beban yang lebih tinggi, YugabyteDB mengalami banyak kegagalan.
 
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \caption{Gambaran Kinerja Permosesan Pesanan}
     \label{table:kinerja-pemrosesan-pesanan}
@@ -83,7 +83,7 @@ Sebagaimana digambarkan pada Tabel \ref{table:kinerja-pemrosesan-pesanan}, kiner
 
 Tabel \ref{table:latensi-kueri} menunjukkan data rata-rata waktu eksekusi kueri yang diambil dari tabel pg\_stat\_statements sesaat setelah pengujian dilaksanakan. Data PostgreSQL diambil dari pengujian f1t2, CitusData diambil dari pengujian f2t3, dan YugabyteDB diambil dari f3t1. Beban antara PostgreSQL dan CitusData sama karena pengujian dijalankan pada skenario stress-0, sedangkan beban pada YugabyteDB lebih ringan karena dijalankan pada skenario stress-2. Data PostgreSQL merupakan gabungan antara statistik pada instans \textit{primary} dan replika. Data mentah merupakan data 10 kueri dengan total eksekusi paling banyak. Kueri yang kosong berarti total eksekusinya tidak cukup signifikan, sehingga dapat diasumsikan latensinya cukup rendah untuk diabaikan dibandingkan dengan yang lain.
 
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \caption{Latensi Eksekusi Kueri pada Basis Data dalam Milisekon}
     \label{table:latensi-kueri}
@@ -124,7 +124,7 @@ Kinerja PostgreSQL yang baik berasal dari arsitekturnya yang monolitik. PostgreS
 
 \subsubsection{Pembahasan Kinerja CitusData}
 
-Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perhatikan perbedaan penggunaan sumber daya antara koordinator dan \textit{worker} CitusData pada Gambar \ref{fig:citusdata-usage}.
+Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perbedaan penggunaan sumber daya antara koordinator dan worker CitusData terlihat jelas pada Gambar \ref{fig:citusdata-usage}. Kurva ungu, yang mewakili koordinator (cituscluster-0), mencapai puncak penggunaan CPU di atas 5 cores (rata-rata 2.1). Sebaliknya, kurva biru dan coklat yang mewakili worker (cituscluster-1 dan cituscluster-2) memiliki puncak yang jauh lebih rendah. Beban yang hampir dua kali lipat pada koordinator ini menyoroti overhead dari perencanaan dan distribusi kueri.
 
 \begin{figure}[H]
     \centering
@@ -158,7 +158,7 @@ Permasalahan latensi ini dapat diterima apabila kinerja YugabyteDB juga diiringi
     \label{fig:metrics-f3t1}
 \end{figure}
 
-Latensi pemrosesan diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesannya mulai stabil. Setelah itu, latensi pemrosesan mulai meningkat hingga tiba-tiba turun lagi. Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh sebagaimana terjadi pada hasil pengujian lain yang ditunjukkan pada Gambar \ref{fig:metrics-f3t2}.
+Latensi pemrosesan diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesannya mulai stabil. Setelah itu, latensi pemrosesan mulai meningkat hingga tiba-tiba turun lagi. Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh. Kegagalan penuh pada YugabyteDB di bawah beban yang lebih tinggi diilustrasikan pada Gambar \ref{fig:metrics-f3t2}. Grafik bawah (Errors - \% by handler) menunjukkan bahwa tingkat kesalahan untuk POST /orders secara konsisten berada di atas 90\%, dan sering kali mencapai 100\%. Akibatnya, grafik atas (Latency by handler) menunjukkan data latensi yang tidak valid karena hampir tidak ada permintaan yang berhasil diproses.
 
 \begin{figure}[H]
     \centering
@@ -262,7 +262,7 @@ Kode respons 409 yang tinggi pada varian pengendalian aliran juga merupakan damp
 
 Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal positif yang dapat dibahas. Perhatikan Tabel \ref{table:latensi-kueri-fc-nofc} yang membandingkan latensi kueri pada varian dengan pengendalian aliran (FC) dan tanpa pengendalian aliran (No FC):
 
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \caption{Latensi Eksekusi Kueri pada Pengendalian Aliran dalam Milisekon}
     \label{table:latensi-kueri-fc-nofc}
@@ -299,7 +299,9 @@ Tidak ada perbedaan latensi pada operasi tulis. Meskipun begitu, latensi untuk \
     \label{fig:latency-by-code-fc}
 \end{figure}
 
-Latensi rata-rata pada varian dengan pengendalian aliran berkisar antara 50-100 milisekon, sedangkan latensi rata-rata pada varian tanpa pengendalian aliran berkisar antara 1000-2000 milisekon. Hal ini menunjukkan perbedaan yang signifikan karena pesanan yang pada akhirnya akan ditolak menjadi ditolak lebih awal. Latensi tanpa \textit{early dropper} lebih tinggi karena pesanan baru akan ditolak saat sudah memasuki basis data. Selain memiliki latensi yang lebih tinggi, kasus ini juga dapat membebani basis data lebih jauh.
+Efektivitas strategi penolakan lebih awal terlihat jelas saat membandingkan latensi untuk permintaan yang ditolak (kode status 409). Pada Gambar \ref{fig:latency-by-code-nofc} (tanpa pengendalian aliran), latensi untuk kode 409 (tumpang tindih dengan area abu-abu) berkisar antara 1-2 detik (1000-2000 ms). Sebaliknya, pada Gambar \ref{fig:latency-by-code-fc} (dengan pengendalian aliran), grafik menunjukkan bahwa latensi untuk kode 409 (garis biru pada legenda) secara konsisten berada di bawah 100 ms. Ini secara visual membuktikan bahwa permintaan yang ditakdirkan gagal dapat ditolak secara signifikan lebih cepat, sebelum membebani basis data.
+
+Hal ini menunjukkan perbedaan yang signifikan karena pesanan yang pada akhirnya akan ditolak menjadi ditolak lebih awal. Latensi tanpa \textit{early dropper} lebih tinggi karena pesanan baru akan ditolak saat sudah memasuki basis data. Selain memiliki latensi yang lebih tinggi, kasus ini juga dapat membebani basis data lebih jauh.
 
 Secara umum, pendekatan pengendalian aliran dengan menolak pesanan lebih awal cukup baik dalam mengurangi beban basis data. Di sisi lain, pada pengujian kali ini pendekatan pengendalian aliran dengan sistem antrean tidak terlalu optimal karena latensi yang tinggi. Selain itu, beban pesanan yang masuk tidak cukup tinggi sehingga tidak cukup mengganggu keberjalanan pemrosesan pesanan. Meskipun begitu, pengendalian aliran pesanan yang masuk menunjukkan dampak positif dalam menurunkan \textit{contention} yang ditunjukkan dengan penurunan latensi salah satu kueri \textit{locking}.
 
