@@ -1,20 +1,54 @@
 \section{Analisis Solusi}
 
 \subsection{Peningkatan Laju Pemrosesan Pemesanan Tiket}
+Tantangan fundamental dalam sistem tiket berskala besar adalah keterbatasan laju pemrosesan transaksi tulis (\textit{write throughput}). Basis data relasional tradisional, seperti PostgreSQL dalam konfigurasi \textit{primary-replica}, menghadapi \textit{bottleneck} inheren: semua operasi tulis harus diproses oleh satu \textit{node primary}. Peningkatan kinerjanya terbatas pada penskalaan vertikal (menambah CPU, memori, dan media penyimpanan pada satu mesin), sebuah pendekatan yang mahal dan memiliki batas fisik. Oleh karena itu, arsitektur ini secara fundamental membatasi jumlah pesanan tiket yang dapat diproses secara bersamaan.
 
-Penskalaan laju pemrosesan penulisan pada basis data relasional tradisional seperti PostgreSQL terbatas pada maksimal CPU, Memori, dan laju media penyimpanan yang dapat digunakan oleh suatu komputer. Penskalaan ini memiliki batas dari sisi teknologi dan peningkatan biayanya tidak sebanding dengan peningkatan kinerja yang dihasilkan. Oleh karena itu, skema PostgreSQL dengan \textit{primary} dan \textit{replica} memiliki keterbatasan dari sisi penulisan.
+Meskipun basis data NoSQL seperti MongoDB dan Cassandra menawarkan skalabilitas tulis horizontal yang superior, solusi ini umumnya mengorbankan jaminan konsistensi transaksional kuat (ACID) yang esensial untuk sistem tiket. Dalam skenario perebutan tiket, kemampuan untuk mengeksekusi operasi secara atomik—seperti mengunci dan memesan sebuah kursi—adalah kebutuhan esensial untuk mencegah \textit{double-booking}.
 
-Penggunaan basis data nonrelasional berbasikan dokumen seperti MongoDB memang menarik karena menawarkan laju penulisan yang jauh lebih baik. Meskipun begitu, basis data tersebut tidak memiliki dukungan kueri transaksional sebagaimana yang dimiliki pada basis data relasional. Hal yang sama juga terjadi dengan penggunaan basis data berbasiskan \textit{wide-column}.
+Oleh karena itu, fokus solusi adalah pada ranah basis data relasional yang mampu diskalakan secara horizontal (\textit{scale-out}), atau yang dikenal sebagai Distributed SQL. Pendekatan ini menjanjikan skalabilitas tulis dari dunia NoSQL sambil mempertahankan jaminan transaksional dari dunia relasional. Dalam praktiknya, terdapat dua ekosistem utama yang dominan, yaitu ekosistem MySQL (dengan solusi seperti Vitess dan CockroachDB) dan ekosistem PostgreSQL (dengan CitusData dan YugabyteDB).
 
-Ide yang menyatakan bahwa penskalaan basis data relasional buruk perlu dipertanyakan karena keduanya memiliki pemodelan entitas yang jauh berbeda. Oleh karena itu, tugas akhir ini akan mengeksporasi basis data relasional yang dapat di-\textit{scale-out} sehingga laju penulisan dapat meningkat.
+\subsubsection{Perbandingan Ekosistem PostgreSQL dan MySQL}
 
-Terdapat berbagai alternatif basis data relasional yang merupakan pengembangan dari basis data tradisional. PostgreSQL dan MySQL merupakan basis data relasional yang sudah umum diketahui. Di sisi lain, terdapat CitusData yang merupakan ekstensi PostgreSQL dan memungkinkan PostgreSQL mendukung beberapa penulis dengan skema permartisian baik dari sisi skema atau pun data \parencite{citus}. Hal yang sama juga terjadi pada ekosistem MySQL dengan Vitess \parencite{vitess}.
+Kedua ekosistem menawarkan solusi yang matang dan valid untuk skalabilitas. Vitess menyediakan skalabilitas horizontal untuk MySQL, serupa dengan peran CitusData untuk PostgreSQL \parencite{vitess}. CockroachDB, yang kompatibel dengan antarmuka MySQL, merupakan basis data terdistribusi \textit{native}, sejajar dengan YugabyteDB di dunia PostgreSQL \parencite{cockroachDB}.
 
-Selain itu, terdapat basis data yang bukan merupakan pengembangan dari basis data yang ada seperti PostgreSQL dan MySQL dan merupakan pengembangan basis data yang dimulai dari nol dengan penggunaan konsensus Raft seperti RocksDB atau LevelDB. Meskipun begitu, basis data seperti itu tetap mengimplementasikan antarmuka yang sama pada PostgreSQL dan MySQL. CockroachDB merupakan basis data jenis ini yang kompatibel dengan antarmuka MySQL \parencite{cockroachDB}. YugaByteDB merupakan basis data jenis ini yang kompatible dengan antarmuka PostgreSQL \parencite{yugabyte}. Penggunaan basis data tersebut menarik untuk diuji kinerjanya dibandingkan dengan basis data biasa dan menarik untuk diketahui apakah penggunaan teknologi tersebut dapat membantu kinerja sistem tiket yang dibahas pada tugas akhir ini.
+Meskipun demikian, ekosistem PostgreSQL dipilih untuk tugas akhir ini karena beberapa alasan strategis yang berfokus pada validitas perbandingan dan efisiensi pengembangan:
 
-Selain alternatif di atas, terdapat pula pendekatan lain yaitu pemartisian yang diimplementasikan pada level aplikasi atau pada level \textit{connection pooler} (misalnya PgCat). Meskipun begitu, permartisian pada level aplikasi merupakan alternatif yang paling memungkinkan mengingat fitur \textit{sharding} pada PgCat masih eksperimental \parencite{pgcat}. Pendekatan ini merupakan alternatif yang valid, tetapi tidak dipilih sebagai alternatif solusi karena akan membutuhkan perubahan pada kode aplikasi, terutama pada manajemen data dan kueri. Oleh karena itu, untuk menjaga fokus perbandingan pada teknologi basis datanya itu sendiri, tugas akhir ini akan memprioritaskan solusi yang menangani penskalaan secara internal.
+\begin{enumerate}
+    \item \textbf{Konsistensi Lingkungan Pengujian:} Dengan memilih basis data yang semuanya menggunakan antarmuka PostgreSQL (PostgreSQL, CitusData, dan YugabyteDB), perbandingan kinerja menjadi lebih adil. Semua varian sistem menggunakan dialek SQL, \textit{driver}, dan \textit{tooling} yang sama. Hal ini meminimalkan variabel pembaur (\textit{confounding variables}) sehingga perbedaan kinerja yang teramati dapat lebih akurat diatribusikan pada perbedaan arsitektur fundamental basis data, bukan pada perbedaan implementasi \textit{query planner} atau protokol klien.
+    \item \textbf{Kekuatan Ekstensi dan Komunitas:} PostgreSQL dikenal dengan arsitekturnya yang sangat ekstensibel, yang memungkinkan inovasi seperti CitusData untuk berkembang secara organik. Reputasinya yang kuat dalam hal kepatuhan terhadap standar SQL dan fitur-fitur canggih menjadikannya fondasi yang solid untuk eksplorasi arsitektur.
+    \item \textbf{Efisiensi Pengembangan:} Keakraban penulis dengan ekosistem PostgreSQL memungkinkan fokus yang lebih mendalam pada perancangan arsitektur dan analisis hasil pengujian, alih-alih menghabiskan waktu signifikan untuk mempelajari dan beradaptasi dengan dialek SQL dan perilaku operasional ekosistem yang berbeda.
+\end{enumerate}
 
-Dari sekian banyak alternatif basis data relasional, perlu dipilih basis data yang masing-masing dapat merepresentasikan pendekatan yang dipakai pada basis data tersebut. Basis data yang mendukung antarmuka PostgreSQL dipilih karena keakraban dengan teknologi tersebut. Selain itu, pemilihan basis data dengan antarmuka yang sama memungkinkan pengembangan yang lebih mudah dan perbandingan kinerja yang lebih adil. Oleh karena itu, kluster PostgreSQL dipilih sebagai basis data yang menjadi dasar acuan, CitusData dipilih sebagai basis data yang mengembangkan PostgreSQL, sedangkan YugaByteDB dipilih sebagai basis data dengan ide berbeda, tetapi tetap mengimplementasikan antarmuka PostgreSQL.
+\subsubsection{Strategi Arsitektur yang Diuji}
+
+\paragraph{Tolok Ukur: Arsitektur Monolitik Tradisional (PostgreSQL)}
+
+Pendekatan pertama dan paling fundamental adalah menggunakan kluster PostgreSQL standar dengan konfigurasi \textit{primary-replica}. Arsitektur ini berfungsi sebagai tolok ukur (\textit{baseline}) yang esensial dalam penelitian ini. Kinerjanya merepresentasikan solusi yang matang, andal, dan umum digunakan di industri. Dengan menetapkannya sebagai dasar perbandingan, efektivitas dari dua strategi lainnya dalam mengatasi \textit{bottleneck} penulisan dapat diukur secara kuantitatif.
+
+\paragraph{Strategi 1: Ekstensi Terdistribusi pada Basis Data Monolitik}
+
+Pendekatan ini memanfaatkan basis data yang matang dan teruji seperti PostgreSQL dan menambahkan kemampuan distribusi di atasnya. CitusData dipilih untuk merepresentasikan strategi ini. Sebagai ekstensi, CitusData mengubah kluster PostgreSQL menjadi basis data terdistribusi dengan arsitektur \textit{coordinator-worker} \parencite{citus}.
+
+Kemampuan CitusData untuk melakukan pemartisian (\textit{sharding}) tabel secara horizontal di seluruh \textit{node worker} sangat relevan. Hipotesisnya adalah dengan mempartisi tabel krusial seperti TicketSeats dan Orders berdasarkan kolom seperti ticket\_area\_i, beban transaksi pemesanan dapat didistribusikan. Perebutan tiket untuk "Area A" dapat diproses oleh \textit{Worker 1}, sementara perebutan untuk "Area B" diproses secara paralel oleh \textit{Worker 2}. Secara teoretis, pendekatan ini memungkinkan sistem memproses pesanan dari berbagai kategori tiket secara bersamaan, sehingga secara signifikan meningkatkan laju pemrosesan pesanan secara keseluruhan dibandingkan dengan satu \textit{node primary} tunggal.
+
+\paragraph{Strategi 2: Basis Data Relasional Terdistribusi Secara Natif}
+
+Pendekatan kedua adalah menggunakan basis data yang dirancang dari awal (\textit{from the ground up}) sebagai sistem terdistribusi. Basis data ini tidak memiliki ketergantungan pada arsitektur monolitik dan dibangun dengan konsensus terdistribusi sebagai fondasinya. YugabyteDB dipilih sebagai representasi dari arsitektur ini. YugabyteDB menggunakan konsensus Raft dan arsitektur \textit{multi-writer}, di mana setiap \textit{node} dalam kluster mampu memproses operasi tulis untuk data yang disimpannya \parencite{yugabyte}.
+
+Arsitektur YugabyteDB secara teoretis menawarkan skalabilitas tulis dan ketahanan terhadap kegagalan (\textit{fault tolerance}) yang lebih superior karena tidak adanya \textit{single point of contention} seperti \textit{node coordinator} pada CitusData. Dalam skenario perebutan tiket yang ekstrem, di mana puluhan ribu pengguna mencoba memesan tiket secara bersamaan, kemampuan untuk mendistribusikan beban tulis ke semua \textit{node} secara merata adalah keuntungan yang sangat besar. Hipotesisnya adalah YugabyteDB akan menunjukkan laju pemrosesan transaksi tertinggi di bawah beban puncak. Namun, ini datang dengan pertukaran: protokol konsensus Raft yang menjamin konsistensi data di seluruh kluster dapat memperkenalkan latensi tambahan pada setiap operasi tulis.
+
+\subsubsection{Pemilihan Final dan Alternatif yang Dikesampingkan}
+
+Selain kedua pendekatan di atas, pemartisian pada level aplikasi atau \textit{connection pooler} (misalnya PgCat) juga merupakan alternatif yang valid. Namun, pendekatan ini tidak dipilih karena akan memindahkan kompleksitas logika distribusi ke dalam kode aplikasi, sehingga menyulitkan perbandingan yang adil antar-teknologi basis data itu sendiri \parencite{pgcat}.
+
+Dengan demikian, untuk menjawab rumusan masalah secara komprehensif, tiga varian basis data dipilih untuk diuji:
+\begin{enumerate}
+    \item Kluster PostgreSQL, sebagai tolok ukur (\textit{baseline}) yang merepresentasikan arsitektur relasional tradisional yang matang dan andal.
+    \item CitusData, untuk mengevaluasi efektivitas pendekatan "menambahkan distribusi" pada basis data yang sudah ada.
+    \item YugabyteDB, untuk mengevaluasi kinerja arsitektur "terdistribusi secara \textit{native}" yang dirancang untuk skalabilitas \textit{cloud-native}.
+\end{enumerate}
+
+Pemilihan basis data yang seluruhnya kompatibel dengan antarmuka PostgreSQL memungkinkan pengembangan aplikasi yang sama untuk digunakan di ketiga varian, sehingga memastikan perbandingan kinerja yang lebih adil dan terfokus pada kapabilitas arsitektur basis data masing-masing.
 
 \subsection{Pengoptimalan Operasi Baca Ketersediaan Tiket}
 
