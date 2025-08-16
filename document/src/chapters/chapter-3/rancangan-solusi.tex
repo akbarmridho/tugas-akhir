@@ -35,15 +35,36 @@ Untuk membandingkan pendekatan penskalaan yang berbeda, tiga arsitektur basis da
     \label{fig:rdbms-variation}
 \end{figure}
 
-Pada konfigurasi kluster PostgreSQL, klien terhubung dengan semua instans. Pada konfigurasi CitusData, klien hanya terhubung dengan koordinator dan koordinator yang akan meneruskan permintaan kepada \textit{worker}. Pada konfigurasi YugabyteDB, klien terhubung dengan semua Master yang masing-masing terhubung dengan TServer. Klien sebenarnya dapat terhubung dengan salah satu master saja, tetapi konfigurasi seperti ini membuat koneksi klien ke YugabyteDB menjadi lebih tahan terhadap kegagalan dan juga dapat mengurangi beban agar tidak terpusat pada satu instans saja.
+Setiap varian memiliki alur eksekusi kueri dan model skalabilitas yang fundamental berbeda, yang berdampak langsung pada kinerja, terutama di bawah beban transaksi yang tinggi.
 
-Konfigurasi kluster PostgreSQL memiliki skalabilitas yang terbatas dengan peningkatan penulisan hanya dapat dicapai dengan penskalaan secara vertikal. Laju penulisan CitusData dan YugabyteDB dapat ditingkatkan dengan menambah jumlah instans.
+\subsubsection{Alur kueri pada Kluster PostgreSQL}
 
-\textit{Pooler} PGCat akan digunakan agar direct connection basis data yang terbatas dapat digunakan ulang dan dipakai oleh client yang lebih banyak. Selain itu, pada konfigurasi kluster PostgreSQL \textit{pooler} ini berguna sebagai pembagi beban kueri baca antara \textit{primary} dan replika.
+\begin{enumerate}
+    \item \textbf{Alur kueri tulis:} Setiap permintaan yang mengubah data (misalnya, INSERT data pesanan baru atau UPDATE status kursi) harus diarahkan ke satu \textit{node} \textit{primary}. \textit{Pooler} PGCat akan mengidentifikasi jenis operasi ini dan secara eksklusif meneruskannya ke \textit{primary}. Setelah transaksi berhasil di-\textit{commit} pada \textit{primary}, perubahan tersebut kemudian direplikasi (pada kasus ini secara sinkron) ke \textit{node} \textit{replica}. Model ini menjamin konsistensi yang kuat tetapi menciptakan \textit{bottleneck} karena semua beban tulis terpusat pada satu mesin. Skalabilitas tulisnya terbatas pada penskalaan vertikal (meningkatkan sumber daya pada \textit{node} \textit{primary}).
+    \item \textbf{Alur kueri baca:} Permintaan yang hanya membaca data (misalnya, SELECT untuk melihat ketersediaan kursi) dapat ditangani oleh \textit{primary} maupun \textit{replica}. Di sinilah peran PGCat menjadi krusial sebagai penyeimbang beban (\textit{load balancer}). PGCat mendistribusikan kueri baca ke kedua \textit{node}, sehingga beban baca dapat diskalakan secara horizontal dengan menambahkan lebih banyak \textit{replica}.
+\end{enumerate}
+
+\subsubsection{Alur kueri pada Kluster CitusData}
+
+\begin{enumerate}
+    \item \textbf{Alur Kueri Tulis:} Semua kueri dari aplikasi pertama-tama diterima oleh \textit{Citus Coordinator}. Untuk tabel yang telah didistribusikan seperti TicketSeats dan Orders, koordinator akan memeriksa kunci partisi (\textit{shard key}) dari data yang masuk (misalnya, ticket\_area\_id). Berdasarkan nilai kunci ini, koordinator menentukan secara tepat \textit{node Worker} mana yang menyimpan partisi data tersebut. Kueri kemudian diteruskan dan dieksekusi langsung pada \textit{worker} yang bersangkutan. Pendekatan ini memungkinkan operasi tulis untuk area tiket yang berbeda diproses secara paralel pada \textit{worker} yang berbeda, sehingga meningkatkan laju pemrosesan tulis secara keseluruhan dibandingkan dengan model \textit{Primary-Replica}.
+    \item \textbf{Alur Kueri Baca:} Alur untuk kueri baca juga melalui koordinator. Jika kueri hanya menargetkan satu partisi, kueri akan diteruskan ke \textit{worker} yang relevan. Namun, untuk kueri agregat yang mencakup beberapa partisi, koordinator akan memecah kueri, mengirimkannya secara paralel ke beberapa \textit{worker}, lalu mengumpulkan dan menggabungkan hasilnya sebelum mengembalikannya ke aplikasi. Seluruh proses ini menciptakan \textit{overhead} pada koordinator yang bertanggung jawab atas perencanaan dan orkestrasi kueri terdistribusi.
+\end{enumerate}
+
+\subsubsection{Alur kueri pada Kluster YugabyteDB}
+
+\begin{enumerate}
+    \item \textbf{Alur Kueri Tulis:} Berbeda dengan arsitektur lain, YugabyteDB tidak memiliki satu \textit{node} penulis tunggal atau \textit{coordinator} sebagai \textit{bottleneck}. Aplikasi dapat terhubung ke \textit{node} \textit{TServer} mana pun untuk melakukan operasi tulis. Data secara otomatis dipecah menjadi unit-unit kecil yang disebut \textit{tablet}, yang didistribusikan ke seluruh \textit{TServer}. Setiap \textit{tablet} dikelola oleh sebuah grup konsensus Raft. Ketika sebuah \textit{TServer} menerima permintaan tulis, ia akan mengidentifikasi \textit{tablet leader} untuk data tersebut dan meneruskan permintaan jika diperlukan. \textit{Tablet leader} kemudian mengoordinasikan penulisan melalui protokol Raft, memastikan data direplikasi ke mayoritas \textit{node} sebelum mengonfirmasi keberhasilan transaksi. Alur ini memberikan skalabilitas tulis horizontal yang tinggi dan toleransi kegagalan, tetapi proses konsensus Raft untuk setiap penulisan menambah latensi jaringan.
+    \item \textbf{Alur Kueri Baca:} Kueri baca yang membutuhkan konsistensi kuat (\textit{strong consistency}) akan diarahkan ke \textit{tablet leader}. Namun, YugabyteDB juga mendukung pembacaan dari \textit{follower} terdekat secara geografis untuk latensi yang lebih rendah dengan jaminan konsistensi yang sedikit lebih longgar (\textit{eventual consistency}).
+\end{enumerate}
+
+\subsubsection{Penggunaan \textit{Connection Pooler}}
+
+\textit{Pooler} PGCat akan digunakan pada semua varian untuk mengelola koneksi basis data yang terbatas agar dapat digunakan ulang dan dipakai oleh klien yang lebih banyak. Pada konfigurasi kluster PostgreSQL, \textit{pooler} ini memiliki peran tambahan sebagai pembagi beban kueri baca antara \textit{primary} dan replika.
 
 \subsection{Integrasi Layanan Pembayaran}
 
-Sistem tiket terintegrasi dengan layanan pembayaran yang disimulasikan (\textit{mock service}). Rancangan layanan ini dibahas pada Lampiran ref{apx:payment-service}.
+Sistem tiket terintegrasi dengan layanan pembayaran yang disimulasikan (\textit{mock service}). Rancangan layanan ini dibahas pada Lampiran \ref{apx:payment-service}.
 
 \subsection{Alur Sistem Tiket}
 
@@ -64,8 +85,6 @@ Alur untuk berbagai fitur terkait acara diilustrasikan pada Gambar \ref{fig:flow
     \label{fig:flow-event}
 \end{figure}
 
-\pagebreak
-
 \subsubsection{Alur Fitur Pemesanan Tiket (tanpa pengendalian aliran)}
 
 Proses pemesanan tiket tanpa pengendalian aliran, yang diilustrasikan pada Gambar \ref{fig:flow-book-flow}, dirancang untuk menjaga integritas data. Alurnya adalah sebagai berikut: setelah menerima permintaan, sistem pertama-tama melakukan pengecekan idempotensi di Redis untuk mencegah pemrosesan duplikat. Jika ini adalah permintaan baru, Ticket Backend akan memulai transaksi (Begin Transaction) dengan Database. Langkah krusialnya adalah melakukan kueri penguncian baris (Lock seat rows) untuk memastikan kursi yang dipilih tidak dapat dipesan oleh transaksi lain secara bersamaan. Jika kursi tidak tersedia atau gagal dikunci, transaksi akan dibatalkan (Rollback). Jika berhasil, sistem akan membuat tagihan di Payment Backend, menyimpan informasi pesanan, dan akhirnya melakukan Commit Transaction untuk menyelesaikan pemesanan.
@@ -77,8 +96,6 @@ Proses pemesanan tiket tanpa pengendalian aliran, yang diilustrasikan pada Gamba
     \label{fig:flow-book-flow}
 \end{figure}
 
-\pagebreak
-
 Alur pembayaran dan konfirmasi tiket, seperti yang ditunjukkan pada Gambar \ref{fig:flow-order-payment-flow}, melibatkan dua proses yang berjalan paralel. Pertama, User berinteraksi langsung dengan Payment Backend untuk membayar tagihan (Pay Invoice). Kedua, dan yang lebih penting, diagram ini menunjukkan proses notifikasi asinkron dalam blok par. Payment Backend secara independen mengirimkan webhook (Notify Payment Status Update) ke Ticket Backend. Bergantung pada status pembayaran, Ticket Backend kemudian akan memperbarui status pesanan, menerbitkan tiket (Insert Published Ticket), dan mengoreksi data agregat ketersediaan di Redis. Pengguna kemudian dapat secara terpisah memeriksa status pesanan mereka, yang sudah diperbarui oleh proses di latar belakang ini.
 
 \begin{figure}[H]
@@ -87,8 +104,6 @@ Alur pembayaran dan konfirmasi tiket, seperti yang ditunjukkan pada Gambar \ref{
     \caption{Diagram Alur Fitur Pembayaran Tiket (tanpa pengendalian aliran)}
     \label{fig:flow-order-payment-flow}
 \end{figure}
-
-\pagebreak
 
 \subsubsection{Alur Fitur Pemesanan Tiket (dengan pengendalian aliran)}
 
@@ -101,8 +116,6 @@ Alur pemesanan tiket dengan pengendalian aliran, yang dirinci pada Gambar \ref{f
     \label{fig:flow-book-fc}
 \end{figure}
 
-\pagebreak
-
 Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerbang pembayaran. Setelah pembayaran selesai, pengguna memeriksa status pesanan yang telah dibuat. Tidak ada perbedaan signifikan selain pembaruan data pada Redis untuk sinkronisasi data yang menjadi basis untuk menolak permintaan pesanan lebih awal. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-payment-fc}.
 
 \begin{figure}[H]
@@ -112,11 +125,9 @@ Ketika pengguna berhasil memesan, pengguna akan melakukan pembayaran kepada gerb
     \label{fig:flow-order-payment-fc}
 \end{figure}
 
-\pagebreak
-
 \subsubsection{Alur Fitur Pembacaan Pesanan}
 
-Terdapat dua operasi tambahan yang berkaitan dengan pembacaan pesanan, yaitu membaca detail pesanan dan membaca tiket yang sudah diterbitkan. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-flow}.
+Terdapat dua operasi tambahan yang berkaitan dengan pembacaan pesanan, yaitu membaca detail pesanan dan membaca tiket yang sudah diterbitkan. Alur fitur ini diilustrasikan pada Gambar \ref{fig:flow-order-flow}. Diagram tersebut memvisualisasikan bagaimana Pengguna dapat meminta status pesanan atau tiket yang telah terbit. Dalam kedua skenario opsional ini, Ticket Backend menerima permintaan, mengambil informasi yang sesuai dari Database, dan mengembalikannya kepada Pengguna. Proses ini memastikan bahwa data yang ditampilkan kepada pengguna selalu yang paling terbaru.
 
 \begin{figure}[H]
     \centering
