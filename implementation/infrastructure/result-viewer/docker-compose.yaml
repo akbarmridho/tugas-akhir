@@ -19,7 +19,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=0"
+      - "--storage.tsdb.retention.time=10y"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
       - "--web.enable-admin-api"
@@ -33,7 +33,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=0"
+      - "--storage.tsdb.retention.time=10y"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
       - "--web.enable-admin-api"
@@ -47,7 +47,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=0"
+      - "--storage.tsdb.retention.time=10y"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
       - "--web.enable-admin-api"
@@ -73,7 +73,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=0"
+      - "--storage.tsdb.retention.time=10y"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
       - "--web.enable-admin-api"
@@ -87,7 +87,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=0"
+      - "--storage.tsdb.retention.time=10y"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
       - "--web.enable-admin-api"
@@ -101,7 +101,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=0"
+      - "--storage.tsdb.retention.time=10y"
       - "--web.enable-lifecycle"
       - "--web.enable-remote-write-receiver"
       - "--web.enable-admin-api"
