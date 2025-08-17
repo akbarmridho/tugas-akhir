@@ -235,14 +235,7 @@ Kombinasi hal tersebut membuat \textit{cache hit} operasi ini rendah sehingga ti
 
 \subsection{Penggunaan Pengendalian Aliran}
 
-Gambar \ref{fig:latency-fc} dan Gambar \ref{fig:latency-nofc} menunjukkan perbedaan latensi pemrosesan antara sistem dengan pendendalian aliran dan tanpa pengendalian aliran. Saat berjalan dengan baik, latensi pemrosesan dengan pengendalian aliran dapat turun hingga ratusan milisekon.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
-    \caption{Latensi Pemrosesan dengan Pengendalian Aliran}
-    \label{fig:latency-fc}
-\end{figure}
+Gambar \ref{fig:latency-nofc} menunjukkan latensi pemrosesan pesanan sistem tanpa pengendalian aliran. Perhatikan garis berwarna ungu (dan garis merah). Rata-rata latensi operasi tersebut sekitar 1,5 detik.
 
 \begin{figure}[H]
     \centering
@@ -251,7 +244,16 @@ Gambar \ref{fig:latency-fc} dan Gambar \ref{fig:latency-nofc} menunjukkan perbed
     \label{fig:latency-nofc}
 \end{figure}
 
-Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana ditunjukkan pada Gambar \ref{fig:rps-fc-pg-stress-0} dan Gambar \ref{fig:rps-nofc-pg-stress-0}. Meskipun memiliki latensi yang lebih tinggi, laju pemrosesan puncak varian ini sama dengan laju pemrosesan puncak pada sistem referensi. Oleh karena itu, latensi yang tinggi tidak serta merta membuat laju pemrosesan lebih lambat.
+Selanutnya, Gambar \ref{fig:latency-fc} menunjukkan latensi pemrosesan pesanan sistem dengan pengendalian aliran. Saat berjalan baik (garis ungu landai), latensip emrosesan berada pada angka ratusan milisekon. Meskipun begitu, rata-rata latensi pemrosesan ini pada banyak waktu berada di atas 10 detik.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
+    \caption{Latensi Pemrosesan dengan Pengendalian Aliran}
+    \label{fig:latency-fc}
+\end{figure}
+
+Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana ditunjukkan pada Gambar \ref{fig:rps-fc-pg-stress-0} dan Gambar \ref{fig:rps-nofc-pg-stress-0}. Pada Gambar \ref{fig:rps-fc-pg-stress-0}, puncak laju pemrosesan adalah 550 rps (perhatikan puncak garis berwarna ungu). Pada Gambar \ref{fig:rps-nofc-pg-stress-0}, puncak laju pemrosesan adalah 570 rps (perhatikan puncak garis berwarna ungu). Meskipun memiliki latensi yang lebih tinggi, laju pemrosesan puncak varian ini sama dengan laju pemrosesan puncak pada sistem referensi. Oleh karena itu, latensi yang tinggi tidak serta merta membuat laju pemrosesan lebih lambat.
 
 \begin{figure}[H]
     \centering
@@ -294,23 +296,27 @@ Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal posit
     \end{tabular}
 \end{table}
 
-Tidak ada perbedaan latensi pada operasi tulis. Meskipun begitu, latensi untuk \textit{lock} kursi pada varian dengan pengendalian aliran jauh lebih kecil. Selanjutnya, mari bandingkan latensi pemrosesan pesanan saat kode respons 409 berdasarkan Gambar \ref{fig:latency-by-code-nofc} dan Gambar \ref{fig:latency-by-code-fc}.
+Tidak ada perbedaan latensi pada operasi tulis (InsertOrder, InsertIssuedTiket, dan InsertInvoice). Meskipun begitu, latensi untuk \textit{lock} kursi (LockFreeStandingSeats) pada varian dengan pengendalian aliran jauh lebih kecil.
+
+Selanjutnya, mari bandingkan latensi pemrosesan pesanan saat kode respons 409 berdasarkan Gambar \ref{fig:latency-by-code-nofc} dan Gambar \ref{fig:latency-by-code-fc}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/latency-by-code-nofc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode tanpa Pengendalian Aliran}
     \label{fig:latency-by-code-nofc}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/latency-by-code-fc-pg-stress-0.png}
     \caption{Latensi Berdasarkan Status Kode dengan Pengendalian Aliran}
     \label{fig:latency-by-code-fc}
 \end{figure}
 
-Efektivitas strategi penolakan lebih awal terlihat jelas saat membandingkan latensi untuk permintaan yang ditolak (kode status 409). Pada Gambar \ref{fig:latency-by-code-nofc} (tanpa pengendalian aliran), latensi untuk kode 409 (tumpang tindih dengan area abu-abu) berkisar antara 1-2 detik (1000-2000 ms). Sebaliknya, pada Gambar \ref{fig:latency-by-code-fc} (dengan pengendalian aliran), grafik menunjukkan bahwa latensi untuk kode 409 (garis biru pada legenda) secara konsisten berada di bawah 100 ms. Ini secara visual membuktikan bahwa permintaan yang ditakdirkan gagal dapat ditolak secara signifikan lebih cepat, sebelum membebani basis data.
+Gambar \ref{fig:latency-by-code-nofc} menunjukkan rata-rata latensi permintaan pesanan pada varian tanpa pengendalian aliran yang ditolak (kode status 409) sebesar 2 detik. Selanjutnya, Gambar \ref{fig:latency-by-code-fc} menunjukkan rata-rata ltensi permintaan pada varian dengan pengenalian aliran yang ditolak (kode status 409) sebesar 50 milisekon hingga 100 milisekon (\textit{most of the time}).
+
+Efektivitas strategi penolakan lebih awal terlihat jelas saat membandingkan latensi untuk permintaan yang ditolak (kode status 409). Perbedaan latensi ini membuktikan bahwa permintaan yang ditakdirkan gagal dapat ditolak secara signifikan lebih cepat, sebelum membebani basis data.
 
 Hal ini menunjukkan perbedaan yang signifikan karena pesanan yang pada akhirnya akan ditolak menjadi ditolak lebih awal. Latensi tanpa \textit{early dropper} lebih tinggi karena pesanan baru akan ditolak saat sudah memasuki basis data. Selain memiliki latensi yang lebih tinggi, kasus ini juga dapat membebani basis data lebih jauh.
 
@@ -328,7 +334,7 @@ Pengoptimalan baca dengan menggunakan Redis memungkinkan terjadinya ketidakcocok
     \item Tidak ada kursi yang terjual lebih dari satu kali.
 \end{enumerate}
 
-Gambar \ref{fig:sanity-f2t3}, Gambar \ref{fig:sanity-f3t1}, dan Gambar \ref{fig:sanity-f5t4} menunjukkan sampel hasil \textit{sanity check} selama pelaksanaan pengujian.
+Gambar \ref{fig:sanity-f2t3}, Gambar \ref{fig:sanity-f3t1}, dan Gambar \ref{fig:sanity-f5t4} menunjukkan sampel hasil \textit{sanity check} selama pelaksanaan pengujian. Garis yang tidak pada angka nol menunjukkan ketidaksesuaian data.
 
 \begin{figure}[H]
     \centering
@@ -351,4 +357,4 @@ Gambar \ref{fig:sanity-f2t3}, Gambar \ref{fig:sanity-f3t1}, dan Gambar \ref{fig:
     \label{fig:sanity-f5t4}
 \end{figure}
 
-Berdasarkan sampel di atas, terdapat beberapa waktu terjadinya ketidaksesuaian data yang pada akhirnya konsisten. Setelah ditelusuri, hal tersebut terjadi karena masalah pada pengumpulan data yang mengalami kegagalan memperoleh data yang lengkap. Hal ini didukung dengan fakta bahwa selisih nilainya memang sangat ekstrem. Oleh karena itu, dapat disimpulkan bahwa implementasi yang ada sekarang telah menjamin kesesuaian data dan berhasil menjamin bahwa tidak ada kursi yang terjual lebih dari satu kali.
+Berdasarkan sampel di atas, terdapat beberapa waktu terjadinya ketidaksesuaian data yang pada akhirnya konsisten (Gambar \ref{fig:sanity-f2t3} dan Gambar \ref{fig:sanity-f3t1} pada grafik kiri). Setelah ditelusuri, hal tersebut terjadi karena masalah pada pengumpulan data yang mengalami kegagalan memperoleh data yang lengkap. Hal ini didukung dengan fakta bahwa selisih nilainya memang sangat ekstrem. Mengingat sepanjang waktu setiap grafik tersebut landai dan berada pada angka nol, dapat disimpulkan bahwa tidak terjadi ketidaksesuaian data pada sistem. Oleh karena itu, dapat disimpulkan bahwa implementasi yang ada sekarang telah menjamin kesesuaian data dan berhasil menjamin bahwa tidak ada kursi yang terjual lebih dari satu kali.
