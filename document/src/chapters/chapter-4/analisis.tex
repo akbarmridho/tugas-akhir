@@ -6,44 +6,41 @@ Kedua skenario pengujian ini memiliki siklus/fase pola permintaan yang berbeda. 
 
 \subsubsection{Skenario Beban Berkelanjutan}
 
-Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Pola ini ditunjukkan dengan jelas pada Gambar \ref{fig:pattern-stress-traffic}. Perhatikan bagaimana kurva ungu (POST /orders) tetap stabil lalu menurun saat tiket habis, sementara kurva abu-abu (GET /events/availability) melonjak tajam setelahnya. Ini menandakan fase di mana pengguna beralih dari aktif memesan menjadi hanya memeriksa sisa ketersediaan.
+Pada skenario ini, sistem memiliki ketersediaan tiket yang banyak sehingga penjualan tiket yang berhasil berjalan cukup lama. Pola ini ditunjukkan pada Gambar \ref{fig:pattern-stress-traffic}. Perhatikan bagaimana kurva biru (POST /orders) tetap stabil lalu menurun saat tiket habis, sementara kurva ungu (GET /events/availability/:ticketSaleId) melonjak tajam setelahnya. Ini menandakan fase di mana pengguna beralih dari aktif memesan menjadi hanya memeriksa sisa ketersediaan.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{resources/chapter-4/pattern-stress-traffic.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/pattern-stress-traffic.png}
     \caption{Pola Permintaan pada Beban Berkelanjutan}
     \label{fig:pattern-stress-traffic}
 \end{figure}
 
-Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) selama pemrosesan pesanan sebanyak 3-10\% dari respons secara keseluruhan. Hal ini ditunjukkan pada Gambar \ref{fig:pattern-stress-order}.
+Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) selama pemrosesan pesanan sebanyak 10-12\% dari pemesanan sukses (kode respons 200). Hal ini ditunjukkan pada Gambar \ref{fig:pattern-stress-order}. Pada gambar tersebut, garis merah (kode respons 200) berada pada angka 400 dan garis hijau (kode respons 409) secara rata-rata berada pada angka 50.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{resources/chapter-4/pattern-stress-order.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/pattern-stress-order.png}
     \caption{Status Respons pada Beban Berkelanjutan}
     \label{fig:pattern-stress-order}
 \end{figure}
 
-\pagebreak
-
 \subsubsection{Skenario Perebutan Tiket}
 
-Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan permintaan pemesanan tiket. Hal ini wajar karena terdapat lebih banyak peminat dibandingkan dengan tiket yang tersedia. Berdasarkan Gambar \ref{fig:pattern-sim-traffic}, tiket habis terjual dalam kurang lebih 2 menit penjualan.
-
+Pada skenario ini, jumlah permintaan ketersediaan jauh lebih banyak dibandingkan permintaan pemesanan tiket. Hal ini wajar karena terdapat lebih banyak peminat dibandingkan dengan tiket yang tersedia. Berdasarkan Gambar \ref{fig:pattern-sim-traffic}, tiket habis terjual dalam kurang lebih 2,5 menit penjualan. Sistem mulai melayani permintaan pemesanan 2,5 menit sejak pengawasan dimulai dan permintaan pemesanan menjadi nol pada waktu yang ditandai dengan garis hijau (5 menit sejak pengawasan).
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-traffic.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/pattern-sim-traffic.png}
     \caption{Pola Permintaan pada Perebutan Tiket}
     \label{fig:pattern-sim-traffic}
 \end{figure}
 
-Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang cukup banyak bahkan sejak proses penjualan dimulai. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana digambarkan pada keadaan akhir penguji pada Gambar \ref{fig:pattern-sim-order}.
+Status respons pemesanan tiket menunjukkan bahwa terjadi konflik (kode 409) yang cukup banyak bahkan sejak proses penjualan dimulai. Puncak perebutan terjadi di awal sebagiamana ditunjukkan pada Gambar \ref{fig:pattern-sim-order}. Puncak tertinggi kode respons 409 adalah 400 sedangkan kode respons 200 adalah 250. Pada saat itu, terdapat lebih banyak pesanan yang ditolak dibandingkan dengan pesanan yang berhasil. Pengguna yang baru masuk setelahnya pada akhirnya akan gagal memperoleh tiket, sebagaimana ditunjukkan dengan tidak adanya pesanan yang berhasil setelah penanganan pesanan berjalan beberapa waktu.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/pattern-sim-order.png}
-    \caption{Status Respons pada Perebutan Tiket}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/pattern-sim-order.png}
+    \caption{Status Respons Pemesanan pada Perebutan Tiket}
     \label{fig:pattern-sim-order}
 \end{figure}
 
@@ -124,7 +121,7 @@ Kinerja PostgreSQL yang baik berasal dari arsitekturnya yang monolitik. PostgreS
 
 \subsubsection{Pembahasan Kinerja CitusData}
 
-Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perbedaan penggunaan sumber daya antara koordinator dan worker CitusData terlihat jelas pada Gambar \ref{fig:citusdata-usage}. Kurva ungu, yang mewakili koordinator (cituscluster-0), mencapai puncak penggunaan CPU di atas 5 cores (rata-rata 2.1). Sebaliknya, kurva biru dan coklat yang mewakili worker (cituscluster-1 dan cituscluster-2) memiliki puncak yang jauh lebih rendah. Beban yang hampir dua kali lipat pada koordinator ini menyoroti overhead dari perencanaan dan distribusi kueri.
+Meskipun secara teori ide pemartisian pada PostgreSQL dengan CitusData terdengar baik, terdapat \textit{tradeoff} dari sisi koordinator yang ternyata tidak dapat diabaikan. Pertukaran ini semakin tidak dapat diabaikan pada kasus penjualan tiket ketika pola kueri adalah banyak kueri ringan yang dijalankan secara berulang-ulang. Perbedaan penggunaan sumber daya antara koordinator dan worker CitusData terlihat jelas pada Gambar \ref{fig:citusdata-usage}. Kurva ungu, yang mewakili koordinator (cituscluster-0), mencapai puncak penggunaan CPU di atas 5 \textit{core}. Sebaliknya, kurva biru dan coklat yang mewakili worker (cituscluster-1 dan cituscluster-2) memiliki puncak yang jauh lebih rendah (2 \textit{core} dan 3 \textit{core}).
 
 \begin{figure}[H]
     \centering
@@ -149,31 +146,29 @@ Sebagaimana ditunjukkan pada Tabel \ref{table:latensi-kueri}, latensi YugabyteDB
 
 Pada kasus yang lebih sederhana, seorang pengguna melaporkan penurunan kinerja hingga 300x lebih lambat dibandingkan dengan PostgreSQL. Meski setelah beberapa tahun berlalu telah banyak dilakukan pengoptimalan pada YugabyteDB, referensi hasil pengujian ini tetap dapat dianggap relevan sebagai validasi bahwa penurunan kinerja seperti ini memang juga terjadi pada kasus lain \parencite{yugabyteIssuePerformance}.
 
-Permasalahan latensi ini dapat diterima apabila kinerja YugabyteDB juga diiringi dengan keunggulan dari aspek lain, seperti kemampuan menangani keadaan perebutan tiket dengan baik dan kestabilan kluster yang baik. Meskipun begitu, hal ini juga tidak dapat ditunjukkan oleh YugabyteDB. Gambar \ref{fig:metrics-f3t1} menunjukkan gambaran kinerja YugabyteDB saat berjalan dengan baik.
+Permasalahan latensi ini dapat diterima apabila kinerja YugabyteDB juga diiringi dengan keunggulan dari aspek lain, seperti kemampuan menangani keadaan perebutan tiket dengan baik dan kestabilan kluster yang baik. Meskipun begitu, hal ini juga tidak dapat ditunjukkan oleh YugabyteDB. Gambar \ref{fig:metrics-f3t1} menunjukkan gambaran kinerja YugabyteDB saat berjalan dengan baik. Pada pengujian ini, terdapat beberapa waktu ketika YugabyteDB menangani permintaan pemesanan dengan latensi normal (sekitar 1,5 detik) yang ditunjukkan oleh garis merah. Meskipun begitu, terdapat periode ketika latensinya meningkat hingga 10 detik.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latensi-yugabyte-success.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/latensi-yugabyte-success.png}
     \caption{Metrik Pemrosesan Pesanan (f3t2)}
     \label{fig:metrics-f3t1}
 \end{figure}
 
-Latensi pemrosesan diawali dengan tingkat kegagalan yang tinggi, lalu pemrosesannya mulai stabil. Setelah itu, latensi pemrosesan mulai meningkat hingga tiba-tiba turun lagi. Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh. Kegagalan penuh pada YugabyteDB di bawah beban yang lebih tinggi diilustrasikan pada Gambar \ref{fig:metrics-f3t2}. Grafik bawah (Errors - \% by handler) menunjukkan bahwa tingkat kesalahan untuk POST /orders secara konsisten berada di atas 90\%, dan sering kali mencapai 100\%. Akibatnya, grafik atas (Latency by handler) menunjukkan data latensi yang tidak valid karena hampir tidak ada permintaan yang berhasil diproses.
+Hasil ini merupakan hasil paling baik yang dapat diperoleh dari pengujian YugabyteDB. \textit{Tuning} lebih lanjut seperti mengubah batas koneksi dan penambahan beban membuat YugabyteDB mengalami kegagalan penuh. Kegagalan penuh pada YugabyteDB di bawah beban yang lebih tinggi diilustrasikan pada Gambar \ref{fig:metrics-f3t2}. Grafik bawah (Errors - \% by handler) menunjukkan bahwa tingkat kesalahan untuk POST /orders secara rata-rata konsisten berada di atas 90\%, dan sering kali mencapai 100\%. Akibatnya, grafik atas (Latency by handler) menunjukkan data latensi yang tidak valid karena hampir tidak ada permintaan yang berhasil diproses. Selain itu, latensi pemrosesan pesanan secara konsisten berada di atas 10 detik.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{resources/chapter-4/latensi-yugabyte-fail.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/latensi-yugabyte-fail.png}
     \caption{Metrik Pemrosesan Pesanan (f3t2)}
     \label{fig:metrics-f3t2}
 \end{figure}
 
-Selama pengujian, terdapat beberapa kasus ketika salah satu \textit{node} YugabyteDB mati, sehingga menyebabkan kluster basis data mati dan tidak dapat menangani permintaan selama beberapa waktu. Kestabilan kluster ini juga merupakan hal yang menjadi permasalahan selama pengujian.
+Selama pengujian, terdapat beberapa kasus ketika salah satu \textit{node} YugabyteDB mati, sehingga menyebabkan kluster basis data mati dan tidak dapat menangani permintaan selama beberapa waktu. Ketidakstabilan kluster ini juga merupakan hal yang menjadi permasalahan selama pengujian.
 
-Setelah ditelusuri, laju pemrosesan kueri saat YugabyteDB mengalami kegagalan sebagaimana ditunjukkan pada Gambar \ref{fig:metrics-f3t2} mengalami penurunan yang cukup tajam dibandingkan saat YugabyteDB berjalan cukup baik sebagiamana ditunjukkan pada Gambar \ref{fig:metrics-f3t1}. Penyebab pasti hal ini belum dapat diidentifikasi hingga pengujian selesai dilaksanakan. Akan tetapi, dapat diasumsikan bahwa setelah melewati beban tertentu, YugabyteDB mulai kesulitan menangani beban yang diberikan, sehingga kegagalan mulai sering terjadi dan laju pemrosesan kueri menjadi lebih lambat.
+Setelah ditelusuri, laju pemrosesan kueri saat YugabyteDB mengalami kegagalan sebagaimana ditunjukkan pada Gambar \ref{fig:metrics-f3t2} mengalami penurunan yang cukup tajam dibandingkan saat YugabyteDB berjalan cukup baik sebagaimana ditunjukkan pada Gambar \ref{fig:metrics-f3t1}. Penyebab pasti hal ini belum dapat diidentifikasi hingga pengujian selesai dilaksanakan. Akan tetapi, dapat diasumsikan bahwa setelah melewati beban tertentu, YugabyteDB mulai kesulitan menangani beban yang diberikan, sehingga kegagalan mulai sering terjadi dan laju pemrosesan kueri menjadi lebih lambat.
 
-Masalah lain yang berhasil diidentifikasi pada YugabyteDB ini adalah masalah manajemen koneksi. Setelah beberapa kali pengujian, tidak ditemukan kombinasi pengaturan koneksi yang memberikan kinerja yang baik, baik itu jumlah koneksi dari sisi klien ke PGCat atau pun jumlah koneksi dari PGCat ke TServer. \textit{Pooler} bawaan YugabyteDB, yaitu YSQL Connection Manager juga tidak memberikan perubahan kinerja. Selain itu, pengujian tanpa \textit{pooler} (menggunakan \textit{direct connection}) juga sudah dicoba dan tetap tidak memperoleh hasil yang baik.
-
-Dari sisi \textit{throughput}, terdapat kasus ketika YugabyteDB memiliki hasil yang cukup baik sebagaimana ditunjukkan pada Gambar \ref{fig:yugabytedb-throughput}. Meskipun begitu, hasil ini tidak dapat direplikasi pada pengujian lain.
+Gambar \ref{fig:yugabytedb-throughput} menunjukkan total kueri dan latensi pada YugabyteDB saat berjalan dengan baik. Perhatikan grafik kiri yang berwarna biru (kueri UPDATE dan INSERT). Rata-rata operasi adalah 1000 operasi per detik. Perhatikan grafik kanan. Garis berwarna biru muda dan coklat tua menunjukkan latensi operasi INSERT dan UPDATE. Rata-rata latensi operasi tersebut adalah 50 milisekon (garis merah). Garis berwarna coklat muda menunjukkan latensi operasi TRANSACTION dengan rata-rata latensi 100 milisekon (garis hijau).
 
 \begin{figure}[H]
     \centering
@@ -182,35 +177,53 @@ Dari sisi \textit{throughput}, terdapat kasus ketika YugabyteDB memiliki hasil y
     \label{fig:yugabytedb-throughput}
 \end{figure}
 
+Masalah lain yang berhasil diidentifikasi pada YugabyteDB ini adalah masalah manajemen koneksi. Setelah beberapa kali pengujian, tidak ditemukan kombinasi pengaturan koneksi yang memberikan kinerja yang baik, baik itu jumlah koneksi dari sisi klien ke PGCat atau pun jumlah koneksi dari PGCat ke TServer. \textit{Pooler} bawaan YugabyteDB, yaitu YSQL Connection Manager juga tidak memberikan perubahan kinerja. Selain itu, pengujian tanpa \textit{pooler} (menggunakan \textit{direct connection}) juga sudah dicoba dan tetap tidak memperoleh hasil yang baik.
+
 Singkat cerita, YugabyteDB kesulitan menangani beban koneksi yang ada pada pengujian dan memiliki masalah pada kestabilan kluster untuk dapat digunakan secara andal. Hal ini mungkin saja berubah apabila YugabyteDB diberi lebih banyak sumber daya atau lebih banyak \textit{node}.
 
 \subsection{Pengoptimalan Kueri Baca}
 
 \subsubsection{Kueri Ketersediaan Area}
 
-Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dipanggil, terutama ketika ketersediaan tiket mulai menipis dan pengguna mencoba mengeksplorasi lebih banyak area. Hal ini ditunjukkan pada Gambar \ref{fig:latency-get-area}. Pada pengujian f5t2, \textit{endpoint} ini memiliki puncak pemanggilan sebanyak 1700 rps. Sepanjang pengujian, latensi rata-rata operasi tersebut berkisar antara 2.5-4.5 milisekon. Hal ini menunjukkan bahwa pengoptimalan kueri ketersediaan area dengan menggunakan Redis merupakan pendekatan yang sangat efektif, terutama dalam meringankan beban pada basis data.
+Operasi baca ketersediaan area merupakan \textit{endpoint} yang cukup banyak dipanggil, terutama ketika ketersediaan tiket mulai menipis dan pengguna mencoba mengeksplorasi lebih banyak area. Gambar \ref{fig:throughput-get-area} menunjukkan metrik pada pengujian f5t2 dengan puncak pemanggilan sebanyak 1700 rps.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{resources/chapter-4/throughput-area-availability.png}
+    \caption{Metrik \textit{Throughput} Baca Ketersediaan Area (f5t2)}
+    \label{fig:throughput-get-area}
+\end{figure}
+
+Selanjutnya, Gambar \ref{fig:latency-get-area} menunjukkan latensi operasi baca. Rata-rata latensi ditunjukkan dengan garis berwarna ungu yang sangat dekat dengan garis dasar. Berdasarkan interaksi dengan grafik (tidak terlihat pada grafik), latensi rata-rata operasi ini adalah 2,5 hingga 4,5 milisekon. Hal ini menunjukkan bahwa pengoptimalan kueri ketersediaan area dengan menggunakan Redis merupakan pendekatan yang sangat efektif, terutama dalam meringankan beban pada basis data.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/latency-area-availability.png}
-    \caption{Metrik Baca Ketersediaan Area (f5t2)}
+    \caption{Metrik Latensi Baca Ketersediaan Area (f5t2)}
     \label{fig:latency-get-area}
 \end{figure}
 
 \subsubsection{Kueri Ketersediaan Kursi}
 
-Operasi baca ketersediaan kursi tidak dipanggil sebanyak operasi sebelumnya. Hal ini karena tidak semua tiket merupakan tiket dengan nomor kursi dan pengguna tidak akan memanggil operasi ini apabila tidak menemukan area yang memenuhi kriterianya. Meskipun begitu, pengoptimalan kueri ini tidak berjalan dengan cukup baik sebagaimana ditunjukkan pada Gambar \ref{fig:latency-get-seat}.
+Operasi baca ketersediaan kursi tidak dipanggil sebanyak operasi sebelumnya. Pada Gambar \ref{fig:throughput-get-seat}, puncak pemanggil operasi ini adalah 350 rps. Hal ini terjadi karena tidak semua tiket merupakan tiket dengan nomor kursi dan pengguna tidak akan memanggil operasi ini apabila tidak menemukan area yang memenuhi kriterianya.
 
-\pagebreak
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{resources/chapter-4/throughput-seat-availability.png}
+    \caption{Metrik \textit{Throughput} Baca Ketersediaan Kursi (f5t2)}
+    \label{fig:throughput-get-seat}
+\end{figure}
+
+Meskipun begitu, pengoptimalan kueri ini tidak berjalan dengan cukup baik sebagaimana ditunjukkan pada Gambar \ref{fig:latency-get-seat}. Rata-rata latensi (P50 dan garis berwarna ungu) memiliki nilai mulai dari 40 milisekon hingga 1.75 sekon (apabila mengesampingkan latensi di awal saat jumlah koneksi masih sedikit). Di sisi lain, latensi P95 (garis berwarna biru) cukup tinggi dengan banyak periode ketika latensinya berada di atas  2,5 detik. Hal ini menunjukkan bahwa penggunaan tembolok singkat (waktu hidup 150 milisekon) tidak begitu efektif.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{resources/chapter-4/latency-seat-availability.png}
-    \caption{Metrik Baca Ketersediaan Kursi (f5t2)}
+    \caption{Metrik Latensi Baca Ketersediaan Kursi (f5t2)}
     \label{fig:latency-get-seat}
 \end{figure}
 
-Rata-rata latensi (P50) memiliki nilai mulai dari 40 milisekon hingga 1.75 sekon (apabila mengesampingkan latensi di awal saat jumlah koneksi masih sedikit). Di sisi lain, latensi P95 cukup mengkhawatirkan dengan nilai mulai dari 1.6 sekon hingga 7 sekon. Hal ini menunjukkan bahwa penggunaan tembolok singkat (waktu hidup 150 milisekon) tidak begitu efektif. Hal ini terjadi karena beberapa hal berikut:
+Tingginya latensi operasi ini dapat terjadi karena beberapa hal berikut:
 
 \begin{enumerate}
     \item Tembolok yang bersifat lokal pada level aplikasi.
@@ -218,7 +231,7 @@ Rata-rata latensi (P50) memiliki nilai mulai dari 40 milisekon hingga 1.75 sekon
     \item Waktu hidup yang terlalu singkat.
 \end{enumerate}
 
-Kombinasi hal tersebut membuat \textit{cache hit} operasi ini sangat rendah sehingga tidak efektif. Selain itu, latensi ini menunjukkan bahwa operasi ini merupakan operasi yang cukup berat yang ditandai dengan latensi yang ada dan merupakan hal yang dapat menjadi fokus pengoptimalan di masa mendatang. Sebagaimana ditunjukkan pada pengoptimalan sebelumnya, pengoptimalan penggunaan Redis bisa menjadi alternatif yang dapat dieksplorasi lebih lanjut.
+Kombinasi hal tersebut membuat \textit{cache hit} operasi ini rendah sehingga tidak efektif. Rendahnya \textit{cache hit} ini ditunjukkan dengan tingginya latensi operasi ini. Meskipun begitu, tidak ada angka pasti yang menunjukkan berada \textit{cache hit} operasi ini. Selain itu, latensi ini menunjukkan bahwa operasi ini merupakan operasi yang cukup berat yang ditandai dengan latensi yang ada dan merupakan hal yang dapat menjadi fokus pengoptimalan di masa mendatang. Sebagaimana ditunjukkan pada pengoptimalan sebelumnya, pengoptimalan penggunaan Redis bisa menjadi alternatif yang dapat dieksplorasi lebih lanjut.
 
 \subsection{Penggunaan Pengendalian Aliran}
 
@@ -226,32 +239,30 @@ Gambar \ref{fig:latency-fc} dan Gambar \ref{fig:latency-nofc} menunjukkan perbed
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/latency-fc-pg-stress-0.png}
     \caption{Latensi Pemrosesan dengan Pengendalian Aliran}
     \label{fig:latency-fc}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/latency-nofc-pg-stress-0.png}
     \caption{Latensi Pemrosesan tanpa Pengendalian Aliran}
     \label{fig:latency-nofc}
 \end{figure}
 
 Selanjutnya, perhatikan laju pemrosesan berdasarkan kode respons sebagaimana ditunjukkan pada Gambar \ref{fig:rps-fc-pg-stress-0} dan Gambar \ref{fig:rps-nofc-pg-stress-0}. Meskipun memiliki latensi yang lebih tinggi, laju pemrosesan puncak varian ini sama dengan laju pemrosesan puncak pada sistem referensi. Oleh karena itu, latensi yang tinggi tidak serta merta membuat laju pemrosesan lebih lambat.
 
-\pagebreak
-
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/rps-fc-pg-stress-0.png}
     \caption{Laju Pemrosesan dengan Pengendalian Aliran}
     \label{fig:rps-fc-pg-stress-0}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
+    \includegraphics[width=1\textwidth]{resources/chapter-4/rps-nofc-pg-stress-0.png}
     \caption{Laju Pemrosesan tanpa Pengendalian Aliran}
     \label{fig:rps-nofc-pg-stress-0}
 \end{figure}
@@ -268,17 +279,17 @@ Meskipun implementasi sistem antrean kurang optimal, terdapat beberapa hal posit
     \label{table:latensi-kueri-fc-nofc}
     \begin{tabular}{|l|l|l|}
         \hline
-        \textbf{Kueri}        & \textbf{Tanpa Pengendalian Aliran} & \textbf{Dengan Pengendalian Aliran} \\
+        \textbf{Kueri}        & \textbf{No FC} & \textbf{FC} \\
         \hline
-        LockFreeStandingSeats & 8.5                                & 0.98                                \\
+        LockFreeStandingSeats & 8.5            & 0.98        \\
         \hline
-        LockNumberedSeats     & -                                  & -                                   \\
+        LockNumberedSeats     & -              & -           \\
         \hline
-        InsertOrder           & 0.2                                & 0.2                                 \\
+        InsertOrder           & 0.2            & 0.2         \\
         \hline
-        InsertIssuedTiket     & 0.28                               & 0.3                                 \\
+        InsertIssuedTiket     & 0.28           & 0.3         \\
         \hline
-        InsertInvoice         & 0.12                               & 0.12                                \\
+        InsertInvoice         & 0.12           & 0.12        \\
         \hline
     \end{tabular}
 \end{table}

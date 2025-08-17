@@ -15,11 +15,11 @@ Diagram deployment untuk sistem pengawasan ditunjukkan pada Gambar \ref{fig:depl
 
 \subsubsection{Nginx Ingress Controller}
 
-Gambar \ref{fig:deployment-nginx} menampilkan arsitektur ingress. Komponen inti adalah deploy/nginx-ingress-controller, yang bertindak sebagai reverse proxy untuk mengarahkan lalu lintas eksternal ke layanan internal yang sesuai. Diagram ini juga menunjukkan integrasi dengan cert-manager (terdiri dari webhook, controller, dan cainjector) yang secara otomatis mengelola sertifikat TLS untuk mengamankan endpoint yang diekspos.
+Gambar \ref{fig:deployment-nginx} menampilkan arsitektur ingress. Komponen inti adalah nginx-ingress-controller, yang bertindak sebagai reverse proxy untuk mengarahkan lalu lintas eksternal ke layanan internal yang sesuai. Diagram ini juga menunjukkan integrasi dengan cert-manager yang secara otomatis mengelola sertifikat TLS untuk mengamankan endpoint yang diekspos.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/chapter-4/nginx-1.png}
+    \includegraphics[width=0.75\textwidth]{resources/chapter-4/nginx-1.png}
     \caption{\textit{Deployment} Nginx Ingress}
     \label{fig:deployment-nginx}
 \end{figure}
