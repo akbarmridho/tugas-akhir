@@ -68,7 +68,7 @@ Implementasi pengendalian aliran untuk strategi antrean dapat dibagi menjadi beb
 
 Algoritma \textit{rate limiter} yang digunakan dalam tugas akhir ini merupakan algoritma yang sederhana, yaitu membatasi jumlah konkurensi dengan nilai tertentu. Pada kasus ini, batas tersebut adalah 5000 konkurensi. Algoritma memberi jaminan bahwa jumlah pesanan yang diproses konsisten tidak melebihi batas tertentu.
 
-Terdapat algoritma yang lebih cangggih dan mampu mengatur batas konkurensi secara dinamis, seperti Gradient2. Algoritma ini mengatur batas konkurensi berdasarkan gradien perubahan RTT dan \textit{long term exponentially smoothed average RTT}. Penggunaan algoritma ini dapat meminimalkan dampak pencilan untuk trafik yang bersifat bursty \parencite{platinummonkey_go_concurrency_limits}. Meskipun begitu, algoritma sebelumnya digunakan karena kemudahan implementasi dan proses \textit{tuning} selama pengujian.
+Terdapat algoritma yang lebih cangggih dan mampu mengatur batas konkurensi secara dinamis, seperti Gradient2. Algoritma ini mengatur batas konkurensi berdasarkan gradien perubahan RTT dan \textit{long-term exponentially smoothed average RTT}. Penggunaan algoritma ini dapat meminimalkan dampak pencilan untuk trafik yang bersifat bursty \parencite{platinummonkey_go_concurrency_limits}. Meskipun begitu, algoritma sebelumnya digunakan karena kemudahan implementasi dan proses \textit{tuning} selama pengujian.
 
 \subsubsection{\textit{Runtime} Aplikasi}
 
