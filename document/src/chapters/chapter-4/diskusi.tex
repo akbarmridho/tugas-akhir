@@ -11,6 +11,7 @@ Tugas akhir ini memiliki beberapa keterbatasan pengujian yang dapat memengaruhi 
     \item Tingginya utilisasi sumber daya YugabyteDB mengindikasikan kinerjanya terhambat oleh alokasi sumber daya, sehingga pengujian lanjutan dengan sumber daya lebih tinggi diperlukan untuk mengukur potensi sebenarnya.
     \item Tidak adanya data terperinci seperti \textit{log} aplikasi dan \textit{trace} menyulitkan identifikasi bagian eksekusi yang lambat, karena latensi hanya terukur secara keseluruhan.
     \item Penanganan kueri baca dan tulis tidak dipisah, sehingga dampak dan konsumsi sumber daya untuk masing-masing operasi tidak dapat diukur secara independen.
+    \item Pengujian ini tidak menyertakan skenario ketika semua pengguna virtual mencoba memesan satu kursi tunggal yang sama persis. Hal ini merupakan pilihan yang disengaja karena model yang digunakan saat ini menyimulasikan perebutan di berbagai area tiket secara bersamaan yang merupakan representasi yang lebih akurat dari perilaku pengguna di dunia nyata.
 \end{enumerate}
 
 \subsection{Eksplorasi Lebih Lanjut}
